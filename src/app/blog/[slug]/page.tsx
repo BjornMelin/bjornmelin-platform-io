@@ -15,7 +15,9 @@ async function getPostData(slug: string) {
   // TODO: Implement actual data fetching
   // This is a placeholder - replace with your data fetching logic
   return {
-    title: "Sample Blog Post",
+    id: "1",
+    slug: slug,
+    title: `Post: ${slug}`,
     excerpt: "This is a sample blog post",
     content: "# Sample Content\n\nThis is the content of the blog post.",
     publishedAt: new Date().toISOString(),
@@ -23,8 +25,10 @@ async function getPostData(slug: string) {
     author: {
       name: "John Doe",
       image: "/placeholder.jpg",
+      bio: "Sample author bio"
     },
     tags: ["sample", "blog"],
+    readingTime: "5 min"
   };
 }
 
