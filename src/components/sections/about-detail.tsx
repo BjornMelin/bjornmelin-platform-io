@@ -87,16 +87,16 @@ export function AboutDetail() {
                 operations through efficient, reliable, and strategically designed solutions.
               </p>
               <p>
-                My recent achievements include leading CRAL's infrastructure migration to AWS, resulting in 60% cost reduction, 
-                and establishing scalable frameworks supporting diverse teams across 3M. I've developed custom Python packages, 
+                My recent achievements include leading CRAL&apos;s infrastructure migration to AWS, resulting in 60% cost reduction, 
+                and establishing scalable frameworks supporting diverse teams across 3M. I&apos;ve developed custom Python packages, 
                 reusable IaC libraries, and modernized CI/CD pipelines, consistently delivering 50%+ improvements in performance 
                 and deployment efficiency.
               </p>
               <p>
                 With a strong foundation in Computer Science and Mathematics from Augsburg University and six AWS certifications, 
-                I've evolved from software engineering to become a leader in cloud architecture and data science. I'm passionate 
+                I&apos;ve evolved from software engineering to become a leader in cloud architecture and data science. I'm passionate 
                 about advancing cloud-based technologies and architecting solutions that enable operational agility and innovation. 
-                Outside of tech, I'm an avid freestyle skier and outdoor enthusiast, bringing the same dedication to precision 
+                Outside of tech, I&apos;m an avid freestyle skier and outdoor enthusiast, bringing the same dedication to precision 
                 and continuous improvement from the slopes to my professional work.
               </p>
             </div>
