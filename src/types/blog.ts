@@ -1,13 +1,22 @@
 export interface BlogPost {
   id: string;
+  slug: string;
   title: string;
-  content: string;
   excerpt: string;
-  published: boolean;
+  content: string;
+  publishedAt: string;
+  updatedAt: string;
+  author: {
+    name: string;
+    image: string;
+    bio: string;
+  };
+  coverImage?: string;
+  tags: string[];
+  readingTime: string;
+  published?: boolean;
   seoTitle?: string;
   seoDescription?: string;
-  tags: string[];
-  updatedAt: string;
 }
 
 export interface EditorState extends BlogPost {
