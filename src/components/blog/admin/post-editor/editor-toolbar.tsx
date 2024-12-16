@@ -43,7 +43,7 @@ export function EditorToolbar({
               {post.title || "Untitled Post"}
             </h1>
             <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
-              <StatusBadge published={post.published} />
+              <StatusBadge published={post.published ?? false} />
               {formattedTime && (
                 <span>Last saved: {formattedTime}</span>
               )}

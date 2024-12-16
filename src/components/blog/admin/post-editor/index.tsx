@@ -2,26 +2,19 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { ContentEditor } from "@/components/blog/admin/post-editor/content-editor";
 import { PreviewPanel } from "@/components/blog/admin/post-editor/preview-panel";
-import { MetadataPanel } from "@/components/blog/admin/post-editor/metadata-panel"; 
+import { MetadataPanel } from "@/components/blog/admin/post-editor/metadata-panel";
 import { EditorToolbar } from "@/components/blog/admin/post-editor/editor-toolbar";
 import { usePostEditorState } from "@/components/blog/admin/post-editor/use-post-editor-state";
 import { useAutosave } from "@/components/blog/admin/post-editor/use-autosave";
 import { toast } from "sonner";
-
-interface BlogPost {
-  id: string;
-  title: string;
-  content: string;
-  excerpt: string;
-  published: boolean;
-  seoTitle?: string;
-  seoDescription?: string;
-  tags: string[];
-  updatedAt: string;
-}
+import { BlogPost } from "@/types/blog";
 
 interface PostEditorProps {
   post: BlogPost;
@@ -30,7 +23,7 @@ interface PostEditorProps {
 export function PostEditor({ post }: PostEditorProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const { state, dispatch } = usePostEditorState(post);
+  const [state, dispatch] = usePostEditorState(post);
   const { lastSaved } = useAutosave(state, post.id);
 
   const handleSave = useCallback(async () => {
@@ -88,33 +81,32 @@ export function PostEditor({ post }: PostEditorProps) {
         onSave={handleSave}
         onPublish={handlePublish}
       />
-      
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="flex-1"
-      >
+
+      <ResizablePanelGroup direction="horizontal" className="flex-1">
         <ResizablePanel defaultSize={40}>
           <ContentEditor
             content={state.content}
             onChange={(content) => dispatch({ type: "SET_CONTENT", content })}
           />
         </ResizablePanel>
-        
+
         <ResizableHandle />
-        
+
         <ResizablePanel defaultSize={40}>
           <PreviewPanel content={state.content} />
         </ResizablePanel>
-        
+
         <ResizableHandle />
-        
+
         <ResizablePanel defaultSize={20}>
           <MetadataPanel
             post={state}
-            onChange={(field, value) => dispatch({ type: "SET_FIELD", field, value })}
+            onChange={(field, value) =>
+              dispatch({ type: "SET_FIELD", field, value })
+            }
           />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
   );
-} 
+}
