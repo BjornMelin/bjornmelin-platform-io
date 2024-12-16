@@ -5,13 +5,13 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Prism from 'prismjs';
-import 'prismjs/components/prism-markdown';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-json';
-import 'prismjs/themes/prism-tomorrow.css';
+import Prism from "prismjs";
+import "prismjs/components/prism-markdown";
+import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-javascript";
+import "prismjs/components/prism-css";
+import "prismjs/components/prism-json";
+import "prismjs/themes/prism-tomorrow.css";
 
 interface PreviewPanelProps {
   content: string;
@@ -30,9 +30,17 @@ function escapeHtml(unsafe: string): string {
 
 // Configure marked options for better markdown support
 const renderer = new marked.Renderer();
-renderer.code = ({ text, lang, escaped }: { text: string, lang?: string, escaped?: boolean }): string => {
-  const languageClass = lang ? ` language-${lang}` : '';
-  
+renderer.code = ({
+  text,
+  lang,
+  escaped,
+}: {
+  text: string;
+  lang?: string;
+  escaped?: boolean;
+}): string => {
+  const languageClass = lang ? ` language-${lang}` : "";
+
   if (escaped) {
     return `<pre><code class="block${languageClass}">${text}</code></pre>`;
   }
@@ -41,11 +49,7 @@ renderer.code = ({ text, lang, escaped }: { text: string, lang?: string, escaped
   try {
     // Only highlight if we have a language and it's supported by Prism
     if (lang && Prism.languages[lang]) {
-      highlighted = Prism.highlight(
-        text,
-        Prism.languages[lang],
-        lang
-      );
+      highlighted = Prism.highlight(text, Prism.languages[lang], lang);
     } else {
       // Fallback to escaped code if no language or unsupported
       highlighted = escapeHtml(text);
@@ -68,7 +72,14 @@ marked.setOptions({
 // Configure DOMPurify options for safe HTML
 const purifyConfig = {
   ADD_TAGS: ["iframe", "pre", "code"],
-  ADD_ATTR: ["allow", "allowfullscreen", "frameborder", "scrolling", "class", "language"],
+  ADD_ATTR: [
+    "allow",
+    "allowfullscreen",
+    "frameborder",
+    "scrolling",
+    "class",
+    "language",
+  ],
   FORBID_TAGS: ["script", "style"],
   FORBID_ATTR: ["onerror", "onload", "onclick"],
 };
@@ -113,4 +124,4 @@ export function PreviewPanel({ content, className }: PreviewPanelProps) {
       </Suspense>
     </div>
   );
-} 
+}

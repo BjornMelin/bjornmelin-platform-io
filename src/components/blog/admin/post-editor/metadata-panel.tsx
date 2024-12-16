@@ -2,35 +2,60 @@
 
 import { useCallback } from "react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
-import type { BlogPost, EditorField, EditorValue } from "@/types/blog";
-
-interface MetadataPanelProps {
-  post: BlogPost;
-  onChange: (field: EditorField, value: EditorValue) => void;
-}
+import type { BlogPost } from "@/types/blog";
 
 const MAX_SEO_TITLE_LENGTH = 60;
 const MAX_SEO_DESCRIPTION_LENGTH = 160;
 
-export function MetadataPanel({ post, onChange }: MetadataPanelProps) {
-  const handleTagKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && e.currentTarget.value) {
-      e.preventDefault();
-      const newTag = e.currentTarget.value.trim().toLowerCase();
-      if (newTag && !post.tags.includes(newTag)) {
-        onChange("tags", [...post.tags, newTag]);
-      }
-      e.currentTarget.value = "";
-    }
-  }, [post.tags, onChange]);
+export interface MetadataPanelProps {
+  title: BlogPost["title"];
+  seoTitle: BlogPost["seoTitle"];
+  seoDescription: BlogPost["seoDescription"];
+  excerpt: BlogPost["excerpt"];
+  tags: BlogPost["tags"];
+  onTitleChange: (value: BlogPost["title"]) => void;
+  onSeoTitleChange: (value: BlogPost["seoTitle"]) => void;
+  onSeoDescriptionChange: (value: BlogPost["seoDescription"]) => void;
+  onExcerptChange: (value: BlogPost["excerpt"]) => void;
+  onTagsChange: (value: BlogPost["tags"]) => void;
+}
 
-  const removeTag = useCallback((tagToRemove: string) => {
-    onChange("tags", post.tags.filter(tag => tag !== tagToRemove));
-  }, [post.tags, onChange]);
+export function MetadataPanel({
+  title,
+  seoTitle,
+  seoDescription,
+  excerpt,
+  tags,
+  onTitleChange,
+  onSeoTitleChange,
+  onSeoDescriptionChange,
+  onExcerptChange,
+  onTagsChange,
+}: MetadataPanelProps) {
+  const handleTagKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" && e.currentTarget.value) {
+        e.preventDefault();
+        const newTag = e.currentTarget.value.trim().toLowerCase();
+        if (newTag && !tags.includes(newTag)) {
+          onTagsChange([...tags, newTag]);
+        }
+        e.currentTarget.value = "";
+      }
+    },
+    [tags, onTagsChange]
+  );
+
+  const removeTag = useCallback(
+    (tagToRemove: string) => {
+      onTagsChange(tags.filter((tag) => tag !== tagToRemove));
+    },
+    [tags, onTagsChange]
+  );
 
   return (
     <div className="h-full overflow-auto bg-muted/50 p-6">
@@ -39,8 +64,8 @@ export function MetadataPanel({ post, onChange }: MetadataPanelProps) {
           <Label htmlFor="title">Title</Label>
           <Input
             id="title"
-            value={post.title}
-            onChange={(e) => onChange("title", e.target.value)}
+            value={title}
+            onChange={(e) => onTitleChange(e.target.value)}
             placeholder="Post title"
           />
         </div>
@@ -49,8 +74,8 @@ export function MetadataPanel({ post, onChange }: MetadataPanelProps) {
           <Label htmlFor="excerpt">Excerpt</Label>
           <Textarea
             id="excerpt"
-            value={post.excerpt}
-            onChange={(e) => onChange("excerpt", e.target.value)}
+            value={excerpt || ""}
+            onChange={(e) => onExcerptChange(e.target.value)}
             placeholder="Brief description of the post"
             rows={3}
           />
@@ -59,7 +84,7 @@ export function MetadataPanel({ post, onChange }: MetadataPanelProps) {
         <div className="space-y-2">
           <Label htmlFor="tags">Tags</Label>
           <div className="flex flex-wrap gap-2 mb-2">
-            {post.tags.map((tag) => (
+            {tags.map((tag) => (
               <Badge
                 key={tag}
                 variant="secondary"
@@ -88,13 +113,14 @@ export function MetadataPanel({ post, onChange }: MetadataPanelProps) {
           <Label htmlFor="seoTitle">SEO Title</Label>
           <Input
             id="seoTitle"
-            value={post.seoTitle}
-            onChange={(e) => onChange("seoTitle", e.target.value)}
+            value={seoTitle || ""}
+            onChange={(e) => onSeoTitleChange(e.target.value)}
             placeholder="SEO optimized title"
             maxLength={MAX_SEO_TITLE_LENGTH}
           />
           <p className="text-xs text-muted-foreground">
-            {MAX_SEO_TITLE_LENGTH - (post.seoTitle?.length || 0)} characters remaining
+            {MAX_SEO_TITLE_LENGTH - (seoTitle?.length || 0)} characters
+            remaining
           </p>
         </div>
 
@@ -102,17 +128,18 @@ export function MetadataPanel({ post, onChange }: MetadataPanelProps) {
           <Label htmlFor="seoDescription">SEO Description</Label>
           <Textarea
             id="seoDescription"
-            value={post.seoDescription}
-            onChange={(e) => onChange("seoDescription", e.target.value)}
+            value={seoDescription || ""}
+            onChange={(e) => onSeoDescriptionChange(e.target.value)}
             placeholder="SEO optimized description"
             maxLength={MAX_SEO_DESCRIPTION_LENGTH}
             rows={3}
           />
           <p className="text-xs text-muted-foreground">
-            {MAX_SEO_DESCRIPTION_LENGTH - (post.seoDescription?.length || 0)} characters remaining
+            {MAX_SEO_DESCRIPTION_LENGTH - (seoDescription?.length || 0)}{" "}
+            characters remaining
           </p>
         </div>
       </div>
     </div>
   );
-} 
+}

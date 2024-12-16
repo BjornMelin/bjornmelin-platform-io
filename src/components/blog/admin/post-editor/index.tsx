@@ -1,20 +1,19 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { ContentEditor } from "@/components/blog/admin/post-editor/content-editor";
-import { PreviewPanel } from "@/components/blog/admin/post-editor/preview-panel";
-import { MetadataPanel } from "@/components/blog/admin/post-editor/metadata-panel";
-import { EditorToolbar } from "@/components/blog/admin/post-editor/editor-toolbar";
-import { usePostEditorState } from "@/components/blog/admin/post-editor/use-post-editor-state";
-import { useAutosave } from "@/components/blog/admin/post-editor/use-autosave";
-import { toast } from "sonner";
-import { BlogPost } from "@/types/blog";
+import { trpc } from "@/lib/trpc/client";
+import { type BlogPost } from "@/types/blog";
+import { Toolbar } from "./toolbar";
+import { ContentEditor, type ContentEditorRef } from "./content-editor";
+import { PreviewPanel } from "./preview-panel";
+import { MetadataPanel } from "./metadata-panel";
+import { useToast } from "@/hooks/use-toast";
 
 interface PostEditorProps {
   post: BlogPost;
@@ -22,88 +21,190 @@ interface PostEditorProps {
 
 export function PostEditor({ post }: PostEditorProps) {
   const router = useRouter();
+  const [content, setContent] = useState<BlogPost["content"]>(post.content);
+  const [title, setTitle] = useState<BlogPost["title"]>(post.title);
+  const [seoTitle, setSeoTitle] = useState<BlogPost["seoTitle"]>(post.seoTitle);
+  const [seoDescription, setSeoDescription] = useState<
+    BlogPost["seoDescription"]
+  >(post.seoDescription);
+  const [excerpt, setExcerpt] = useState<BlogPost["excerpt"]>(post.excerpt);
+  const [tags, setTags] = useState<BlogPost["tags"]>(post.tags);
   const [isSaving, setIsSaving] = useState(false);
-  const [state, dispatch] = usePostEditorState(post);
-  const { lastSaved } = useAutosave(state, post.id);
+  const [lastSaved, setLastSaved] = useState<Date>();
+  const editorRef = useRef<ContentEditorRef>(null);
+  const { toast } = useToast();
+
+  const updatePostMutation = trpc.blog.update.useMutation<BlogPost>({
+    onSuccess: () => {
+      setLastSaved(new Date());
+      toast({
+        title: "Success",
+        description: "Post saved successfully",
+      });
+      router.refresh();
+    },
+    onError: (error) => {
+      console.error("Failed to save post:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save post",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const publishPostMutation = trpc.blog.update.useMutation({
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Post published successfully",
+      });
+      router.refresh();
+    },
+    onError: (error) => {
+      console.error("Failed to publish post:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to publish post",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleSave = useCallback(async () => {
+    if (isSaving) return;
+
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/posts/${post.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(state),
+      await updatePostMutation.mutateAsync({
+        id: post.id,
+        title,
+        seoTitle,
+        seoDescription,
+        excerpt,
+        content,
+        tags,
       });
-
-      if (!response.ok) throw new Error("Failed to save post");
-
-      const updatedPost = await response.json();
-      dispatch({ type: "SAVED", post: updatedPost });
-      toast.success("Changes saved successfully");
-      router.refresh();
-    } catch (error) {
-      console.error("Failed to save post:", error);
-      toast.error("Failed to save changes");
     } finally {
       setIsSaving(false);
     }
-  }, [state, post.id, router, dispatch]);
+  }, [
+    post.id,
+    title,
+    seoTitle,
+    seoDescription,
+    excerpt,
+    content,
+    tags,
+    isSaving,
+    updatePostMutation,
+  ]);
 
   const handlePublish = useCallback(async () => {
+    if (isSaving) return;
+
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/posts/${post.id}/publish`, {
-        method: "POST",
+      await publishPostMutation.mutateAsync({
+        id: post.id,
+        published: true,
       });
-
-      if (!response.ok) throw new Error("Failed to publish post");
-
-      const updatedPost = await response.json();
-      dispatch({ type: "SAVED", post: updatedPost });
-      toast.success("Post published successfully");
-      router.refresh();
-    } catch (error) {
-      console.error("Failed to publish post:", error);
-      toast.error("Failed to publish post");
     } finally {
       setIsSaving(false);
     }
-  }, [post.id, router, dispatch]);
+  }, [post.id, isSaving, publishPostMutation]);
+
+  const handleImageInsert = useCallback((url: string) => {
+    editorRef.current?.handleImageInsert(url);
+  }, []);
+
+  // Auto-save every 30 seconds if there are changes
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    const hasChanges =
+      content !== post.content ||
+      title !== post.title ||
+      seoTitle !== post.seoTitle ||
+      seoDescription !== post.seoDescription ||
+      excerpt !== post.excerpt ||
+      JSON.stringify(tags) !== JSON.stringify(post.tags);
+
+    if (hasChanges && !isSaving) {
+      timer = setTimeout(() => {
+        handleSave();
+      }, 30000);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [
+    content,
+    title,
+    seoTitle,
+    seoDescription,
+    excerpt,
+    tags,
+    post,
+    isSaving,
+    handleSave,
+  ]);
+
+  // Add keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        if (!isSaving) {
+          handleSave();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isSaving, handleSave]);
 
   return (
-    <div className="h-full flex flex-col">
-      <EditorToolbar
-        post={state}
-        isSaving={isSaving}
-        lastSaved={lastSaved}
+    <div className="flex h-full flex-col">
+      <Toolbar
+        onImageInsert={handleImageInsert}
         onSave={handleSave}
         onPublish={handlePublish}
+        isSaving={isSaving}
+        lastSaved={lastSaved}
+        isPublished={post.published}
       />
-
       <ResizablePanelGroup direction="horizontal" className="flex-1">
-        <ResizablePanel defaultSize={40}>
+        <ResizablePanel defaultSize={40} minSize={30}>
           <ContentEditor
-            content={state.content}
-            onChange={(content) => dispatch({ type: "SET_CONTENT", content })}
+            ref={editorRef}
+            content={content}
+            onChange={setContent}
           />
         </ResizablePanel>
 
         <ResizableHandle />
 
-        <ResizablePanel defaultSize={40}>
-          <PreviewPanel content={state.content} />
+        <ResizablePanel defaultSize={40} minSize={30}>
+          <PreviewPanel content={content} />
         </ResizablePanel>
 
         <ResizableHandle />
 
-        <ResizablePanel defaultSize={20}>
+        <ResizablePanel defaultSize={20} minSize={15}>
           <MetadataPanel
-            post={state}
-            onChange={(field, value) =>
-              dispatch({ type: "SET_FIELD", field, value })
-            }
+            title={title}
+            seoTitle={seoTitle}
+            seoDescription={seoDescription}
+            excerpt={excerpt}
+            tags={tags}
+            onTitleChange={setTitle}
+            onSeoTitleChange={setSeoTitle}
+            onSeoDescriptionChange={setSeoDescription}
+            onExcerptChange={setExcerpt}
+            onTagsChange={setTags}
           />
         </ResizablePanel>
       </ResizablePanelGroup>

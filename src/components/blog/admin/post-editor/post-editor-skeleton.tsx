@@ -47,4 +47,4 @@ export function PostEditorSkeleton() {
       </div>
     </div>
   );
-} 
+}
