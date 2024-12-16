@@ -51,12 +51,19 @@ export const blogRouter = createTRPCRouter({
           nextCursor = nextItem?.id;
         }
 
-        const formattedPosts: BlogPost[] = posts.map((post) => ({
-          ...post,
-          publishedAt: post.publishedAt.toISOString(),
-          updatedAt: post.updatedAt.toISOString(),
-          readingTime: `${calculateReadingTime(post.content)} min`,
-        }));
+        const formattedPosts: BlogPost[] = posts.map(
+          (post: {
+            publishedAt: Date;
+            updatedAt: Date;
+            content: string;
+            [key: string]: unknown;
+          }) => ({
+            ...post,
+            publishedAt: post.publishedAt.toISOString(),
+            updatedAt: post.updatedAt.toISOString(),
+            readingTime: `${calculateReadingTime(post.content)} min`,
+          })
+        );
 
         return {
           items: formattedPosts,
@@ -147,7 +154,13 @@ export const blogRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        ...blogPostSchema.partial(),
+        title: z.string().optional(),
+        seoTitle: z.string().optional(),
+        seoDescription: z.string().optional(),
+        excerpt: z.string().optional(),
+        content: z.string().optional(),
+        tags: z.array(z.string()).optional(),
+        published: z.boolean().optional(),
       })
     )
     .mutation(async ({ input, ctx }): Promise<BlogPost> => {
@@ -158,8 +171,9 @@ export const blogRouter = createTRPCRouter({
         });
       }
 
-      const { id, ...data } = input;
-      const existingPost = await ctx.db.post.findUnique({ where: { id } });
+      const existingPost = await ctx.db.post.findUnique({
+        where: { id: input.id },
+      });
 
       if (!existingPost) {
         throw new TRPCError({
@@ -168,23 +182,39 @@ export const blogRouter = createTRPCRouter({
         });
       }
 
-      const updatedPost = await ctx.db.post.update({
-        where: { id },
-        data: {
-          ...data,
-          slug: data.title ? generateSlug(data.title) : existingPost.slug,
-          readingTime: data.content
-            ? `${calculateReadingTime(data.content)} min`
-            : existingPost.readingTime,
-          updatedAt: new Date(),
-        },
-      });
+      try {
+        const { id, ...data } = input;
+        const updatedPost = await ctx.db.post.update({
+          where: { id },
+          data: {
+            ...data,
+            ...(data.content && {
+              readingTime: `${calculateReadingTime(data.content)} min`,
+            }),
+            ...(data.title && {
+              slug: generateSlug(data.title),
+            }),
+            ...(data.published && {
+              publishedAt: existingPost.publishedAt || new Date(),
+            }),
+            updatedAt: new Date(),
+          },
+        });
 
-      return {
-        ...updatedPost,
-        publishedAt: updatedPost.publishedAt.toISOString(),
-        updatedAt: updatedPost.updatedAt.toISOString(),
-      };
+        return {
+          ...updatedPost,
+          publishedAt: updatedPost.publishedAt.toISOString(),
+          updatedAt: updatedPost.updatedAt.toISOString(),
+        };
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invalid input data",
+          });
+        }
+        throw error;
+      }
     }),
 
   delete: protectedProcedure
@@ -208,7 +238,9 @@ export const blogRouter = createTRPCRouter({
       where: { published: true },
     });
 
-    return Array.from(new Set(posts.flatMap((post) => post.tags)));
+    return Array.from(
+      new Set(posts.flatMap((post: { tags: string[] }) => post.tags))
+    );
   }),
 
   getStats: protectedProcedure.query(async ({ ctx }) => {
