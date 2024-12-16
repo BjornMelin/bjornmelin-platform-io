@@ -1,9 +1,10 @@
 import { PostRow } from "@/components/blog/admin/list/post-row";
 import { Card } from "@/components/ui/card";
+import type { BlogPost } from "@/types/blog";
 
 async function getPosts() {
   // TODO: Replace with actual API call
-  const posts = await fetch("/api/posts").then(res => res.json());
+  const posts = await fetch("/api/posts").then(res => res.json()) as BlogPost[];
   return posts;
 }
 
@@ -21,7 +22,7 @@ export async function PostList() {
 
   return (
     <div className="space-y-4">
-      {posts.map((post) => (
+      {posts.map((post: BlogPost) => (
         <PostRow key={post.id} post={post} />
       ))}
     </div>

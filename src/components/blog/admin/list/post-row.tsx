@@ -5,27 +5,17 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/blog/admin/shared/status-badge";
-import { 
-  MoreVertical, 
-  Pencil, 
-  Trash2, 
-  Eye 
-} from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Eye } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { BlogPost } from "@/types/blog";
 
 interface PostRowProps {
-  post: {
-    id: string;
-    title: string;
-    excerpt: string;
-    published: boolean;
-    updatedAt: string;
-  };
+  post: BlogPost;
 }
 
 export function PostRow({ post }: PostRowProps) {
@@ -33,7 +23,7 @@ export function PostRow({ post }: PostRowProps) {
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this post?")) return;
-    
+
     setIsDeleting(true);
     try {
       await fetch(`/api/posts/${post.id}`, { method: "DELETE" });
@@ -51,13 +41,13 @@ export function PostRow({ post }: PostRowProps) {
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Link 
+            <Link
               href={`/admin/blog/${post.id}`}
               className="text-lg font-medium hover:underline"
             >
               {post.title}
             </Link>
-            <StatusBadge published={post.published} />
+            <StatusBadge published={post.published ?? false} />
           </div>
           <p className="text-muted-foreground text-sm">{post.excerpt}</p>
           <p className="text-xs text-muted-foreground">
@@ -97,4 +87,4 @@ export function PostRow({ post }: PostRowProps) {
       </div>
     </Card>
   );
-} 
+}
