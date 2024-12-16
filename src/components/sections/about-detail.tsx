@@ -94,7 +94,7 @@ export function AboutDetail() {
               </p>
               <p>
                 With a strong foundation in Computer Science and Mathematics from Augsburg University and six AWS certifications, 
-                I&apos;ve evolved from software engineering to become a leader in cloud architecture and data science. I'm passionate 
+                I&apos;ve evolved from software engineering to become a leader in cloud architecture and data science. I&apos;m passionate 
                 about advancing cloud-based technologies and architecting solutions that enable operational agility and innovation. 
                 Outside of tech, I&apos;m an avid freestyle skier and outdoor enthusiast, bringing the same dedication to precision 
                 and continuous improvement from the slopes to my professional work.
