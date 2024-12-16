@@ -45,7 +45,7 @@ export function BlogCard({ post }: BlogCardProps) {
         </CardContent>
         <CardFooter className="mt-auto">
           <div className="flex items-center justify-between w-full text-sm text-muted-foreground">
-            <span>{formatDate(post.publishedAt)}</span>
+            <span>{formatDate(post.publishedAt.toString())}</span>
             <span>{post.readingTime} min read</span>
           </div>
         </CardFooter>
