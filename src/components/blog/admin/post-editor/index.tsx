@@ -3,12 +3,12 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { ContentEditor } from "./content-editor";
-import { PreviewPanel } from "./preview-panel";
-import { MetadataPanel } from "./metadata-panel"; 
-import { EditorToolbar } from "./editor-toolbar";
-import { usePostEditorState } from "./use-post-editor-state";
-import { useAutosave } from "./use-autosave";
+import { ContentEditor } from "@/components/blog/admin/post-editor/content-editor";
+import { PreviewPanel } from "@/components/blog/admin/post-editor/preview-panel";
+import { MetadataPanel } from "@/components/blog/admin/post-editor/metadata-panel"; 
+import { EditorToolbar } from "@/components/blog/admin/post-editor/editor-toolbar";
+import { usePostEditorState } from "@/components/blog/admin/post-editor/use-post-editor-state";
+import { useAutosave } from "@/components/blog/admin/post-editor/use-autosave";
 import { toast } from "sonner";
 
 interface BlogPost {
