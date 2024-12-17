@@ -9,6 +9,7 @@ import {
   DatabaseError,
   ValidationError,
 } from "@/lib/utils/blog";
+import { type Post } from ".prisma/client";
 import { type BlogPost } from "@/types/blog";
 
 export const blogRouter = createTRPCRouter({
@@ -26,7 +27,7 @@ export const blogRouter = createTRPCRouter({
 
       try {
         const [posts, totalCount] = await Promise.all([
-          ctx.db.post.findMany({
+          ctx.prisma.post.findMany({
             take: limit + 1,
             where: {
               published,
@@ -42,7 +43,7 @@ export const blogRouter = createTRPCRouter({
             orderBy: { publishedAt: "desc" },
             ...(cursor && { cursor: { id: cursor }, skip: 1 }),
           }),
-          ctx.db.post.count({ where: { published } }),
+          ctx.prisma.post.count({ where: { published } }),
         ]);
 
         let nextCursor: string | undefined;
@@ -85,7 +86,7 @@ export const blogRouter = createTRPCRouter({
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input, ctx }): Promise<BlogPost> => {
-      const post = await ctx.db.post.findUnique({
+      const post = await ctx.prisma.post.findUnique({
         where: { slug: input.slug },
       });
 
@@ -119,7 +120,7 @@ export const blogRouter = createTRPCRouter({
         const slug = generateSlug(input.title);
         const now = new Date();
 
-        const post = await ctx.db.post.create({
+        const post = await ctx.prisma.post.create({
           data: {
             ...input,
             slug,
@@ -171,7 +172,7 @@ export const blogRouter = createTRPCRouter({
         });
       }
 
-      const existingPost = await ctx.db.post.findUnique({
+      const existingPost = await ctx.prisma.post.findUnique({
         where: { id: input.id },
       });
 
@@ -184,7 +185,7 @@ export const blogRouter = createTRPCRouter({
 
       try {
         const { id, ...data } = input;
-        const updatedPost = await ctx.db.post.update({
+        const updatedPost = await ctx.prisma.post.update({
           where: { id },
           data: {
             ...data,
@@ -227,13 +228,13 @@ export const blogRouter = createTRPCRouter({
         });
       }
 
-      await ctx.db.post.delete({ where: { id: input.id } });
+      await ctx.prisma.post.delete({ where: { id: input.id } });
       return { success: true };
     }),
 
   // Additional Procedures
   getTags: publicProcedure.query(async ({ ctx }): Promise<string[]> => {
-    const posts = await ctx.db.post.findMany({
+    const posts = await ctx.prisma.post.findMany({
       select: { tags: true },
       where: { published: true },
     });
@@ -252,11 +253,129 @@ export const blogRouter = createTRPCRouter({
     }
 
     const [totalPosts, publishedPosts, draftPosts] = await Promise.all([
-      ctx.db.post.count(),
-      ctx.db.post.count({ where: { published: true } }),
-      ctx.db.post.count({ where: { published: false } }),
+      ctx.prisma.post.count(),
+      ctx.prisma.post.count({ where: { published: true } }),
+      ctx.prisma.post.count({ where: { published: false } }),
     ]);
 
     return { totalPosts, publishedPosts, draftPosts };
   }),
+
+  getFeatured: publicProcedure.query(async ({ ctx }): Promise<BlogPost[]> => {
+    const posts = await ctx.prisma.post.findMany({
+      where: {
+        published: true,
+        featured: true,
+      },
+      orderBy: { publishedAt: "desc" },
+      take: 5,
+    });
+
+    return posts.map(
+      (post: Post): BlogPost => ({
+        ...post,
+        publishedAt: post.publishedAt.toISOString(),
+        updatedAt: post.updatedAt.toISOString(),
+        readingTime: calculateReadingTime(post.content).toString(),
+        author: post.author as BlogPost["author"],
+        featured: true,
+      })
+    );
+  }),
+
+  getRecent: publicProcedure
+    .input(z.object({ limit: z.number().min(1).max(10).default(5) }))
+    .query(async ({ ctx, input }): Promise<BlogPost[]> => {
+      const posts = await ctx.prisma.post.findMany({
+        where: {
+          published: true,
+        },
+        orderBy: { publishedAt: "desc" },
+        take: input.limit,
+      });
+
+      return posts.map(
+        (post: Post): BlogPost => ({
+          ...post,
+          publishedAt: post.publishedAt.toISOString(),
+          updatedAt: post.updatedAt.toISOString(),
+          readingTime: calculateReadingTime(post.content).toString(),
+          author: post.author as BlogPost["author"],
+          featured: false,
+        })
+      );
+    }),
+
+  togglePublish: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }): Promise<BlogPost> => {
+      if (!isAdmin(ctx.session.user)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only admins can toggle post publication status",
+        });
+      }
+
+      const post = await ctx.prisma.post.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+
+      const updatedPost = await ctx.prisma.post.update({
+        where: { id: input.id },
+        data: {
+          published: !post.published,
+          publishedAt: !post.published ? new Date() : post.publishedAt,
+        },
+      });
+
+      return {
+        ...updatedPost,
+        publishedAt: updatedPost.publishedAt.toISOString(),
+        updatedAt: updatedPost.updatedAt.toISOString(),
+        readingTime: calculateReadingTime(updatedPost.content),
+      };
+    }),
+
+  toggleFeatured: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }): Promise<BlogPost> => {
+      if (!isAdmin(ctx.session.user)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only admins can toggle featured status",
+        });
+      }
+
+      const post = await ctx.prisma.post.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+
+      const updatedPost = await ctx.prisma.post.update({
+        where: { id: input.id },
+        data: {
+          featured: !post.featured,
+        },
+      });
+
+      return {
+        ...updatedPost,
+        publishedAt: updatedPost.publishedAt.toISOString(),
+        updatedAt: updatedPost.updatedAt.toISOString(),
+        readingTime: calculateReadingTime(updatedPost.content),
+      };
+    }),
 });

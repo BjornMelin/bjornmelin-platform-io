@@ -3,6 +3,7 @@ import superjson from "superjson";
 import { type NextRequest } from "next/server";
 import { getServerSession, type DefaultSession } from "next-auth";
 import { isAdmin } from "@/lib/utils/blog";
+import { prisma } from "@/server/db";
 
 // Extend NextAuth types
 declare module "next-auth" {
@@ -13,19 +14,16 @@ declare module "next-auth" {
   }
 }
 
-// Define context type for better type inference
-interface CreateContextOptions {
-  req: NextRequest;
-}
-
 // Create context with type safety
-export const createTRPCContext = async ({ req }: CreateContextOptions) => {
+export const createTRPCContext = async (opts: { req: NextRequest }) => {
   const session = await getServerSession();
+  const user = session?.user;
 
   return {
-    req,
+    req: opts.req,
     session,
-    user: session?.user,
+    user,
+    prisma,
   };
 };
 
