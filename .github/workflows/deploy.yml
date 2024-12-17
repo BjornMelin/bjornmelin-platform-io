@@ -1,41 +1,50 @@
-name: Deploy Frontend
+name: Deploy
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read # This is required for actions/checkout
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'yarn'
-      
-      - name: Configure AWS Credentials
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      
-      - name: Install Dependencies
-        run: |
-          yarn install
-          cd infrastructure && yarn install
-      
-      - name: Build Next.js
-        run: yarn build
-      
-      - name: Deploy to AWS
-        if: github.ref == 'refs/heads/main'
-        run: |
-          cd infrastructure
-          yarn deploy:prod 
+          # Replace with your IAM role ARN
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-deploy-role
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies (infrastructure)
+        working-directory: ./infrastructure
+        run: npm ci
+
+      - name: CDK synth
+        working-directory: ./infrastructure
+        run: npx cdk synth
+
+      - name: Deploy infrastructure
+        working-directory: ./infrastructure
+        run: npx cdk deploy --require-approval never
+
+      - name: Install dependencies (application)
+        working-directory: ./
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy application (replace with your deployment method)
+        run: echo "Implement your application deployment here (e.g., Amplify, Vercel, etc.)"
