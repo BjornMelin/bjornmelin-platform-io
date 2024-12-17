@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  content     String   @db.Text
+  excerpt     String
+  coverImage  String?
+  published   Boolean  @default(false)
+  featured    Boolean  @default(false)
+  // Store minimal author data as JSON
+  author      Json     
+  tags        String[]
+  publishedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([publishedAt(sort: Desc)])
+  @@index([slug])
+  @@index([tags])
+}
