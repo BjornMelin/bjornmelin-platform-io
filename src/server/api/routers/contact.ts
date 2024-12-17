@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { router, publicProcedure } from "@/server/api/trpc";
 import { contactFormSchema } from "@/lib/schemas/contact";
 import { Resend } from "resend";
 
@@ -15,7 +15,7 @@ const requestLog = new Map<string, { count: number; timestamp: number }>();
 const RATE_LIMIT_DURATION = 60 * 1000; // 1 minute
 const MAX_REQUESTS = 3; // 3 requests per minute
 
-export const contactRouter = createTRPCRouter({
+export const contactRouter = router({
   submit: publicProcedure
     .input(contactFormSchema)
     .mutation(async ({ input, ctx }) => {
