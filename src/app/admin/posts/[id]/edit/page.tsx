@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { PostEditor } from "@/components/blog/admin/post-editor";
-import { db } from "@/server/db";
+import { prisma } from "@/server/db";
 import { getServerAuthSession } from "@/server/auth";
 import { isAdmin } from "@/lib/utils/blog";
 import { type BlogPost } from "@/types/blog";
@@ -22,7 +22,7 @@ export default async function PostEditPage({ params }: PageProps) {
     notFound();
   }
 
-  const post = await db.post.findUnique({
+  const post = await prisma.post.findUnique({
     where: { id: params.id },
   });
 
