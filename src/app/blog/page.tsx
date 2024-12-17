@@ -1,21 +1,22 @@
-import { type Metadata } from "next";
-import { BlogList } from "@/components/blog/blog-list";
+import { Metadata } from "next";
+import { BlogHeader } from "@/components/blog/blog-header";
+import { SearchAndFilters } from "@/components/blog/search-and-filters";
+import { BlogGrid } from "@/components/blog/blog-grid";
+import { BlogErrorBoundary } from "@/components/blog/error-boundary";
 
 export const metadata: Metadata = {
-  title: "Blog - Bjorn Melin",
+  title: "Blog | Platform.io",
   description: "Thoughts on cloud architecture, AI/ML, and modern development",
-  openGraph: {
-    title: "Blog - Bjorn Melin",
-    description: "Thoughts on cloud architecture, AI/ML, and modern development",
-    type: "website",
-    url: "https://bjornmelin.com/blog",
-  },
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
   return (
     <main className="container mx-auto px-4 py-12">
-      <BlogList />
+      <BlogErrorBoundary>
+        <BlogHeader />
+        <SearchAndFilters />
+        <BlogGrid />
+      </BlogErrorBoundary>
     </main>
   );
-} 
+}
