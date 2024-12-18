@@ -37,7 +37,7 @@ jobs:
 
       - name: Deploy infrastructure
         working-directory: ./infrastructure
-        run: npx cdk deploy --require-approval never
+        run: npm run deploy:api
 
       - name: Install dependencies (application)
         working-directory: ./
@@ -46,5 +46,5 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Deploy application (replace with your deployment method)
-        run: echo "Implement your application deployment here (e.g., Amplify, Vercel, etc.)"
+      - name: Deploy application
+        run: npm run deploy:api
