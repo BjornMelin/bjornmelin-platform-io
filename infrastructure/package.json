@@ -7,8 +7,11 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
+    "build:lambda": "cd ../ && npm run build",
+    "deploy:base": "cdk deploy --all --require-approval never",
     "deploy:dev": "cdk deploy DevFrontendStack --require-approval never",
     "deploy:prod": "cdk deploy ProdFrontendStack --require-approval never",
+    "deploy:api": "npm run build:lambda && cdk deploy BlogInfrastructure --require-approval never",
     "diff": "cdk diff"
   },
   "devDependencies": {
