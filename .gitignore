@@ -66,3 +66,8 @@ cdk.out
 
 # RepoMix
 repomix-output.txt
+
+# Prisma files
+/prisma/migrations
+/prisma/dev.db*
+/prisma/client
