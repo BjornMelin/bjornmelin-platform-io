@@ -2,12 +2,12 @@ import * as cdk from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import { Construct } from "constructs";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 
 interface ApiConstructProps {
   lambdaCode: lambda.Code;
   databaseUrl: string;
   s3BucketName: string;
-  cloudfrontUrl: string;
 }
 
 export class ApiConstruct extends Construct {
@@ -22,25 +22,29 @@ export class ApiConstruct extends Construct {
       handler: "index.handler",
       code: props.lambdaCode,
       memorySize: 512,
+      logRetention: RetentionDays.ONE_WEEK, // Retain logs for one week
       timeout: cdk.Duration.seconds(30), // Increased timeout
       environment: {
         DATABASE_URL: props.databaseUrl,
         S3_BUCKET: props.s3BucketName,
-        CLOUDFRONT_URL: props.cloudfrontUrl,
         NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "", // Retrieve from env
-        EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST || "",
-        EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT || "",
-        EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER || "",
-        EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD || "",
-        EMAIL_FROM: process.env.EMAIL_FROM || "",
+        GITHUB_ID: process.env.GITHUB_ID || "",
+        GITHUB_SECRET: process.env.GITHUB_SECRET || "",
       },
-    });
+    }); // Grant the Lambda function read access to the S3 bucket
+
+    const mediaBucket = cdk.aws_s3.Bucket.fromBucketName(
+      this,
+      "ImportedMediaBucket",
+      props.s3BucketName
+    );
+    mediaBucket.grantRead(blogHandler);
 
     this.api = new apigateway.RestApi(this, "BlogApi", {
       deployOptions: {
         cachingEnabled: true,
         cacheTtl: cdk.Duration.minutes(5),
-        cacheSize: 0.5,
+        cacheSize: "0.5",
       },
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
@@ -49,13 +53,10 @@ export class ApiConstruct extends Construct {
       },
     });
 
-    const posts = this.api.root.addResource("trpc");
-    posts.addProxy({
+    const trpc = this.api.root.addResource("trpc");
+    const trpcHandler = trpc.addProxy({
       anyMethod: true,
       defaultIntegration: new apigateway.LambdaIntegration(blogHandler, {
-        requestParameters: {
-          "method.request.path.proxy": true,
-        },
         proxy: true,
       }),
     });

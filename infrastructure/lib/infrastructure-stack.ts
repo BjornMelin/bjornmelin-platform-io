@@ -16,22 +16,18 @@ export class InfrastructureStack extends cdk.Stack {
     const databaseStack = new DatabaseStack(this, "Database", {
       vpc: networkStack.vpc,
       dbSecurityGroup: networkStack.dbSecurityGroup,
-    });
+    }); // Build the code from the root directory using a relative path
 
     const lambdaCode = cdk.aws_lambda.Code.fromAsset(
-      path.join(__dirname, "../../../lambda")
+      path.join(__dirname, "../../dist")
     );
 
     new ApiConstruct(this, "Api", {
       lambdaCode,
-      databaseUrl: `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${databaseStack.instance.dbInstanceEndpointAddress}:${databaseStack.instance.dbInstancePort}/${databaseStack.instance.dbName}`,
+      databaseUrl: `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${databaseStack.instance.dbInstanceEndpointAddress}:${databaseStack.instance.dbInstancePort}/${process.env.DB_NAME}`,
       s3BucketName: storageStack.mediaBucket.bucketName,
-      cloudfrontUrl: storageStack.distribution.distributionDomainName,
     });
 
-    new cdk.CfnOutput(this, "CloudFrontDomain", {
-      value: storageStack.distribution.distributionDomainName,
-    });
     new cdk.CfnOutput(this, "DatabaseEndpoint", {
       value: databaseStack.instance.dbInstanceEndpointAddress,
     });

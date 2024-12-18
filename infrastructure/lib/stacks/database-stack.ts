@@ -30,6 +30,7 @@ export class DatabaseStack extends cdk.Stack {
       securityGroups: [props.dbSecurityGroup],
       deletionProtection: false, // Set to true in production
       removalPolicy: cdk.RemovalPolicy.DESTROY, // Change to RETAIN in production
+      databaseName: process.env.DB_NAME,
     });
   }
 }
