@@ -10,19 +10,20 @@ datasource db {
 model Post {
   id          String   @id @default(cuid())
   slug        String   @unique
-  title       String
+  title       String   @db.VarChar(100)
   content     String   @db.Text
-  excerpt     String
-  coverImage  String?
+  excerpt     String   @db.VarChar(300)
+  coverImage  String?  @db.VarChar(500)
   published   Boolean  @default(false)
   featured    Boolean  @default(false)
-  // Store minimal author data as JSON
-  author      Json     
+  author      Json
   tags        String[]
   publishedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([publishedAt(sort: Desc)])
-  @@index([slug])
+  // Optimized indexes for common queries
+  @@index([publishedAt(sort: Desc), published])
+  @@index([slug, published])
   @@index([tags])
+  @@index([featured, published, publishedAt])
 }
