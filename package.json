@@ -4,11 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    // "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
     "lint": "next lint",
-    "prisma:migrate:local": "dotenv -e .env.local -- prisma migrate dev --name init",
-    "prisma:push:local": "dotenv -e .env.local -- prisma db push"
+    "deploy:api": "cd infrastructure && yarn run deploy:api",
+    "prisma:migrate:local": "dotenv -e .env.local -- prisma migrate dev",
+    "prisma:push:local": "dotenv -e .env.local -- prisma db push",
+    "deploy:fe:dev": "cd infrastructure && pnpm run deploy:dev",
+    "deploy:fe:prod": "cd infrastructure && pnpm run deploy:prod"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
