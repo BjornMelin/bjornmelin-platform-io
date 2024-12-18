@@ -72,3 +72,35 @@ This documentation is maintained alongside the codebase. When making changes:
 - [Development Environment Setup](./development/getting-started.md)
 - [Deployment Process](./deployment/ci-cd.md)
 - [Security Best Practices](./security/README.md)
+
+## Generating Repository Text for AI Models
+
+To generate a comprehensive text representation of the relevant parts of this repository for use with generative AI models, you can use the `repomix` command. This command will include specific directories and files that are essential for understanding the project's structure and functionality.
+
+### Command
+
+```bash
+repomix --include src,infrastructure,prisma,public,.vscode,.github/workflows/deploy.yml,.eslintrc.json,.gitignore,components.json,next.config.mjs,package.json,postcss.config.mjs,README.md,tailwind.config.ts,tsconfig.json
+```
+
+### Explanation of Included Components
+
+- **src**: Contains the main source code of the application.
+- **infrastructure**: Includes infrastructure-related configurations and scripts.
+- **prisma**: Contains the Prisma schema and migration files.
+- **public**: Holds static assets that are served directly.
+- **.vscode**: Contains Visual Studio Code settings specific to the project.
+- **.github/workflows/deploy.yml**: GitHub Actions workflow for deployment.
+- **.eslintrc.json**: ESLint configuration file for code linting.
+- **.gitignore**: Specifies files and directories to be ignored by Git.
+- **components.json**: A JSON representation of the components used in the project.
+- **next.config.mjs**: Configuration file for Next.js.
+- **package.json**: Contains metadata about the project and its dependencies.
+- **postcss.config.mjs**: Configuration for PostCSS.
+- **README.md**: The main documentation file for the project.
+- **tailwind.config.ts**: Configuration file for Tailwind CSS.
+- **tsconfig.json**: TypeScript configuration file.
+
+### Usage
+
+Run the command in your terminal from the root of the repository to generate the text output. This output can then be fed into generative AI models to assist with development tasks, code suggestions, or documentation generation.
