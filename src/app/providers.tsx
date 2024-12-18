@@ -7,6 +7,7 @@ import { httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes";
+import { SessionProvider } from "next-auth/react";
 
 export function Providers({ children, ...props }: ThemeProviderProps) {
   const [queryClient] = useState(() => new QueryClient());
@@ -22,17 +23,19 @@ export function Providers({ children, ...props }: ThemeProviderProps) {
   );
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <NextThemesProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          {...props}
-        >
-          {children}
-        </NextThemesProvider>
-      </QueryClientProvider>
-    </trpc.Provider>
+    <SessionProvider>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <NextThemesProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            {...props}
+          >
+            {children}
+          </NextThemesProvider>
+        </QueryClientProvider>
+      </trpc.Provider>
+    </SessionProvider>
   );
 }
