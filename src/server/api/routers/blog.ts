@@ -4,13 +4,28 @@ import { TRPCError } from "@trpc/server";
 import { blogPostSchema, blogQuerySchema } from "@/lib/schemas/blog";
 import { BlogError } from "@/lib/errors";
 import { formatPostResponse } from "@/lib/utils/response";
-import { getCachedPost, getCachedPosts } from "@/lib/cache";
+import { getCachedPost, getCachedPosts, getCachedTags } from "@/lib/cache";
 import { generateSlug } from "@/lib/utils/blog";
 
 export const blogRouter = createTRPCRouter({
   getAll: publicProcedure.input(blogQuerySchema).query(async ({ input }) => {
     try {
       return await getCachedPosts(input);
+    } catch (error) {
+      if (error instanceof BlogError) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error.message,
+          cause: error,
+        });
+      }
+      throw error;
+    }
+  }),
+
+  getTags: publicProcedure.query(async () => {
+    try {
+      return await getCachedTags();
     } catch (error) {
       if (error instanceof BlogError) {
         throw new TRPCError({
@@ -160,13 +175,4 @@ export const blogRouter = createTRPCRouter({
         throw error;
       }
     }),
-
-  getTags: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.prisma.post.findMany({
-      select: { tags: true },
-      where: { published: true },
-    });
-
-    return Array.from(new Set(posts.flatMap((post) => post.tags))).sort();
-  }),
 });
