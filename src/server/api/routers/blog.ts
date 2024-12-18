@@ -1,3 +1,4 @@
+// src/server/api/routers/blog.ts
 import { publicProcedure, protectedProcedure, router } from "@/server/api/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
@@ -7,10 +8,18 @@ export const blogRouter = router({
     return await ctx.prisma.post.findMany({
       where: { published: true },
       orderBy: { createdAt: "desc" },
+      include: {
+        author: true,
+      },
     });
   }),
   getById: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
-    const post = await ctx.prisma.post.findUnique({ where: { id: input } });
+    const post = await ctx.prisma.post.findUnique({
+      where: { id: input },
+      include: {
+        author: true,
+      },
+    });
     if (!post) {
       throw new TRPCError({ code: "NOT_FOUND" });
     }
@@ -26,10 +35,10 @@ export const blogRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      if (ctx.user.role !== "admin")
+      if (ctx.session.user.role !== "ADMIN")
         throw new TRPCError({ code: "UNAUTHORIZED" });
       const post = await ctx.prisma.post.create({
-        data: { ...input, authorId: ctx.user.id },
+        data: { ...input, authorId: ctx.session.user.id },
       });
       return post;
     }),
@@ -44,7 +53,7 @@ export const blogRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      if (ctx.user.role !== "admin")
+      if (ctx.session.user.role !== "ADMIN")
         throw new TRPCError({ code: "UNAUTHORIZED" });
       const post = await ctx.prisma.post.update({
         where: { id: input.id },
@@ -55,7 +64,7 @@ export const blogRouter = router({
   delete: protectedProcedure
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
-      if (ctx.user.role !== "admin")
+      if (ctx.session.user.role !== "ADMIN")
         throw new TRPCError({ code: "UNAUTHORIZED" });
       return await ctx.prisma.post.delete({ where: { id: input } });
     }),

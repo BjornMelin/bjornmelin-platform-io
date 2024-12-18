@@ -1,12 +1,11 @@
+// src/server/api/context.ts
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { Session } from "next-auth";
-import { getServerSession } from "next-auth/next";
+import { getServerSession, Session } from "next-auth";
 import { prisma } from "../db";
-import { authOptions } from "../auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 type CreateContextOptions = {
   session: Session | null;
-  secrets: Record<string, string>;
 };
 
 /**
@@ -17,7 +16,6 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
-    secrets: opts.secrets,
   };
 };
 
@@ -25,17 +23,13 @@ export const createContextInner = async (opts: CreateContextOptions) => {
  * Creates context for an incoming request
  * @link https://trpc.io/docs/context
  */
-export const createContext = async (
-  opts: CreateNextContextOptions & { secrets: Record<string, string> }
-) => {
+export const createContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
   const session = await getServerSession(req, res, authOptions);
 
   return await createContextInner({
     session,
-    secrets: opts.secrets,
   });
 };
 
-// Use Awaited<ReturnType<T>> instead of inferAsyncReturnType
 export type Context = Awaited<ReturnType<typeof createContext>>;
