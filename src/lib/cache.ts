@@ -4,6 +4,22 @@ import { prisma } from "@/server/db";
 import { formatPostResponse, formatPostsResponse } from "@/lib/utils/response";
 import { Prisma } from "@prisma/client";
 
+export const getCachedTags = unstable_cache(
+  async () => {
+    const posts = await prisma.post.findMany({
+      where: { published: true },
+      select: { tags: true },
+    });
+
+    return Array.from(new Set(posts.flatMap((post) => post.tags))).sort();
+  },
+  ["tags"],
+  {
+    revalidate: 3600, // Cache for 1 hour
+    tags: ["tags"],
+  }
+);
+
 export const getCachedPost = unstable_cache(
   async (slug: string): Promise<BlogPost | null> => {
     const post = await prisma.post.findUnique({

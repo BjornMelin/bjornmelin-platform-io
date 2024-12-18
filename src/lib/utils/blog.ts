@@ -29,9 +29,9 @@ export function formatPostResponse(post: Post): BlogPost {
     ...post,
     publishedAt: post.publishedAt.toISOString(),
     updatedAt: post.updatedAt.toISOString(),
-    readingTime: calculateReadingTime(post.content).toString(),
     featured: false,
     author: post.author as BlogPost["author"],
+    coverImage: post.coverImage || undefined,
   };
 }
 
