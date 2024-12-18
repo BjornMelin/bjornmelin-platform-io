@@ -1,124 +1,71 @@
-import { useCallback, useEffect } from "react";
+"use client";
+
+import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { motion, AnimatePresence } from "framer-motion";
-import { useInfinitePosts } from "@/hooks/use-infinite-posts";
+import { api } from "@/trpc/client";
 import { BlogCard } from "./blog-card";
-import { BlogGridSkeleton } from "./loading-states";
-import { useSearchParams } from "next/navigation";
-import type { BlogPost } from "@/types/blog";
+import { Spinner } from "@/components/ui/spinner";
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      duration: 0.2,
-    },
-  },
-  exit: {
-    opacity: 0,
-    transition: {
-      duration: 0.1,
-    },
-  },
-};
+interface BlogGridProps {
+  page?: number;
+  tag?: string;
+}
 
-export function BlogGrid() {
-  const searchParams = useSearchParams();
-  const tag = searchParams.get("tag");
-  const search = searchParams.get("search");
-  const category = searchParams.get("category");
-  const orderBy = (searchParams.get("orderBy") as 'latest' | 'popular' | 'trending') || 'latest';
+export function BlogGrid({ page = 1, tag }: BlogGridProps) {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    api.blog.getAll.useInfiniteQuery(
+      {
+        limit: 9,
+        tag,
+        published: true,
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        initialCursor: page > 1 ? ((page - 1) * 9).toString() : undefined
+      }
+    );
 
   const { ref, inView } = useInView({
-    threshold: 0.1,
-    rootMargin: "100px",
+    threshold: 0,
+    rootMargin: "200px",
   });
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    isError,
-    error,
-  } = useInfinitePosts({
-    limit: 9,
-    tag: tag ?? undefined,
-    search: search ?? undefined,
-    category: category ?? undefined,
-    orderBy,
-  });
-
-  const handleFetchMore = useCallback(() => {
+  useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
+      void fetchNextPage();
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  useEffect(() => {
-    handleFetchMore();
-  }, [handleFetchMore]);
-
-  if (isLoading) {
-    return <BlogGridSkeleton />;
-  }
-
-  if (isError) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-destructive">
-          {error instanceof Error ? error.message : "Failed to load posts"}
-        </p>
-      </div>
-    );
-  }
-
-  const posts = data?.pages.flatMap((page) => page.items) ?? [];
-
-  if (posts.length === 0) {
+  if (!data?.pages[0]?.items.length) {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">No posts found</p>
-        {(tag || search || category) && (
-          <p className="text-sm text-muted-foreground mt-2">
-            Try adjusting your search or filters
-          </p>
-        )}
       </div>
     );
   }
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={`${tag}-${search}-${category}-${orderBy}`}
-          variants={container}
-          initial="hidden"
-          animate="show"
-          exit="exit"
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {posts.map((post: BlogPost, index: number) => (
-            <BlogCard 
-              key={post.id} 
-              post={post} 
-              priority={index < 6} 
+    <div>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {data.pages.map((page, i) =>
+          page.items.map((post, index) => (
+            <BlogCard
+              key={post.id}
+              post={post}
+              priority={i === 0 && index < 6}
             />
-          ))}
-        </motion.div>
-      </AnimatePresence>
-
+          ))
+        )}
+      </div>
       <div ref={ref} className="h-10" />
-
       {isFetchingNextPage && (
-        <div className="mt-8">
-          <BlogGridSkeleton />
+        <div className="flex justify-center py-4">
+          <Spinner />
         </div>
       )}
-    </>
+    </div>
   );
 }
