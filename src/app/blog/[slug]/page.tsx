@@ -1,42 +1,27 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
-import { PostContent } from "@/components/blog/post-content";
+import { Suspense } from "react";
+import { getCachedPost } from "@/lib/cache";
 import { PostHeader } from "@/components/blog/post-header";
-import { PostSidebar } from "@/components/blog/post-sidebar";
+import { PostContent } from "@/components/blog/post-content";
 import { PostFooter } from "@/components/blog/post-footer";
+import { TableOfContents } from "@/components/blog/table-of-contents";
+import { ScrollProgress } from "@/components/blog/scroll-progress";
+import {
+  PostContentSkeleton,
+  PostFooterSkeleton,
+  TableOfContentsSkeleton,
+} from "@/components/blog/loading-states";
 
-interface BlogPostPageProps {
-  params: {
-    slug: string;
-  };
-}
-
-async function getPostData(slug: string) {
-  // TODO: Implement actual data fetching
-  // This is a placeholder - replace with your data fetching logic
-  return {
-    id: "1",
-    slug: slug,
-    title: `Post: ${slug}`,
-    excerpt: "This is a sample blog post",
-    content: "# Sample Content\n\nThis is the content of the blog post.",
-    publishedAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    author: {
-      name: "John Doe",
-      image: "/placeholder.jpg",
-      bio: "Sample author bio"
-    },
-    tags: ["sample", "blog"],
-    readingTime: "5 min"
-  };
-}
-
-export async function generateMetadata(
-  { params }: BlogPostPageProps
-): Promise<Metadata> {
-  const post = await getPostData(params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const post = await getCachedPost(params.slug);
   if (!post) return {};
+
+  const ogImage = post.coverImage || "/images/blog-og.jpg";
 
   return {
     title: post.title,
@@ -49,28 +34,48 @@ export async function generateMetadata(
       modifiedTime: post.updatedAt,
       authors: [post.author.name],
       tags: post.tags,
+      images: [{ url: ogImage, alt: post.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images: [ogImage],
     },
   };
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = await getPostData(params.slug);
+export default async function BlogPostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const post = await getCachedPost(params.slug);
   if (!post) notFound();
 
   return (
-    <article className="container max-w-4xl mx-auto px-4 py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_250px] gap-8">
-        <div className="space-y-8">
-          <PostHeader post={post} />
-          <PostContent content={post.content} />
-          <PostFooter post={post} />
-        </div>
-        <aside className="hidden lg:block">
-          <div className="sticky top-20">
-            <PostSidebar content={post.content} />
+    <>
+      <ScrollProgress />
+      <article className="container max-w-4xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_250px] gap-8">
+          <div className="space-y-8">
+            <PostHeader post={post} />
+            <Suspense fallback={<PostContentSkeleton />}>
+              <PostContent content={post.content} />
+            </Suspense>
+            <Suspense fallback={<PostFooterSkeleton />}>
+              <PostFooter post={post} />
+            </Suspense>
           </div>
-        </aside>
-      </div>
-    </article>
+          <aside className="hidden lg:block">
+            <div className="sticky top-20">
+              <Suspense fallback={<TableOfContentsSkeleton />}>
+                <TableOfContents content={post.content} />
+              </Suspense>
+            </div>
+          </aside>
+        </div>
+      </article>
+    </>
   );
-} 
+}

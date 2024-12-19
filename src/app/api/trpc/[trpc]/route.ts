@@ -6,7 +6,7 @@ import { type NextRequest } from "next/server";
 const handler = (req: NextRequest) =>
   fetchRequestHandler({
     endpoint: "/api/trpc",
-    req,
+    req: req as unknown as Request,
     router: appRouter,
     createContext: () => createTRPCContext({ req }),
     onError:
