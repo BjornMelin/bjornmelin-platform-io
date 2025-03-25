@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.721.0",
-    "aws-cdk-lib": "^2.173.0",
+    "aws-cdk-lib": "^2.184.0",
     "constructs": "^10.4.0",
     "source-map-support": "^0.5.21"
   }
