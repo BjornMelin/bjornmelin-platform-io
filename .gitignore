@@ -91,4 +91,17 @@ node_modules/
 .roo
 .cursor
 
+# TaskMaster AI - Configuration and State Files
+.taskmaster/config.json       # Contains API keys and sensitive configuration
+.taskmaster/state.json        # Contains user state and session data
+.taskmaster/reports/          # Generated reports may contain sensitive data
+.taskmaster/.cache/           # Cache directory if created
+.taskmaster/logs/             # Log files if created
+.taskmaster/temp/             # Temporary files if created
+
+# TaskMaster AI - Keep these files
+!.taskmaster/docs/            # Documentation should be tracked
+!.taskmaster/tasks/           # Task definitions should be tracked
+!.taskmaster/templates/       # Templates should be tracked
+
 # OS specific
