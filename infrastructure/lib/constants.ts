@@ -14,5 +14,4 @@ export const CONFIG = {
   },
 };
 
-export const getStackName = (stackType: string, env: string) =>
-  `${env}-portfolio-${stackType}`;
+export const getStackName = (stackType: string, env: string) => `${env}-portfolio-${stackType}`;

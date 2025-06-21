@@ -1,13 +1,11 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import * as React from "react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
-const NavSeparator = () => (
-  <span className="text-muted-foreground/30">|</span>
-);
+const NavSeparator = () => <span className="text-muted-foreground/30">|</span>;
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -24,24 +22,15 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link
-              href="/"
-              className="text-foreground/60 hover:text-foreground"
-            >
+            <Link href="/" className="text-foreground/60 hover:text-foreground">
               Home
             </Link>
             <NavSeparator />
-            <Link
-              href="/about"
-              className="text-foreground/60 hover:text-foreground"
-            >
+            <Link href="/about" className="text-foreground/60 hover:text-foreground">
               About
             </Link>
             <NavSeparator />
-            <Link
-              href="/projects"
-              className="text-foreground/60 hover:text-foreground"
-            >
+            <Link href="/projects" className="text-foreground/60 hover:text-foreground">
               Projects
             </Link>
             {/* <NavSeparator />
@@ -52,10 +41,7 @@ export function Navbar() {
               Blog
             </Link> */}
             <NavSeparator />
-            <Link
-              href="/contact"
-              className="text-foreground/60 hover:text-foreground"
-            >
+            <Link href="/contact" className="text-foreground/60 hover:text-foreground">
               Contact
             </Link>
             <NavSeparator />
@@ -64,6 +50,7 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             onClick={toggleMenu}
             className="md:hidden p-2"
             aria-label="Toggle menu"

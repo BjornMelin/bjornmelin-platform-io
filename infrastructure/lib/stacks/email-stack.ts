@@ -1,16 +1,16 @@
+import * as path from "node:path";
 import * as cdk from "aws-cdk-lib";
-import * as route53 from "aws-cdk-lib/aws-route53";
-import * as ses from "aws-cdk-lib/aws-ses";
-import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
-import * as lambdaCore from "aws-cdk-lib/aws-lambda";
-import * as iam from "aws-cdk-lib/aws-iam";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
-import * as targets from "aws-cdk-lib/aws-route53-targets"; // Correct import for targets
-import { Construct } from "constructs";
-import { EmailStackProps } from "../types/stack-props";
-import * as path from "path";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as lambdaCore from "aws-cdk-lib/aws-lambda";
+import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as targets from "aws-cdk-lib/aws-route53-targets"; // Correct import for targets
+import * as ses from "aws-cdk-lib/aws-ses";
+import type { Construct } from "constructs";
+import type { EmailStackProps } from "../types/stack-props";
 
 export class EmailStack extends cdk.Stack {
   public readonly emailFunction: lambda.NodejsFunction;
@@ -71,37 +71,33 @@ export class EmailStack extends cdk.Stack {
     });
 
     // Create Lambda function for contact form
-    this.emailFunction = new lambda.NodejsFunction(
-      this,
-      "ContactFormFunction",
-      {
-        runtime: lambdaCore.Runtime.NODEJS_20_X,
-        handler: "handler",
-        entry: path.join(__dirname, "../functions/contact-form/index.ts"),
-        environment: {
-          SENDER_EMAIL: `no-reply@${domain}`,
-          RECIPIENT_EMAIL: "bjornmelin16@gmail.com",
-          REGION: this.region,
-          ALLOWED_ORIGIN: apiEndpoint, // Use the secure API endpoint
-        },
-        bundling: {
-          minify: true,
-          sourceMap: true,
-          externalModules: ["@aws-sdk/client-ses"],
-        },
-        timeout: cdk.Duration.seconds(10),
-        memorySize: 128,
-        architecture: lambdaCore.Architecture.ARM_64,
-        tracing: lambdaCore.Tracing.ACTIVE,
-      }
-    );
+    this.emailFunction = new lambda.NodejsFunction(this, "ContactFormFunction", {
+      runtime: lambdaCore.Runtime.NODEJS_20_X,
+      handler: "handler",
+      entry: path.join(__dirname, "../functions/contact-form/index.ts"),
+      environment: {
+        SENDER_EMAIL: `no-reply@${domain}`,
+        RECIPIENT_EMAIL: "bjornmelin16@gmail.com",
+        REGION: this.region,
+        ALLOWED_ORIGIN: apiEndpoint, // Use the secure API endpoint
+      },
+      bundling: {
+        minify: true,
+        sourceMap: true,
+        externalModules: ["@aws-sdk/client-ses"],
+      },
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 128,
+      architecture: lambdaCore.Architecture.ARM_64,
+      tracing: lambdaCore.Tracing.ACTIVE,
+    });
 
     // Create API Gateway Logging Role
     const apiGatewayLoggingRole = new iam.Role(this, "ApiGatewayLoggingRole", {
       assumedBy: new iam.ServicePrincipal("apigateway.amazonaws.com"),
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName(
-          "service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+          "service-role/AmazonAPIGatewayPushToCloudWatchLogs",
         ),
       ],
     });
@@ -111,7 +107,7 @@ export class EmailStack extends cdk.Stack {
 
     // Set up API Gateway Account settings
     new apigateway.CfnAccount(this, "ApiGatewayAccount", {
-      cloudWatchRoleArn: apiGatewayLoggingRole.roleArn
+      cloudWatchRoleArn: apiGatewayLoggingRole.roleArn,
     });
 
     // Create API Gateway
@@ -156,31 +152,28 @@ export class EmailStack extends cdk.Stack {
     new route53.ARecord(this, "ApiGatewayDnsRecord", {
       zone: props.hostedZone,
       recordName: subdomain,
-      target: route53.RecordTarget.fromAlias(
-        new targets.ApiGatewayDomain(customDomain)
-      ),
+      target: route53.RecordTarget.fromAlias(new targets.ApiGatewayDomain(customDomain)),
     });
 
     // Add API Gateway resource and method
     const contact = this.api.root.addResource("contact");
-    contact.addMethod(
-      "POST",
-      new apigateway.LambdaIntegration(this.emailFunction),
-      {
-        authorizationType: apigateway.AuthorizationType.NONE, // Allow unauthenticated access
-        apiKeyRequired: false,
-      }
-    );
+    contact.addMethod("POST", new apigateway.LambdaIntegration(this.emailFunction), {
+      authorizationType: apigateway.AuthorizationType.NONE, // Allow unauthenticated access
+      apiKeyRequired: false,
+    });
 
     // Add CORS options to the API
+    const allowedOrigins = [`https://${props.domainName}`, `https://www.${props.domainName}`];
+
+    // Add ALLOWED_ORIGIN from environment if it exists
+    if (process.env.ALLOWED_ORIGIN) {
+      allowedOrigins.push(process.env.ALLOWED_ORIGIN);
+    }
+
     const corsOptions: apigateway.CorsOptions = {
-      allowOrigins: [
-        `https://${props.domainName}`,
-        `https://www.${props.domainName}`,
-        process.env.ALLOWED_ORIGIN!,
-      ],
-      allowMethods: ['POST', 'OPTIONS'],
-      allowHeaders: ['Content-Type'],
+      allowOrigins: allowedOrigins,
+      allowMethods: ["POST", "OPTIONS"],
+      allowHeaders: ["Content-Type"],
     };
 
     // Apply CORS to the contact resource
@@ -190,9 +183,7 @@ export class EmailStack extends cdk.Stack {
     const sesPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ["ses:SendEmail", "ses:SendRawEmail"],
-      resources: [
-        `arn:aws:ses:${this.region}:${this.account}:identity/${domain}`,
-      ],
+      resources: [`arn:aws:ses:${this.region}:${this.account}:identity/${domain}`],
     });
 
     // Attach SES policy to Lambda function

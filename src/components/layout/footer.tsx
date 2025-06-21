@@ -1,10 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { Mail } from "lucide-react";
 import { GitHubLogoIcon, LinkedInLogoIcon } from "@radix-ui/react-icons";
-import { BookText } from "lucide-react";
-import { BookOpenCheck } from "lucide-react";
+import { BookOpenCheck, BookText, Mail } from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -23,16 +21,10 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Quick Links</h3>
             <nav className="flex flex-col space-y-2">
-              <Link
-                href="/about"
-                className="text-sm text-foreground/60 hover:text-foreground"
-              >
+              <Link href="/about" className="text-sm text-foreground/60 hover:text-foreground">
                 About
               </Link>
-              <Link
-                href="/projects"
-                className="text-sm text-foreground/60 hover:text-foreground"
-              >
+              <Link href="/projects" className="text-sm text-foreground/60 hover:text-foreground">
                 Projects
               </Link>
               {/* <Link
@@ -41,10 +33,7 @@ export function Footer() {
               >
                 Blog
               </Link> */}
-              <Link
-                href="/contact"
-                className="text-sm text-foreground/60 hover:text-foreground"
-              >
+              <Link href="/contact" className="text-sm text-foreground/60 hover:text-foreground">
                 Contact
               </Link>
             </nav>

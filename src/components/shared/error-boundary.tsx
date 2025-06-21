@@ -1,6 +1,6 @@
 "use client";
 
-import { Component, ErrorInfo, ReactNode } from "react";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 
 interface Props {
   children?: ReactNode;
@@ -30,6 +30,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
           <h2 className="text-2xl font-bold">Something went wrong</h2>
           <button
+            type="button"
             onClick={() => window.location.reload()}
             className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
           >

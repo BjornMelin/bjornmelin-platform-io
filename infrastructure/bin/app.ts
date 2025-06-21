@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
-import { DnsStack } from "../lib/stacks/dns-stack";
-import { StorageStack } from "../lib/stacks/storage-stack";
-import { DeploymentStack } from "../lib/stacks/deployment-stack";
-import { MonitoringStack } from "../lib/stacks/monitoring-stack";
-import { EmailStack } from "../lib/stacks/email-stack";
 import { CONFIG, getStackName } from "../lib/constants";
+import { DeploymentStack } from "../lib/stacks/deployment-stack";
+import { DnsStack } from "../lib/stacks/dns-stack";
+import { EmailStack } from "../lib/stacks/email-stack";
+import { MonitoringStack } from "../lib/stacks/monitoring-stack";
+import { StorageStack } from "../lib/stacks/storage-stack";
 
 const app = new cdk.App();
 
@@ -41,35 +41,27 @@ const storageStack = new StorageStack(app, getStackName("storage", "prod"), {
 storageStack.addDependency(dnsStack);
 
 // Deployment Stack
-const deploymentStack = new DeploymentStack(
-  app,
-  getStackName("deployment", "prod"),
-  {
-    env,
-    domainName: CONFIG.prod.domainName,
-    environment: CONFIG.prod.environment,
-    bucket: storageStack.bucket,
-    distribution: storageStack.distribution,
-    tags: CONFIG.tags,
-  }
-);
+const deploymentStack = new DeploymentStack(app, getStackName("deployment", "prod"), {
+  env,
+  domainName: CONFIG.prod.domainName,
+  environment: CONFIG.prod.environment,
+  bucket: storageStack.bucket,
+  distribution: storageStack.distribution,
+  tags: CONFIG.tags,
+});
 
 // Ensure deployment stack depends on storage stack
 deploymentStack.addDependency(storageStack);
 
 // Monitoring Stack
-const monitoringStack = new MonitoringStack(
-  app,
-  getStackName("monitoring", "prod"),
-  {
-    env,
-    domainName: CONFIG.prod.domainName,
-    environment: CONFIG.prod.environment,
-    bucket: storageStack.bucket,
-    distribution: storageStack.distribution,
-    tags: CONFIG.tags,
-  }
-);
+const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "prod"), {
+  env,
+  domainName: CONFIG.prod.domainName,
+  environment: CONFIG.prod.environment,
+  bucket: storageStack.bucket,
+  distribution: storageStack.distribution,
+  tags: CONFIG.tags,
+});
 
 // Ensure monitoring stack depends on storage stack
 monitoringStack.addDependency(storageStack);

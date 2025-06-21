@@ -21,4 +21,4 @@
     "outDir": "dist"
   },
   "exclude": ["node_modules", "cdk.out", "dist"]
-} 
+}

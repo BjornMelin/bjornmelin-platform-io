@@ -1,8 +1,8 @@
 import * as cdk from "aws-cdk-lib";
-import * as route53 from "aws-cdk-lib/aws-route53";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
-import { Construct } from "constructs";
-import { BaseStackProps } from "../types/stack-props";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import type { Construct } from "constructs";
+import type { BaseStackProps } from "../types/stack-props";
 
 export class DnsStack extends cdk.Stack {
   public readonly hostedZone: route53.IHostedZone;
@@ -19,10 +19,7 @@ export class DnsStack extends cdk.Stack {
     // Create certificate in us-east-1 for CloudFront
     this.certificate = new acm.Certificate(this, "SiteCertificate", {
       domainName: props.domainName,
-      subjectAlternativeNames: [
-        `www.${props.domainName}`,
-        `api.${props.domainName}`,
-      ],
+      subjectAlternativeNames: [`www.${props.domainName}`, `api.${props.domainName}`],
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
 

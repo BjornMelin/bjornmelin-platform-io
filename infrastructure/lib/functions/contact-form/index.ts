@@ -1,14 +1,14 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 const ses = new SESClient({ region: process.env.REGION });
 
 // Allowed origins (replace with your actual domains)
 const allowedOrigins = [
-  process.env.ALLOWED_ORIGIN!,
+  process.env.ALLOWED_ORIGIN || "",
   `https://${process.env.DOMAIN_NAME}`,
   `https://www.${process.env.DOMAIN_NAME}`,
-];
+].filter(Boolean); // Filter out empty strings
 
 // Types
 interface ContactFormData {
@@ -24,26 +24,33 @@ function validateInput(data: ContactFormData): string | null {
   if (!data.email || !data.email.includes("@")) {
     return "Invalid email address";
   }
-  if (
-    !data.message ||
-    typeof data.message !== "string" ||
-    data.message.length < 10
-  ) {
+  if (!data.message || typeof data.message !== "string" || data.message.length < 10) {
     return "Message must be at least 10 characters long";
   }
   return null;
 }
 
-export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  // Validate required environment variables
+  if (!process.env.RECIPIENT_EMAIL) {
+    console.error("RECIPIENT_EMAIL environment variable is not set");
+    return {
+      statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+      },
+      body: JSON.stringify({ error: "Server configuration error" }),
+    };
+  }
+
   const origin = event.headers.origin || event.headers.Origin;
 
   // CORS headers
   const corsHeaders: {
-    'Access-Control-Allow-Headers': string;
-    'Access-Control-Allow-Methods': string;
-    'Access-Control-Allow-Origin'?: string;
+    "Access-Control-Allow-Headers": string;
+    "Access-Control-Allow-Methods": string;
+    "Access-Control-Allow-Origin"?: string;
   } = {
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -92,7 +99,7 @@ export const handler = async (
       new SendEmailCommand({
         Source: process.env.SENDER_EMAIL,
         Destination: {
-          ToAddresses: [process.env.RECIPIENT_EMAIL!],
+          ToAddresses: [process.env.RECIPIENT_EMAIL || ""],
         },
         Message: {
           Subject: {
@@ -128,7 +135,7 @@ Time: ${new Date().toISOString()}
             },
           },
         },
-      })
+      }),
     );
 
     return {

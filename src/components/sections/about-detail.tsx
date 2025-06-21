@@ -1,22 +1,13 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
+import { Award, Brain, Building2, Cloud, Code, GraduationCap, Sparkles } from "lucide-react";
 import Image from "next/image";
-import {
-  Brain,
-  Cloud,
-  Code,
-  Building2,
-  GraduationCap,
-  Award,
-  Sparkles,
-} from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { certifications } from "@/data/certifications";
-import { experiences, previousExperiences } from "@/data/experience";
 import { education } from "@/data/education";
+import { experiences, previousExperiences } from "@/data/experience";
 import { hobbies } from "@/data/hobbies";
 import { skillCategories } from "@/data/skills";
 
@@ -82,23 +73,28 @@ export function AboutDetail() {
             </h2>
             <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
               <p>
-                AI Engineer and Machine Learning Engineer based in Salt Lake City, specializing in deep learning, generative AI,
-                and LLM applications. With a proven track record of delivering multi-million-dollar solutions, I bring 
-                expertise in building scalable, cost-effective systems on AWS and transforming
-                operations through efficient, reliable, and strategically designed solutions.
+                AI Engineer and Machine Learning Engineer based in Salt Lake City, specializing in
+                deep learning, generative AI, and LLM applications. With a proven track record of
+                delivering multi-million-dollar solutions, I bring expertise in building scalable,
+                cost-effective systems on AWS and transforming operations through efficient,
+                reliable, and strategically designed solutions.
               </p>
               <p>
-                My recent achievements include leading a high-profile neuro-symbolic AI project that reduced training data needs
-                by 40% and solved complex material science challenges. I successfully migrated 3M&apos;s Corporate Research Analytical
-                Lab&apos;s infrastructure to AWS, cutting cloud costs by 60% and establishing scalable frameworks for manufacturing
-                and divisional teams. I&apos;ve developed custom Python packages, reusable IaC libraries, and modernized CI/CD pipelines,
-                consistently delivering 50%+ improvements in performance and deployment efficiency.
+                My recent achievements include leading a high-profile neuro-symbolic AI project that
+                reduced training data needs by 40% and solved complex material science challenges. I
+                successfully migrated 3M&apos;s Corporate Research Analytical Lab&apos;s
+                infrastructure to AWS, cutting cloud costs by 60% and establishing scalable
+                frameworks for manufacturing and divisional teams. I&apos;ve developed custom Python
+                packages, reusable IaC libraries, and modernized CI/CD pipelines, consistently
+                delivering 50%+ improvements in performance and deployment efficiency.
               </p>
               <p>
-                With multiple AWS certifications and a strong foundation in Mathematics and Computer Science from Augsburg University,
-                I&apos;ve evolved from software engineering to become a leader in cloud architecture and data science. I&apos;m passionate
-                about advancing AI technologies and developing solutions that enable operational excellence and innovation. Outside of tech,
-                I&apos;m an avid freestyle skier and outdoor enthusiast, bringing the same dedication to precision and continuous
+                With multiple AWS certifications and a strong foundation in Mathematics and Computer
+                Science from Augsburg University, I&apos;ve evolved from software engineering to
+                become a leader in cloud architecture and data science. I&apos;m passionate about
+                advancing AI technologies and developing solutions that enable operational
+                excellence and innovation. Outside of tech, I&apos;m an avid freestyle skier and
+                outdoor enthusiast, bringing the same dedication to precision and continuous
                 improvement from the slopes to my professional work.
               </p>
             </div>
@@ -128,11 +124,7 @@ export function AboutDetail() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {category.skills.map((skill) => (
-                    <Badge
-                      key={skill}
-                      variant="outline"
-                      className={`${category.color}`}
-                    >
+                    <Badge key={skill} variant="outline" className={`${category.color}`}>
                       {skill}
                     </Badge>
                   ))}
@@ -155,16 +147,22 @@ export function AboutDetail() {
           </h2>
           <div className="space-y-6">
             {experiences.map((exp) => (
-              <Card key={`${exp.title}-${exp.startDate}`} className="p-6 backdrop-blur-xl bg-card/50 border-primary/10">
+              <Card
+                key={`${exp.title}-${exp.startDate}`}
+                className="p-6 backdrop-blur-xl bg-card/50 border-primary/10"
+              >
                 <div className="flex flex-col md:flex-row justify-between mb-4">
                   <div>
                     <h3 className="text-xl font-semibold">{exp.title}</h3>
                     <p className="text-primary">{exp.company}</p>
                     <p className="text-sm text-muted-foreground">
-                      {exp.location}{exp.isRemote ? " (Remote)" : ""}
+                      {exp.location}
+                      {exp.isRemote ? " (Remote)" : ""}
                     </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">{exp.startDate} - {exp.endDate}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {exp.startDate} - {exp.endDate}
+                  </p>
                 </div>
                 <ul className="space-y-2 text-muted-foreground ml-4">
                   {exp.achievements.map((achievement, index) => (
@@ -218,11 +216,7 @@ export function AboutDetail() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {certifications.map((cert) => (
-              <motion.div
-                key={cert.name}
-                whileHover={{ scale: 1.02 }}
-                className="relative"
-              >
+              <motion.div key={cert.name} whileHover={{ scale: 1.02 }} className="relative">
                 <Card className="p-6 backdrop-blur-xl bg-card/50 border-primary/10 hover:border-primary/30 transition-colors">
                   <div className="flex flex-col gap-4">
                     <a
@@ -240,12 +234,8 @@ export function AboutDetail() {
                       />
                       <div>
                         <h3 className="font-semibold mb-1">{cert.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {cert.issuedBy}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Issued: {cert.issuedDate}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{cert.issuedBy}</p>
+                        <p className="text-sm text-muted-foreground">Issued: {cert.issuedDate}</p>
                       </div>
                     </a>
 
@@ -306,9 +296,7 @@ export function AboutDetail() {
                     <p className="text-sm text-muted-foreground">
                       {education.startDate} - {education.endDate}
                     </p>
-                    <p className="text-sm font-medium text-primary">
-                      GPA: {education.gpa}
-                    </p>
+                    <p className="text-sm font-medium text-primary">GPA: {education.gpa}</p>
                   </div>
                 </div>
                 <div className="mt-3">
@@ -363,9 +351,7 @@ export function AboutDetail() {
                   <Badge variant="outline" className="bg-primary/5 text-base py-2 px-3">
                     {hobby.emoji} {hobby.name}
                   </Badge>
-                  <p className="text-sm text-muted-foreground pl-2">
-                    {hobby.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground pl-2">{hobby.description}</p>
                 </div>
               ))}
             </div>
