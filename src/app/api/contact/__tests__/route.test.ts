@@ -4,6 +4,11 @@ import { EmailService } from "@/lib/services/email";
 import { ResendEmailService } from "@/lib/services/resend-email";
 import { POST } from "../route";
 
+// Mock security utilities - must be defined before vi.mock
+const mockCheckRateLimit = vi.fn();
+const mockGetClientIp = vi.fn();
+const mockSanitizeInput = vi.fn((input: string) => input);
+
 // Mock services
 vi.mock("@/lib/services/email");
 vi.mock("@/lib/services/resend-email");
@@ -14,15 +19,10 @@ vi.mock("@/env.mjs", () => ({
   },
 }));
 
-// Mock security utilities
-const mockCheckRateLimit = vi.fn();
-const mockGetClientIp = vi.fn();
-const mockSanitizeInput = vi.fn((input: string) => input);
-
 vi.mock("@/lib/utils/security", () => ({
-  checkRateLimit: mockCheckRateLimit,
-  getClientIp: mockGetClientIp,
-  sanitizeInput: mockSanitizeInput,
+  checkRateLimit: vi.fn(() => mockCheckRateLimit()),
+  getClientIp: vi.fn(() => mockGetClientIp()),
+  sanitizeInput: vi.fn((input: string) => mockSanitizeInput(input)),
 }));
 
 describe("Contact API Route", () => {
