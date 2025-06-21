@@ -1,0 +1,58 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.next
+out
+dist
+
+# Test outputs
+coverage
+playwright-report
+test-results
+.nyc_output
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Misc
+.cache
+.temp
+*.pid
+*.seed
+*.pid.lock
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Infrastructure (not needed for tests)
+infrastructure/node_modules
+infrastructure/cdk.out
+
+# Other test files
+cypress
+__mocks__

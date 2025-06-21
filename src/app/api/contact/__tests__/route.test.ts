@@ -20,9 +20,9 @@ const mockGetClientIp = vi.fn();
 const mockSanitizeInput = vi.fn((input: string) => input);
 
 vi.mock("@/lib/utils/security", () => ({
-  checkRateLimit: (...args: unknown[]) => mockCheckRateLimit(...args),
-  getClientIp: (...args: unknown[]) => mockGetClientIp(...args),
-  sanitizeInput: (...args: unknown[]) => mockSanitizeInput(...args),
+  checkRateLimit: mockCheckRateLimit,
+  getClientIp: mockGetClientIp,
+  sanitizeInput: mockSanitizeInput,
 }));
 
 describe("Contact API Route", () => {

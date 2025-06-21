@@ -293,9 +293,65 @@ yarn start        # Start production server
 yarn lint         # Run ESLint
 yarn serve        # Serve production build locally
 
+# Testing
+yarn test         # Run unit tests with Vitest
+yarn test:ui      # Run tests with UI
+yarn test:coverage # Run tests with coverage report
+yarn test:e2e     # Run E2E tests (requires Docker, see below)
+
 # Infrastructure (in /infrastructure directory)
 yarn cdk deploy   # Deploy AWS infrastructure
 ```
+
+## 🧪 Testing
+
+### Unit Testing
+
+The project uses Vitest for unit testing with comprehensive coverage:
+
+```bash
+# Run unit tests
+pnpm test
+
+# Run with UI
+pnpm test:ui
+
+# Generate coverage report
+pnpm test:coverage
+```
+
+### E2E Testing
+
+End-to-end tests are implemented using Playwright. Due to system dependencies, E2E tests must be run in Docker or CI environment.
+
+#### Running E2E Tests Locally with Docker
+
+```bash
+# Build and run E2E tests in Docker
+docker build -f Dockerfile.e2e -t e2e-tests .
+docker run --rm e2e-tests
+
+# Or use docker-compose
+docker-compose -f docker-compose.e2e.yml up --build
+
+# For development with headed browser (requires X11)
+docker build -f Dockerfile.e2e.dev -t e2e-tests-dev .
+docker run --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix e2e-tests-dev
+```
+
+#### E2E Test Coverage
+
+The E2E test suite includes:
+- ✅ Contact form happy path submission
+- ✅ Form validation and error handling
+- ✅ Rate limiting verification (5 requests/5 minutes)
+- ✅ Security features (honeypot, GDPR consent)
+- ✅ Accessibility compliance
+- ✅ XSS prevention
+
+#### CI/CD Integration
+
+E2E tests automatically run on GitHub Actions for all PRs and pushes to main branch. Test reports and videos are uploaded as artifacts for debugging.
 
 ## 👨‍💻 Author
 

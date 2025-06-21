@@ -1,0 +1,55 @@
+FROM mcr.microsoft.com/playwright:v1.53.1-focal
+
+WORKDIR /app
+
+# Install pnpm and curl
+RUN npm install -g pnpm@latest && \
+    apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy application source
+COPY . .
+
+# Install Playwright browsers
+RUN pnpm exec playwright install chromium
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV NEXT_PUBLIC_BASE_URL=http://localhost:3000
+ENV NEXT_PUBLIC_API_URL=http://localhost:3000/api
+
+# Create a script to run dev server and tests
+RUN echo '#!/bin/bash\n\
+# Start the Next.js dev server in the background\n\
+pnpm dev &\n\
+SERVER_PID=$!\n\
+\n\
+# Wait for server to be ready (dev server takes longer)\n\
+echo "Waiting for dev server to start..."\n\
+sleep 5\n\
+while ! curl -s http://localhost:3000 > /dev/null; do\n\
+  echo "Still waiting for server..."\n\
+  sleep 2\n\
+done\n\
+echo "Dev server is ready!"\n\
+\n\
+# Run the E2E tests with headed mode for development\n\
+pnpm test:e2e --headed\n\
+TEST_EXIT_CODE=$?\n\
+\n\
+# Kill the server\n\
+kill $SERVER_PID\n\
+\n\
+# Exit with test exit code\n\
+exit $TEST_EXIT_CODE' > /app/run-tests-dev.sh
+
+RUN chmod +x /app/run-tests-dev.sh
+
+CMD ["/app/run-tests-dev.sh"]

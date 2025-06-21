@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  e2e-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    environment:
+      - NODE_ENV=test
+      - NEXT_PUBLIC_BASE_URL=http://localhost:3000
+      - NEXT_PUBLIC_API_URL=http://localhost:3000/api
+      - CI=true
+    volumes:
+      # Mount test results and reports
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results
+    network_mode: host
