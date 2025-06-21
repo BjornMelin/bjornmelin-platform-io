@@ -72,3 +72,23 @@ repomix-output.txt
 /prisma/migrations
 /prisma/dev.db*
 /prisma/client
+
+# Added by Task Master AI
+# Logs
+logs
+*.log
+dev-debug.log
+# Dependency directories
+node_modules/
+# Environment variables
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.roomodes
+.roo
+.cursor
+
+# OS specific
