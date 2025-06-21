@@ -1,0 +1,79 @@
+# Task ID: 27
+# Title: React 19 Performance Features Implementation with Core Web Vitals Optimization
+# Status: pending
+# Dependencies: 25, 26
+# Priority: high
+# Description: Implement cutting-edge React 19 performance optimizations including enhanced concurrent features, Actions API, use() hook, and Next.js 15 Turbopack integration to achieve perfect Core Web Vitals scores with 2025 targets: LCP <1.8s, CLS <0.1, INP <150ms.
+# Details:
+Implement comprehensive React 19 performance optimizations leveraging enhanced concurrent features including improved automatic batching, startTransition for non-urgent updates, and the new use() API for efficient promise handling. Integrate React 19's Actions API for optimized form submissions with reduced JavaScript bundle size and built-in loading states. Utilize React 19's enhanced Suspense boundaries with streaming optimizations and selective hydration, plus new document metadata handling to reduce third-party library dependencies. Implement React 19's async scripts with automatic deduplication and cache() API for optimized data fetching. Configure Next.js 15 with Turbopack for significantly faster build times and Hot Module Replacement (HMR). Set up sophisticated caching layers including HTTP caching with proper Cache-Control headers, Redis caching for API responses, and browser caching with service workers. Implement 2025 Core Web Vitals optimizations targeting LCP under 1.8s through advanced image optimization, CLS under 0.1 with proper aspect ratios and skeleton loading, and INP under 150ms (replacing FID) with React 19's concurrent rendering and improved error boundaries. Configure Lighthouse CI integration with Web Vitals library v4 for automated performance monitoring including new INP metric and improved attribution. Add React 19's improved Profiler for real-time performance monitoring, automated alerts for performance degradation, and detailed performance reports with actionable recommendations.
+
+# Test Strategy:
+Test 2025 Core Web Vitals metrics across multiple devices and network conditions using Lighthouse CI with Web Vitals library v4, verify LCP scores consistently under 1.8s with real content loading, validate CLS scores under 0.1 with dynamic content insertion, test INP responsiveness under 150ms with user interaction simulation using React 19's improved Profiler. Verify React 19's Actions API effectiveness for form submissions, test use() API performance improvements for promise handling, validate cache() API optimization for data fetching. Test Next.js 15 Turbopack integration for build performance improvements and HMR speed. Verify React 19's enhanced Suspense streaming optimizations, test async scripts deduplication effectiveness, validate document metadata handling performance gains. Run automated Lighthouse audits in CI/CD pipeline with 2025 performance budget enforcement, test performance regression detection with threshold alerts, verify real-time monitoring accuracy with React 19's enhanced Profiler and Web Vitals v4 attribution data.
+
+# Subtasks:
+## 1. Adopt React 19 Enhanced Concurrent Features [pending]
+### Dependencies: None
+### Description: Integrate React 19's enhanced concurrent features including improved automatic batching, startTransition, and the new use() API for efficient promise handling and reduced client-side state.
+### Details:
+Implement React 19's enhanced automatic batching for better performance, utilize startTransition for non-urgent updates, and integrate the new use() API for efficient promise handling. Ensure compatibility with existing codebase and document migration steps for React 19 concurrent features.
+
+## 2. Implement React 19 Actions API and Form Optimizations [pending]
+### Dependencies: 27.1
+### Description: Integrate React 19's Actions API for optimized form submissions with reduced JavaScript bundle size and built-in loading states.
+### Details:
+Replace traditional form handling with React 19's Actions API to reduce bundle size and improve performance. Implement built-in loading states and error handling. Ensure proper server-side integration and validation.
+
+## 3. Design and Implement React 19 Caching Strategies [pending]
+### Dependencies: 27.2
+### Description: Develop robust caching strategies leveraging React 19's cache() API for optimized data fetching, along with traditional caching layers for comprehensive performance optimization.
+### Details:
+Implement React 19's cache() API for optimized data fetching and deduplication. Choose appropriate caching layers (in-memory, persistent, edge, external like Redis) based on data volatility. Implement cache invalidation, revalidation intervals, and error handling with React 19's improved error boundaries.
+
+## 4. Integrate Next.js 15 Turbopack and Enhanced SSR Streaming [pending]
+### Dependencies: 27.3
+### Description: Implement Next.js 15 with Turbopack for faster build times and HMR, plus React 19's enhanced Suspense streaming with selective hydration and document metadata handling.
+### Details:
+Configure Next.js 15 with Turbopack for significantly improved build performance and HMR speed. Implement React 19's enhanced Suspense boundaries with streaming optimizations and selective hydration. Utilize React 19's document metadata handling to reduce third-party library dependencies. Set up async scripts with automatic deduplication.
+
+## 5. Optimize for 2025 Core Web Vitals Targets [pending]
+### Dependencies: 27.4
+### Description: Optimize for 2025 Core Web Vitals targets (LCP <1.8s, CLS <0.1, INP <150ms) using React 19 performance features and advanced optimization techniques.
+### Details:
+Implement optimizations targeting LCP under 1.8s through React 19's enhanced rendering, CLS under 0.1 with proper layout handling, and INP under 150ms using React 19's concurrent features. Utilize improved error boundaries for better error recovery and performance.
+
+## 6. Set Up Lighthouse CI with Web Vitals v4 Integration [pending]
+### Dependencies: 27.5
+### Description: Integrate Lighthouse CI with Web Vitals library v4 for automated auditing including new INP metric and improved attribution data.
+### Details:
+Configure Lighthouse CI with Web Vitals library v4 supporting new INP metric and improved attribution. Set up custom thresholds for 2025 Core Web Vitals targets and performance budgets. Automate audits on pull requests and deployments with enhanced reporting.
+
+## 7. Define and Enforce 2025 Performance Budgets [pending]
+### Dependencies: 27.6
+### Description: Establish and enforce performance budgets for 2025 Core Web Vitals targets and React 19 performance metrics across the stack.
+### Details:
+Set realistic budgets based on 2025 Core Web Vitals targets (LCP <1.8s, CLS <0.1, INP <150ms). Integrate budget checks into CI/CD with React 19 performance considerations and block merges that exceed thresholds. Document budgets for all stakeholders.
+
+## 8. Implement Real-Time Performance Monitoring with React 19 Profiler [pending]
+### Dependencies: None
+### Description: Deploy real-time monitoring using React 19's enhanced Profiler and Web Vitals v4 to track performance in production with improved attribution and alerting.
+### Details:
+Instrument key user flows using React 19's improved Profiler and Web Vitals v4 with enhanced INP tracking and attribution. Set up dashboards and alerting for anomalies with React 19 performance insights. Ensure monitoring respects privacy and security requirements.
+
+## 9. Apply React 19 Advanced Optimization Techniques [pending]
+### Dependencies: None
+### Description: Implement React 19 advanced optimizations including enhanced code splitting, async scripts deduplication, and selective hydration for maximum performance gains.
+### Details:
+Leverage React 19's enhanced code splitting and selective hydration features. Implement async scripts with automatic deduplication and document metadata optimizations. Use React 19's cache() API and improved memoization for expensive computations. Profile impact using React 19's enhanced Profiler.
+
+## 10. Create React 19 Performance Dashboard [pending]
+### Dependencies: None
+### Description: Develop a centralized dashboard visualizing React 19 performance metrics, 2025 Core Web Vitals data, and real-time monitoring with enhanced attribution.
+### Details:
+Integrate data from Lighthouse CI, React 19's Profiler, Web Vitals v4, and real-time monitoring. Provide actionable insights for React 19 features and 2025 Core Web Vitals targets. Include historical trends and enhanced attribution data for performance optimization.
+
+## 11. Establish React 19 Performance Regression Testing [pending]
+### Dependencies: None
+### Description: Set up automated regression tests specifically for React 19 performance features and 2025 Core Web Vitals targets to catch degradations before release.
+### Details:
+Integrate React 19 performance regression tests into CI/CD targeting 2025 Core Web Vitals. Use Web Vitals v4 with INP metric and React 19's Profiler data to validate against budgets. Document test coverage for React 19 features and update as new optimizations are adopted.
+

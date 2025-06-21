@@ -1,179 +1,174 @@
-# bjornmelin-platform-io Workflow Guide
+# Workflow Guide - bjornmelin-platform-io
 
-**Version:** 1.0  
-**Date:** June 21, 2025  
-**Total Tasks:** 29  
-**Estimated Duration:** 12-16 weeks
+## Overview
+This guide outlines the optimized task workflow for the bjornmelin-platform-io project, designed to minimize complexity while maintaining proper dependencies and logical development progression.
 
-## 🎯 Executive Summary
+## Task Organization Philosophy
 
-This document outlines the optimized critical path for developing the bjornmelin-platform-io portfolio platform. The workflow is designed for maximum parallelization while maintaining logical dependencies and minimizing blockers.
+After comprehensive complexity analysis, we've restructured the project into **31 focused tasks** that follow these principles:
 
-## 📋 Phase Overview
+1. **Emergency Fixes First** - Critical business issues (P0) are prioritized
+2. **Framework Foundation** - Core upgrades before feature development  
+3. **Infrastructure Setup** - AWS services and networking
+4. **Security Implementation** - Enterprise-grade security measures
+5. **Feature Development** - User-facing functionality
+6. **Testing & Validation** - Comprehensive quality assurance
+7. **Launch Preparation** - Final deployment readiness
 
-| Phase | Duration | Tasks | Priority | Dependencies |
-|-------|----------|-------|----------|--------------|
-| **Phase 0: Emergency Fixes** | Week 1 | 3 tasks | P0 Critical | None - Start immediately |
-| **Phase 1: Foundation** | Weeks 1-4 | 8 tasks | High | Sequential foundation building |
-| **Phase 2: Platform Features** | Weeks 3-8 | 12 tasks | Medium-High | Parallel after foundations |
-| **Phase 3: Advanced Features** | Weeks 6-10 | 8 tasks | Medium | Parallel development |
-| **Phase 4: Launch Validation** | Weeks 11-12 | 4 tasks | High | Sequential pre-launch |
+## Task Categories & Flow
 
-## 🚀 Phase 0: Emergency Fixes (Start Immediately)
+### Phase 1: Emergency Resolution (Tasks 1-2)
+**Critical Priority** - Immediate business impact
+- Task 1: Emergency Contact Form Repair (P0 Critical)
+- Task 2: Mobile Navigation Emergency Fix (P0 Critical)
 
-**Duration:** Week 1  
-**Can Start:** Day 1  
-**Blocking:** High - Prevents business impact
+*No dependencies - can be worked in parallel*
 
-```mermaid
-graph LR
-    A[Task 1: Contact Form] --> B[Ready for Users]
-    C[Task 2: Mobile Nav] --> B
-    D[Task 26: Infrastructure] --> E[Database Ready]
+### Phase 2: Framework Upgrade Foundation (Tasks 23-27)
+**Foundation Priority** - Must complete before feature development
+
+#### Validation Layer (Tasks 23-24)
+- Task 23: Client-Side Form Validation with React Hook Form and Zod
+- Task 24: Server-Side Form Validation and Security Implementation
+
+#### Framework Migration (Tasks 25-27)  
+- Task 25: Next.js 15 and React 19 Framework Upgrade with TypeScript 5.8.4 Migration
+- Task 26: App Router Migration with Server Components Conversion  
+- Task 27: React 19 Performance Features Implementation with Core Web Vitals Optimization
+
+**Dependencies**: Tasks 25→26→27 (sequential upgrade path)
+
+### Phase 3: Infrastructure Setup (Tasks 28-33)
+**Infrastructure Priority** - Cloud services and networking
+
+#### Core Infrastructure (Tasks 28-30)
+- Task 28: AWS VPC and Core Networking Setup with CDK v2
+- Task 29: CloudFront CDN and Route 53 DNS Configuration with SSL/TLS
+- Task 30: DynamoDB and S3 Storage Setup with Redis Caching Layer
+
+#### Application Infrastructure (Tasks 31-33)
+- Task 31: AWS Lambda Functions and API Gateway Setup for Serverless Architecture
+- Task 32: Enterprise Security Headers and WAF Implementation
+- Task 33: CloudWatch Monitoring, CI/CD Pipelines, and Blue-Green Deployment Automation
+
+**Dependencies**: Sequential setup from networking→storage→serverless→security→monitoring
+
+### Phase 4: Feature Development (Tasks 4-22)
+**Feature Priority** - User-facing functionality
+
+#### Design System (Dependencies: Task 26)
+- Task 5: Tailwind CSS v4 Design System Implementation
+
+#### AI & Analytics (Dependencies: Task 27, 30)
+- Task 7: OpenAI GPT-4o Integration for AI-Enhanced Content
+- Task 8: Advanced Analytics and Monitoring System
+
+#### User Interface Components (Dependencies: Task 5, 7)
+- Task 9: Interactive Project Portfolio with AI Insights
+- Task 10: Professional Timeline and Skills Visualization
+- Task 11: AI-Powered Lead Qualification System
+
+#### Content Management (Dependencies: Various)
+- Task 12: Technical Blog System with MDX Support
+- Task 19: Content Management and AI Content Generation
+
+#### Performance & Optimization
+- Task 4: Next.js 15 and React 19 Upgrade (Score: 8)
+- Task 6: AWS CDK v2 Infrastructure Upgrade (Score: 9)
+- Task 13: Performance Optimization and Core Web Vitals (Score: 9)
+- Task 14: Security Implementation and Compliance (Score: 10)
+- Task 15: Mobile-First Responsive Design Enhancement
+- Task 16: Advanced Testing Suite Implementation
+- Task 17: SEO Optimization and Structured Data
+- Task 18: Real-Time Features with Server-Sent Events
+- Task 20: Advanced Monitoring and Alerting System
+
+### Phase 5: Testing & Quality Assurance (Tasks 34-36)
+**Validation Priority** - Comprehensive testing before launch
+
+- Task 34: Comprehensive Testing Suite Implementation (Dependencies: multiple infrastructure tasks)
+- Task 35: Pre-launch Security and Performance Auditing (Score: 10 - Most Complex)
+- Task 36: Accessibility Validation and Content Review with WCAG 2.1 AA Compliance
+
+### Phase 6: Launch Preparation (Tasks 21, 37, 22)
+**Launch Priority** - Final deployment readiness
+
+- Task 21: Launch Preparation and Quality Assurance
+- Task 37: Final Load Testing and Production Deployment Procedures (Score: 10)
+- Task 22: Post-Launch Monitoring and Optimization (Dependencies: Task 37)
+
+## Key Dependency Relationships
+
+### Critical Paths
+1. **Framework Path**: 25→26→27 (Must complete in sequence)
+2. **Infrastructure Path**: 28→29→30→31→32→33 (Sequential AWS setup)
+3. **Testing Path**: 34→35→36→37 (Comprehensive validation)
+
+### Parallel Development Opportunities
+- Emergency fixes (1, 2) can run parallel to everything
+- Design system (5) can develop after framework upgrades
+- AI features (7, 8, 9, 11) can develop after infrastructure is ready
+- Content features (12, 19) can develop independently once frameworks are ready
+
+## Complexity Management
+
+### High-Complexity Tasks Resolved
+After analysis, we split all tasks with complexity scores 9-10 into focused subtasks:
+- **Original high-complexity tasks removed**: 3, 13, 14, 23-32
+- **New focused tasks added**: 23-37 (15 new tasks)
+- **Result**: Better parallelization and reduced risk
+
+### Recommended Work Approach
+1. **Start with Emergency Fixes** (Tasks 1-2) - immediate business impact
+2. **Complete Framework Upgrades** (Tasks 25-27) - foundation for everything else  
+3. **Build Infrastructure** (Tasks 28-33) - enables feature development
+4. **Develop Features** (Tasks 4-22) - user-facing functionality
+5. **Validate Everything** (Tasks 34-36) - comprehensive testing
+6. **Launch Safely** (Tasks 21, 37, 22) - production deployment
+
+## Task Master Commands Reference
+
+### Getting Started
+```bash
+# View all tasks and status
+task-master list
+
+# Find next task to work on
+task-master next
+
+# View specific task details
+task-master show <id>
 ```
 
-| Task ID | Title | Priority | Duration | Team |
-|---------|-------|----------|----------|------|
-| 1 | Emergency Contact Form Repair | P0 | 2-3 days | Frontend |
-| 2 | Mobile Navigation Emergency Fix | P0 | 1-2 days | Frontend |
-| 26 | Core Infrastructure & Networking | High | 3-5 days | DevOps |
+### Task Management
+```bash
+# Mark task complete
+task-master set-status --id=<id> --status=done
 
-**Success Criteria:**
-- ✅ Contact form submission works
-- ✅ Mobile navigation functional on all devices
-- ✅ AWS infrastructure foundation ready
+# View complexity analysis
+task-master complexity-report
 
-## 🏗️ Phase 1: Foundation Pipeline (Weeks 1-4)
-
-**Critical Path:** Sequential foundation building enabling all future work
-
-```mermaid
-graph TD
-    A[Task 26: Infrastructure] --> B[Task 27: Database]
-    B --> C[Task 28: Lambda Services]
-    C --> D[Task 29: Monitoring]
-    
-    E[Task 1: Contact Fix] --> F[Task 23: Framework Migration]
-    F --> G[Task 24: App Router]
-    G --> H[Task 5: Design System]
+# Add new task dependencies
+task-master add-dependency --id=<id> --depends-on=<dependency-id>
 ```
 
-### Infrastructure Stream (DevOps Team)
-| Task | Duration | Dependencies | Notes |
-|------|----------|--------------|-------|
-| 26: Core Infrastructure | 3-5 days | None | VPC, CloudFront, Route 53 |
-| 27: Database Services | 2-3 days | Task 26 | DynamoDB, S3, Redis |
-| 28: Lambda Services | 3-4 days | Task 27 | API Gateway, microservices |
-| 29: Monitoring & CI/CD | 3-4 days | Task 28 | CloudWatch, deployment automation |
+### Project Health
+```bash
+# Validate all dependencies are correct
+task-master validate-dependencies
 
-### Framework Stream (Frontend Team)
-| Task | Duration | Dependencies | Notes |
-|------|----------|--------------|-------|
-| 23: Framework Migration | 3-4 days | Task 1 | Next.js 15, React 19, pnpm |
-| 24: App Router Conversion | 4-5 days | Task 23 | Server Components migration |
-| 5: Design System | 4-6 days | Task 24 | Tailwind v4, glassmorphism |
+# Fix any dependency issues
+task-master fix-dependencies
 
-## 🚀 Phase 2: Platform Features (Weeks 3-8)
-
-**Parallel Development:** Multiple teams can work simultaneously
-
-```mermaid
-graph TD
-    A[Database Ready] --> B[Task 7: AI Integration]
-    A --> C[Task 8: Analytics]
-    D[Design System] --> E[Task 13: Performance]
-    F[App Router] --> G[Task 16: Testing]
-    H[Infrastructure] --> I[Task 14: Security]
+# Generate task files
+task-master generate
 ```
 
-### AI & Analytics Stream
-| Task | Duration | Dependencies | Team |
-|------|----------|--------------|------|
-| 7: OpenAI GPT-4o Integration | 3-4 days | Task 27 | Backend |
-| 8: Advanced Analytics | 4-5 days | Task 27 | Full-stack |
-| 11: AI Lead Qualification | 4-5 days | Tasks 7, 3 | Backend |
+## Success Criteria
+- All emergency fixes completed immediately
+- Framework upgrades completed before feature development
+- Infrastructure properly configured before dependent features
+- Comprehensive testing before any launch activities
+- All dependencies respected throughout development
 
-### Performance & Testing Stream
-| Task | Duration | Dependencies | Team |
-|------|----------|--------------|------|
-| 13: Performance Optimization | 3-4 days | Task 5 | Frontend |
-| 16: Testing Suite (80%+ coverage) | 5-6 days | Task 24 | QA/Frontend |
-| 25: Performance Testing | 3-4 days | Tasks 24, 13, 16 | QA |
-
-### Security Stream
-| Task | Duration | Dependencies | Team |
-|------|----------|--------------|------|
-| 14: Security Implementation | 4-5 days | Task 26 | DevOps/Security |
-
-## 🎨 Phase 3: Advanced Features (Weeks 6-10)
-
-**User-Facing Features:** Can be developed in parallel
-
-### Content & Portfolio Stream
-| Task | Duration | Dependencies | Team |
-|------|----------|--------------|------|
-| 9: Interactive Portfolio | 4-5 days | Task 7 | Frontend |
-| 10: Timeline Visualization | 3-4 days | Task 5 | Frontend |
-| 12: Technical Blog (MDX) | 4-5 days | Tasks 5, 7 | Frontend |
-| 19: Content Management | 3-4 days | Tasks 7, 12 | Full-stack |
-
-### User Experience Stream
-| Task | Duration | Dependencies | Team |
-|------|----------|--------------|------|
-| 15: Mobile-First Design | 3-4 days | Tasks 5, 2 | Frontend |
-| 17: SEO Optimization | 2-3 days | Task 12 | Frontend |
-| 18: Real-Time Features | 3-4 days | Task 8 | Backend |
-| 20: Advanced Monitoring | 3-4 days | Task 8 | DevOps |
-
-## 🚀 Phase 4: Launch Validation (Weeks 11-12)
-
-**Sequential Pre-Launch:** Critical validation before production
-
-```mermaid
-graph TD
-    A[All Features Complete] --> B[Task 30: Security Audit]
-    B --> C[Task 31: Accessibility Validation]
-    B --> D[Task 32: Load Testing]
-    C --> E[Task 22: Post-Launch Setup]
-    D --> E
-```
-
-| Task | Duration | Dependencies | Critical Success Metrics |
-|------|----------|--------------|---------------------------|
-| 30: Security & Performance Auditing | 3-4 days | Tasks 14, 25, 13, 28, 29 | Zero critical vulnerabilities, 100/100/100/100 Lighthouse |
-| 31: Accessibility & Content | 2-3 days | Tasks 16, 15, 19, 24 | WCAG 2.1 AA compliance |
-| 32: Load Testing & Deployment | 2-3 days | Tasks 30, 29, 25, 28, 27 | 10x traffic capacity, rollback procedures |
-| 22: Post-Launch Monitoring | 2 days | Task 32 | Continuous improvement framework |
-
-## 📊 Progress Tracking
-
-### Key Milestones
-- **Week 1:** Emergency fixes complete, infrastructure started
-- **Week 3:** Framework migration complete, parallel development begins
-- **Week 6:** AI integration and analytics operational
-- **Week 8:** All core features complete
-- **Week 10:** Advanced features complete
-- **Week 12:** Production launch ready
-
-### Health Metrics
-- **Dependency Blocker Risk:** Low (maximum parallelization)
-- **Critical Path Length:** 12 weeks optimized
-- **Resource Utilization:** High (multiple parallel streams)
-- **Quality Gates:** Built into each phase
-
-## 🎯 Next Actions
-
-### Immediate (Week 1)
-1. **Start Task 1** (Contact Form) - Frontend team
-2. **Start Task 2** (Mobile Nav) - Frontend team  
-3. **Start Task 26** (Infrastructure) - DevOps team
-4. **Complete Task 3** (Form Validation) after Task 1
-
-### Week 2-3 Setup
-1. **Begin Task 23** (Framework Migration) after Task 1
-2. **Continue Task 27** (Database) after Task 26
-3. **Prepare Task 24** (App Router) dependencies
-
----
-
-**📝 Note:** This workflow optimizes for maximum team productivity while maintaining software engineering best practices. Update this document as tasks complete and dependencies shift.
+This workflow ensures systematic progress while maintaining code quality and minimizing risk through proper dependency management and complexity reduction.
