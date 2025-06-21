@@ -37,20 +37,6 @@
         "subtasks": []
       },
       {
-        "id": 4,
-        "title": "Next.js 15 and React 19 Upgrade",
-        "description": "Upgrade to Next.js 15.3.4 with React 19 Server Components for modern performance",
-        "details": "Migrate to Next.js 15.3.4 with App Router, React 19 Server Components, and enhanced bundling. Use Next.js codemod for migration, implement React 19 concurrent features, test Server Components rendering, and verify edge runtime compatibility. Configure Turbopack for development, optimize bundle splitting, and ensure all existing routes are properly migrated. Update TypeScript to v5.8.4 and configure strict type checking.",
-        "testStrategy": "Verify all routes work correctly, test Server Components rendering, validate performance improvements, ensure backward compatibility, and run comprehensive integration tests.",
-        "priority": "high",
-        "dependencies": [
-          2,
-          3
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
         "id": 5,
         "title": "Tailwind CSS v4 Design System Implementation",
         "description": "Implement modern design system with Tailwind CSS v4 and glassmorphism aesthetics",
@@ -58,20 +44,7 @@
         "testStrategy": "Test responsive design across all breakpoints, verify theme switching functionality, validate glassmorphism effects across browsers, and ensure accessibility compliance with color contrast ratios.",
         "priority": "medium",
         "dependencies": [
-          4
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 6,
-        "title": "AWS CDK v2 Infrastructure Upgrade",
-        "description": "Modernize AWS infrastructure using CDK v2 with enhanced security and monitoring",
-        "details": "Upgrade to AWS CDK v2.178.2 with enhanced constructs, implement security best practices with WAF v2, configure CloudFront with HTTP/3 support, and set up comprehensive monitoring with CloudWatch. Create DynamoDB tables for analytics, content, and opportunities with proper indexing and encryption. Implement Lambda functions with Node.js 20.x runtime, API Gateway with CORS configuration, and Route53 DNS management.",
-        "testStrategy": "Test infrastructure deployment, verify security configurations, validate monitoring and alerting, test auto-scaling capabilities, and ensure proper backup and recovery procedures.",
-        "priority": "high",
-        "dependencies": [
-          4
+          "24"
         ],
         "status": "pending",
         "subtasks": []
@@ -84,7 +57,7 @@
         "testStrategy": "Test AI content generation quality, verify caching mechanisms, validate fallback scenarios, test rate limiting, and ensure content accuracy and relevance.",
         "priority": "medium",
         "dependencies": [
-          6
+          "27"
         ],
         "status": "pending",
         "subtasks": []
@@ -97,7 +70,7 @@
         "testStrategy": "Test analytics data collection, verify GDPR compliance, validate real-time tracking accuracy, test dashboard functionality, and ensure data privacy and security.",
         "priority": "medium",
         "dependencies": [
-          6
+          "27"
         ],
         "status": "pending",
         "subtasks": []
@@ -164,7 +137,6 @@
         "testStrategy": "Run Lighthouse audits, measure Core Web Vitals, test loading performance across devices and networks, verify caching strategies, and ensure performance budgets are maintained.",
         "priority": "high",
         "dependencies": [
-          4,
           5
         ],
         "status": "pending",
@@ -178,7 +150,7 @@
         "testStrategy": "Test security headers, verify WAF rules, validate GDPR compliance, test authentication flows, run security scans, and perform penetration testing.",
         "priority": "high",
         "dependencies": [
-          6
+          "26"
         ],
         "status": "pending",
         "subtasks": []
@@ -205,7 +177,7 @@
         "testStrategy": "Achieve 80%+ test coverage, verify all critical user paths, test across multiple browsers and devices, validate accessibility compliance, and ensure CI/CD pipeline reliability.",
         "priority": "medium",
         "dependencies": [
-          4
+          "24"
         ],
         "status": "pending",
         "subtasks": []
@@ -258,23 +230,7 @@
         "testStrategy": "Test monitoring accuracy, verify alert triggers, validate incident response procedures, test dashboard functionality, and ensure comprehensive coverage of critical metrics.",
         "priority": "medium",
         "dependencies": [
-          6,
           8
-        ],
-        "status": "pending",
-        "subtasks": []
-      },
-      {
-        "id": 21,
-        "title": "Launch Preparation and Quality Assurance",
-        "description": "Complete pre-launch testing, optimization, and deployment preparation",
-        "details": "Conduct comprehensive pre-launch testing including load testing for 1000 concurrent users, security audit with penetration testing, and accessibility compliance verification (WCAG 2.2 AAA). Perform final performance optimization, content review and proofreading, and backup/recovery testing. Create launch checklist, rollback procedures, and post-launch monitoring plan. Verify all integrations, test disaster recovery, and ensure production readiness.",
-        "testStrategy": "Execute complete launch checklist, perform load testing, verify security measures, test all user workflows, validate monitoring systems, and ensure rollback procedures work correctly.",
-        "priority": "high",
-        "dependencies": [
-          13,
-          14,
-          16
         ],
         "status": "pending",
         "subtasks": []
@@ -287,15 +243,159 @@
         "testStrategy": "Monitor key performance indicators, track user engagement metrics, verify A/B testing functionality, validate feedback collection, and ensure continuous improvement processes are effective.",
         "priority": "medium",
         "dependencies": [
-          21
+          "32"
         ],
         "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 23,
+        "title": "Framework Migration & Dependencies",
+        "description": "Upgrade core framework dependencies and establish Next.js 15/React 19 foundation with modern tooling and architecture.",
+        "details": "Upgrade to Next.js 15.3.4 with App Router architecture, implementing React 19 with Server Components for improved performance and developer experience. Migrate to TypeScript 5.8.4 for enhanced type safety and latest language features. Establish pnpm as the package manager for faster installs and better dependency management. Configure App Router with proper layout hierarchy, implement Server Components for data fetching, and set up Client Components for interactive features. Update all existing components to be compatible with React 19's new features including automatic batching and concurrent features. Configure TypeScript strict mode with proper path mapping and module resolution. Set up pnpm workspaces if needed and update all package.json files. Ensure proper ESLint and Prettier configurations for the new framework versions. Update build scripts and deployment configurations to work with the new architecture. Implement proper error boundaries and loading states for the App Router. Configure middleware for authentication and routing protection.",
+        "testStrategy": "Test framework upgrade by verifying all existing functionality works correctly with new versions. Validate App Router navigation and Server Component rendering. Test TypeScript compilation with strict mode enabled. Verify pnpm installation and dependency resolution. Test build process and deployment pipeline compatibility. Validate performance improvements with React 19 features. Test error boundaries and loading states. Ensure all existing components render correctly and maintain their functionality. Verify middleware configuration and routing protection works as expected.",
+        "status": "pending",
+        "dependencies": [
+          "1"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Server Components & App Router Conversion",
+        "description": "Convert existing pages to App Router architecture with Server Components, migrating from pages directory to app directory and implementing proper layout hierarchy.",
+        "details": "Migrate the entire application from Next.js Pages Router to App Router architecture with Server Components. Start by creating the new app directory structure with proper layout.tsx files for nested layouts. Convert existing pages to page.tsx files in the app directory, implementing the new file-based routing conventions. Transform components to Server Components by default, explicitly marking Client Components with 'use client' directive only when necessary for interactivity. Implement proper data fetching patterns using async Server Components, replacing getServerSideProps and getStaticProps with direct async/await in components. Create shared layouts for common UI elements, implement loading.tsx and error.tsx files for better UX, and configure route groups for organization. Update all imports and routing logic to work with the new App Router conventions. Optimize data fetching by moving API calls closer to where data is consumed, leveraging Server Components for better performance. Ensure proper TypeScript integration with the new routing patterns and component architecture.",
+        "testStrategy": "Test all existing routes work correctly in the new App Router structure, verify Server Components render properly on the server, validate Client Components maintain interactivity, test nested layouts render correctly, verify data fetching works in Server Components, test loading and error states, ensure TypeScript compilation passes, validate SEO and meta tags work properly, test dynamic routes and route parameters, verify middleware compatibility, and ensure all existing functionality is preserved during migration.",
+        "status": "pending",
+        "dependencies": [
+          "23"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "Performance Optimization & Testing",
+        "description": "Complete framework upgrade with performance optimizations and comprehensive testing. Implement React 19 performance features, configure build optimizations, and validate upgrade success.",
+        "details": "Complete the framework upgrade by implementing React 19 performance features including automatic batching, concurrent features, and Suspense optimizations. Configure advanced build optimizations with bundle splitting, tree shaking, and dead code elimination. Implement React 19's new useOptimistic hook for optimistic updates, leverage Server Components for improved SSR performance, and configure the new React Compiler for automatic memoization. Set up performance monitoring with Core Web Vitals tracking, implement code splitting at route and component levels, and configure aggressive caching strategies. Optimize bundle sizes with dynamic imports, implement preloading strategies for critical resources, and configure service workers for offline functionality. Integrate with existing performance optimization work to achieve sub-1.2s LCP and maintain 100/100/100/100 Lighthouse scores. Configure build-time optimizations including image optimization, font loading strategies, and CSS purging. Implement comprehensive testing suite covering performance regressions, React 19 feature compatibility, and App Router functionality.",
+        "testStrategy": "Run comprehensive performance testing with Lighthouse CI to verify 100/100/100/100 scores are maintained post-upgrade. Execute Core Web Vitals monitoring to ensure LCP <1.2s, FID <50ms, and CLS <0.05. Test React 19 features including concurrent rendering, automatic batching, and Server Components functionality. Validate App Router navigation performance and SSR optimization. Run existing test suite with 80%+ coverage to ensure no regressions. Perform cross-browser testing with Playwright to verify React 19 compatibility. Test build optimization effectiveness by measuring bundle sizes and load times. Validate caching strategies and service worker functionality. Execute visual regression testing to ensure UI consistency. Monitor real-time performance metrics and verify alerting systems detect any degradation.",
+        "status": "pending",
+        "dependencies": [
+          13,
+          16,
+          "24"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 26,
+        "title": "Core Infrastructure & Networking Foundation",
+        "description": "Establish foundational AWS infrastructure with CDK v2, implementing VPC, security groups, CloudFront, Route 53, and core networking components for scalable cloud architecture.",
+        "details": "Set up AWS CDK v2 project structure with TypeScript for infrastructure as code. Create VPC with public/private subnets across multiple AZs, configure NAT gateways, internet gateways, and route tables for proper network segmentation. Implement security groups with least privilege access, NACLs for additional network security, and VPC Flow Logs for monitoring. Configure CloudFront distribution with custom domain, SSL/TLS certificates via ACM, and optimized caching policies for static assets and API responses. Set up Route 53 hosted zone with DNS records, health checks, and failover routing policies. Establish Application Load Balancer with target groups, implement auto-scaling groups for EC2 instances, and configure ECS/Fargate clusters for containerized workloads. Create S3 buckets with proper versioning, encryption, and lifecycle policies for static assets and backups. Configure CloudWatch for infrastructure monitoring, set up IAM roles and policies following principle of least privilege, and implement AWS Secrets Manager for sensitive configuration. Establish VPC endpoints for AWS services to reduce data transfer costs and improve security. Configure AWS WAF integration points and prepare networking foundation for application deployment.",
+        "testStrategy": "Validate VPC creation with correct CIDR blocks and subnet configurations across availability zones. Test internet connectivity from public subnets and NAT gateway functionality for private subnets. Verify security group rules allow only necessary traffic and block unauthorized access. Test CloudFront distribution serves content correctly with proper caching headers and SSL termination. Validate Route 53 DNS resolution and health check functionality. Test load balancer health checks and traffic distribution. Verify S3 bucket policies and encryption settings. Test IAM role permissions and ensure least privilege access. Validate VPC Flow Logs are capturing network traffic. Test CDK deployment and rollback procedures. Perform network latency and throughput testing between subnets and to external services.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 27,
+        "title": "Database & Storage Services Implementation",
+        "description": "Implement comprehensive database architecture with DynamoDB, S3, and Redis caching layer for scalable data storage and retrieval.",
+        "details": "Design and implement multi-tier database architecture with DynamoDB as primary NoSQL database, S3 for static asset storage, and Redis for high-performance caching. Create DynamoDB tables with optimized partition keys for analytics data, visitor tracking, lead management, and content metadata. Configure S3 buckets with lifecycle policies, versioning, and CloudFront integration for static assets. Set up Redis cluster for session management, real-time analytics caching, and API response caching. Implement data access patterns using single-table design for DynamoDB with GSI for query flexibility. Create data models for VisitorAnalyticsSchema, ContactFormSchema, and ContentMetadataSchema. Configure automated backups, point-in-time recovery, and cross-region replication for disaster recovery. Implement connection pooling, query optimization, and caching strategies for sub-100ms response times. Use AWS SDK v3 with proper error handling, retry logic, and connection management.",
+        "testStrategy": "Test database connectivity and CRUD operations, verify DynamoDB table design with load testing, validate S3 bucket policies and access controls, test Redis caching performance and TTL configurations, verify data consistency across services, test backup and recovery procedures, validate query performance under load, and ensure proper error handling and connection pooling functionality.",
+        "status": "pending",
+        "dependencies": [
+          "26"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 28,
+        "title": "Compute & Lambda Services: Serverless Architecture Implementation",
+        "description": "Implement comprehensive serverless compute architecture with AWS Lambda functions, API Gateway, and microservices for scalable backend operations.",
+        "details": "Implement serverless compute architecture using AWS Lambda with Node.js runtime, API Gateway for RESTful endpoints, and microservices pattern. Create Lambda functions for contact form processing, lead qualification automation, real-time analytics processing, and background job execution. Set up API Gateway with custom authorizers, request/response transformations, and CORS configuration. Implement microservices for user management, content delivery, analytics processing, and notification handling. Configure Lambda layers for shared dependencies, environment variable management with AWS Systems Manager Parameter Store, and proper IAM roles with least privilege access. Set up CloudWatch logging, X-Ray tracing for distributed debugging, and DLQ (Dead Letter Queues) for error handling. Implement serverless cron jobs using EventBridge for scheduled tasks like analytics aggregation and lead nurturing. Use AWS SAM or Serverless Framework for infrastructure as code deployment, configure auto-scaling policies, and implement proper error handling with exponential backoff for external API calls.",
+        "testStrategy": "Test Lambda function execution with various payload sizes and execution times, verify API Gateway endpoint responses and error handling, validate microservices communication and data flow. Test auto-scaling behavior under load, verify CloudWatch logging and monitoring, test DLQ functionality with failed executions. Validate IAM permissions and security configurations, test deployment pipeline with staging and production environments, verify cost optimization with proper timeout and memory configurations. Test integration with existing database services, validate real-time processing capabilities, and ensure proper error propagation across microservices.",
+        "status": "pending",
+        "dependencies": [
+          3,
+          "27"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 29,
+        "title": "Monitoring & Deployment Automation: Complete Infrastructure with CloudWatch, CI/CD Pipelines, and Deployment Automation",
+        "description": "Implement comprehensive monitoring infrastructure with CloudWatch dashboards, automated CI/CD pipelines, and deployment automation for complete DevOps workflow integration.",
+        "details": "Establish comprehensive monitoring and deployment automation infrastructure building on existing compute services. Implement CloudWatch monitoring with custom dashboards for Lambda functions, API Gateway metrics, DynamoDB performance, and application-level KPIs. Create CloudWatch alarms for critical thresholds including Lambda errors, API Gateway 4xx/5xx responses, DynamoDB throttling, and custom business metrics. Set up AWS X-Ray for distributed tracing across serverless architecture. Implement CI/CD pipelines using AWS CodePipeline with CodeBuild for automated testing, security scanning, and deployment. Configure multi-stage deployment with dev/staging/production environments using AWS CodeDeploy for blue-green deployments. Set up Infrastructure as Code deployment automation with AWS CDK pipelines for consistent environment provisioning. Implement automated rollback mechanisms, canary deployments for Lambda functions, and feature flag integration. Configure CloudWatch Logs aggregation with structured logging, log retention policies, and automated log analysis. Set up AWS Systems Manager Parameter Store for configuration management and AWS Secrets Manager for secure credential handling. Implement automated backup strategies for DynamoDB with point-in-time recovery and S3 cross-region replication. Create deployment notifications via SNS integration with Slack/email for team visibility. Configure AWS Config for compliance monitoring and AWS CloudTrail for audit logging.",
+        "testStrategy": "Test CloudWatch dashboard functionality and verify all metrics are properly collected from Lambda, API Gateway, and DynamoDB services. Validate alarm triggers by simulating error conditions and performance degradation scenarios. Test CI/CD pipeline execution with code commits, verify automated testing stages, security scanning, and deployment processes. Validate blue-green deployment functionality with traffic shifting and automated rollback capabilities. Test canary deployments with gradual traffic routing and automatic rollback on error thresholds. Verify X-Ray tracing captures complete request flows across microservices architecture. Test backup and recovery procedures including DynamoDB point-in-time recovery and S3 cross-region replication. Validate configuration management through Parameter Store and secret rotation via Secrets Manager. Test deployment notifications and ensure proper team visibility. Verify compliance monitoring with AWS Config rules and audit trail completeness with CloudTrail. Conduct load testing to validate auto-scaling triggers and monitoring accuracy under high traffic conditions.",
+        "status": "pending",
+        "dependencies": [
+          28,
+          27,
+          26
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 30,
+        "title": "Security & Performance Auditing",
+        "description": "Comprehensive pre-launch security audit and performance validation including security testing, penetration testing, and performance verification for launch readiness.",
+        "details": "Conduct comprehensive pre-launch security and performance auditing to ensure production readiness. Execute full security audit including vulnerability assessment using OWASP ZAP, Nessus, and custom security scanners to identify potential threats. Perform penetration testing targeting authentication systems, API endpoints, input validation, and session management. Validate all security implementations from Task 14 including CSP headers, WAF configurations, GDPR compliance, and authentication flows. Conduct performance validation building on Tasks 13 and 25 optimizations, verifying Core Web Vitals targets (LCP <1.2s, FID <50ms, CLS <0.05) under production load conditions. Execute load testing with Artillery.js and k6 to simulate 10x expected traffic, stress test Lambda functions and API Gateway endpoints from Task 28, and validate DynamoDB performance under concurrent access. Perform security code review using SonarQube and Snyk for dependency vulnerabilities, validate SSL/TLS configurations, test backup and disaster recovery procedures. Create comprehensive audit reports with risk assessments, remediation recommendations, and performance benchmarks. Establish security baseline metrics and performance thresholds for ongoing monitoring integration with Task 29 infrastructure.",
+        "testStrategy": "Execute automated security scanning with OWASP ZAP and validate zero critical/high vulnerabilities. Perform manual penetration testing on authentication, authorization, and data handling systems. Verify all security headers and WAF rules are functioning correctly. Run Lighthouse CI audits to confirm 100/100/100/100 scores are maintained under load. Execute load testing scenarios with 10x expected traffic and verify system stability. Test Core Web Vitals under various network conditions and device types. Validate monitoring and alerting systems trigger correctly during simulated incidents. Perform security regression testing on all critical user flows. Generate comprehensive audit reports with security posture assessment and performance benchmarks for production launch approval.",
+        "status": "pending",
+        "dependencies": [
+          14,
+          25,
+          13,
+          28,
+          29
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 31,
+        "title": "Accessibility & Content Validation",
+        "description": "Pre-launch accessibility compliance testing and content validation ensuring WCAG 2.1 AA compliance, comprehensive content review, and user experience validation.",
+        "details": "Conduct comprehensive pre-launch accessibility and content validation to ensure WCAG 2.1 AA compliance and optimal user experience. Implement automated accessibility testing using axe-core, Pa11y, and Lighthouse accessibility audits integrated into CI/CD pipeline. Perform manual accessibility testing with screen readers (NVDA, JAWS, VoiceOver), keyboard navigation validation, and color contrast verification using tools like Colour Contrast Analyser. Validate semantic HTML structure, ARIA labels, focus management, and alternative text for images. Execute comprehensive content validation including grammar and spelling checks using tools like Grammarly API, content readability analysis with Flesch-Kincaid scoring, SEO content optimization validation, and brand voice consistency review. Implement content freshness validation, broken link detection, and metadata completeness checks. Conduct user experience validation through usability testing sessions, A/B testing for key conversion paths, mobile accessibility testing across devices, and performance impact assessment of accessibility features. Create accessibility documentation, content style guide compliance verification, and establish ongoing monitoring processes for post-launch accessibility maintenance.",
+        "testStrategy": "Execute automated accessibility testing with axe-core and Pa11y to achieve zero critical accessibility violations and validate WCAG 2.1 AA compliance across all pages. Perform manual testing with screen readers to verify proper navigation, content structure, and interactive element accessibility. Test keyboard navigation for all interactive elements and verify focus indicators are visible and logical. Validate color contrast ratios meet WCAG AA standards (4.5:1 for normal text, 3:1 for large text). Conduct content validation by running grammar/spelling checks, readability analysis, and SEO optimization verification. Test content across multiple devices and browsers to ensure consistent accessibility experience. Perform usability testing sessions with diverse user groups including users with disabilities. Validate form accessibility, error handling, and success message delivery. Test dynamic content updates for screen reader compatibility and ensure all interactive components are properly labeled and described.",
+        "status": "pending",
+        "dependencies": [
+          16,
+          15,
+          19,
+          24
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 32,
+        "title": "Load Testing & Deployment Procedures",
+        "description": "Final pre-launch load testing and deployment procedure validation with production deployment preparation and rollback testing.",
+        "details": "Execute comprehensive load testing to validate system performance under production-level traffic using tools like Artillery, K6, and AWS Load Testing solution. Simulate realistic user scenarios including concurrent visitors, form submissions, API calls, and real-time features to identify bottlenecks and performance limits. Test auto-scaling behavior of Lambda functions, DynamoDB read/write capacity, and CloudFront distribution under varying load conditions. Validate deployment procedures by creating detailed runbooks for production deployment, including pre-deployment checklists, deployment steps, and post-deployment verification. Implement blue-green deployment strategy with AWS CodeDeploy for zero-downtime deployments. Create comprehensive rollback procedures with automated rollback triggers based on CloudWatch alarms for error rates, response times, and availability metrics. Test disaster recovery scenarios including database restoration, infrastructure recreation, and service failover. Validate monitoring and alerting systems under load conditions to ensure proper incident detection and response. Document deployment procedures, create deployment automation scripts, and establish change management processes for production releases. Conduct final performance validation against established SLAs including response times, throughput, and availability targets.",
+        "testStrategy": "Execute load testing scenarios with gradually increasing concurrent users from 100 to 10,000+ to identify breaking points and validate auto-scaling behavior. Test deployment procedures in staging environment that mirrors production, including full deployment cycle, rollback procedures, and disaster recovery scenarios. Verify all monitoring dashboards and alerts function correctly under load conditions. Validate that performance metrics meet established SLAs: API response times <200ms, page load times <2s, 99.9% uptime. Test rollback procedures by simulating deployment failures and verifying automatic rollback triggers. Conduct end-to-end deployment testing including database migrations, infrastructure updates, and application deployments. Verify backup and recovery procedures by testing data restoration and service recovery scenarios.",
+        "status": "pending",
+        "dependencies": [
+          30,
+          29,
+          25,
+          28,
+          27
+        ],
+        "priority": "high",
         "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-06-21T07:33:28.032Z",
-      "updated": "2025-06-21T07:33:28.032Z",
+      "updated": "2025-06-21T08:27:32.784Z",
       "description": "Tasks for master context"
     }
   }
