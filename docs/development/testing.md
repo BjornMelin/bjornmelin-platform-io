@@ -4,8 +4,9 @@
 
 ### Core Tools
 
+- Vitest (unit testing)
+- Playwright (E2E testing)
 - React Testing Library
-- Jest
 - TypeScript
 - MSW (Mock Service Worker)
 
@@ -36,6 +37,7 @@
 
 ```typescript
 import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
 import { Button } from "@/components/ui/button";
 
 describe("Button", () => {
@@ -45,7 +47,7 @@ describe("Button", () => {
   });
 
   it("handles click events", () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     render(<Button onClick={onClick}>Click me</Button>);
     screen.getByText("Click me").click();
     expect(onClick).toHaveBeenCalled();
@@ -149,6 +151,9 @@ src/
 │   ├── components/
 │   ├── api/
 │   └── integration/
+├── e2e/              # Playwright E2E tests
+│   ├── contact.spec.ts
+│   └── navigation.spec.ts
 └── test-utils/
     ├── setup.ts
     └── helpers.ts
@@ -174,33 +179,42 @@ src/
 - Write maintainable tests
 - Handle async operations properly
 - Mock external services
+- Use Zod schemas for validation testing
 
 ### 3. Coverage Goals
 
 - Components: 80%
 - API Routes: 90%
 - Utility Functions: 100%
+- E2E Critical Paths: 100%
 
 ### 4. Performance
 
-- Optimize test execution
+- Optimize test execution with Vitest
 - Proper mocking strategies
 - Avoid unnecessary rerenders
+- Parallel test execution
 
 ## Running Tests
 
 ```bash
 # Run all tests
-yarn test
+pnpm test
 
 # Run specific test file
-yarn test ComponentName.test.tsx
+pnpm test ComponentName.test.tsx
 
 # Run tests in watch mode
-yarn test --watch
+pnpm test --watch
+
+# Run tests with UI
+pnpm test:ui
 
 # Generate coverage report
-yarn test --coverage
+pnpm test:coverage
+
+# Run E2E tests with Playwright
+pnpm test:e2e
 ```
 
 ## Continuous Integration

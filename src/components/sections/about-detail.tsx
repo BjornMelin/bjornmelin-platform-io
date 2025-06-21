@@ -341,6 +341,7 @@ export function AboutDetail() {
                 strokeLinejoin="round"
                 className="w-6 h-6 text-primary"
               >
+                <title>Hobbies and Interests</title>
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
               </svg>
               Hobbies & Interests

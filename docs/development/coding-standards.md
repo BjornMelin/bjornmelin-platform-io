@@ -1,5 +1,28 @@
 # Coding Standards
 
+## Code Quality Tools
+
+### Biome (Linting & Formatting)
+
+The project uses Biome for consistent code formatting and linting.
+
+```bash
+# Run linting
+pnpm lint
+
+# Run formatting
+pnpm format
+
+# Check formatting without applying changes
+pnpm format:check
+```
+
+Configuration is in `biome.json` with rules for:
+- TypeScript best practices
+- React best practices
+- Import organization
+- Code formatting
+
 ## TypeScript
 
 ### Type Safety
@@ -138,6 +161,7 @@ export function Button({ variant = "default", className }: ButtonProps) {
 // app/api/contact/route.ts
 import { NextResponse } from "next/server";
 import { contactSchema } from "@/lib/schemas/contact";
+import { z } from "zod";
 
 export async function POST(request: Request) {
   try {
@@ -146,9 +170,29 @@ export async function POST(request: Request) {
     // Implementation
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 });
+    }
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }
+```
+
+## Validation with Zod
+
+### Schema Definition
+
+```typescript
+// lib/schemas/contact.ts
+import { z } from "zod";
+
+export const contactSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  message: z.string().min(10).max(1000),
+});
+
+export type ContactFormData = z.infer<typeof contactSchema>;
 ```
 
 ## Error Handling
@@ -157,9 +201,11 @@ export async function POST(request: Request) {
 
 ```typescript
 // lib/utils/error-handler.ts
+import { z } from "zod";
+
 export function handleApiError(error: unknown) {
-  if (error instanceof ZodError) {
-    return { error: "Validation error", status: 400 };
+  if (error instanceof z.ZodError) {
+    return { error: "Validation error", details: error.errors, status: 400 };
   }
   // Other error types
 }
@@ -226,7 +272,7 @@ export interface Project {
 
 ### Security
 
-- Validate all inputs
+- Validate all inputs with Zod schemas
 - Sanitize outputs
 - Use proper CORS settings
 - Implement rate limiting

@@ -15,7 +15,7 @@ This section provides comprehensive documentation for developers working on the 
 ### Prerequisites
 
 - Node.js (v18 or higher)
-- Yarn package manager
+- pnpm package manager (v9 or higher)
 - AWS CLI configured with appropriate credentials
 - Git
 
@@ -37,9 +37,10 @@ This section provides comprehensive documentation for developers working on the 
 
 #### Development Tools
 
-- ESLint
-- Prettier
+- Biome (linting and formatting)
 - Zod for validation
+- Vitest for unit testing
+- Playwright for E2E testing
 - React Testing Library
 
 ## Development Workflow
@@ -57,9 +58,9 @@ graph LR
 ### 2. Code Quality
 
 - TypeScript for type safety
-- ESLint for code linting
-- Prettier for code formatting
+- Biome for code linting and formatting
 - Git hooks for pre-commit checks
+- Zod for runtime validation
 
 ### 3. Testing Requirements
 
@@ -122,16 +123,22 @@ src/
 
 ```bash
 # Start development server
-yarn dev
+pnpm dev
 
 # Build for production
-yarn build
+pnpm build
 
 # Run type checking
-yarn type-check
+pnpm type-check
 
 # Run linting
-yarn lint
+pnpm lint
+
+# Run formatting
+pnpm format
+
+# Run tests
+pnpm test
 ```
 
 ## Infrastructure Development

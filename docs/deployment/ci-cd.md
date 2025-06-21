@@ -8,7 +8,7 @@ This document outlines the deployment process for bjornmelin-platform-io.
 
 - AWS credentials configured
 - AWS CDK CLI installed
-- Node.js and Yarn
+- Node.js and pnpm
 
 ### CDK Deployment Process
 
@@ -21,13 +21,13 @@ cd infrastructure
 2. Install dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 3. Build the CDK app:
 
 ```bash
-yarn build
+pnpm build
 ```
 
 4. Review infrastructure changes:
@@ -55,19 +55,19 @@ cdk deploy EmailStack DnsStack
 1. Install dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 2. Build the application:
 
 ```bash
-yarn build
+pnpm build
 ```
 
 3. Start production server:
 
 ```bash
-yarn start
+pnpm start
 ```
 
 ### Environment Variables

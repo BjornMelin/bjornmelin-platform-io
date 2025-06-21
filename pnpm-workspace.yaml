@@ -1,0 +1,5 @@
+packages:
+  # Root package (Next.js application)
+  - "."
+  # Infrastructure package (AWS CDK)
+  - "infrastructure"

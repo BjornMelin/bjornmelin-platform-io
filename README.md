@@ -187,7 +187,7 @@ bjornmelin-platform-io/
 
 ```bash
 Node.js >= 18.0.0
-yarn >= 4.0.0
+pnpm >= 9.0.0
 AWS CLI configured
 ```
 
@@ -199,7 +199,7 @@ git clone https://github.com/bjornmelin/bjornmelin-platform-io.git
 cd bjornmelin-platform-io
 
 # Install dependencies
-yarn install
+pnpm install
 
 # Configure AWS credentials
 aws configure
@@ -213,15 +213,15 @@ cp .env.production .env.local
 ```bash
 # Deploy infrastructure
 cd infrastructure
-yarn install
-yarn cdk deploy
+pnpm install
+pnpm cdk deploy
 ```
 
 ### Local Development
 
 ```bash
 # Start development server
-yarn dev
+pnpm dev
 ```
 
 ## 🛠️ Tech Stack
@@ -251,11 +251,11 @@ Infrastructure:
 
 Development:
   Tools:
-    - yarn 4.0
-    - ESLint
-    - Prettier
+    - pnpm 9.0
+    - Biome (linting & formatting)
     - TypeScript
     - PostCSS
+    - Zod (schema validation)
 ```
 
 ## 🏗️ AWS Services Integration
@@ -287,20 +287,21 @@ Development:
 
 ```bash
 # Development
-yarn dev          # Start development server
-yarn build        # Build production application
-yarn start        # Start production server
-yarn lint         # Run ESLint
-yarn serve        # Serve production build locally
+pnpm dev          # Start development server
+pnpm build        # Build production application
+pnpm start        # Start production server
+pnpm lint         # Run Biome linter
+pnpm format       # Run Biome formatter
+pnpm serve        # Serve production build locally
 
 # Testing
-yarn test         # Run unit tests with Vitest
-yarn test:ui      # Run tests with UI
-yarn test:coverage # Run tests with coverage report
-yarn test:e2e     # Run E2E tests (requires Docker, see below)
+pnpm test         # Run unit tests with Vitest
+pnpm test:ui      # Run tests with UI
+pnpm test:coverage # Run tests with coverage report
+pnpm test:e2e     # Run E2E tests with Playwright (requires Docker, see below)
 
 # Infrastructure (in /infrastructure directory)
-yarn cdk deploy   # Deploy AWS infrastructure
+pnpm cdk deploy   # Deploy AWS infrastructure
 ```
 
 ## 🧪 Testing
@@ -343,7 +344,7 @@ docker run --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix e2e-tests-d
 
 The E2E test suite includes:
 - ✅ Contact form happy path submission
-- ✅ Form validation and error handling
+- ✅ Form validation and error handling (with Zod schemas)
 - ✅ Rate limiting verification (5 requests/5 minutes)
 - ✅ Security features (honeypot, GDPR consent)
 - ✅ Accessibility compliance

@@ -92,5 +92,6 @@ src/
 
 - Component-first architecture
 - Type-safe development with TypeScript
-- Consistent code formatting with ESLint
+- Consistent code formatting with Biome
 - Modular and reusable component design
+- Runtime validation with Zod schemas

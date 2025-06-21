@@ -41,7 +41,7 @@ graph TD
 
 - AWS CLI configured
 - Node.js 16+
-- Yarn package manager
+- pnpm package manager
 - Domain registered in Route 53
 
 ### Configuration Parameters
@@ -61,20 +61,20 @@ export const CONFIG = {
 
 ```bash
 cd infrastructure
-yarn install
+pnpm install
 ```
 
 2. Deploy stacks in order:
 
 ```bash
 # Deploy DNS stack first (wait for certificate validation)
-yarn deploy:dns
+pnpm deploy:dns
 
 # Deploy remaining stacks
-yarn deploy:storage
-yarn deploy:deployment
-yarn deploy:monitoring
-yarn deploy:email
+pnpm deploy:storage
+pnpm deploy:deployment
+pnpm deploy:monitoring
+pnpm deploy:email
 ```
 
 ### Troubleshooting Steps
@@ -102,7 +102,7 @@ yarn deploy:email
 cdk destroy prod-portfolio-[stack-name]
 
 # Rollback all stacks
-yarn destroy:all
+pnpm destroy:all
 ```
 
 ## Monitoring Documentation

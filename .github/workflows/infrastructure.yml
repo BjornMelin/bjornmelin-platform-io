@@ -26,7 +26,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "yarn"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -38,22 +43,22 @@ jobs:
       # Install CDK dependencies
       - name: Install CDK Dependencies
         working-directory: infrastructure
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       # Deploy stacks in order
       - name: Deploy DNS Stack
         if: ${{ github.event_name == 'workflow_dispatch' }}
         working-directory: infrastructure
-        run: yarn cdk deploy prod-portfolio-dns --require-approval never
+        run: pnpm cdk deploy prod-portfolio-dns --require-approval never
 
       - name: Deploy Storage Stack
         working-directory: infrastructure
-        run: yarn cdk deploy prod-portfolio-storage --require-approval never
+        run: pnpm cdk deploy prod-portfolio-storage --require-approval never
 
       - name: Deploy Email Stack
         working-directory: infrastructure
-        run: yarn cdk deploy prod-portfolio-email --require-approval never
+        run: pnpm cdk deploy prod-portfolio-email --require-approval never
 
       - name: Deploy Monitoring Stack
         working-directory: infrastructure
-        run: yarn cdk deploy prod-portfolio-monitoring --require-approval never
+        run: pnpm cdk deploy prod-portfolio-monitoring --require-approval never

@@ -40,6 +40,7 @@ export default function TestMobileNav() {
         <div className="bg-card p-4 rounded-lg border">
           <h2 className="font-semibold mb-2">Test Touch Target</h2>
           <button
+            type="button"
             className="w-full h-16 bg-primary text-primary-foreground rounded-lg"
             onTouchStart={() => addTouchEvent("touchstart")}
             onTouchEnd={() => addTouchEvent("touchend")}

@@ -5,7 +5,7 @@ This guide will help you set up your development environment for bjornmelin-plat
 ## Prerequisites
 
 - Node.js (v18 or higher)
-- Yarn package manager
+- pnpm package manager (v9 or higher)
 - AWS CLI configured with appropriate credentials
 - Git
 
@@ -21,7 +21,7 @@ cd bjornmelin-platform-io
 2. Install dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 3. Set up environment variables:
@@ -41,7 +41,7 @@ cp .env.example .env.local
 Run the development server:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 The site will be available at [http://localhost:3000](http://localhost:3000)
@@ -53,7 +53,7 @@ For working with AWS infrastructure:
 1. Install AWS CDK globally:
 
 ```bash
-npm install -g aws-cdk
+pnpm add -g aws-cdk
 ```
 
 2. Navigate to infrastructure directory:
@@ -65,7 +65,7 @@ cd infrastructure
 3. Install infrastructure dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 4. Deploy infrastructure:
@@ -76,11 +76,12 @@ cdk deploy
 
 ## Available Scripts
 
-- `yarn dev` - Start development server
-- `yarn build` - Build production bundle
-- `yarn start` - Start production server
-- `yarn lint` - Run ESLint
-- `yarn type-check` - Run TypeScript checks
+- `pnpm dev` - Start development server
+- `pnpm build` - Build production bundle
+- `pnpm start` - Start production server
+- `pnpm lint` - Run Biome linter
+- `pnpm format` - Run Biome formatter
+- `pnpm type-check` - Run TypeScript checks
 
 ## Project Structure
 
@@ -95,16 +96,16 @@ cdk deploy
 
 ## Code Style
 
-- ESLint configuration in `.eslintrc.json`
-- Prettier for code formatting
+- Biome for linting and formatting (configuration in `biome.json`)
 - TypeScript strict mode enabled
+- Zod for runtime schema validation
 
 ## Testing
 
 Run tests:
 
 ```bash
-yarn test
+pnpm test
 ```
 
 ## Common Issues
@@ -124,7 +125,7 @@ export AWS_DEFAULT_REGION="your_region"
 If port 3000 is already in use, you can specify a different port:
 
 ```bash
-PORT=3001 yarn dev
+PORT=3001 pnpm dev
 ```
 
 ## Next Steps
