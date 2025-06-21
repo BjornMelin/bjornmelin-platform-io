@@ -25,13 +25,16 @@ export default function TestMobileNav() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Mobile Navigation Test Page</h1>
-      
+
       <div className="space-y-4">
         <div className="bg-card p-4 rounded-lg border">
           <h2 className="font-semibold mb-2">Device Info</h2>
           <p>Window Width: {windowWidth}px</p>
           <p>User Agent: {typeof window !== "undefined" ? navigator.userAgent : "N/A"}</p>
-          <p>Touch Support: {typeof window !== "undefined" && "ontouchstart" in window ? "Yes" : "No"}</p>
+          <p>
+            Touch Support:{" "}
+            {typeof window !== "undefined" && "ontouchstart" in window ? "Yes" : "No"}
+          </p>
         </div>
 
         <div className="bg-card p-4 rounded-lg border">

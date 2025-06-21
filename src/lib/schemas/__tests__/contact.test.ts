@@ -14,7 +14,7 @@ describe("Contact Form Schema Validation", () => {
 
       const result = contactFormSchema.safeParse(validData);
       expect(result.success).toBe(true);
-      
+
       if (result.success) {
         expect(result.data).toEqual(validData);
       }
@@ -73,9 +73,9 @@ describe("Contact Form Schema Validation", () => {
 
       const result = contactFormSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      
+
       if (!result.success) {
-        const nameError = result.error.errors.find(e => e.path[0] === "name");
+        const nameError = result.error.errors.find((e) => e.path[0] === "name");
         expect(nameError?.message).toBe("Name must be at least 2 characters");
       }
     });
@@ -91,9 +91,9 @@ describe("Contact Form Schema Validation", () => {
 
       const result = contactFormSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      
+
       if (!result.success) {
-        const nameError = result.error.errors.find(e => e.path[0] === "name");
+        const nameError = result.error.errors.find((e) => e.path[0] === "name");
         expect(nameError?.message).toBe("Name must be less than 50 characters");
       }
     });
@@ -106,10 +106,10 @@ describe("Contact Form Schema Validation", () => {
         "test..double@example.com",
         "test@example",
         "test @example.com",
-        "test@exam ple.com"
+        "test@exam ple.com",
       ];
 
-      invalidEmails.forEach(email => {
+      invalidEmails.forEach((email) => {
         const invalidData = {
           name: "Test User",
           email,
@@ -120,9 +120,9 @@ describe("Contact Form Schema Validation", () => {
 
         const result = contactFormSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
-        
+
         if (!result.success) {
-          const emailError = result.error.errors.find(e => e.path[0] === "email");
+          const emailError = result.error.errors.find((e) => e.path[0] === "email");
           expect(emailError?.message).toBe("Please enter a valid email address");
         }
       });
@@ -139,9 +139,9 @@ describe("Contact Form Schema Validation", () => {
 
       const result = contactFormSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      
+
       if (!result.success) {
-        const messageError = result.error.errors.find(e => e.path[0] === "message");
+        const messageError = result.error.errors.find((e) => e.path[0] === "message");
         expect(messageError?.message).toBe("Message must be at least 10 characters");
       }
     });
@@ -157,9 +157,9 @@ describe("Contact Form Schema Validation", () => {
 
       const result = contactFormSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      
+
       if (!result.success) {
-        const messageError = result.error.errors.find(e => e.path[0] === "message");
+        const messageError = result.error.errors.find((e) => e.path[0] === "message");
         expect(messageError?.message).toBe("Message must be less than 1000 characters");
       }
     });
@@ -175,9 +175,9 @@ describe("Contact Form Schema Validation", () => {
 
       const result = contactFormSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      
+
       if (!result.success) {
-        const gdprError = result.error.errors.find(e => e.path[0] === "gdprConsent");
+        const gdprError = result.error.errors.find((e) => e.path[0] === "gdprConsent");
         expect(gdprError?.message).toBe("You must accept the privacy policy to submit this form");
       }
     });
@@ -191,11 +191,11 @@ describe("Contact Form Schema Validation", () => {
 
       const result = contactFormSchema.safeParse(incompleteData);
       expect(result.success).toBe(false);
-      
+
       if (!result.success) {
         const errors = result.error.errors;
-        const fields = errors.map(e => e.path[0]);
-        
+        const fields = errors.map((e) => e.path[0]);
+
         expect(fields).toContain("name");
         expect(fields).toContain("email");
         expect(fields).toContain("message");
@@ -213,7 +213,7 @@ describe("Contact Form Schema Validation", () => {
 
       const result = contactFormSchema.safeParse(dataWithoutHoneypot);
       expect(result.success).toBe(true);
-      
+
       if (result.success) {
         expect(result.data.honeypot).toBeUndefined();
       }
@@ -227,10 +227,10 @@ describe("Contact Form Schema Validation", () => {
         "John@Doe",
         "José García", // International characters not allowed
         "John_Doe",
-        "John.Doe"
+        "John.Doe",
       ];
 
-      invalidNames.forEach(name => {
+      invalidNames.forEach((name) => {
         const invalidData = {
           name,
           email: "test@example.com",
@@ -241,10 +241,12 @@ describe("Contact Form Schema Validation", () => {
 
         const result = contactFormSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
-        
+
         if (!result.success) {
-          const nameError = result.error.errors.find(e => e.path[0] === "name");
-          expect(nameError?.message).toBe("Name can only contain letters, spaces, hyphens, and apostrophes");
+          const nameError = result.error.errors.find((e) => e.path[0] === "name");
+          expect(nameError?.message).toBe(
+            "Name can only contain letters, spaces, hyphens, and apostrophes",
+          );
         }
       });
     });

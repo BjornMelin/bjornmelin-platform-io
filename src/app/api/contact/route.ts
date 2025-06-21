@@ -67,9 +67,16 @@ export async function POST(request: Request) {
     // Sanitize inputs before validation
     const sanitizedData = {
       ...requestData,
-      name: typeof requestData.name === "string" ? sanitizeInput(requestData.name) : requestData.name,
-      email: typeof requestData.email === "string" ? sanitizeInput(requestData.email) : requestData.email,
-      message: typeof requestData.message === "string" ? sanitizeInput(requestData.message) : requestData.message,
+      name:
+        typeof requestData.name === "string" ? sanitizeInput(requestData.name) : requestData.name,
+      email:
+        typeof requestData.email === "string"
+          ? sanitizeInput(requestData.email)
+          : requestData.email,
+      message:
+        typeof requestData.message === "string"
+          ? sanitizeInput(requestData.message)
+          : requestData.message,
     };
 
     const validatedData = contactFormSchema.parse(sanitizedData);

@@ -12,7 +12,7 @@ describe("cn utility", () => {
   it("handles conditional classes", () => {
     const isActive = true;
     const isDisabled = false;
-    
+
     expect(cn("base", isActive && "active", isDisabled && "disabled")).toBe("base active");
   });
 
@@ -57,8 +57,8 @@ describe("cn utility", () => {
         undefined,
         null,
         false,
-        "final-class"
-      )
+        "final-class",
+      ),
     ).toBe("base array-class-1 array-class-2 object-class-1 final-class");
   });
 });

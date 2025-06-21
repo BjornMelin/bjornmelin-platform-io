@@ -73,11 +73,15 @@ describe("Contact API Integration Tests", () => {
       name: "J", // Too short
       email: "not-an-email", // Invalid
       message: "Short", // Too short
+      honeypot: "", // Add missing honeypot field
       gdprConsent: false, // Not accepted
     };
 
     const request = new NextRequest("http://localhost:3000/api/contact", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(invalidData),
     });
 
