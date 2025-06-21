@@ -1,0 +1,67 @@
+# Task ID: 28
+# Title: AWS VPC and Core Networking Setup with CDK v2
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Set up comprehensive AWS VPC infrastructure using CDK v2 including VPC configuration, multi-AZ subnets, security groups, NAT gateways, and foundational networking components for scalable cloud deployment.
+# Details:
+Implement complete AWS VPC infrastructure using AWS CDK v2 with TypeScript for Infrastructure as Code. Create VPC with CIDR block 10.0.0.0/16 spanning multiple availability zones for high availability. Configure public subnets (10.0.1.0/24, 10.0.2.0/24) for load balancers and NAT gateways, private subnets (10.0.10.0/24, 10.0.20.0/24) for application servers, and isolated subnets (10.0.100.0/24, 10.0.200.0/24) for databases. Set up Internet Gateway for public internet access and NAT Gateways in each AZ for outbound internet access from private subnets. Create comprehensive security groups including web tier (ports 80, 443), application tier (port 3000), database tier (port 5432), and management access (port 22). Implement Network ACLs for additional security layers with stateless filtering rules. Configure VPC Flow Logs for network monitoring and troubleshooting. Set up Route Tables with proper routing for public, private, and isolated subnets. Implement VPC Endpoints for AWS services (S3, DynamoDB) to reduce NAT Gateway costs. Create reusable CDK constructs for networking components with proper tagging strategy for cost allocation and resource management. Configure DNS resolution and hostname assignment within VPC.
+
+# Test Strategy:
+Verify VPC creation with correct CIDR blocks and availability zone distribution using AWS CLI describe-vpcs command. Test subnet connectivity by deploying test EC2 instances in each subnet type and verifying internet access patterns (public subnets have direct internet access, private subnets route through NAT Gateway, isolated subnets have no internet access). Validate security group rules by testing port accessibility from different sources using nmap or telnet. Confirm NAT Gateway functionality by testing outbound internet connectivity from private subnet instances. Test VPC Flow Logs by generating network traffic and verifying log entries in CloudWatch. Validate Route Table configurations by examining routing rules and testing traffic flow between subnets. Test VPC Endpoints by accessing S3 and DynamoDB from private subnets without internet routing. Verify DNS resolution within VPC by testing hostname resolution between instances. Perform CDK synthesis and deployment validation to ensure infrastructure can be consistently reproduced. Test resource tagging and cost allocation reporting functionality.
+
+# Subtasks:
+## 1. Initialize CDK Project with Latest Library Versions [pending]
+### Dependencies: None
+### Description: Set up a new AWS CDK project using the latest stable version of the AWS CDK CLI and libraries. Ensure project structure follows best practices for maintainability and logical separation of resources.
+### Details:
+Install AWS CDK CLI globally, initialize the project (e.g., with TypeScript), and configure version control. Organize code into logical units (e.g., network, security) as recommended by AWS.
+
+## 2. Configure CDK Environments and Context [pending]
+### Dependencies: 28.1
+### Description: Set up environment configurations to support multiple deployment targets (e.g., dev, staging, prod) using CDK environment properties and context.
+### Details:
+Define environments in cdk.json or via Stack props. Ensure credentials and region settings are managed securely and support automated deployments.
+
+## 3. Define and Create VPC with Advanced Features [pending]
+### Dependencies: 28.2
+### Description: Implement a VPC construct with enterprise-grade features, including multi-AZ support, DNS support, and flow log configuration.
+### Details:
+Use the latest VPC construct from aws-cdk-lib. Enable DNS hostnames and support, select appropriate CIDR blocks, and configure flow logs for security and compliance.
+
+## 4. Configure Subnets (Public, Private, Isolated) [pending]
+### Dependencies: 28.3
+### Description: Design and implement subnet configuration for public, private (with NAT), and isolated subnets across multiple AZs for high availability.
+### Details:
+Follow AWS best practices for subnet sizing and placement. Use CDK constructs to automate subnet creation and tagging for maintainability.
+
+## 5. Set Up Security Groups with Least Privilege [pending]
+### Dependencies: 28.4
+### Description: Create modular, reusable security group constructs that enforce least privilege and support common application patterns.
+### Details:
+Define ingress and egress rules based on application requirements. Use CDK features to avoid security group sprawl and ensure maintainability.
+
+## 6. Provision and Configure NAT Gateways [pending]
+### Dependencies: 28.4
+### Description: Deploy NAT gateways in each AZ to enable outbound internet access for private subnets, ensuring high availability and cost optimization.
+### Details:
+Automate NAT gateway deployment with CDK, associate with appropriate route tables, and consider cost-saving strategies (e.g., using NAT instances for dev).
+
+## 7. Configure Route Tables and Associations [pending]
+### Dependencies: 28.4, 28.6
+### Description: Set up route tables for each subnet type and associate them correctly to ensure proper routing between subnets, NAT gateways, and the internet.
+### Details:
+Automate route table creation and association using CDK. Validate routes for security and connectivity, and document routing logic.
+
+## 8. Implement VPC Endpoints for AWS Services [pending]
+### Dependencies: 28.3, 28.4, 28.7
+### Description: Add VPC endpoints (Gateway and Interface) for critical AWS services to enhance security and reduce reliance on public internet.
+### Details:
+Use CDK constructs to create endpoints for services like S3, DynamoDB, and others as needed. Apply endpoint policies for fine-grained access control.
+
+## 9. Configure DNS and Name Resolution [pending]
+### Dependencies: 28.3, 28.4, 28.8
+### Description: Enable and configure DNS support within the VPC, including private hosted zones if required, to support service discovery and internal communication.
+### Details:
+Ensure DNS hostnames and support are enabled in the VPC. Use Route 53 private hosted zones for internal DNS, and automate record management with CDK.
+

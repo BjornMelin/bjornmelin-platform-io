@@ -1,0 +1,61 @@
+# Task ID: 1
+# Title: Emergency Contact Form Repair (P0 Critical)
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Fix the completely broken contact form submit button that is preventing all lead generation
+# Details:
+CRITICAL BUSINESS ISSUE: Contact form submit button is permanently disabled despite complete form data. Implement React Hook Form v8 with advanced 2025 features including native browser validation and Zod v4 with latest API enhancements. Debug form state management with performance optimization, verify button disabled/enabled logic, test email service integration (Resend API), and examine browser console for JavaScript errors. Use strict validation with ContactFormSchema including honeypot field for bot detection, CSRF protection, and GDPR compliance checkbox. Ensure form submission triggers email notifications and confirmation messages with enhanced UX features.
+
+# Test Strategy:
+Comprehensive testing including React Testing Library unit tests, Playwright E2E testing, screen reader compatibility (VoiceOver, NVDA), performance validation testing, form validation states, submit button enablement, email delivery, error handling, and cross-browser compatibility. Verify honeypot spam protection, CSRF security, rate limiting, and GDPR compliance validation.
+
+# Subtasks:
+## 1. Debug and Refactor Form State Management with Performance Optimization [pending]
+### Dependencies: None
+### Description: Analyze and debug the current form state logic. Refactor to use best practices for state management in React with 2025 performance optimizations, ensuring minimal re-renders and optimal performance.
+### Details:
+Adopt controlled components for tight data control, implement debounced validation for performance, ensure all fields are initialized, and use field-level validation strategies. Use functional components and hooks as per 2025 React best practices. Implement minimal re-render patterns and optimize bundle size for form components.
+
+## 2. Integrate React Hook Form v8 with Native Browser Validation [pending]
+### Dependencies: 1.1
+### Description: Integrate the latest React Hook Form (v8) for efficient form state handling, validation, and error management with native browser validation support.
+### Details:
+Leverage React Hook Form's API for minimal boilerplate and improved performance. Enable shouldUseNativeValidation: true for progressive enhancement. Implement CSS :valid/:invalid selectors for visual feedback. Ensure modular and reusable form components with seamless integration with validation libraries.
+
+## 3. Implement Advanced Zod v4 Schema Validation with Latest API Features [pending]
+### Dependencies: 1.2
+### Description: Set up Zod v4 for schema-based validation using latest 2025 API features, ensuring all form fields are validated according to business rules and security requirements.
+### Details:
+Define a comprehensive Zod schema using z.file() for potential attachments, z.templateLiteral() for enhanced email validation, z.transform() for optimal data processing, and native error message customization with unified `error` parameter. Implement performance-optimized schema composition and integrate with React Hook Form resolver for synchronous and asynchronous validation. Provide clear, accessible error messages.
+
+## 4. Add Enhanced Security Features: Honeypot, GDPR, CSRF, and Rate Limiting [pending]
+### Dependencies: 1.3
+### Description: Implement comprehensive security measures including honeypot field for spam prevention, GDPR compliance, CSRF protection, rate limiting, and input sanitization.
+### Details:
+Add a hidden honeypot input and logic to silently reject bot submissions. Include explicit consent checkbox and privacy policy link. Implement CSRF token generation and validation, rate limiting protection, input sanitization beyond validation, and secure API key handling for Resend. Ensure data handling aligns with GDPR and enterprise security standards.
+
+## 5. Develop Button Enablement and Submission Logic [pending]
+### Dependencies: 1.4
+### Description: Implement logic to enable the submit button only when the form is valid, all required fields are filled, and GDPR consent is given.
+### Details:
+Use React Hook Form's form state and Zod validation results to control button state. Prevent double submissions and provide loading indicators.
+
+## 6. Test and Integrate Resend API for Email Delivery [pending]
+### Dependencies: 1.5
+### Description: Integrate the Resend API for sending form submissions via email. Test for reliability, security, and error scenarios.
+### Details:
+Implement secure API calls, handle API keys securely, and test with various payloads. Ensure proper error handling and fallback mechanisms.
+
+## 7. Implement Enhanced UX with Robust Error Handling and User Feedback [pending]
+### Dependencies: None
+### Description: Ensure all errors (validation, network, API) are caught and displayed clearly to users, with actionable feedback and enhanced UX features for 2025 standards.
+### Details:
+Display inline error messages, global alerts for critical failures, and success confirmations. Implement form field persistence/draft saving, real-time validation feedback, loading states and submission feedback, dark mode/theme support, and form abandonment analytics. Log errors for monitoring and debugging.
+
+## 8. Conduct Comprehensive Cross-Browser, Accessibility, and Performance Validation [pending]
+### Dependencies: None
+### Description: Test the form across all major browsers and devices for consistent behavior, accessibility compliance with WCAG standards, and performance optimization with comprehensive testing suite.
+### Details:
+Implement React Testing Library unit tests, Playwright E2E testing, and screen reader testing (VoiceOver, NVDA). Validate keyboard navigation, screen reader compatibility, and responsive design. Conduct performance testing for validation speed and form interaction responsiveness. Address any browser-specific issues and ensure ARIA attributes are used appropriately.
+

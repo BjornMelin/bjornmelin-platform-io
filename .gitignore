@@ -72,3 +72,36 @@ repomix-output.txt
 /prisma/migrations
 /prisma/dev.db*
 /prisma/client
+
+# Added by Task Master AI
+# Logs
+logs
+*.log
+dev-debug.log
+# Dependency directories
+node_modules/
+# Environment variables
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.roomodes
+.roo
+.cursor
+
+# TaskMaster AI - Configuration and State Files
+.taskmaster/config.json       # Contains API keys and sensitive configuration
+.taskmaster/state.json        # Contains user state and session data
+.taskmaster/reports/          # Generated reports may contain sensitive data
+.taskmaster/.cache/           # Cache directory if created
+.taskmaster/logs/             # Log files if created
+.taskmaster/temp/             # Temporary files if created
+
+# TaskMaster AI - Keep these files
+!.taskmaster/docs/            # Documentation should be tracked
+!.taskmaster/tasks/           # Task definitions should be tracked
+!.taskmaster/templates/       # Templates should be tracked
+
+# OS specific
