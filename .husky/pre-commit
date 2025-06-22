@@ -1,0 +1,4 @@
+# Run linting and formatting
+pnpm run format:check || (echo "Formatting issues found. Running formatter..." && pnpm run format)
+pnpm run lint
+pnpm run type-check

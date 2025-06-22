@@ -18,7 +18,10 @@
     "test:e2e:report": "playwright show-report",
     "test:e2e:docker": "./scripts/run-e2e-tests.sh",
     "test:e2e:setup": "./scripts/setup-e2e.sh",
-    "serve": "pnpm dlx serve out"
+    "serve": "pnpm dlx serve out",
+    "prepare": "husky",
+    "semantic-release": "semantic-release",
+    "semantic-release:dry-run": "semantic-release --dry-run --no-ci"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.721.0",
@@ -52,6 +55,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.4",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@playwright/test": "^1.53.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -65,12 +70,20 @@
     "eslint": "^8.56.0",
     "eslint-config-next": "14.2.20",
     "happy-dom": "^18.0.1",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "playwright": "^1.53.1",
     "postcss": "^8.4.35",
     "shadcn-ui": "^0.9.4",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "semantic-release": "^24.2.5",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.3",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.3"
   }
 }
