@@ -50,7 +50,7 @@
     "react-hook-form": "^7.58.1",
     "resend": "^4.0.1",
     "superjson": "^2.2.0",
-    "tailwind-merge": "^2.5.5",
+    "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.1"
   },
