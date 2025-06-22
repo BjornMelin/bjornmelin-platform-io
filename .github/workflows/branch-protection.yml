@@ -47,21 +47,24 @@ jobs:
             doesn't start with an uppercase character.
 
       - name: Check branch is up to date
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          BASE_BRANCH="origin/${{ github.base_ref }}"
-          HEAD_BRANCH="origin/${{ github.head_ref }}"
+          BASE_BRANCH="origin/$BASE_REF"
+          HEAD_BRANCH="origin/$HEAD_REF"
           
-          git fetch origin ${{ github.base_ref }}
-          git fetch origin ${{ github.head_ref }}
+          git fetch origin "$BASE_REF"
+          git fetch origin "$HEAD_REF"
           
           BEHIND_COUNT=$(git rev-list --count HEAD..$BASE_BRANCH)
           
           if [ $BEHIND_COUNT -gt 0 ]; then
-            echo "⚠️ This branch is $BEHIND_COUNT commits behind ${{ github.base_ref }}"
-            echo "Please merge or rebase the latest changes from ${{ github.base_ref }}"
+            echo "⚠️ This branch is $BEHIND_COUNT commits behind $BASE_REF"
+            echo "Please merge or rebase the latest changes from $BASE_REF"
             exit 1
           else
-            echo "✅ Branch is up to date with ${{ github.base_ref }}"
+            echo "✅ Branch is up to date with $BASE_REF"
           fi
 
       - name: Check for merge conflicts
