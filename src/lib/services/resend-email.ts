@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { env } from "@/env.mjs";
 import type { ContactFormData } from "@/lib/schemas/contact";
+import { ParameterStoreService } from "./parameter-store";
 
 // Custom error types for better error handling
 export class ResendEmailError extends Error {
@@ -194,15 +195,14 @@ Time: ${timestamp}
 
 export class ResendEmailService {
   private static instance: ResendEmailService;
-  private resend: Resend;
+  private resend: Resend | null = null;
   private retryOptions: Required<RetryOptions>;
+  private parameterStoreService: ParameterStoreService;
+  private isInitialized = false;
 
   private constructor(retryOptions?: RetryOptions) {
-    if (!env.RESEND_API_KEY) {
-      throw new ResendConfigurationError("RESEND_API_KEY is not configured");
-    }
-    this.resend = new Resend(env.RESEND_API_KEY);
     this.retryOptions = { ...DEFAULT_RETRY_OPTIONS, ...retryOptions };
+    this.parameterStoreService = ParameterStoreService.getInstance();
   }
 
   public static getInstance(retryOptions?: RetryOptions): ResendEmailService {
@@ -210,6 +210,37 @@ export class ResendEmailService {
       ResendEmailService.instance = new ResendEmailService(retryOptions);
     }
     return ResendEmailService.instance;
+  }
+
+  /**
+   * Initialize the Resend client with API key from Parameter Store
+   */
+  private async ensureInitialized(): Promise<void> {
+    if (this.isInitialized && this.resend) {
+      return;
+    }
+
+    try {
+      // In development/test, fall back to environment variable if available
+      let apiKey: string;
+
+      if (process.env.NODE_ENV === "development" && env.RESEND_API_KEY) {
+        apiKey = env.RESEND_API_KEY;
+        this.log("info", "Using Resend API key from environment variable for development");
+      } else {
+        // Fetch from Parameter Store for production
+        apiKey = await this.parameterStoreService.getResendApiKey();
+        this.log("info", "Retrieved Resend API key from Parameter Store");
+      }
+
+      this.resend = new Resend(apiKey);
+      this.isInitialized = true;
+    } catch (error) {
+      this.log("error", "Failed to initialize Resend client", error);
+      throw new ResendConfigurationError(
+        "Failed to initialize Resend client. API key could not be retrieved.",
+      );
+    }
   }
 
   /**
@@ -360,6 +391,13 @@ export class ResendEmailService {
     try {
       const result = await this.executeWithRetry(
         async () => {
+          // Ensure Resend client is initialized
+          await this.ensureInitialized();
+
+          if (!this.resend) {
+            throw new ResendConfigurationError("Resend client is not initialized");
+          }
+
           const timestamp = new Date().toLocaleString("en-US", {
             timeZone: "America/Denver",
             dateStyle: "full",
@@ -532,6 +570,14 @@ export class ResendEmailService {
   public async verifyConfiguration(): Promise<boolean> {
     try {
       this.log("info", "Verifying Resend configuration");
+
+      // Ensure Resend client is initialized
+      await this.ensureInitialized();
+
+      if (!this.resend) {
+        this.log("error", "Resend client is not initialized");
+        return false;
+      }
 
       // Attempt to send a test email to verify configuration
       const testEmail = {

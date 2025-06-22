@@ -6,7 +6,7 @@ import { DeploymentStack } from "../lib/stacks/deployment-stack";
 import { DnsStack } from "../lib/stacks/dns-stack";
 import { EmailStack } from "../lib/stacks/email-stack";
 import { MonitoringStack } from "../lib/stacks/monitoring-stack";
-import { SecretsStack } from "../lib/stacks/secrets-stack";
+import { ParameterStoreStack } from "../lib/stacks/parameter-store-stack";
 import { StorageStack } from "../lib/stacks/storage-stack";
 
 const app = new cdk.App();
@@ -67,14 +67,15 @@ const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "pro
 // Ensure monitoring stack depends on storage stack
 monitoringStack.addDependency(storageStack);
 
-// Secrets Stack
-const secretsStack = new SecretsStack(app, getStackName("secrets", "prod"), {
+// Parameter Store Stack (cost-optimized replacement for Secrets Manager)
+const parameterStoreStack = new ParameterStoreStack(app, getStackName("parameter-store", "prod"), {
   env,
   domainName: CONFIG.prod.domainName,
   environment: CONFIG.prod.environment,
   tags: CONFIG.tags,
   enableRotation: true, // Enable automatic rotation
   rotationScheduleDays: 90, // Rotate every 90 days
+  notificationEmail: "bjornmelin16@gmail.com", // Notification for rotation events
 });
 
 // Email Stack
@@ -83,7 +84,7 @@ const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   domainName: CONFIG.prod.domainName,
   environment: CONFIG.prod.environment,
   hostedZone: dnsStack.hostedZone,
-  resendApiKeySecret: secretsStack.resendApiKeySecret,
+  resendApiKeyParameter: parameterStoreStack.resendApiKeyParameter,
   tags: CONFIG.tags,
   // These will be filled in after adding domain to Resend
   // resendDomainVerification: "resend-verification-code",
@@ -93,6 +94,6 @@ const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   // ],
 });
 
-// Ensure email stack depends on both DNS and secrets stacks
+// Ensure email stack depends on both DNS and parameter store stacks
 emailStack.addDependency(dnsStack);
-emailStack.addDependency(secretsStack);
+emailStack.addDependency(parameterStoreStack);

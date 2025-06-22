@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
 import * as actions from "aws-cdk-lib/aws-cloudwatch-actions";
+import * as logs from "aws-cdk-lib/aws-logs";
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
 import type { Construct } from "constructs";
@@ -18,6 +19,38 @@ export class MonitoringStack extends cdk.Stack {
 
     // Add email subscription
     alertTopic.addSubscription(new subscriptions.EmailSubscription("bjornmelin16@gmail.com"));
+
+    // Create optimized log groups for cost-effective monitoring
+    const applicationLogGroup = new logs.LogGroup(this, "ApplicationLogGroup", {
+      logGroupName: `/aws/portfolio/${props.environment}/application`,
+      retention: logs.RetentionDays.ONE_WEEK, // Cost optimized
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    const infraLogGroup = new logs.LogGroup(this, "InfrastructureLogGroup", {
+      logGroupName: `/aws/portfolio/${props.environment}/infrastructure`,
+      retention: logs.RetentionDays.ONE_WEEK, // Cost optimized
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // Create log metric filters for error tracking
+    new logs.MetricFilter(this, "ApplicationErrorMetric", {
+      logGroup: applicationLogGroup,
+      metricNamespace: "Portfolio/Application",
+      metricName: "Errors",
+      filterPattern: logs.FilterPattern.stringValue("$.level", "=", "ERROR"),
+      metricValue: "1",
+      defaultValue: 0,
+    });
+
+    new logs.MetricFilter(this, "InfraErrorMetric", {
+      logGroup: infraLogGroup,
+      metricNamespace: "Portfolio/Infrastructure",
+      metricName: "Errors",
+      filterPattern: logs.FilterPattern.stringValue("$.level", "=", "ERROR"),
+      metricValue: "1",
+      defaultValue: 0,
+    });
 
     // CloudFront Metrics Dashboard
     const dashboard = new cloudwatch.Dashboard(this, "PortfolioDashboard", {

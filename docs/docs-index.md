@@ -24,7 +24,14 @@ This document serves as a comprehensive index for all documentation in the bjorn
 - [Infrastructure](./architecture/infrastructure.md) - AWS CDK and cloud resources
 - [AWS Services](./architecture/aws-services.md) - AWS services integration
 
-### 3. Development Documentation  
+### 3. Infrastructure Documentation
+- [Infrastructure Overview](./infrastructure/README.md) - AWS infrastructure and services
+- [AWS Free Tier Optimization](./infrastructure/AWS_FREE_TIER_OPTIMIZATION_2025.md) - Cost optimization guide
+- [Email Infrastructure Guide](./infrastructure/EMAIL_INFRASTRUCTURE_GUIDE.md) - Email service implementation
+- [Security Audit Checklist](./infrastructure/SECURITY_AUDIT_CHECKLIST.md) - Security review procedures
+- [Application Integration Examples](./infrastructure/APPLICATION_INTEGRATION_EXAMPLES.md) - Code integration examples
+
+### 4. Development Documentation  
 - [Development Overview](./development/README.md) - Development process and standards
 - [Getting Started](./development/getting-started.md) - Setup and initial development
 - [Onboarding Checklist](./development/onboarding-checklist.md) - New team member onboarding
@@ -35,21 +42,24 @@ This document serves as a comprehensive index for all documentation in the bjorn
 - [Git Workflow Guide](./development/git-workflow-guide.md) - Quick reference for Git commands
 - [Workflow Diagrams](./development/workflow-diagrams.md) - Visual workflow representations
 
-### 4. Deployment Documentation
+### 5. Deployment Documentation
 - [Deployment Overview](./deployment/README.md) - Deployment processes
 - [CI/CD Pipeline](./deployment/ci-cd.md) - GitHub Actions and automation
 - [Environments](./deployment/environments.md) - Development, staging, and production
 - [Monitoring](./deployment/monitoring.md) - Application monitoring and alerting
 
-### 5. Testing Documentation
+### 6. Testing Documentation
 - [Testing Overview](./TESTING.md) - Comprehensive testing guide
 - [Unit Testing](./development/testing.md#unit-testing) - Component and utility testing
 - [E2E Testing](./TESTING.md#e2e-testing-with-playwright) - End-to-end testing setup
 
-### 6. Additional Documentation
+### 7. Additional Documentation
 - [Feature Flags Implementation](./feature-flags-implementation-plan.md) - Feature flag system plan
 - [Semantic Release](./SEMANTIC_RELEASE.md) - Automated versioning and releases
 - [Conventional Commits Setup](../CONVENTIONAL_COMMITS_SETUP.md) - Commit validation setup
+- [Email Migration Plan](./email-migration-plan.md) - Email service migration guide
+- [Email Service Comparison](./email-service-comparison-2025.md) - Email providers analysis
+- [CodeArtifact Integration](./codeartifact-integration.md) - AWS CodeArtifact setup
 
 ## 📁 Directory Structure
 
@@ -67,6 +77,13 @@ bjornmelin-platform-io/
 │   │   ├── backend.md        # Backend design
 │   │   ├── infrastructure.md # AWS infrastructure
 │   │   └── aws-services.md   # AWS services used
+│   │
+│   ├── infrastructure/       # Infrastructure docs
+│   │   ├── README.md         # Infrastructure overview
+│   │   ├── AWS_FREE_TIER_OPTIMIZATION_2025.md # Cost optimization
+│   │   ├── EMAIL_INFRASTRUCTURE_GUIDE.md # Email setup
+│   │   ├── SECURITY_AUDIT_CHECKLIST.md # Security review
+│   │   └── APPLICATION_INTEGRATION_EXAMPLES.md # Code examples
 │   │
 │   ├── development/          # Development guides
 │   │   ├── README.md         # Development overview

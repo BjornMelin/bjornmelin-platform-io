@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { env } from "@/env.mjs";
 import type { ContactFormData } from "@/lib/schemas/contact";
+import { ParameterStoreService } from "../parameter-store";
 import {
   ResendConfigurationError,
   ResendEmailError,
@@ -27,6 +28,17 @@ vi.mock("@/env.mjs", () => ({
     RESEND_API_KEY: "test-api-key",
     RESEND_FROM_EMAIL: "test@example.com",
     CONTACT_EMAIL: "contact@example.com",
+    AWS_REGION: "us-east-1",
+  },
+}));
+
+// Mock the Parameter Store service
+vi.mock("../parameter-store", () => ({
+  ParameterStoreService: {
+    getInstance: vi.fn().mockReturnValue({
+      getResendApiKey: vi.fn().mockResolvedValue("test-api-key-from-parameter-store"),
+      clearCache: vi.fn(),
+    }),
   },
 }));
 

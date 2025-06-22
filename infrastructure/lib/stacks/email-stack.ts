@@ -1,15 +1,16 @@
 import * as cdk from "aws-cdk-lib";
 import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
 import * as cloudwatchActions from "aws-cdk-lib/aws-cloudwatch-actions";
+import * as logs from "aws-cdk-lib/aws-logs";
 import * as route53 from "aws-cdk-lib/aws-route53";
-import type * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import * as sns from "aws-cdk-lib/aws-sns";
+import type * as ssm from "aws-cdk-lib/aws-ssm";
 import type { Construct } from "constructs";
 import type { BaseStackProps } from "../types/stack-props";
 
 export interface EmailStackProps extends BaseStackProps {
   hostedZone: route53.IHostedZone;
-  resendApiKeySecret: secretsmanager.ISecret;
+  resendApiKeyParameter: ssm.IParameter;
   // These values will be obtained from Resend after domain is added
   resendDomainVerification?: string;
   resendDkimRecords?: Array<{
@@ -63,27 +64,45 @@ export class EmailStack extends cdk.Stack {
       });
     }
 
-    // CloudWatch Metric for monitoring secret access
-    const secretAccessMetric = new cloudwatch.Metric({
-      namespace: "AWS/SecretsManager",
-      metricName: "SecretAccess",
+    // Create optimized log group for email service monitoring
+    new logs.LogGroup(this, "EmailServiceLogGroup", {
+      logGroupName: `/aws/email-service/${props.environment}`,
+      retention: logs.RetentionDays.ONE_WEEK, // Cost optimized
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // CloudWatch Metric for monitoring parameter access (using custom metrics)
+    const parameterAccessMetric = new cloudwatch.Metric({
+      namespace: "Portfolio/EmailService",
+      metricName: "ParameterAccess",
       dimensionsMap: {
-        SecretName: props.resendApiKeySecret.secretName,
+        ParameterName: props.resendApiKeyParameter.parameterName,
+        Environment: props.environment,
       },
       statistic: cloudwatch.Statistic.SUM,
       period: cdk.Duration.hours(1),
     });
 
-    // Alarm for unusual secret access patterns
-    const unusualAccessAlarm = new cloudwatch.Alarm(this, "UnusualSecretAccessAlarm", {
-      metric: secretAccessMetric,
-      threshold: 100, // More than 100 accesses per hour
+    // Alarm for service errors
+    const errorMetric = new cloudwatch.Metric({
+      namespace: "Portfolio/EmailService",
+      metricName: "Errors",
+      dimensionsMap: {
+        Environment: props.environment,
+      },
+      statistic: cloudwatch.Statistic.SUM,
+      period: cdk.Duration.minutes(5),
+    });
+
+    const serviceErrorAlarm = new cloudwatch.Alarm(this, "ServiceErrorAlarm", {
+      metric: errorMetric,
+      threshold: 5, // More than 5 errors in 5 minutes
       evaluationPeriods: 1,
-      alarmDescription: "Alert on unusual number of secret accesses",
+      alarmDescription: "Alert on email service errors",
       treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
     });
 
-    unusualAccessAlarm.addAlarmAction(new cloudwatchActions.SnsAction(this.emailAlarmTopic));
+    serviceErrorAlarm.addAlarmAction(new cloudwatchActions.SnsAction(this.emailAlarmTopic));
 
     // Custom CloudWatch Dashboard for Email Service Monitoring
     const dashboard = new cloudwatch.Dashboard(this, "EmailServiceDashboard", {
@@ -93,14 +112,20 @@ export class EmailStack extends cdk.Stack {
 
     dashboard.addWidgets(
       new cloudwatch.GraphWidget({
-        title: "Secret Access Frequency",
-        left: [secretAccessMetric],
+        title: "Parameter Access Frequency",
+        left: [parameterAccessMetric],
+        width: 12,
+        height: 6,
+      }),
+      new cloudwatch.GraphWidget({
+        title: "Service Errors",
+        left: [errorMetric],
         width: 12,
         height: 6,
       }),
       new cloudwatch.SingleValueWidget({
-        title: "Total Secret Accesses (24h)",
-        metrics: [secretAccessMetric],
+        title: "Total Parameter Accesses (24h)",
+        metrics: [parameterAccessMetric],
         period: cdk.Duration.days(1),
         width: 6,
         height: 4,
