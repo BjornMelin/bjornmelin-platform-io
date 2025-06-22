@@ -101,8 +101,8 @@ export const projectsData: Project[] = [
     technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "AWS"],
     category: "Web Development",
     links: {
-      github: "https://github.com/yourusername/your-portfolio-repo",
-      live: "https://yourdomain.com",
+      github: "https://github.com/bjornmelin/bjornmelin-platform-io",
+      live: "https://bjornmelin.io",
     },
     featured: false,
   },
