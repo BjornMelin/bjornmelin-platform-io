@@ -5,8 +5,8 @@ export const env = createEnv({
     server: {
         // Email configuration
         RESEND_API_KEY: z.string().min(1).optional(), // Optional - will use Parameter Store in production
-        RESEND_FROM_EMAIL: z.string().email().default("noreply@bjornmelin.io"),
-        CONTACT_EMAIL: z.string().email().default("contact@bjornmelin.io"),
+        RESEND_FROM_EMAIL: z.string().email(),
+        CONTACT_EMAIL: z.string().email(),
         // AWS configuration
         AWS_REGION: z.string().default("us-east-1"),
     },

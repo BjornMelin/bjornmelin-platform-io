@@ -44,7 +44,7 @@ export function Footer() {
             <h3 className="text-lg font-semibold">Connect</h3>
             <div className="flex space-x-4">
               <a
-                href="https://github.com/bjornmelin"
+                href="https://github.com/yourusername"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-foreground/60 hover:text-foreground"
@@ -53,7 +53,7 @@ export function Footer() {
                 <GitHubLogoIcon className="w-5 h-5" />
               </a>
               <a
-                href="https://linkedin.com/in/bjorn-melin"
+                href="https://linkedin.com/in/yourprofile"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-foreground/60 hover:text-foreground"
@@ -62,7 +62,7 @@ export function Footer() {
                 <LinkedInLogoIcon className="w-5 h-5" />
               </a>
               <a
-                href="https://medium.com/@bjornmelin"
+                href="https://medium.com/@yourusername"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-foreground/60 hover:text-foreground"
@@ -71,7 +71,7 @@ export function Footer() {
                 <BookText size={20} />
               </a>
               <a
-                href="https://orcid.org/0009-0004-1978-3356"
+                href="https://orcid.org/your-orcid-id"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-foreground/60 hover:text-foreground"
@@ -80,7 +80,7 @@ export function Footer() {
                 <BookOpenCheck size={20} />
               </a>
               <a
-                href="mailto:bjornmelin16@gmail.com"
+                href="mailto:your-email@example.com"
                 className="text-foreground/60 hover:text-foreground"
                 aria-label="Email"
               >
