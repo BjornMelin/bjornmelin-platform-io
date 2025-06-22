@@ -128,3 +128,6 @@ prisma/client/
 !.taskmaster/docs/            # Documentation should be tracked
 !.taskmaster/tasks/           # Task definitions should be tracked
 !.taskmaster/templates/       # Templates should be tracked
+
+# Claude Code - Personal settings (auto-ignored by Claude Code)
+.claude/settings.local.json   # Personal settings, not version controlled
