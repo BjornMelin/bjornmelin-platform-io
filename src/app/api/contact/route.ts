@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { contactFormSchema } from "@/lib/schemas/contact";
-import { ResendEmailService } from "@/lib/services/resend-email";
+import {
+  ResendEmailError,
+  ResendEmailService,
+  ResendRateLimitError,
+} from "@/lib/services/resend-email";
 import { APIError, handleAPIError } from "@/lib/utils/error-handler";
 import { checkRateLimit, getClientIp, sanitizeInput } from "@/lib/utils/security";
 
@@ -81,10 +85,13 @@ export async function POST(request: Request) {
 
     // Send email using Resend
     const resendService = ResendEmailService.getInstance();
-    await resendService.sendContactFormEmail(validatedData);
+    const result = await resendService.sendContactFormEmail(validatedData);
 
     return NextResponse.json(
-      { success: true },
+      {
+        success: true,
+        emailId: result.id,
+      },
       {
         headers: {
           "X-RateLimit-Limit": "5",
@@ -94,11 +101,34 @@ export async function POST(request: Request) {
       },
     );
   } catch (error) {
-    if (error instanceof Error && error.message.toLowerCase().includes("failed to send email")) {
+    // Handle specific Resend errors
+    if (error instanceof ResendRateLimitError) {
       return handleAPIError(
-        new APIError("Failed to send message. Please try again later.", 500, "EMAIL_SEND_ERROR"),
+        new APIError(
+          "Email service rate limit exceeded. Please try again later.",
+          429,
+          "EMAIL_RATE_LIMIT",
+        ),
       );
     }
+
+    if (error instanceof ResendEmailError) {
+      // Log the specific error for debugging
+      console.error("ResendEmailError:", {
+        code: error.code,
+        statusCode: error.statusCode,
+        message: error.message,
+      });
+
+      return handleAPIError(
+        new APIError(
+          "Failed to send message. Please try again later.",
+          error.statusCode || 500,
+          error.code || "EMAIL_SEND_ERROR",
+        ),
+      );
+    }
+
     return handleAPIError(error);
   }
 }

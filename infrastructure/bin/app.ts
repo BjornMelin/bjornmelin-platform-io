@@ -4,7 +4,9 @@ import * as cdk from "aws-cdk-lib";
 import { CONFIG, getStackName } from "../lib/constants";
 import { DeploymentStack } from "../lib/stacks/deployment-stack";
 import { DnsStack } from "../lib/stacks/dns-stack";
+import { EmailStack } from "../lib/stacks/email-stack";
 import { MonitoringStack } from "../lib/stacks/monitoring-stack";
+import { SecretsStack } from "../lib/stacks/secrets-stack";
 import { StorageStack } from "../lib/stacks/storage-stack";
 
 const app = new cdk.App();
@@ -64,3 +66,33 @@ const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "pro
 
 // Ensure monitoring stack depends on storage stack
 monitoringStack.addDependency(storageStack);
+
+// Secrets Stack
+const secretsStack = new SecretsStack(app, getStackName("secrets", "prod"), {
+  env,
+  domainName: CONFIG.prod.domainName,
+  environment: CONFIG.prod.environment,
+  tags: CONFIG.tags,
+  enableRotation: true, // Enable automatic rotation
+  rotationScheduleDays: 90, // Rotate every 90 days
+});
+
+// Email Stack
+const emailStack = new EmailStack(app, getStackName("email", "prod"), {
+  env,
+  domainName: CONFIG.prod.domainName,
+  environment: CONFIG.prod.environment,
+  hostedZone: dnsStack.hostedZone,
+  resendApiKeySecret: secretsStack.resendApiKeySecret,
+  tags: CONFIG.tags,
+  // These will be filled in after adding domain to Resend
+  // resendDomainVerification: "resend-verification-code",
+  // resendDkimRecords: [
+  //   { name: "resend._domainkey", value: "dkim1.resend.com" },
+  //   { name: "resend2._domainkey", value: "dkim2.resend.com" },
+  // ],
+});
+
+// Ensure email stack depends on both DNS and secrets stacks
+emailStack.addDependency(dnsStack);
+emailStack.addDependency(secretsStack);
