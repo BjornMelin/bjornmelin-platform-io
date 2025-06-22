@@ -184,7 +184,7 @@ export function useFeatureFlags(keys: string[]): Record<string, UseFeatureFlagRe
     };
 
     evaluateAll();
-  }, [client, context, keys.join(",")]); // Use keys.join to create a stable dependency
+  }, [client, context, keys]); // Updated dependency
 
   return results;
 }

@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import {
   FEATURE_FLAGS,
   FeatureFlag,
-  type FeatureFlagEvaluation,
   useFeatureFlag,
   useFeatureFlagEnabled,
   useFeatureFlags,

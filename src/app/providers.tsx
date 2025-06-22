@@ -5,8 +5,8 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import {
-  FeatureFlagProvider,
   DEFAULT_FLAGS,
+  FeatureFlagProvider,
   LocalStorageFeatureFlagStore,
 } from "@/lib/feature-flags/client-exports";
 

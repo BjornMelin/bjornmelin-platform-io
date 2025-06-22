@@ -85,7 +85,7 @@ export function ContactFormWithFlags() {
         title: "Message sent!",
         description: "Thanks for reaching out. I'll get back to you soon.",
       });
-    } catch (error) {
+    } catch (_error) {
       setFormStatus("error");
       toast({
         title: "Error",

@@ -6,8 +6,6 @@
 export * from "./client";
 export * from "./evaluator";
 export * from "./flags";
-export * from "./types";
-
 // React exports (client-only)
 export {
   FeatureFlag,
@@ -19,10 +17,10 @@ export {
   useFeatureFlagUserContext,
   withFeatureFlag,
 } from "./hooks";
-
 // Store exports
 export { LocalStorageFeatureFlagStore } from "./stores/local-storage-store";
 export { MemoryFeatureFlagStore } from "./stores/memory-store";
+export * from "./types";
 
 // Default client instance
 import { DefaultFeatureFlagClient } from "./client";

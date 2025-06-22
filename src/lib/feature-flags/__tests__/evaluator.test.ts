@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { evaluateFeatureFlag } from "../evaluator";
 import type { FeatureFlag, FeatureFlagContext } from "../types";
 
@@ -37,9 +37,9 @@ describe("Feature Flag Evaluator", () => {
     // Test with different user IDs to get different hash results
     const results = [];
     for (let i = 0; i < 100; i++) {
-      const result = evaluateFeatureFlag(flag, { 
+      const result = evaluateFeatureFlag(flag, {
         ...defaultContext,
-        userId: `user-${i}` 
+        userId: `user-${i}`,
       });
       results.push(result.enabled);
     }
@@ -71,15 +71,15 @@ describe("Feature Flag Evaluator", () => {
       ],
     };
 
-    const adminResult = evaluateFeatureFlag(flag, { 
+    const adminResult = evaluateFeatureFlag(flag, {
       ...defaultContext,
-      userRole: "admin" 
+      userRole: "admin",
     });
     expect(adminResult.enabled).toBe(true);
 
-    const userResult = evaluateFeatureFlag(flag, { 
+    const userResult = evaluateFeatureFlag(flag, {
       ...defaultContext,
-      userRole: "user" 
+      userRole: "user",
     });
     expect(userResult.enabled).toBe(false);
   });
