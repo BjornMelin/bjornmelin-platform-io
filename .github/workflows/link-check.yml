@@ -1,0 +1,54 @@
+name: Check Links
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 4 * * 1' # Weekly on Monday at 4:00 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  check-links:
+    name: Check Links
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check links in Markdown files
+        uses: lycheeverse/lychee-action@v2
+        with:
+          fail: true
+          args: |
+            --verbose
+            --no-progress
+            --exclude-loopback
+            --exclude localhost
+            --exclude 127.0.0.1
+            --exclude example.com
+            --exclude-mail
+            --timeout 30
+            --max-retries 3
+            --user-agent "Mozilla/5.0 (compatible; LinkChecker/1.0)"
+            '**/*.md'
+            '**/*.mdx'
+            '*.md'
+
+      - name: Create issue if failed
+        if: failure() && github.event_name == 'schedule'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Broken Links Found"
+          content-filepath: ./lychee/out.md
+          labels: |
+            bug
+            documentation
+            automated

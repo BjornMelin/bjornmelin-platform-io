@@ -8,6 +8,12 @@ on:
       - "infrastructure/**"
       - "**.md"
   workflow_dispatch:
+  workflow_run:
+    workflows: ["E2E Tests"]
+    types:
+      - completed
+    branches:
+      - main
 
 concurrency:
   group: "deploy"
@@ -19,7 +25,39 @@ env:
   NEXT_PUBLIC_API_URL: https://api.bjornmelin.io
 
 jobs:
+  # Run tests before deployment
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      tests-passed: ${{ steps.test-result.outputs.passed }}
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run unit tests
+        run: pnpm test
+
+      - name: Set test result
+        id: test-result
+        run: echo "passed=true" >> $GITHUB_OUTPUT
+
   deploy:
+    needs: test
+    if: needs.test.outputs.tests-passed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,8 +71,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "yarn"
-          cache-dependency-path: "**/yarn.lock"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -45,19 +100,19 @@ jobs:
 
       # Install root dependencies (i.e., for Next.js)
       - name: Install Root Dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       # Install dependencies in the infrastructure directory (if needed)
       - name: Install Infrastructure Dependencies
         working-directory: ./infrastructure
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       # Build the Next.js app & export static files
       - name: Build Next.js App (Static Export)
         env:
           NEXT_PUBLIC_BASE_URL: ${{ env.NEXT_PUBLIC_BASE_URL }}
           NEXT_PUBLIC_API_URL: ${{ env.NEXT_PUBLIC_API_URL }}
-        run: yarn build
+        run: pnpm build
 
       # Retrieve the S3 bucket name and CloudFront distribution from your CF stack
       - name: Get Stack Outputs
