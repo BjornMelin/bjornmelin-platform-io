@@ -7,8 +7,12 @@ This section provides comprehensive documentation for developers working on the 
 ## Documentation Structure
 
 - [Getting Started](./getting-started.md) - Setup and initial development guide
+- [Onboarding Checklist](./onboarding-checklist.md) - New team member onboarding
+- [Branching Strategy](./branching-strategy.md) - Git workflow and branch management
+- [Conventional Commits](./conventional-commits.md) - Commit message standards
 - [Coding Standards](./coding-standards.md) - Code style and best practices
 - [Testing Strategies](./testing.md) - Testing methodologies and tools
+- [Git Workflow Guide](./git-workflow-guide.md) - Day-to-day Git operations
 
 ## Development Environment
 
@@ -45,29 +49,42 @@ This section provides comprehensive documentation for developers working on the 
 
 ## Development Workflow
 
-### 1. Local Development
+### 1. Git-Based Development Flow
 
 ```mermaid
 graph LR
-    A[Local Branch] --> B[Development]
-    B --> C[Code Review]
-    C --> D[Testing]
-    D --> E[Deploy]
+    A[Feature Branch] --> B[Development]
+    B --> C[Code Review/PR]
+    C --> D[Automated Testing]
+    D --> E[Merge to Develop]
+    E --> F[Deploy to Staging]
+    F --> G[Release to Main]
+    G --> H[Deploy to Production]
 ```
 
-### 2. Code Quality
+### 2. Branch-Based Workflow
 
-- TypeScript for type safety
-- Biome for code linting and formatting
-- Git hooks for pre-commit checks
-- Zod for runtime validation
+- **Feature Development**: Create feature branches from `develop`
+- **Code Reviews**: All changes require PR approval
+- **Automated Testing**: CI/CD runs on every PR
+- **Staging Deployment**: Automatic from `develop` branch
+- **Production Release**: Tagged releases from `main`
 
-### 3. Testing Requirements
+### 3. Code Quality Gates
 
-- Component testing
-- API route testing
-- Integration testing
-- Type checking
+- **Pre-commit Hooks**: Format and lint before commit
+- **Conventional Commits**: Enforced commit message format
+- **Type Safety**: Strict TypeScript checking
+- **Test Coverage**: Minimum 80% coverage required
+- **Security Scanning**: Automated vulnerability checks
+
+### 4. Testing Requirements
+
+- **Unit Tests**: All business logic and utilities
+- **Component Tests**: React component behavior
+- **Integration Tests**: API routes and services
+- **E2E Tests**: Critical user journeys
+- **Type Checking**: No TypeScript errors
 
 ## Best Practices
 

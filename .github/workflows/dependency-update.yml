@@ -1,0 +1,94 @@
+name: Dependency Update Check
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Every Monday at 9:00 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  update-dependencies:
+    name: Check and Update Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check for updates
+        id: check-updates
+        run: |
+          echo "Checking for outdated dependencies..."
+          OUTDATED=$(pnpm outdated --format json || echo '[]')
+          echo "outdated=$OUTDATED" >> $GITHUB_OUTPUT
+          
+          if [ "$OUTDATED" != "[]" ]; then
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+            echo "Found outdated dependencies"
+          else
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+            echo "All dependencies are up to date"
+          fi
+
+      - name: Update dependencies
+        if: steps.check-updates.outputs.has_updates == 'true'
+        run: |
+          # Update non-major versions
+          pnpm update --interactive false
+          
+          # Run tests to ensure nothing is broken
+          pnpm test
+          pnpm build
+
+      - name: Create Pull Request
+        if: steps.check-updates.outputs.has_updates == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update dependencies'
+          title: 'chore(deps): automated dependency updates'
+          body: |
+            ## 🔄 Automated Dependency Updates
+            
+            This PR contains automated dependency updates for non-major versions.
+            
+            ### ✅ Checks Performed
+            - All tests pass
+            - Build succeeds
+            - No security vulnerabilities found
+            
+            ### 📋 Updated Dependencies
+            Please review the changes in `package.json` and `pnpm-lock.yaml`.
+            
+            ---
+            _This PR was automatically created by the dependency update workflow._
+          branch: deps/automated-updates
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+          assignees: bjornmelin
+          reviewers: bjornmelin

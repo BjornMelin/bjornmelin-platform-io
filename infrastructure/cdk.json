@@ -43,6 +43,10 @@
     "@aws-cdk/aws-redshift:columnId": true,
     "@aws-cdk/aws-stepfunctions-tasks:enableEmrServicePolicyV2": true,
     "@aws-cdk/aws-ec2:restrictDefaultSecurityGroup": true,
-    "@aws-cdk/aws-apigateway:requestValidatorUniqueId": true
+    "@aws-cdk/aws-apigateway:requestValidatorUniqueId": true,
+    "githubRepository": "bjornmelin/bjornmelin-platform-io",
+    "allowedBranches": ["main"],
+    "domainName": "bjornmelin-platform",
+    "repositoryName": "platform-releases"
   }
 }

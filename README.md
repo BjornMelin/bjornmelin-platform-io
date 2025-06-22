@@ -2,6 +2,11 @@
 
 Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutions architecture through serverless APIs and infrastructure as code. Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices.
 
+[![CI](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml)
+[![Security Audit](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml)
+[![Release](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/release.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/bjornmelin/bjornmelin-platform-io/branch/main/graph/badge.svg)](https://codecov.io/gh/bjornmelin/bjornmelin-platform-io)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![AWS SAA](https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-solutions-architect-associate)
 [![AWS DVA](https://img.shields.io/badge/AWS-Developer%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-developer-associate)
@@ -282,6 +287,35 @@ Development:
 
 - **IAM**: Role-based access control
 - **WAF**: Basic security rules (optional)
+
+## 🔄 Git Workflow & Contributing
+
+We follow a structured Git workflow with conventional commits. For detailed contribution guidelines:
+
+- 📖 [Contributing Guide](./CONTRIBUTING.md) - Complete guide for contributors
+- 🌳 [Branching Strategy](./docs/development/branching-strategy.md) - Git flow and branch management
+- 📝 [Conventional Commits](./docs/development/conventional-commits.md) - Commit message standards
+
+### Quick Start for Contributors
+
+```bash
+# Fork and clone
+git clone https://github.com/YOUR_USERNAME/bjornmelin-platform-io.git
+cd bjornmelin-platform-io
+
+# Install dependencies
+pnpm install
+
+# Create feature branch
+git checkout -b feature/your-feature-name
+
+# Make changes and commit
+git add .
+git commit -m "feat: add awesome feature"
+
+# Push and create PR
+git push origin feature/your-feature-name
+```
 
 ## 💻 Development Scripts
 

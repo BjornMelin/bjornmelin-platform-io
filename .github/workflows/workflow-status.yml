@@ -1,0 +1,153 @@
+name: Workflow Status Check
+
+on:
+  schedule:
+    - cron: '0 12 * * 1' # Weekly on Monday at noon UTC
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+  issues: write
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  check-workflows:
+    name: Check Workflow Status
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Check workflow runs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // Get all workflows
+            const workflows = await github.rest.actions.listRepoWorkflows({
+              owner,
+              repo,
+              per_page: 100
+            });
+            
+            console.log(`Found ${workflows.data.workflows.length} workflows`);
+            
+            // Check status of each workflow
+            const workflowStatus = [];
+            
+            for (const workflow of workflows.data.workflows) {
+              const runs = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id: workflow.id,
+                per_page: 5,
+                status: 'completed'
+              });
+              
+              const successRate = runs.data.workflow_runs.length > 0
+                ? (runs.data.workflow_runs.filter(run => run.conclusion === 'success').length / runs.data.workflow_runs.length) * 100
+                : 0;
+              
+              workflowStatus.push({
+                name: workflow.name,
+                path: workflow.path,
+                state: workflow.state,
+                runs: runs.data.total_count,
+                successRate: successRate.toFixed(1),
+                lastRun: runs.data.workflow_runs[0]?.created_at || 'Never'
+              });
+            }
+            
+            // Create status report
+            let report = '# GitHub Actions Workflow Status Report\n\n';
+            report += `Generated on: ${new Date().toISOString()}\n\n`;
+            report += '## Workflow Summary\n\n';
+            report += '| Workflow | State | Total Runs | Success Rate | Last Run |\n';
+            report += '|----------|-------|------------|--------------|----------|\n';
+            
+            workflowStatus.forEach(workflow => {
+              const stateEmoji = workflow.state === 'active' ? '✅' : '⚠️';
+              const rateEmoji = workflow.successRate >= 90 ? '🟢' : workflow.successRate >= 70 ? '🟡' : '🔴';
+              report += `| ${workflow.name} | ${stateEmoji} ${workflow.state} | ${workflow.runs} | ${rateEmoji} ${workflow.successRate}% | ${workflow.lastRun} |\n`;
+            });
+            
+            // Check for workflows that haven't run recently
+            report += '\n## Workflows Requiring Attention\n\n';
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            const staleWorkflows = workflowStatus.filter(workflow => {
+              if (workflow.lastRun === 'Never') return true;
+              return new Date(workflow.lastRun) < oneWeekAgo;
+            });
+            
+            if (staleWorkflows.length > 0) {
+              report += 'The following workflows haven\'t run in over a week:\n\n';
+              staleWorkflows.forEach(workflow => {
+                report += `- **${workflow.name}** (${workflow.path})\n`;
+              });
+            } else {
+              report += 'All workflows have run recently! ✅\n';
+            }
+            
+            // Save report
+            const fs = require('fs');
+            fs.writeFileSync('workflow-status-report.md', report);
+            
+            // Output summary
+            console.log('\nWorkflow Status Summary:');
+            console.log(`Total workflows: ${workflowStatus.length}`);
+            console.log(`Active workflows: ${workflowStatus.filter(w => w.state === 'active').length}`);
+            console.log(`Workflows needing attention: ${staleWorkflows.length}`);
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-status-report
+          path: workflow-status-report.md
+          retention-days: 30
+
+      - name: Create issue if problems found
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('workflow-status-report.md', 'utf8');
+            
+            if (report.includes('Workflows Requiring Attention') && !report.includes('All workflows have run recently!')) {
+              // Check if there's already an open issue
+              const issues = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: 'workflow-status',
+                state: 'open'
+              });
+              
+              if (issues.data.length === 0) {
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: 'GitHub Actions Workflows Need Attention',
+                  body: report,
+                  labels: ['workflow-status', 'automated', 'maintenance']
+                });
+              }
+            }

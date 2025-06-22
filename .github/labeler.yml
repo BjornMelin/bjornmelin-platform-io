@@ -1,0 +1,93 @@
+# Add labels based on file paths
+frontend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/**'
+      - 'app/**'
+      - 'components/**'
+      - 'hooks/**'
+      - 'lib/**'
+      - 'styles/**'
+      - 'public/**'
+
+backend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'api/**'
+      - 'server/**'
+      - 'middleware/**'
+
+testing:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.test.*'
+      - '**/*.spec.*'
+      - 'tests/**'
+      - 'e2e/**'
+      - '__tests__/**'
+      - 'playwright/**'
+      - 'vitest.config.*'
+      - 'playwright.config.*'
+
+configuration:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*.config.*'
+      - '*.json'
+      - '*.yaml'
+      - '*.yml'
+      - '.env*'
+      - '.github/**'
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'yarn.lock'
+      - 'package-lock.json'
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE*'
+
+styling:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.css'
+      - '**/*.scss'
+      - '**/*.sass'
+      - 'tailwind.config.*'
+      - 'postcss.config.*'
+
+types:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.d.ts'
+      - 'types/**'
+      - 'tsconfig.*'
+
+security:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/workflows/security-*'
+      - '.github/workflows/codeql*'
+      - '.github/dependabot.yml'
+      - '**/auth/**'
+      - '**/security/**'
+
+ci:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+
+docker:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'Dockerfile*'
+      - 'docker-compose*'
+      - '.dockerignore'
