@@ -1,0 +1,106 @@
+name: Branch Protection Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
+
+permissions:
+  pull-requests: write
+  statuses: write
+  checks: write
+
+jobs:
+  check-pr:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR title follows conventional commits
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            didn't match the configured pattern. Please ensure that the subject
+            doesn't start with an uppercase character.
+
+      - name: Check branch is up to date
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          BASE_BRANCH="origin/$BASE_REF"
+          HEAD_BRANCH="origin/$HEAD_REF"
+          
+          git fetch origin "$BASE_REF"
+          git fetch origin "$HEAD_REF"
+          
+          BEHIND_COUNT=$(git rev-list --count HEAD..$BASE_BRANCH)
+          
+          if [ $BEHIND_COUNT -gt 0 ]; then
+            echo "⚠️ This branch is $BEHIND_COUNT commits behind $BASE_REF"
+            echo "Please merge or rebase the latest changes from $BASE_REF"
+            exit 1
+          else
+            echo "✅ Branch is up to date with $BASE_REF"
+          fi
+
+      - name: Check for merge conflicts
+        run: |
+          if git diff --name-only --diff-filter=U | grep -q .; then
+            echo "❌ Merge conflicts detected!"
+            echo "Please resolve all conflicts before merging."
+            exit 1
+          else
+            echo "✅ No merge conflicts detected"
+          fi
+
+      - name: Label PR size
+        uses: codelytv/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_label: 'size/XS'
+          xs_max_size: 10
+          s_label: 'size/S'
+          s_max_size: 100
+          m_label: 'size/M'
+          m_max_size: 500
+          l_label: 'size/L'
+          l_max_size: 1000
+          xl_label: 'size/XL'
+          fail_if_xl: false
+          files_to_ignore: |
+            'pnpm-lock.yaml'
+            '*.snap'
+            '*.svg'
+            '*.png'
+            '*.jpg'
+            '*.gif'
+            '*.md'
+
+      - name: Auto-assign PR
+        uses: kentaro-m/auto-assign-action@v2.0.0
+        with:
+          configuration-path: '.github/auto-assign.yml'

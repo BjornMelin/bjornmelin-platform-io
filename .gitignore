@@ -104,4 +104,8 @@ node_modules/
 !.taskmaster/tasks/           # Task definitions should be tracked
 !.taskmaster/templates/       # Templates should be tracked
 
+# Test artifacts
+playwright-report/
+test-results/
+
 # OS specific

@@ -1,0 +1,165 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip running tests'
+        required: false
+        default: false
+        type: boolean
+      reason:
+        description: 'Reason for manual deployment'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  deployments: write
+  id-token: write
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  validate:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log deployment reason
+        run: |
+          echo "🚀 Manual deployment initiated"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Initiated by: ${{ github.actor }}"
+          echo "Reason: ${{ inputs.reason }}"
+          echo "Skip tests: ${{ inputs.skip_tests }}"
+
+      - name: Validate environment
+        run: |
+          if [[ "${{ inputs.environment }}" == "production" && "${{ github.ref }}" != "refs/heads/main" ]]; then
+            echo "❌ Production deployments are only allowed from the main branch"
+            exit 1
+          fi
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: validate
+    if: inputs.skip_tests != true
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: |
+          pnpm lint
+          pnpm type-check
+          pnpm test
+
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    needs: [validate, test]
+    if: always() && needs.validate.result == 'success' && (needs.test.result == 'success' || inputs.skip_tests == true)
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.deployment-url.outputs.url }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application
+        run: pnpm build
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_ENVIRONMENT: ${{ inputs.environment }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Deploy to environment
+        run: |
+          echo "Deploying to ${{ inputs.environment }}..."
+          # Add actual deployment commands here
+          # Example: aws s3 sync out/ s3://${{ secrets.S3_BUCKET_NAME }}-${{ inputs.environment }}/
+          # Example: aws cloudfront create-invalidation --distribution-id ${{ secrets.CF_DISTRIBUTION_ID }}
+
+      - name: Set deployment URL
+        id: deployment-url
+        run: |
+          if [[ "${{ inputs.environment }}" == "production" ]]; then
+            echo "url=https://bjornmelin.io" >> $GITHUB_OUTPUT
+          else
+            echo "url=https://${{ inputs.environment }}.bjornmelin.io" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create deployment record
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: '${{ inputs.environment }}',
+              description: 'Manual deployment: ${{ inputs.reason }}',
+              auto_merge: false,
+              required_contexts: []
+            });
+
+      - name: Send deployment notification
+        if: always()
+        run: |
+          if [[ "${{ job.status }}" == "success" ]]; then
+            echo "✅ Deployment to ${{ inputs.environment }} completed successfully"
+          else
+            echo "❌ Deployment to ${{ inputs.environment }} failed"
+          fi

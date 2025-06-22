@@ -1,0 +1,58 @@
+name: Mark Stale Issues and PRs
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Daily at midnight UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    name: Mark Stale Items
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Mark stale issues and PRs
+        uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
+          # Issue settings
+          stale-issue-message: |
+            This issue has been automatically marked as stale because it has not had recent activity. 
+            It will be closed if no further activity occurs within 7 days. 
+            Thank you for your contributions.
+          close-issue-message: |
+            This issue has been automatically closed due to inactivity. 
+            If this is still relevant, please feel free to reopen it with additional context.
+          days-before-issue-stale: 30
+          days-before-issue-close: 7
+          stale-issue-label: 'stale'
+          exempt-issue-labels: 'pinned,security,bug,feature,documentation'
+          
+          # PR settings
+          stale-pr-message: |
+            This pull request has been automatically marked as stale because it has not had recent activity. 
+            It will be closed if no further activity occurs within 14 days. 
+            If you're still working on this, please add a comment or push new commits.
+          close-pr-message: |
+            This pull request has been automatically closed due to inactivity. 
+            If you'd like to continue working on this, please reopen the PR and rebase on the latest main branch.
+          days-before-pr-stale: 14
+          days-before-pr-close: 14
+          stale-pr-label: 'stale'
+          exempt-pr-labels: 'pinned,security,work-in-progress'
+          
+          # General settings
+          remove-stale-when-updated: true
+          delete-branch: false
+          operations-per-run: 100
+          ascending: true
+          
+          # Exempt drafts and specific authors
+          exempt-draft-pr: true
+          exempt-all-assignees: false
+          exempt-all-milestones: false

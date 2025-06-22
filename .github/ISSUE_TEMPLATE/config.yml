@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/bjornmelin/bjornmelin-platform-io/wiki
+    about: Please check the documentation first
+  - name: Discussions
+    url: https://github.com/bjornmelin/bjornmelin-platform-io/discussions
+    about: Ask questions and discuss ideas
+  - name: Security Issues
+    url: https://github.com/bjornmelin/bjornmelin-platform-io/security/policy
+    about: Please report security vulnerabilities privately

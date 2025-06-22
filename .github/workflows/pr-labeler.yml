@@ -1,0 +1,41 @@
+name: PR Labeler
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label:
+    name: Label PR
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Label based on PR paths
+        uses: actions/labeler@v5
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          configuration-path: .github/labeler.yml
+          sync-labels: true
+
+      - name: Label based on PR title
+        uses: bcoe/conventional-release-labels@v1
+        with:
+          type_labels: |
+            {
+              "feat": "feature",
+              "fix": "bug",
+              "docs": "documentation",
+              "style": "style",
+              "refactor": "refactor",
+              "perf": "performance",
+              "test": "test",
+              "build": "build",
+              "ci": "ci",
+              "chore": "chore",
+              "revert": "revert"
+            }
+          ignored_types: '[]'
