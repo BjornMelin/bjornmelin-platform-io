@@ -16,9 +16,14 @@ api/
 
 ### Email Service
 
-- Implementation: `src/lib/services/email.ts`
-- Uses AWS SES for email delivery
+- Implementation: `src/lib/services/resend-email.ts`
+- Uses Resend API for email delivery
 - Handles contact form submissions
+- Features:
+  - TypeScript-native SDK
+  - Built-in retry mechanisms
+  - Real-time analytics
+  - Webhook support
 
 ### Error Handling
 
@@ -42,13 +47,16 @@ contact.ts:
 - message length requirements
 ```
 
+## External Services
+
+### Resend Email API
+
+- Modern email delivery service
+- No infrastructure management required
+- Simple API key configuration
+- Automatic bounce and complaint handling
+
 ## AWS Integration
-
-### SES Configuration
-
-- Email sending capabilities
-- Managed through AWS CDK
-- Environment-specific settings
 
 ### Infrastructure
 

@@ -23,7 +23,3 @@ export interface MonitoringStackProps extends BaseStackProps {
   bucket: s3.IBucket;
   distribution: cloudfront.IDistribution;
 }
-
-export interface EmailStackProps extends BaseStackProps {
-  hostedZone: route53.IHostedZone;
-}

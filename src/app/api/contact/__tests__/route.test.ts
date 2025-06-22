@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { EmailService } from "@/lib/services/email";
 import { ResendEmailService } from "@/lib/services/resend-email";
 import { POST } from "../route";
 
@@ -10,12 +9,12 @@ const mockGetClientIp = vi.fn();
 const mockSanitizeInput = vi.fn((input: string) => input);
 
 // Mock services
-vi.mock("@/lib/services/email");
 vi.mock("@/lib/services/resend-email");
 vi.mock("@/env.mjs", () => ({
   env: {
-    USE_RESEND: false,
-    RESEND_API_KEY: undefined,
+    RESEND_API_KEY: "test-resend-key",
+    RESEND_FROM_EMAIL: "test@example.com",
+    CONTACT_EMAIL: "contact@example.com",
   },
 }));
 
@@ -26,9 +25,6 @@ vi.mock("@/lib/utils/security", () => ({
 }));
 
 describe("Contact API Route", () => {
-  let mockEmailService: {
-    sendContactFormEmail: ReturnType<typeof vi.fn>;
-  };
   let mockResendService: {
     sendContactFormEmail: ReturnType<typeof vi.fn>;
   };
@@ -44,15 +40,11 @@ describe("Contact API Route", () => {
       resetTime: Date.now() + 3600000,
     });
 
-    // Mock email services
-    mockEmailService = {
-      sendContactFormEmail: vi.fn().mockResolvedValue(undefined),
-    };
+    // Mock Resend email service
     mockResendService = {
       sendContactFormEmail: vi.fn().mockResolvedValue({ id: "test-id" }),
     };
 
-    (EmailService.getInstance as ReturnType<typeof vi.fn>).mockReturnValue(mockEmailService);
     (ResendEmailService.getInstance as ReturnType<typeof vi.fn>).mockReturnValue(mockResendService);
   });
 
@@ -79,7 +71,7 @@ describe("Contact API Route", () => {
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true });
-    expect(mockEmailService.sendContactFormEmail).toHaveBeenCalledWith(validData);
+    expect(mockResendService.sendContactFormEmail).toHaveBeenCalledWith(validData);
 
     // Check rate limit headers
     expect(response.headers.get("X-RateLimit-Limit")).toBe("5");
@@ -131,7 +123,7 @@ describe("Contact API Route", () => {
 
     expect(response.status).toBe(200);
     expect(data).toEqual({ success: true });
-    expect(mockEmailService.sendContactFormEmail).not.toHaveBeenCalled();
+    expect(mockResendService.sendContactFormEmail).not.toHaveBeenCalled();
   });
 
   it("sanitizes input data before validation", async () => {
@@ -154,7 +146,7 @@ describe("Contact API Route", () => {
     await POST(request);
 
     expect(mockSanitizeInput).toHaveBeenCalledTimes(3);
-    expect(mockEmailService.sendContactFormEmail).toHaveBeenCalledWith(
+    expect(mockResendService.sendContactFormEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         name: "Sanitized Name",
         email: "sanitized@email.com",
@@ -208,7 +200,7 @@ describe("Contact API Route", () => {
       message: "You must accept the privacy policy to submit this form",
     });
 
-    expect(mockEmailService.sendContactFormEmail).not.toHaveBeenCalled();
+    expect(mockResendService.sendContactFormEmail).not.toHaveBeenCalled();
   });
 
   it("handles missing required fields", async () => {
@@ -239,43 +231,11 @@ describe("Contact API Route", () => {
     expect(missingFields).toContain("message");
     expect(missingFields).toContain("gdprConsent");
 
-    expect(mockEmailService.sendContactFormEmail).not.toHaveBeenCalled();
-  });
-
-  it("uses Resend service when configured", async () => {
-    // Mock env to use Resend
-    const { env } = await import("@/env.mjs");
-    (env as { USE_RESEND: boolean; RESEND_API_KEY: string }).USE_RESEND = true;
-    (env as { USE_RESEND: boolean; RESEND_API_KEY: string }).RESEND_API_KEY = "test-key";
-
-    const validData = {
-      name: "John Doe",
-      email: "john@example.com",
-      message: "This is a test message",
-      honeypot: "",
-      gdprConsent: true,
-    };
-
-    const request = new NextRequest("http://localhost:3000/api/contact", {
-      method: "POST",
-      body: JSON.stringify(validData),
-    });
-
-    const response = await POST(request);
-    const data = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(data).toEqual({ success: true });
-    expect(mockResendService.sendContactFormEmail).toHaveBeenCalledWith(validData);
-    expect(mockEmailService.sendContactFormEmail).not.toHaveBeenCalled();
-
-    // Reset env
-    (env as { USE_RESEND: boolean; RESEND_API_KEY: string | undefined }).USE_RESEND = false;
-    (env as { USE_RESEND: boolean; RESEND_API_KEY: string | undefined }).RESEND_API_KEY = undefined;
+    expect(mockResendService.sendContactFormEmail).not.toHaveBeenCalled();
   });
 
   it("handles email service errors gracefully", async () => {
-    mockEmailService.sendContactFormEmail.mockRejectedValue(new Error("Failed to send email"));
+    mockResendService.sendContactFormEmail.mockRejectedValue(new Error("Failed to send email"));
 
     const validData = {
       name: "John Doe",

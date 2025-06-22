@@ -41,7 +41,12 @@ AWS_REGION=us-east-1
 ### Required Variables
 
 ```bash
-# AWS Configuration
+# Email Configuration
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=
+CONTACT_EMAIL=
+
+# AWS Configuration (for CDK deployment)
 AWS_REGION=
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
@@ -107,19 +112,14 @@ export const env = {
 
 ## Service Configuration
 
-### Email Service (SES)
+### Email Service (Resend)
 
 ```typescript
-// Development
+// Development & Production
 const emailConfig = {
-  region: "us-east-1",
-  sandbox: true,
-};
-
-// Production
-const emailConfig = {
-  region: "us-east-1",
-  sandbox: false,
+  apiKey: process.env.RESEND_API_KEY,
+  from: process.env.RESEND_FROM_EMAIL,
+  to: process.env.CONTACT_EMAIL,
 };
 ```
 

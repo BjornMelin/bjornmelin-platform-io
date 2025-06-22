@@ -3849,11 +3849,24 @@
             "testStrategy": "Automated tests for board state synchronization, calendar integration, and session replay accuracy. Use accessibility testing tools and conduct user acceptance testing."
           }
         ]
+      },
+      {
+        "id": 46,
+        "title": "Migrate Email Notifications from AWS SES to Resend API",
+        "description": "Complete migration from AWS SES to Resend API for all email notifications based on 88.5% weighted score analysis, including production enablement, code cleanup, and infrastructure removal.",
+        "details": "Execute comprehensive migration from AWS SES to Resend API based on analysis showing 88.5% weighted score for Resend. Begin by enabling Resend API in production environment with proper API key configuration and environment variable setup. Remove all AWS SES-related code including SDK imports, SES client initialization, and SES-specific email sending functions from the codebase. Update email service abstraction layer to use Resend's REST API with proper error handling and retry logic. Remove AWS SES infrastructure including IAM roles, policies, and SES domain verification from AWS CloudFormation/CDK templates. Update all email templates to use Resend's template format and ensure proper HTML/text rendering. Configure Resend webhooks for delivery tracking and bounce handling. Update environment configuration files to remove AWS SES credentials and add Resend API keys. Modify CI/CD pipeline to exclude AWS SES deployment steps and include Resend configuration validation. Update monitoring and alerting to track Resend API usage, delivery rates, and error responses. Ensure proper rate limiting compliance with Resend's API limits and implement exponential backoff for failed requests.",
+        "testStrategy": "Test complete email flow end-to-end by triggering contact form submissions and verifying emails are sent via Resend API instead of AWS SES. Verify email delivery by checking Resend dashboard for successful sends and monitoring webhook events for delivery confirmations. Test error handling by simulating API failures and verifying graceful degradation with proper user feedback. Validate email templates render correctly in multiple email clients including Gmail, Outlook, and Apple Mail. Test rate limiting behavior by sending multiple emails in quick succession and ensuring proper throttling. Verify monitoring alerts trigger correctly for failed email sends and API errors. Confirm AWS SES infrastructure has been completely removed by checking AWS console and CloudFormation stacks. Test email functionality across all environments (development, staging, production) to ensure consistent behavior. Validate webhook handling for bounce and complaint notifications from Resend. Perform load testing to ensure Resend API can handle expected email volume without performance degradation.",
+        "status": "done",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-06-21T07:33:28.032Z",
-      "updated": "2025-06-22T04:14:01.510Z",
+      "updated": "2025-06-22T17:11:02.316Z",
       "description": "Tasks for master context"
     }
   }

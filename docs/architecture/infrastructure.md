@@ -10,12 +10,9 @@ infrastructure/
 │   └── app.ts               # CDK app entry point
 ├── lib/
 │   ├── constants.ts         # Shared constants
-│   ├── functions/          # Lambda functions
-│   │   └── contact-form/   # Contact form handler
 │   ├── stacks/            # CDK stack definitions
 │   │   ├── deployment-stack.ts
 │   │   ├── dns-stack.ts
-│   │   ├── email-stack.ts
 │   │   ├── monitoring-stack.ts
 │   │   └── storage-stack.ts
 │   └── types/             # TypeScript types
@@ -30,11 +27,11 @@ infrastructure/
 - Handles domain name management
 - Configures DNS records
 
-### Email Stack
+### Email Service (Resend)
 
-- Configures AWS SES for email services
-- Sets up email sending capabilities
-- Manages email templates
+- Email delivery handled by Resend API
+- No AWS infrastructure required
+- Configuration via environment variables only
 
 ### Monitoring Stack
 
@@ -56,20 +53,7 @@ infrastructure/
 
 ## Infrastructure as Code
 
-All infrastructure is defined as code using AWS CDK TypeScript:
-
-```typescript
-// Example stack structure
-export class EmailStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-
-    // SES configuration
-    // Email templates
-    // IAM roles and policies
-  }
-}
-```
+All infrastructure is defined as code using AWS CDK TypeScript. Email functionality is handled by the Resend API service and doesn't require AWS infrastructure.
 
 ## Deployment Process
 
@@ -83,7 +67,7 @@ export class EmailStack extends Stack {
 cdk deploy --all
 
 # Deploy specific stack
-cdk deploy EmailStack
+cdk deploy StorageStack
 ```
 
 ## Environment Management

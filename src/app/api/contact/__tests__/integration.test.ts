@@ -2,15 +2,7 @@ import { NextRequest } from "next/server";
 import { describe, expect, it, vi } from "vitest";
 import { POST } from "../route";
 
-// Mock the email services
-vi.mock("@/lib/services/email", () => ({
-  EmailService: {
-    getInstance: vi.fn().mockReturnValue({
-      sendContactFormEmail: vi.fn().mockResolvedValue(undefined),
-    }),
-  },
-}));
-
+// Mock the email service
 vi.mock("@/lib/services/resend-email", () => ({
   ResendEmailService: {
     getInstance: vi.fn().mockReturnValue({
@@ -35,8 +27,9 @@ vi.mock("@/lib/utils/security", () => ({
 // Mock env
 vi.mock("@/env.mjs", () => ({
   env: {
-    USE_RESEND: false,
-    RESEND_API_KEY: undefined,
+    RESEND_API_KEY: "test-resend-key",
+    RESEND_FROM_EMAIL: "test@example.com",
+    CONTACT_EMAIL: "contact@example.com",
   },
 }));
 

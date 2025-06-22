@@ -94,8 +94,8 @@ graph TB
     end
 
     subgraph "API Layer"
-        LAMBDA[Contact Form Lambda]
-        SES[Amazon SES]
+        API[Next.js API Routes]
+        RESEND[Resend Email Service]
     end
 
     subgraph "DNS & SSL"
@@ -103,8 +103,8 @@ graph TB
         ACM[ACM Certificate]
     end
 
-    CF --> LAMBDA
-    LAMBDA --> SES
+    CF --> API
+    API --> RESEND
     R53 --> CF
     ACM --> CF
 ```
@@ -115,14 +115,14 @@ graph TB
 sequenceDiagram
     participant User
     participant Frontend
-    participant Lambda
-    participant SES
+    participant API
+    participant Resend
 
     User->>Frontend: Submit Contact Form
-    Frontend->>Lambda: POST /api/contact
-    Lambda->>SES: Send Email
-    SES-->>Lambda: Email Sent
-    Lambda-->>Frontend: Success Response
+    Frontend->>API: POST /api/contact
+    API->>Resend: Send Email
+    Resend-->>API: Email Sent
+    API-->>Frontend: Success Response
     Frontend-->>User: Show Success Message
 ```
 
@@ -184,7 +184,7 @@ bjornmelin-platform-io/
 - **Infrastructure**: AWS CDK for cloud resource management
 - **CI/CD**: GitHub Actions for automated deployments
 - **CDN**: CloudFront with Route 53 DNS
-- **API**: Serverless Lambda functions with SES integration
+- **API**: Next.js API routes with Resend email integration
 
 ## 🚀 Getting Started
 
@@ -210,7 +210,8 @@ pnpm install
 aws configure
 
 # Configure environment
-cp .env.production .env.local
+cp .env.example .env.local
+# Edit .env.local and add your Resend API key and email addresses
 ```
 
 ### Infrastructure Deployment
@@ -251,8 +252,6 @@ Infrastructure:
     - S3
     - Route 53
     - ACM
-    - Lambda
-    - SES
 
 Development:
   Tools:
@@ -272,10 +271,9 @@ Development:
 - **ACM**: SSL/TLS certificate management
 - **S3**: Static website hosting and assets
 
-### Compute & Messaging Services
+### Email Service
 
-- **Lambda**: Serverless contact form handling
-- **SES**: Email delivery for contact form
+- **Resend**: Modern email API for contact form delivery
 
 ### Development & Deployment
 

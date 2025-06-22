@@ -4,7 +4,6 @@ import * as cdk from "aws-cdk-lib";
 import { CONFIG, getStackName } from "../lib/constants";
 import { DeploymentStack } from "../lib/stacks/deployment-stack";
 import { DnsStack } from "../lib/stacks/dns-stack";
-import { EmailStack } from "../lib/stacks/email-stack";
 import { MonitoringStack } from "../lib/stacks/monitoring-stack";
 import { StorageStack } from "../lib/stacks/storage-stack";
 
@@ -65,15 +64,3 @@ const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "pro
 
 // Ensure monitoring stack depends on storage stack
 monitoringStack.addDependency(storageStack);
-
-// Email Stack
-const emailStack = new EmailStack(app, getStackName("email", "prod"), {
-  env,
-  domainName: CONFIG.prod.domainName,
-  environment: CONFIG.prod.environment,
-  hostedZone: dnsStack.hostedZone,
-  tags: CONFIG.tags,
-});
-
-// Ensure email stack depends on DNS stack
-emailStack.addDependency(dnsStack);

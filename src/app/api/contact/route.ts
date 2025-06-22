@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { env } from "@/env.mjs";
 import { contactFormSchema } from "@/lib/schemas/contact";
-import { EmailService } from "@/lib/services/email";
 import { ResendEmailService } from "@/lib/services/resend-email";
 import { APIError, handleAPIError } from "@/lib/utils/error-handler";
 import { checkRateLimit, getClientIp, sanitizeInput } from "@/lib/utils/security";
@@ -81,14 +79,9 @@ export async function POST(request: Request) {
 
     const validatedData = contactFormSchema.parse(sanitizedData);
 
-    // Use Resend if enabled, otherwise fall back to AWS SES
-    if (env.USE_RESEND === true && env.RESEND_API_KEY) {
-      const resendService = ResendEmailService.getInstance();
-      await resendService.sendContactFormEmail(validatedData);
-    } else {
-      const emailService = EmailService.getInstance();
-      await emailService.sendContactFormEmail(validatedData);
-    }
+    // Send email using Resend
+    const resendService = ResendEmailService.getInstance();
+    await resendService.sendContactFormEmail(validatedData);
 
     return NextResponse.json(
       { success: true },
