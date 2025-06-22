@@ -57,16 +57,27 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const results = require('./lighthouse-results.json');
-            const comment = `## 🚦 Lighthouse Performance Report
+            const fs = require('fs');
+            let comment = '';
             
-            | Metric | Score |
-            |--------|-------|
-            | Performance | ${results.performance}% |
-            | Accessibility | ${results.accessibility}% |
-            | Best Practices | ${results.bestPractices}% |
-            | SEO | ${results.seo}% |
-            `;
+            if (fs.existsSync('./lighthouse-results.json')) {
+              try {
+                const results = require('./lighthouse-results.json');
+                comment = `## 🚦 Lighthouse Performance Report
+                
+                | Metric | Score |
+                |--------|-------|
+                | Performance | ${results.performance}% |
+                | Accessibility | ${results.accessibility}% |
+                | Best Practices | ${results.bestPractices}% |
+                | SEO | ${results.seo}% |
+                `;
+              } catch (error) {
+                comment = `## 🚦 Lighthouse Performance Report\n\n❌ Error parsing Lighthouse results: ${error.message}`;
+              }
+            } else {
+              comment = `## 🚦 Lighthouse Performance Report\n\n⚠️ Lighthouse results not found. The performance check may have failed.`;
+            }
             
             github.rest.issues.createComment({
               issue_number: context.issue.number,
