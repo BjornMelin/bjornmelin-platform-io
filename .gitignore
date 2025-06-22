@@ -1,11 +1,12 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
-*node_modules/
-
+# Dependencies
+node_modules/
 /.pnp
 .pnp.js
+.pnpm-debug.log*
+
+# Yarn (legacy, keeping for compatibility)
 .yarn/install-state.gz
 .yarn/*
 !.yarn/patches
@@ -13,87 +14,107 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-/e2e-results/
-/playwright-report/
-/playwright/.cache/
-/test-results/
+# Testing
+coverage/
+test-results/
+e2e-results/
 
-# next.js build output
-/.next/
-/out/
+# Playwright
+playwright-report/
+playwright/.cache/
 
-# production
-*build/
-*dist/
+# Next.js
+.next/
+out/
 
-# misc
-.DS_Store
-*.pem
+# Production builds
+build/
+dist/
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
+# Environment files
 .env
-# .env.production
+.env*.local
+# .env.production (commented to allow production env template)
 
-# vercel
+# Vercel
 .vercel
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# VSCode file excluding the settings.json file
-.vscode/
-!settings.json
+# AWS CDK
+cdk.out/
+infrastructure/cdk.out/
+
+# Package managers
+.npm
+.pnpm-store/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+dev-debug.log
+
+# Cache directories
+.eslintcache
+.stylelintcache
+.parcel-cache/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.pem
 
 # Editor directories and files
-.idea
-.DS_Store
+.vscode/
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
 
-# cdk
-cdk.out
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional stylelint cache
-.stylelintcache
-
-# RepoMix
-repomix-output.txt
-
-# Prisma files
-/prisma/migrations
-/prisma/dev.db*
-/prisma/client
-
-# Added by Task Master AI
-# Logs
-logs
-*.log
-dev-debug.log
-# Dependency directories
-node_modules/
-# Environment variables
-.vscode
+# IDE files
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# RepoMix
+repomix-output.txt
+
+# Prisma
+prisma/migrations/
+prisma/dev.db*
+prisma/client/
+
+# AI Tools
 .roomodes
-.roo
-.cursor
+.roo/
+.cursor/
 
 # TaskMaster AI - Configuration and State Files
 .taskmaster/config.json       # Contains API keys and sensitive configuration
@@ -107,5 +128,3 @@ node_modules/
 !.taskmaster/docs/            # Documentation should be tracked
 !.taskmaster/tasks/           # Task definitions should be tracked
 !.taskmaster/templates/       # Templates should be tracked
-
-# OS specific
