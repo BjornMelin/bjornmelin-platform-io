@@ -572,7 +572,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
       ];
 
       xssAttempts.forEach(({ field, value }) => {
-        const data: any = {
+        const data: Record<string, unknown> = {
           name: "Test User",
           email: "test@example.com",
           message: "Valid message",
