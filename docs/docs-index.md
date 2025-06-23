@@ -67,6 +67,7 @@ This document serves as a comprehensive index for all documentation in the bjorn
 - [Environments](./deployment/environments.md) - Development, staging, and production
 - [Monitoring](./deployment/monitoring.md) - Application monitoring and alerting
 - [Deployment Secrets Setup](./deployment/deployment-secrets-setup.md) - Secrets management guide
+- [Resend Complete Setup Guide](./deployment/resend-complete-setup-guide.md) - Comprehensive Resend API setup with AWS
 
 ### 8. Testing Documentation
 - [Testing Overview](./development/testing.md) - Comprehensive testing guide
@@ -144,7 +145,8 @@ bjornmelin-platform-io/
 │   │   ├── ci-cd.md           # CI/CD pipeline
 │   │   ├── environments.md    # Environment setup
 │   │   ├── monitoring.md      # Monitoring guide
-│   │   └── deployment-secrets-setup.md # Secrets management
+│   │   ├── deployment-secrets-setup.md # Secrets management
+│   │   └── resend-complete-setup-guide.md # Resend API setup guide
 │   │
 │   ├── archive/               # Archived documentation
 │   │   └── codeartifact/      # Original CodeArtifact docs
