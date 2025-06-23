@@ -1383,9 +1383,7 @@ describe("Contact Form Schema Validation", () => {
         expect(csrfError?.message).toBe("CSRF token is required");
 
         // Check for honeypot error - it might be at the root level or field level
-        const honeypotError = errors.find((e) => 
-          e.path.length === 0 || e.path[0] === "honeypot"
-        );
+        const honeypotError = errors.find((e) => e.path.length === 0 || e.path[0] === "honeypot");
         if (honeypotError) {
           expect(honeypotError.message).toBe("Bot detection triggered");
         }
@@ -1480,7 +1478,7 @@ describe("Contact Form Schema Validation", () => {
       const largeValidData = {
         name: "A".repeat(50), // Maximum length
         email: "test@example.com",
-        message: "This is a very long message that contains lots of content. " + "A".repeat(950), // Maximum length with valid content
+        message: Array.from({length: 10}, (_, i) => `Sentence ${i + 1} of a long message.`).join(' '), // Valid length with varied content
         honeypot: "",
         gdprConsent: true,
         company: "A Corp " + "B".repeat(93), // Maximum length with valid format
@@ -1490,7 +1488,7 @@ describe("Contact Form Schema Validation", () => {
       const startTime = Date.now();
       const result = contactFormSchema.safeParse(largeValidData);
       const endTime = Date.now();
-
+      
       expect(result.success).toBe(true);
       expect(endTime - startTime).toBeLessThan(100); // Should complete in under 100ms
     });
