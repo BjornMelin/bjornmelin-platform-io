@@ -41,12 +41,11 @@ function evaluateCondition(
   context: FeatureFlagContext,
 ): boolean {
   const { attribute, operator, value } = condition;
-  const contextValue = attribute.split(".").reduce(
-    (obj: any, key: string) => {
-      return obj?.[key];
-    },
-    context as Record<string, any>,
-  );
+  const contextValue = attribute.split(".").reduce((obj: unknown, key: string) => {
+    return obj && typeof obj === "object" && key in obj
+      ? (obj as Record<string, unknown>)[key]
+      : undefined;
+  }, context as unknown);
 
   if (contextValue === undefined) {
     return false;
@@ -66,10 +65,10 @@ function evaluateCondition(
       return !String(contextValue).includes(String(value));
 
     case "in":
-      return Array.isArray(value) && value.includes(contextValue);
+      return Array.isArray(value) && value.includes(contextValue as string | number);
 
     case "notIn":
-      return Array.isArray(value) && !value.includes(contextValue);
+      return Array.isArray(value) && !value.includes(contextValue as string | number);
 
     case "greaterThan":
       return Number(contextValue) > Number(value);

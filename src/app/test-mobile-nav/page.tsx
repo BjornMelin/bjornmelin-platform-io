@@ -1,11 +1,17 @@
 "use client";
 
+import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
+
+interface EventItem {
+  id: string;
+  message: string;
+}
 
 export default function TestMobileNav() {
   const [windowWidth, setWindowWidth] = useState(0);
-  const [touchEvents, setTouchEvents] = useState<string[]>([]);
-  const [clickEvents, setClickEvents] = useState<string[]>([]);
+  const [touchEvents, setTouchEvents] = useState<EventItem[]>([]);
+  const [clickEvents, setClickEvents] = useState<EventItem[]>([]);
 
   useEffect(() => {
     const updateWidth = () => setWindowWidth(window.innerWidth);
@@ -15,11 +21,23 @@ export default function TestMobileNav() {
   }, []);
 
   const addTouchEvent = (event: string) => {
-    setTouchEvents((prev) => [...prev.slice(-4), `${new Date().toLocaleTimeString()}: ${event}`]);
+    setTouchEvents((prev) => [
+      ...prev.slice(-4),
+      {
+        id: nanoid(),
+        message: `${new Date().toLocaleTimeString()}: ${event}`,
+      },
+    ]);
   };
 
   const addClickEvent = (event: string) => {
-    setClickEvents((prev) => [...prev.slice(-4), `${new Date().toLocaleTimeString()}: ${event}`]);
+    setClickEvents((prev) => [
+      ...prev.slice(-4),
+      {
+        id: nanoid(),
+        message: `${new Date().toLocaleTimeString()}: ${event}`,
+      },
+    ]);
   };
 
   return (
@@ -56,8 +74,8 @@ export default function TestMobileNav() {
             <p className="text-muted-foreground">No touch events yet</p>
           ) : (
             <ul className="text-sm space-y-1">
-              {touchEvents.map((event, i) => (
-                <li key={i}>{event}</li>
+              {touchEvents.map((event) => (
+                <li key={event.id}>{event.message}</li>
               ))}
             </ul>
           )}
@@ -69,8 +87,8 @@ export default function TestMobileNav() {
             <p className="text-muted-foreground">No click events yet</p>
           ) : (
             <ul className="text-sm space-y-1">
-              {clickEvents.map((event, i) => (
-                <li key={i}>{event}</li>
+              {clickEvents.map((event) => (
+                <li key={event.id}>{event.message}</li>
               ))}
             </ul>
           )}

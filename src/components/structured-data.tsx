@@ -1,5 +1,5 @@
-import { useMemo } from "react";
 import { nanoid } from "nanoid";
+import { useMemo } from "react";
 
 export function generatePersonSchema() {
   return {

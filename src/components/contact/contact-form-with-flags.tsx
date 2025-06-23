@@ -43,6 +43,7 @@ export function ContactFormWithFlags() {
   const emailId = useId();
   const messageId = useId();
   const gdprId = useId();
+  const fileId = useId();
 
   const {
     register,

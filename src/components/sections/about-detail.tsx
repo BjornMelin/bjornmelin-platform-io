@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Award, Brain, Building2, Cloud, Code, GraduationCap, Sparkles } from "lucide-react";
+import { nanoid } from "nanoid";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -165,8 +166,8 @@ export function AboutDetail() {
                   </p>
                 </div>
                 <ul className="space-y-2 text-muted-foreground ml-4">
-                  {exp.achievements.map((achievement, index) => (
-                    <li key={index} className="flex">
+                  {exp.achievements.map((achievement) => (
+                    <li key={`${exp.title}-${nanoid()}`} className="flex">
                       <span className="mr-2">•</span>
                       <span className="flex-1">{achievement.text}</span>
                     </li>
@@ -174,8 +175,12 @@ export function AboutDetail() {
                 </ul>
                 {exp.skills.length > 0 && (
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {exp.skills.map((skill, index) => (
-                      <Badge key={index} variant="outline" className="bg-primary/5">
+                    {exp.skills.map((skill) => (
+                      <Badge
+                        key={`${exp.title}-${skill.name}-${nanoid()}`}
+                        variant="outline"
+                        className="bg-primary/5"
+                      >
                         {skill.name}
                       </Badge>
                     ))}
@@ -302,7 +307,7 @@ export function AboutDetail() {
                 <div className="mt-3">
                   {education.honors.map((honor, index) => (
                     <Badge
-                      key={index}
+                      key={`${education.school}-honor-${nanoid()}`}
                       variant="outline"
                       className={`bg-primary/5 mb-2 ${index > 0 ? "ml-2" : ""}`}
                     >
@@ -313,8 +318,8 @@ export function AboutDetail() {
                 <div className="mt-4">
                   <p className="text-sm font-medium mb-2">Activities and Societies:</p>
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 ml-2">
-                    {education.activities.map((activity, index) => (
-                      <li key={index}>{activity.name}</li>
+                    {education.activities.map((activity) => (
+                      <li key={`${education.school}-activity-${nanoid()}`}>{activity.name}</li>
                     ))}
                   </ul>
                 </div>
@@ -347,8 +352,8 @@ export function AboutDetail() {
               Hobbies & Interests
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {hobbies.map((hobby, index) => (
-                <div key={index} className="space-y-2">
+              {hobbies.map((hobby) => (
+                <div key={`hobby-${nanoid()}`} className="space-y-2">
                   <Badge variant="outline" className="bg-primary/5 text-base py-2 px-3">
                     {hobby.emoji} {hobby.name}
                   </Badge>

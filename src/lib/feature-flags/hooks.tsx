@@ -13,6 +13,7 @@ import type {
   FeatureFlagClient,
   FeatureFlagConfig,
   FeatureFlagEvaluation,
+  FeatureFlagEvent,
   FeatureFlagValue,
   FeatureFlagContext as FFContext,
   UseFeatureFlagReturn,
@@ -111,7 +112,7 @@ export function useFeatureFlag(
   // Subscribe to updates
   useEffect(() => {
     if ("addEventListener" in client && typeof client.addEventListener === "function") {
-      const unsubscribe = client.addEventListener((event: any) => {
+      const unsubscribe = client.addEventListener((event: FeatureFlagEvent) => {
         if (
           (event.type === "update" && event.key === key) ||
           (event.type === "refresh" && event.keys.includes(key))
