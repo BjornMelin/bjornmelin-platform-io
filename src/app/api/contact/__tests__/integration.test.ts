@@ -4,6 +4,14 @@ import { applyRateLimit, getClientIP } from "@/lib/security/rate-limiter";
 import { ResendEmailService } from "@/lib/services/resend-email";
 import { OPTIONS, POST } from "../route";
 
+// Type definitions for API responses
+interface ValidationErrorDetail {
+  field: string;
+  message: string;
+}
+
+// Removed unused interface - ValidationErrorDetail is sufficient
+
 // Mock modules
 vi.mock("@/lib/services/resend-email");
 vi.mock("@/lib/security/csrf");
@@ -374,7 +382,7 @@ describe("Contact API Integration Tests", () => {
         expect(response.status).toBe(400);
         expect(data.code).toBe("VALIDATION_ERROR");
         expect(data.details).toBeDefined();
-        const emailError = data.details.find((e: any) => e.field === "email");
+        const emailError = data.details?.find((e: ValidationErrorDetail) => e.field === "email");
         expect(emailError?.message).toBe("Disposable email addresses are not allowed");
       });
 
@@ -466,7 +474,9 @@ describe("Contact API Integration Tests", () => {
 
         expect(response.status).toBe(400);
         expect(data.code).toBe("VALIDATION_ERROR");
-        const timestampError = data.details.find((e: any) => e.field.includes("timestamp"));
+        const timestampError = data.details?.find((e: ValidationErrorDetail) =>
+          e.field.includes("timestamp"),
+        );
         expect(timestampError?.message).toBe("Request expired. Please refresh and try again.");
       });
     });
@@ -558,13 +568,19 @@ describe("Contact API Integration Tests", () => {
         ];
 
         for (const headerSet of headers) {
+          const baseHeaders: Record<string, string> = {
+            "Content-Type": "application/json",
+            "x-csrf-token": "valid-token",
+          };
+          // Only add defined header values
+          for (const [key, value] of Object.entries(headerSet)) {
+            if (value !== undefined) {
+              baseHeaders[key] = value;
+            }
+          }
           const request = new Request("http://localhost:3000/api/contact", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-csrf-token": "valid-token",
-              ...headerSet,
-            },
+            headers: baseHeaders,
             body: JSON.stringify({
               name: "Test User",
               email: "test@example.com",
@@ -604,7 +620,9 @@ describe("Contact API Integration Tests", () => {
 
         expect(response.status).toBe(400);
         expect(data.code).toBe("VALIDATION_ERROR");
-        const gdprError = data.details.find((e: any) => e.field === "gdprConsent");
+        const gdprError = data.details?.find(
+          (e: ValidationErrorDetail) => e.field === "gdprConsent",
+        );
         expect(gdprError?.message).toBe("You must accept the privacy policy to submit this form");
       });
     });

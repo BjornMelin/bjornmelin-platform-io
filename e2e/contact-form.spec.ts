@@ -255,7 +255,7 @@ test.describe("Contact Form Security - Complete Flow", () => {
           text: await res.text(),
         };
       } catch (error) {
-        return { error: error.message };
+        return { error: error instanceof Error ? error.message : String(error) };
       }
     });
 

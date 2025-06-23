@@ -1,3 +1,4 @@
+import type { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   checkCSRFToken,
@@ -238,14 +239,15 @@ describe("CSRF Protection", () => {
       });
 
       // We need to mock the headers function for the request
+
       vi.mocked(headers).mockImplementationOnce(
         () =>
-          ({
+          Promise.resolve({
             get: (key: string) => {
               if (key === "x-session-id") return TEST_SESSION_ID;
               return request.headers.get(key);
             },
-          }) as any,
+          }) as unknown as Promise<ReadonlyHeaders>,
       );
 
       const result = await checkCSRFToken(request);
@@ -266,14 +268,15 @@ describe("CSRF Protection", () => {
       });
 
       // We need to mock the headers function for the request
+
       vi.mocked(headers).mockImplementationOnce(
         () =>
-          ({
+          Promise.resolve({
             get: (key: string) => {
               if (key === "x-session-id") return TEST_SESSION_ID;
               return request.headers.get(key.toLowerCase());
             },
-          }) as any,
+          }) as unknown as Promise<ReadonlyHeaders>,
       );
 
       const result = await checkCSRFToken(request);
@@ -296,7 +299,7 @@ describe("CSRF Protection", () => {
     });
 
     it("should prevent token prediction attacks", () => {
-      const tokens = [];
+      const tokens: string[] = [];
       for (let i = 0; i < 10; i++) {
         tokens.push(generateCSRFToken());
       }
@@ -358,7 +361,9 @@ describe("CSRF Protection", () => {
       ];
 
       for (const token of malformedTokens) {
-        const result = await validateCSRFToken(token as any);
+        // Type-safe handling of malformed tokens
+        const tokenString = typeof token === "string" ? token : "";
+        const result = await validateCSRFToken(tokenString);
         expect(result).toBe(false);
       }
     });

@@ -135,7 +135,7 @@ test.describe("CSRF Protection", () => {
       } catch (error) {
         return {
           status: null,
-          error: error.message,
+          error: error instanceof Error ? error.message : String(error),
         };
       }
     });
