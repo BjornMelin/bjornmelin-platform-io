@@ -196,9 +196,9 @@ export function ContactFormWithFlags() {
         {/* File upload (when enabled) */}
         <FeatureFlag flag={FEATURE_FLAGS.CONTACT_FORM_FILE_UPLOAD}>
           <div className="space-y-2">
-            <Label htmlFor="file">Attachment (Optional)</Label>
+            <Label htmlFor={fileId}>Attachment (Optional)</Label>
             <Input
-              id="file"
+              id={fileId}
               type="file"
               accept=".pdf,.doc,.docx,.txt"
               disabled={!fileUploadEnabled}

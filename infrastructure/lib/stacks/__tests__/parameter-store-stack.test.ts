@@ -3,6 +3,48 @@ import { Template } from "aws-cdk-lib/assertions";
 import { describe, expect, it } from "vitest";
 import { ParameterStoreStack } from "../parameter-store-stack";
 
+// Type definitions for CDK Template resources
+interface TemplateFunction {
+  Properties?: {
+    Description?: string;
+    Runtime?: string;
+    Handler?: string;
+    Architectures?: string[];
+    MemorySize?: number;
+    Timeout?: number;
+    LoggingConfig?: {
+      LogFormat?: string;
+      ApplicationLogLevel?: string;
+    };
+    Environment?: {
+      Variables?: Record<string, string>;
+    };
+  };
+}
+
+interface PolicyStatement {
+  Action: string | string[];
+  Effect?: string;
+  Resource?: string | string[];
+}
+
+interface PolicyDocument {
+  Statement: PolicyStatement[];
+}
+
+interface TemplatePolicy {
+  Properties?: {
+    PolicyName?: string;
+    PolicyDocument?: PolicyDocument;
+  };
+}
+
+interface TemplateResource {
+  Properties?: {
+    Tags?: Record<string, string>;
+  };
+}
+
 describe("ParameterStoreStack", () => {
   const createStack = (props: Partial<Parameters<typeof ParameterStoreStack>[2]> = {}) => {
     const app = new App();
@@ -60,7 +102,7 @@ describe("ParameterStoreStack", () => {
 
     // Verify rotation Lambda function (filter out log retention Lambda)
     const functions = template.findResources("AWS::Lambda::Function");
-    const rotationFunction = Object.values(functions).find((fn: any) =>
+    const rotationFunction = Object.values(functions).find((fn: TemplateFunction) =>
       fn.Properties?.Description?.includes("rotate Resend API keys"),
     );
 
@@ -112,7 +154,7 @@ describe("ParameterStoreStack", () => {
     const policies = template.findResources("AWS::IAM::Policy");
 
     // Find the rotation lambda policy
-    const rotationPolicy = Object.values(policies).find((policy: any) =>
+    const rotationPolicy = Object.values(policies).find((policy: TemplatePolicy) =>
       policy.Properties?.PolicyName?.includes("RotationLambda"),
     );
 
@@ -122,38 +164,38 @@ describe("ParameterStoreStack", () => {
     const statements = rotationPolicy?.Properties?.PolicyDocument?.Statement || [];
 
     // Should have SSM permissions
-    const ssmStatement = statements.find((stmt: any) =>
+    const ssmStatement = statements.find((stmt: PolicyStatement) =>
       Array.isArray(stmt.Action)
         ? stmt.Action.some((action: string) => action.includes("ssm:"))
-        : stmt.Action?.includes?.("ssm:"),
+        : typeof stmt.Action === "string" && stmt.Action.includes("ssm:"),
     );
     expect(ssmStatement).toBeDefined();
 
     // Should have KMS permissions
-    const kmsStatement = statements.find((stmt: any) =>
+    const kmsStatement = statements.find((stmt: PolicyStatement) =>
       Array.isArray(stmt.Action)
         ? stmt.Action.some((action: string) => action.includes("kms:"))
-        : stmt.Action?.includes?.("kms:"),
+        : typeof stmt.Action === "string" && stmt.Action.includes("kms:"),
     );
     expect(kmsStatement).toBeDefined();
 
     // Should have SNS permissions (this might not exist if SNS policy is separate)
-    const snsStatement = statements.find((stmt: any) =>
+    const snsStatement = statements.find((stmt: PolicyStatement) =>
       Array.isArray(stmt.Action)
         ? stmt.Action.some((action: string) => action.includes("sns:"))
-        : stmt.Action?.includes?.("sns:"),
+        : typeof stmt.Action === "string" && stmt.Action.includes("sns:"),
     );
 
     // SNS permissions might be in a separate policy, so let's be more flexible
     if (!snsStatement) {
       // Check if SNS permissions exist in any policy
       const allPolicies = Object.values(policies);
-      const hasSnsPermissions = allPolicies.some((policy: any) => {
+      const hasSnsPermissions = allPolicies.some((policy: TemplatePolicy) => {
         const policyStatements = policy.Properties?.PolicyDocument?.Statement || [];
-        return policyStatements.some((stmt: any) =>
+        return policyStatements.some((stmt: PolicyStatement) =>
           Array.isArray(stmt.Action)
             ? stmt.Action.some((action: string) => action.includes("sns:"))
-            : stmt.Action?.includes?.("sns:"),
+            : typeof stmt.Action === "string" && stmt.Action.includes("sns:"),
         );
       });
       expect(hasSnsPermissions).toBe(true);
@@ -168,7 +210,7 @@ describe("ParameterStoreStack", () => {
 
     // Check that stack-level tags are applied
     const resources = template.findResources("AWS::SSM::Parameter");
-    const parameterResource = Object.values(resources)[0] as any;
+    const parameterResource = Object.values(resources)[0] as TemplateResource;
 
     expect(parameterResource).toBeDefined();
     expect(parameterResource.Properties?.Tags).toBeDefined();
@@ -208,7 +250,7 @@ describe("ParameterStoreStack", () => {
 
     // Find the rotation Lambda function (not the log retention Lambda)
     const functions = template.findResources("AWS::Lambda::Function");
-    const rotationFunction = Object.values(functions).find((fn: any) =>
+    const rotationFunction = Object.values(functions).find((fn: TemplateFunction) =>
       fn.Properties?.Description?.includes("rotate Resend API keys"),
     );
 

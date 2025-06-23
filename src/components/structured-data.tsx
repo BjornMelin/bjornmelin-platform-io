@@ -1,3 +1,6 @@
+import { useMemo } from "react";
+import { nanoid } from "nanoid";
+
 export function generatePersonSchema() {
   return {
     "@context": "https://schema.org",
@@ -57,25 +60,49 @@ interface StructuredDataProps {
 }
 
 export default function StructuredData({ type }: StructuredDataProps) {
-  const schemas = [];
+  // Generate stable, unique keys for each schema type
+  const schemaWithKeys = useMemo(() => {
+    const schemas = [];
 
-  if (type === "person" || type === "both") {
-    schemas.push(generatePersonSchema());
-  }
+    if (type === "person" || type === "both") {
+      schemas.push({
+        id: `person-schema-${nanoid()}`,
+        data: generatePersonSchema(),
+      });
+    }
 
-  if (type === "website" || type === "both") {
-    schemas.push(generateWebsiteSchema());
-  }
+    if (type === "website" || type === "both") {
+      schemas.push({
+        id: `website-schema-${nanoid()}`,
+        data: generateWebsiteSchema(),
+      });
+    }
+
+    return schemas;
+  }, [type]);
 
   return (
     <>
-      {schemas.map((schema, index) => (
-        <script
-          key={index}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
+      {schemaWithKeys.map(({ id, data }) => {
+        // Safely serialize JSON data to prevent XSS
+        const safeJsonString = JSON.stringify(data)
+          .replace(/</g, "\\u003c")
+          .replace(/>/g, "\\u003e")
+          .replace(/&/g, "\\u0026")
+          .replace(/'/g, "\\u0027")
+          .replace(/"/g, "\\u0022");
+
+        return (
+          <script
+            key={id}
+            type="application/ld+json"
+            // Using a safer approach than dangerouslySetInnerHTML
+            suppressHydrationWarning
+          >
+            {safeJsonString}
+          </script>
+        );
+      })}
     </>
   );
 }

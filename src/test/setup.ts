@@ -2,9 +2,33 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
+// Ensure test environment variables are set
+beforeAll(() => {
+  // Set required environment variables for tests
+  process.env.NODE_ENV = "test";
+  process.env.NEXT_PUBLIC_APP_URL = "http://localhost:3000";
+  process.env.RESEND_API_KEY = "test-api-key";
+  process.env.RESEND_FROM_EMAIL = "test@example.com";
+  process.env.CONTACT_EMAIL = "test-contact@example.com";
+  process.env.AWS_REGION = "us-east-1";
+  process.env.CSRF_SECRET = "test-csrf-secret-for-testing-only-must-be-32-chars";
+  process.env.SKIP_ENV_VALIDATION = "true";
+
+  // Validate that critical environment variables are set
+  const requiredEnvVars = ["NEXT_PUBLIC_APP_URL", "RESEND_FROM_EMAIL", "CONTACT_EMAIL"];
+
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      throw new Error(`Missing required environment variable: ${envVar}`);
+    }
+  }
+});
+
 // Cleanup after each test
 afterEach(() => {
   cleanup();
+  // Reset mocks after each test
+  vi.clearAllMocks();
 });
 
 // Mock window.matchMedia
@@ -52,6 +76,42 @@ if (!global.crypto) {
     },
   } as Crypto;
 }
+
+// Mock fetch for CSRF and other API calls in tests
+const originalFetch = global.fetch;
+global.fetch = vi.fn().mockImplementation((url: string | Request, options?: RequestInit) => {
+  const urlString = typeof url === "string" ? url : url.url;
+
+  // Handle CSRF token requests
+  if (urlString.includes("/api/csrf")) {
+    return Promise.resolve({
+      ok: true,
+      status: 200,
+      headers: new Headers({
+        "X-Session-ID": "test-session-id",
+        "Content-Type": "application/json",
+      }),
+      json: async () => ({
+        token: "test-csrf-token",
+        sessionId: "test-session-id",
+      }),
+    } as Response);
+  }
+
+  // For other requests, use the original fetch if available or return a mock
+  if (originalFetch) {
+    return originalFetch(url, options);
+  }
+
+  // Default mock response
+  return Promise.resolve({
+    ok: true,
+    status: 200,
+    headers: new Headers(),
+    json: async () => ({}),
+    text: async () => "",
+  } as Response);
+});
 
 // Suppress console errors during tests (optional)
 const originalError = console.error;

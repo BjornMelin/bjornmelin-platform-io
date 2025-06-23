@@ -157,8 +157,9 @@ export function SecureContactForm() {
         // Handle validation errors
         if (response.status === 400 && result.details) {
           result.details.forEach(({ field, message }) => {
-            const fieldPath = field.split(".") as any;
-            setError(fieldPath[0], { message });
+            const fieldPath = field.split(".");
+            const fieldName = fieldPath[0] as keyof EnhancedContactFormData;
+            setError(fieldName, { message });
           });
           throw new Error("Please check the form for errors");
         }

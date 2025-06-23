@@ -105,7 +105,7 @@ test.describe("CSRF Protection", () => {
     expect(response.status()).toBe(200);
   });
 
-  test("should protect against cross-origin requests", async ({ page, context }) => {
+  test("should protect against cross-origin requests", async ({ page: _page, context }) => {
     // Create a new page with a different origin
     const maliciousPage = await context.newPage();
 
