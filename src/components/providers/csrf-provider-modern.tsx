@@ -176,19 +176,18 @@ export function useCSRF(): CSRFContextType {
 export function useCSRFHeaders() {
   const { csrfToken, sessionId, isReady, refreshToken } = useCSRF();
 
-  const getHeaders = useCallback(() => {
-    if (!isReady || !csrfToken || !sessionId) {
-      return {
-        "Content-Type": "application/json",
-      };
-    }
-
-    return {
+  const getHeaders = useCallback((): Record<string, string> => {
+    const baseHeaders: Record<string, string> = {
       "Content-Type": "application/json",
-      "X-CSRF-Token": csrfToken,
-      "X-Session-ID": sessionId,
       "X-CSRF-Version": "2.0",
     };
+
+    if (isReady && csrfToken && sessionId) {
+      baseHeaders["X-CSRF-Token"] = csrfToken;
+      baseHeaders["X-Session-ID"] = sessionId;
+    }
+
+    return baseHeaders;
   }, [csrfToken, sessionId, isReady]);
 
   const getHeadersWithRetry = useCallback(async (): Promise<Record<string, string>> => {

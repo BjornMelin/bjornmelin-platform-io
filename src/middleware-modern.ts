@@ -102,7 +102,8 @@ async function handleTokenGeneration(request: NextRequest): Promise<NextResponse
  * Main middleware function
  */
 export async function middleware(request: NextRequest) {
-  const { pathname, method } = request.nextUrl;
+  const { pathname } = request.nextUrl;
+  const method = request.method;
 
   // Create response with security headers
   const response = NextResponse.next();

@@ -102,7 +102,8 @@ async function handleTokenGeneration(request: NextRequest): Promise<NextResponse
  * Main middleware function
  */
 export async function middleware(request: NextRequest) {
-  const { pathname, method } = request.nextUrl;
+  const { pathname } = request.nextUrl;
+  const method = request.method;
 
   // Create response with security headers
   const response = NextResponse.next();
@@ -201,6 +202,7 @@ export const config = {
      * - favicon.ico, robots.txt, sitemap.xml (metadata files)
      * - Static assets (images, fonts, etc.)
      */
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(jpg|jpeg|gif|png|svg|ico|webp|woff|woff2|ttf|eot|otf)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
+    "/api/:path*",
   ],
 };

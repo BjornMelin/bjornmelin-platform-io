@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
-import { generateCSRFToken } from "@/lib/security/csrf";
+import { generateCSRFToken } from "@/lib/security/csrf-modern";
 
 export const dynamic = "force-dynamic";
 

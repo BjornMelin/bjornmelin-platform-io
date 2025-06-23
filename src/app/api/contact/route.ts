@@ -120,12 +120,7 @@ export async function POST(request: Request) {
 
     // Send email using Resend
     const resendService = ResendEmailService.getInstance();
-    const result = await resendService.sendContactFormEmail({
-      name: validatedData.name,
-      email: validatedData.email,
-      message: validatedData.message,
-      gdprConsent: validatedData.gdprConsent,
-    });
+    const result = await resendService.sendContactFormEmail(validatedData);
 
     // Log successful submission (for monitoring)
     console.log("Contact form submission:", {

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { checkCSRFToken } from "@/lib/security/csrf";
+import { checkCSRFToken } from "@/lib/security/csrf-modern";
 import { applyRateLimit, getClientIP } from "@/lib/security/rate-limiter";
 import { ResendEmailService } from "@/lib/services/resend-email";
 import { OPTIONS, POST } from "../route";
