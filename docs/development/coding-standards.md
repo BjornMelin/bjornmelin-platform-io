@@ -86,11 +86,11 @@ export default async function ProjectsPage() {
 // Add 'use client' directive at the top
 "use client";
 
-// components/contact/contact-form.tsx
+// components/contact/contact-form-enhanced.tsx
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-export function ContactForm() {
+export function ContactFormEnhanced() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // Implementation
 }
@@ -160,13 +160,13 @@ export function Button({ variant = "default", className }: ButtonProps) {
 ```typescript
 // app/api/contact/route.ts
 import { NextResponse } from "next/server";
-import { contactSchema } from "@/lib/schemas/contact";
+import { enhancedContactFormSchema } from "@/lib/validation/contact-schema";
 import { z } from "zod";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const validatedData = contactSchema.parse(body);
+    const validatedData = enhancedContactFormSchema.parse(body);
     // Implementation
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -183,16 +183,18 @@ export async function POST(request: Request) {
 ### Schema Definition
 
 ```typescript
-// lib/schemas/contact.ts
+// lib/validation/contact-schema.ts
 import { z } from "zod";
 
-export const contactSchema = z.object({
-  name: z.string().min(2).max(100),
+export const enhancedContactFormSchema = z.object({
+  name: z.string().min(2).max(50),
   email: z.string().email(),
   message: z.string().min(10).max(1000),
+  csrfToken: z.string(),
+  gdprConsent: z.boolean(),
 });
 
-export type ContactFormData = z.infer<typeof contactSchema>;
+export type EnhancedContactFormData = z.infer<typeof enhancedContactFormSchema>;
 ```
 
 ## Error Handling

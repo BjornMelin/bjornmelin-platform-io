@@ -16,11 +16,6 @@ export function validateCSRFToken(token: string, sessionToken: string): boolean 
   }
 }
 
-// Verify CSRF token (kept for backwards compatibility)
-export function verifyCSRFToken(token: string, sessionToken: string): boolean {
-  return validateCSRFToken(token, sessionToken);
-}
-
 // Get CSRF token from headers (for server components)
 export async function getCSRFToken(): Promise<string | null> {
   const h = await headers();
@@ -49,15 +44,13 @@ export async function validateCSRFFromHeaders(request: Request): Promise<boolean
 // Rate limiting configuration
 export interface RateLimitConfig {
   windowMs: number; // Time window in milliseconds
-  maxRequests?: number; // Max requests per window (new field)
-  max?: number; // Max requests per window (legacy field)
+  maxRequests: number; // Max requests per window
 }
 
 // Default rate limit: 5 submissions per 15 minutes per IP
 export const defaultContactFormRateLimit: RateLimitConfig = {
   windowMs: 15 * 60 * 1000, // 15 minutes
   maxRequests: 5,
-  max: 5, // Legacy field
 };
 
 // Simple in-memory rate limiter (for demonstration - use Redis in production)
@@ -75,7 +68,7 @@ export function checkRateLimit(
 ): { allowed: boolean; remaining: number; resetTime: number } {
   const now = Date.now();
   const record = rateLimitStore.get(identifier);
-  const maxRequests = config.maxRequests ?? config.max ?? 5;
+  const maxRequests = config.maxRequests;
 
   if (!record || record.resetTime < now) {
     // New window or expired window

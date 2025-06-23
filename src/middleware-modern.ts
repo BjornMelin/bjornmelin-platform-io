@@ -32,7 +32,7 @@ const SECURITY_HEADERS = {
 const EXCLUDED_PATHS = [
   "/api/health",
   "/api/metrics",
-  "/api/csrf-modern", // CSRF token generation endpoint
+  "/api/csrf", // CSRF token generation endpoint
   "/_next/",
   "/favicon.ico",
   "/robots.txt",

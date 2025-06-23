@@ -14,7 +14,10 @@ import {
 } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useCSRFHeaders } from "@/components/providers/csrf-provider";
+import {
+  useCSRFHeaders,
+  useCSRFResponseHandler,
+} from "@/components/providers/csrf-provider-modern";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,8 +25,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { type ContactFormData, contactFormSchema } from "@/lib/schemas/contact";
 import { cn } from "@/lib/utils";
+import {
+  type EnhancedContactFormData,
+  enhancedContactFormSchema,
+} from "@/lib/validation/contact-schema";
 
 // Animation variants
 const formVariants = {
@@ -71,7 +77,8 @@ export function ContactFormEnhanced() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
-  const csrfHeaders = useCSRFHeaders();
+  const { getHeadersWithRetry, isReady: csrfReady } = useCSRFHeaders();
+  const { handleResponse } = useCSRFResponseHandler();
 
   // Generate unique IDs for form fields
   const nameId = useId();
@@ -88,8 +95,8 @@ export function ContactFormEnhanced() {
     watch,
     setFocus,
     setValue,
-  } = useForm<ContactFormData>({
-    resolver: zodResolver(contactFormSchema),
+  } = useForm<EnhancedContactFormData>({
+    resolver: zodResolver(enhancedContactFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
@@ -111,23 +118,38 @@ export function ContactFormEnhanced() {
 
   // Focus on first error field
   useEffect(() => {
-    const firstErrorField = Object.keys(errors)[0] as keyof ContactFormData;
+    const firstErrorField = Object.keys(errors)[0] as keyof EnhancedContactFormData;
     if (firstErrorField && firstErrorField !== "honeypot") {
       setFocus(firstErrorField);
     }
   }, [errors, setFocus]);
 
   // Handle form submission
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit = async (data: EnhancedContactFormData) => {
+    if (!csrfReady) {
+      toast({
+        title: "Please wait",
+        description: "Security validation is loading...",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Get fresh CSRF headers
+      const headers = await getHeadersWithRetry();
+
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: csrfHeaders,
+        headers,
         body: JSON.stringify(data),
         credentials: "same-origin",
       });
+
+      // Handle potential CSRF token refresh
+      handleResponse(response);
 
       const result = await response.json();
 
@@ -423,7 +445,7 @@ export function ContactFormEnhanced() {
           <Button
             type="submit"
             size="lg"
-            disabled={!hasAllRequiredFields || isSubmitting}
+            disabled={!hasAllRequiredFields || isSubmitting || !csrfReady}
             className="w-full relative overflow-hidden"
             aria-busy={isSubmitting}
           >

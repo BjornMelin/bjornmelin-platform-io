@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { checkCSRFToken } from "@/lib/security/csrf";
+import { checkCSRFToken } from "@/lib/security/csrf-modern";
 import {
   applyRateLimit,
   createRateLimitResponse,
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       return createRateLimitResponse();
     }
 
-    // Check CSRF token
+    // Check CSRF token with modern implementation
     const csrfCheck = await checkCSRFToken(request);
     if (!csrfCheck.valid) {
       return NextResponse.json(
@@ -32,7 +32,10 @@ export async function POST(request: Request) {
         },
         {
           status: 403,
-          headers: getRateLimitHeaders(rateLimitResult),
+          headers: {
+            ...getRateLimitHeaders(rateLimitResult),
+            ...(csrfCheck.newHeaders || {}),
+          },
         },
       );
     }
@@ -139,7 +142,10 @@ export async function POST(request: Request) {
         message: "Thank you for your message. We'll be in touch soon!",
       },
       {
-        headers: getRateLimitHeaders(rateLimitResult),
+        headers: {
+          ...getRateLimitHeaders(rateLimitResult),
+          ...(csrfCheck.newHeaders || {}),
+        },
       },
     );
   } catch (error) {
@@ -183,7 +189,7 @@ export async function OPTIONS() {
     status: 200,
     headers: {
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, X-CSRF-Token, X-Session-ID",
+      "Access-Control-Allow-Headers": "Content-Type, X-CSRF-Token, X-Session-ID, X-CSRF-Version",
     },
   });
 }

@@ -71,15 +71,14 @@ Located alongside source files with `.test.ts` or `.test.tsx` extensions:
 src/
 ├── components/
 │   └── contact/
-│       ├── contact-form.tsx
+│       ├── contact-form-enhanced.tsx
 │       └── __tests__/
-│           ├── contact-form.test.tsx
 │           └── contact-form-enhanced.test.tsx
 ├── lib/
-│   ├── schemas/
-│   │   ├── contact.ts
+│   ├── validation/
+│   │   ├── contact-schema.ts
 │   │   └── __tests__/
-│   │       └── contact.test.ts
+│   │       └── contact-schema.test.ts
 │   └── utils/
 │       ├── error-handler.ts
 │       └── __tests__/
@@ -145,12 +144,12 @@ Current coverage focuses on:
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ContactForm } from "../contact-form";
+import { ContactFormEnhanced } from "../contact-form-enhanced";
 
-describe("ContactForm", () => {
+describe("ContactFormEnhanced", () => {
   it("should validate email format", async () => {
     const user = userEvent.setup();
-    render(<ContactForm />);
+    render(<ContactFormEnhanced />);
     
     const emailInput = screen.getByLabelText(/email/i);
     await user.type(emailInput, "invalid-email");
@@ -222,7 +221,7 @@ See `.github/workflows/e2e-tests.yml` for configuration.
 
 ```bash
 # Run specific test file
-pnpm test src/components/contact/__tests__/contact-form.test.tsx
+pnpm test src/components/contact/__tests__/contact-form-enhanced.test.tsx
 
 # Run tests matching pattern
 pnpm test -- -t "validation"
