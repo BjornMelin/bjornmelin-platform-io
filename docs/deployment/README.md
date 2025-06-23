@@ -4,6 +4,8 @@
 
 This document provides an overview of deployment processes and practices for bjornmelin-platform-io.
 
+> **📋 Architecture Reference**: For comprehensive architecture diagrams and technical specifications, see the [Architecture Overview](../infrastructure/architecture-overview.md) and related documentation in the infrastructure directory.
+
 ## Deployment Architecture
 
 ### Infrastructure Components

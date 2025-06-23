@@ -4,6 +4,8 @@
 
 This guide provides a comprehensive plan for implementing secure email service integration for bjornmelin.io using AWS CDK v2, Systems Manager Parameter Store, and Route 53.
 
+> **📋 Architecture Reference**: For detailed email service architecture diagrams and technical specifications, see the [Email Service Architecture](./email-service-architecture.md) documentation.
+
 ## Architecture Overview
 
 The email infrastructure consists of:
@@ -307,6 +309,13 @@ If issues arise:
 
 ## References
 
+### Internal Architecture Documentation
+- [Email Service Architecture](./email-service-architecture.md) - Detailed email service flow and technical specifications
+- [Security Architecture](./security-architecture.md) - Defense-in-depth security layers and compliance
+- [DNS Configuration Guide](./dns-configuration-guide.md) - Complete DNS setup and email authentication
+- [Architecture Overview](./architecture-overview.md) - Comprehensive system architecture and design principles
+
+### AWS Documentation
 - [AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
 - [Parameter Store Best Practices](https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-store-best-practices.html)
 - [Route 53 DNS Record Types](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)

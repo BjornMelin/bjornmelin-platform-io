@@ -4,6 +4,14 @@ This directory contains all infrastructure-related documentation for the bjornme
 
 ## Quick Links
 
+### Architecture Documentation
+- [Architecture Overview](./architecture-overview.md) - Comprehensive system architecture and design principles
+- [Email Service Architecture](./email-service-architecture.md) - Detailed email service flow and technical specifications
+- [Security Architecture](./security-architecture.md) - Defense-in-depth security layers and compliance
+- [API Gateway + Lambda Architecture](./api-lambda-architecture.md) - Serverless API architecture and performance
+- [DNS Configuration Guide](./dns-configuration-guide.md) - Complete DNS setup and email authentication
+
+### Implementation Guides
 - [Security Implementation Guide](./security-implementation.md) - Technical guide for implementing security features
 - [Email Service Documentation](./email-service.md) - Comprehensive email service guide (Resend API)
 - [AWS Free Tier Optimization Guide](./aws-free-tier-optimization-2025.md) - Cost optimization strategies and free tier analysis
@@ -94,12 +102,17 @@ pnpm run deploy:all
 ```
 docs/infrastructure/
 ├── README.md                               # This file
-├── email-service.md                       # Email service documentation (Resend)
-├── aws-free-tier-optimization-2025.md     # Cost optimization analysis
-├── parameter-store-migration-guide.md     # Migration from Secrets Manager
-├── email-infrastructure-guide.md          # Email service implementation (AWS)
-├── security-audit-checklist.md           # Security review checklist
-└── application-integration-examples.md    # Integration code examples
+├── architecture-overview.md                # Comprehensive system architecture
+├── email-service-architecture.md           # Email service flow and technical specs
+├── security-architecture.md                # Defense-in-depth security layers
+├── api-lambda-architecture.md              # Serverless API architecture
+├── dns-configuration-guide.md              # DNS setup and email authentication
+├── email-service.md                        # Email service documentation (Resend)
+├── aws-free-tier-optimization-2025.md      # Cost optimization analysis
+├── parameter-store-migration-guide.md      # Migration from Secrets Manager
+├── email-infrastructure-guide.md           # Email service implementation (AWS)
+├── security-audit-checklist.md            # Security review checklist
+└── application-integration-examples.md     # Integration code examples
 ```
 
 ## Related Documentation

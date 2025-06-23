@@ -40,6 +40,15 @@ This document serves as a comprehensive index for all documentation in the bjorn
 
 ### 5. Infrastructure Documentation
 - [Infrastructure Overview](./infrastructure/README.md) - AWS infrastructure and services
+
+#### Architecture Documentation Suite
+- [Architecture Overview](./infrastructure/architecture-overview.md) - Comprehensive system architecture and design principles
+- [Email Service Architecture](./infrastructure/email-service-architecture.md) - Detailed email service flow and technical specifications
+- [Security Architecture](./infrastructure/security-architecture.md) - Defense-in-depth security layers and compliance
+- [API Gateway + Lambda Architecture](./infrastructure/api-lambda-architecture.md) - Serverless API architecture and performance
+- [DNS Configuration Guide](./infrastructure/dns-configuration-guide.md) - Complete DNS setup and email authentication
+
+#### Implementation Guides
 - [Security Implementation Guide](./infrastructure/security-implementation.md) - Security features technical guide
 - [AWS Free Tier Optimization](./infrastructure/aws-free-tier-optimization-2025.md) - Cost optimization guide
 - [Email Service Documentation](./infrastructure/email-service.md) - Comprehensive email service guide
@@ -118,6 +127,11 @@ bjornmelin-platform-io/
 │   │
 │   ├── infrastructure/        # Infrastructure docs
 │   │   ├── README.md          # Infrastructure overview
+│   │   ├── architecture-overview.md # Comprehensive system architecture
+│   │   ├── email-service-architecture.md # Email service flow and specs
+│   │   ├── security-architecture.md # Defense-in-depth security layers
+│   │   ├── api-lambda-architecture.md # Serverless API architecture
+│   │   ├── dns-configuration-guide.md # DNS setup and email authentication
 │   │   ├── security-implementation.md # Security technical guide
 │   │   ├── aws-free-tier-optimization-2025.md # Cost optimization
 │   │   ├── email-service.md   # Email service documentation
@@ -177,10 +191,14 @@ bjornmelin-platform-io/
 4. 🧪 [Testing Guide](./development/testing.md) - Test requirements
 
 ### For Architects:
-1. 🏗️ [Architecture Overview](./architecture/README.md) - System design
-2. ☁️ [AWS Services](./architecture/aws-services.md) - Cloud services
-3. 🚀 [Infrastructure](./architecture/infrastructure.md) - CDK setup
-4. 📡 [API Documentation](./api/README.md) - API design
+1. 🏗️ [Architecture Overview](./infrastructure/architecture-overview.md) - Comprehensive system architecture
+2. 📧 [Email Service Architecture](./infrastructure/email-service-architecture.md) - Email service technical specifications
+3. 🔒 [Security Architecture](./infrastructure/security-architecture.md) - Defense-in-depth security layers
+4. ⚡ [API + Lambda Architecture](./infrastructure/api-lambda-architecture.md) - Serverless API architecture
+5. 🌐 [DNS Configuration Guide](./infrastructure/dns-configuration-guide.md) - DNS setup and email authentication
+6. ☁️ [AWS Services](./architecture/aws-services.md) - Cloud services
+7. 🚀 [Infrastructure](./architecture/infrastructure.md) - CDK setup
+8. 📡 [API Documentation](./api/README.md) - API design
 
 ## 📖 Documentation Standards
 

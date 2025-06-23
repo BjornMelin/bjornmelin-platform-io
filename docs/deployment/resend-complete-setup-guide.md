@@ -2,6 +2,8 @@
 
 This comprehensive guide covers all aspects of setting up Resend API for email notifications in the bjornmelin.io portfolio application, including local development, AWS infrastructure, DNS configuration, and production deployment with security best practices.
 
+> **📋 Architecture Reference**: For detailed system architecture diagrams and technical specifications, see the [Email Service Architecture](../infrastructure/email-service-architecture.md), [Security Architecture](../infrastructure/security-architecture.md), and [DNS Configuration Guide](../infrastructure/dns-configuration-guide.md) documentation.
+
 > **📋 Documentation Updated**: All AWS CLI commands have been validated for v2 compatibility and SSO authentication. Key fixes include: proper date command escaping, `--key-id` parameter usage, and TXT record configuration for DKIM authentication.
 
 ## Table of Contents

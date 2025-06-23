@@ -1,5 +1,7 @@
 # Application Integration Examples
 
+> **📋 Architecture Reference**: For detailed implementation patterns and security considerations, see the [Email Service Architecture](./email-service-architecture.md) and [API Gateway + Lambda Architecture](./api-lambda-architecture.md) documentation.
+
 ## Lambda Function Integration
 
 ### Basic Email Service Integration
