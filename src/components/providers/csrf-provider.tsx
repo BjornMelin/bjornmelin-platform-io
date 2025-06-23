@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 interface CSRFContextType {
   csrfToken: string | null;
@@ -18,7 +18,7 @@ export function CSRFProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchCSRFToken = async () => {
+  const fetchCSRFToken = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -51,7 +51,7 @@ export function CSRFProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchCSRFToken();

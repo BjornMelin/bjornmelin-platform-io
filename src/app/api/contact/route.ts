@@ -111,6 +111,9 @@ export async function POST(request: Request) {
     }
 
     const validatedData = validationResult.data;
+    if (!validatedData) {
+      return NextResponse.json({ error: "Invalid data after validation" }, { status: 500 });
+    }
 
     // Send email using Resend
     const resendService = ResendEmailService.getInstance();
