@@ -64,8 +64,6 @@ This document serves as a comprehensive index for all documentation in the bjorn
 
 ### 8. Additional Documentation
 - [Feature Flags Implementation](./feature-flags-implementation-plan.md) - Feature flag system plan
-- [Testing Documentation Fixes](./testing-documentation-fixes.md) - Phase 1.2 testing documentation updates
-- [Phase 2.5 Summary](./development/phase-2.5-summary.md) - File naming standardization summary
 
 ### 9. Archived Documentation
 - [Email Migration History](./archive/email/) - Historical email service migration documents
@@ -116,8 +114,7 @@ bjornmelin-platform-io/
 │   │   ├── semantic-release.md # Release automation
 │   │   ├── naming-conventions.md # Naming standards
 │   │   ├── git-workflow-guide.md # Git commands
-│   │   ├── workflow-diagrams.md # Visual guides
-│   │   └── phase-2.5-summary.md # Naming standardization
+│   │   └── workflow-diagrams.md # Visual guides
 │   │
 │   ├── deployment/           # Deployment docs
 │   │   ├── README.md        # Deployment overview
@@ -137,7 +134,6 @@ bjornmelin-platform-io/
 │   │       └── README-codeartifact.md
 │   │
 │   ├── feature-flags-implementation-plan.md # Feature flags
-│   ├── testing-documentation-fixes.md # Testing doc updates
 │   └── docs-index.md        # This file
 │
 ├── CONTRIBUTING.md          # Contribution guidelines
