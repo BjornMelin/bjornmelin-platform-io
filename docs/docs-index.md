@@ -13,21 +13,34 @@ This document serves as a comprehensive index for all documentation in the bjorn
 
 ## 📚 Documentation Structure
 
-### 1. API Documentation
+### 1. Architecture Decision Records (ADRs)
+- [ADRs Overview](./adrs/README.md) - Architecture decisions and rationale
+- [ADR Index](./adrs/index.md) - Quick reference to all ADRs
+- [ADR-001: Keep Resend for Email](./adrs/ADR-001-keep-resend-for-email.md) - Email service decision
+- [ADR-002: Security Implementation](./adrs/ADR-002-security-implementation-approach.md) - Security approach
+- [ADR Template](./adrs/adr-template.md) - Template for new ADRs
+
+### 2. Implementation Plans
+- [Implementation Overview](./implementation/README.md) - Active implementation plans
+- [Contact Form Security Enhancement](./implementation/contact-form-security-enhancement.md) - Current security implementation
+
+### 3. API Documentation
 - [API Overview](./api/README.md) - Main API documentation
 - [Contact API](./api/contact.md) - Contact form endpoint documentation  
 - [Schemas](./api/schemas.md) - API schemas and validation
 - [Utilities](./api/utilities.md) - Utility services and error handling
 
-### 2. Architecture Documentation
+### 4. Architecture Documentation
 - [Architecture Overview](./architecture/README.md) - System architecture overview
 - [Frontend Architecture](./architecture/frontend.md) - Next.js and React architecture
 - [Backend Architecture](./architecture/backend.md) - API and serverless functions
 - [Infrastructure](./architecture/infrastructure.md) - AWS CDK and cloud resources
 - [AWS Services](./architecture/aws-services.md) - AWS services integration
+- [Modernization Research](./architecture/modernization-research.md) - Technology research findings
 
-### 3. Infrastructure Documentation
+### 5. Infrastructure Documentation
 - [Infrastructure Overview](./infrastructure/README.md) - AWS infrastructure and services
+- [Security Implementation Guide](./infrastructure/security-implementation.md) - Security features technical guide
 - [AWS Free Tier Optimization](./infrastructure/aws-free-tier-optimization-2025.md) - Cost optimization guide
 - [Email Service Documentation](./infrastructure/email-service.md) - Comprehensive email service guide
 - [Email Infrastructure Guide](./infrastructure/email-infrastructure-guide.md) - Email service implementation
@@ -35,7 +48,7 @@ This document serves as a comprehensive index for all documentation in the bjorn
 - [Application Integration Examples](./infrastructure/application-integration-examples.md) - Code integration examples
 - [Parameter Store Migration Guide](./infrastructure/parameter-store-migration-guide.md) - Cost-effective secrets management
 
-### 4. Development Documentation  
+### 6. Development Documentation  
 - [Development Overview](./development/README.md) - Development process and standards
 - [Getting Started](./development/getting-started.md) - Setup and initial development
 - [Onboarding Checklist](./development/onboarding-checklist.md) - New team member onboarding
@@ -48,24 +61,24 @@ This document serves as a comprehensive index for all documentation in the bjorn
 - [Naming Conventions](./development/naming-conventions.md) - File and code naming standards
 - [Semantic Release](./development/semantic-release.md) - Automated versioning and releases
 
-### 5. Deployment Documentation
+### 7. Deployment Documentation
 - [Deployment Overview](./deployment/README.md) - Deployment processes
 - [CI/CD Pipeline](./deployment/ci-cd.md) - GitHub Actions and automation
 - [Environments](./deployment/environments.md) - Development, staging, and production
 - [Monitoring](./deployment/monitoring.md) - Application monitoring and alerting
 - [Deployment Secrets Setup](./deployment/deployment-secrets-setup.md) - Secrets management guide
 
-### 6. Testing Documentation
+### 8. Testing Documentation
 - [Testing Overview](./development/testing.md) - Comprehensive testing guide
 - [Development Testing](./development/testing.md) - Development testing practices
 
-### 7. Optional Features Documentation
+### 9. Optional Features Documentation
 - [AWS CodeArtifact Integration](./infrastructure/codeartifact-backup.md) - Enterprise-grade npm package backup solution (not deployed)
 
-### 8. Additional Documentation
+### 10. Additional Documentation
 - [Feature Flags Implementation](./feature-flags-implementation-plan.md) - Feature flag system plan
 
-### 9. Archived Documentation
+### 11. Archived Documentation
 - [CodeArtifact Original Docs](./archive/codeartifact/) - Original CodeArtifact documentation
   - Integration plan
   - Implementation summary
@@ -76,60 +89,74 @@ This document serves as a comprehensive index for all documentation in the bjorn
 ```
 bjornmelin-platform-io/
 ├── docs/
-│   ├── api/                    # API documentation
+│   ├── adrs/                  # Architecture Decision Records
+│   │   ├── README.md          # ADR overview and process
+│   │   ├── index.md           # Quick reference to all ADRs
+│   │   ├── adr-template.md    # Template for new ADRs
+│   │   ├── ADR-001-keep-resend-for-email.md # Email service decision
+│   │   ├── ADR-002-security-implementation-approach.md # Security approach
+│   │   └── ADR-TEMPLATE-aws-migration.md # Template for future AWS migration
+│   │
+│   ├── implementation/        # Implementation plans and guides
+│   │   ├── README.md          # Implementation overview
+│   │   └── contact-form-security-enhancement.md # Security implementation
+│   │
+│   ├── api/                   # API documentation
 │   │   ├── README.md          # API overview
 │   │   ├── contact.md         # Contact endpoints
 │   │   ├── schemas.md         # Data schemas
 │   │   └── utilities.md       # Utility services
 │   │
 │   ├── architecture/          # System architecture
-│   │   ├── README.md         # Architecture overview
-│   │   ├── frontend.md       # Frontend design
-│   │   ├── backend.md        # Backend design
-│   │   ├── infrastructure.md # AWS infrastructure
-│   │   └── aws-services.md   # AWS services used
+│   │   ├── README.md          # Architecture overview
+│   │   ├── frontend.md        # Frontend design
+│   │   ├── backend.md         # Backend design
+│   │   ├── infrastructure.md  # AWS infrastructure
+│   │   ├── aws-services.md    # AWS services used
+│   │   └── modernization-research.md # Technology research
 │   │
-│   ├── infrastructure/       # Infrastructure docs
-│   │   ├── README.md         # Infrastructure overview
+│   ├── infrastructure/        # Infrastructure docs
+│   │   ├── README.md          # Infrastructure overview
+│   │   ├── security-implementation.md # Security technical guide
 │   │   ├── aws-free-tier-optimization-2025.md # Cost optimization
-│   │   ├── email-service.md  # Email service documentation
+│   │   ├── email-service.md   # Email service documentation
 │   │   ├── email-infrastructure-guide.md # Email setup
 │   │   ├── security-audit-checklist.md # Security review
 │   │   ├── application-integration-examples.md # Code examples
 │   │   ├── parameter-store-migration-guide.md # Secrets management
 │   │   └── codeartifact-backup.md # Optional CodeArtifact feature
 │   │
-│   ├── development/          # Development guides
-│   │   ├── README.md         # Development overview
+│   ├── development/           # Development guides
+│   │   ├── README.md          # Development overview
 │   │   ├── getting-started.md # Setup guide
 │   │   ├── onboarding-checklist.md # New member guide
 │   │   ├── branching-strategy.md # Git workflow
 │   │   ├── conventional-commits.md # Commit standards
 │   │   ├── coding-standards.md # Code style
-│   │   ├── testing.md        # Testing guide
+│   │   ├── testing.md         # Testing guide
 │   │   ├── semantic-release.md # Release automation
 │   │   ├── naming-conventions.md # Naming standards
 │   │   ├── git-workflow-guide.md # Git commands
 │   │   └── workflow-diagrams.md # Visual guides
 │   │
-│   ├── deployment/           # Deployment docs
-│   │   ├── README.md        # Deployment overview
-│   │   ├── ci-cd.md         # CI/CD pipeline
-│   │   ├── environments.md  # Environment setup
-│   │   ├── monitoring.md    # Monitoring guide
+│   ├── deployment/            # Deployment docs
+│   │   ├── README.md          # Deployment overview
+│   │   ├── ci-cd.md           # CI/CD pipeline
+│   │   ├── environments.md    # Environment setup
+│   │   ├── monitoring.md      # Monitoring guide
 │   │   └── deployment-secrets-setup.md # Secrets management
 │   │
-│   ├── archive/             # Archived documentation
-│   │   └── codeartifact/   # Original CodeArtifact docs
+│   ├── archive/               # Archived documentation
+│   │   └── codeartifact/      # Original CodeArtifact docs
 │   │       ├── codeartifact-integration.md
 │   │       ├── codeartifact-implementation-summary.md
 │   │       └── README-codeartifact.md
 │   │
 │   ├── feature-flags-implementation-plan.md # Feature flags
-│   └── docs-index.md        # This file
+│   └── docs-index.md          # This file
 │
-├── CONTRIBUTING.md          # Contribution guidelines
-└── README.md               # Project overview
+├── CONTRIBUTING.md            # Contribution guidelines
+└── README.md                  # Project overview
 ```
 
 ## 🎯 Getting Started Path

@@ -4,6 +4,7 @@ This directory contains all infrastructure-related documentation for the bjornme
 
 ## Quick Links
 
+- [Security Implementation Guide](./security-implementation.md) - Technical guide for implementing security features
 - [Email Service Documentation](./email-service.md) - Comprehensive email service guide (Resend API)
 - [AWS Free Tier Optimization Guide](./aws-free-tier-optimization-2025.md) - Cost optimization strategies and free tier analysis
 - [Parameter Store Migration Guide](./parameter-store-migration-guide.md) - Step-by-step migration from Secrets Manager
@@ -13,7 +14,16 @@ This directory contains all infrastructure-related documentation for the bjornme
 
 ## Overview
 
-The bjornmelin.io infrastructure is built on AWS using Infrastructure as Code (IaC) with AWS CDK v2. This documentation covers all aspects of the infrastructure including architecture, security, cost optimization, and implementation guides.
+The bjornmelin.io infrastructure follows a pragmatic approach, leveraging Vercel for hosting and Resend for email services. While AWS CDK infrastructure is available, the current implementation prioritizes simplicity and cost-effectiveness for a portfolio website with modest traffic.
+
+### Current Architecture (Simplified)
+- **Hosting**: Vercel (automatic scaling, global CDN)
+- **Email Service**: Resend API (3,000 emails/month free tier)
+- **Security**: CSRF protection, rate limiting, input validation
+- **Monitoring**: Vercel logs and Resend dashboard
+
+### Available Infrastructure (Not Currently Deployed)
+The repository includes AWS CDK v2 infrastructure code that can be deployed if scaling requirements change. This includes Route 53, CloudFront, S3, Lambda, and other AWS services.
 
 ## Infrastructure Components
 

@@ -70,7 +70,7 @@ describe("Contact API Route", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data).toEqual({ success: true });
+    expect(data).toEqual({ success: true, emailId: "test-id" });
     expect(mockResendService.sendContactFormEmail).toHaveBeenCalledWith(validData);
 
     // Check rate limit headers
@@ -254,8 +254,8 @@ describe("Contact API Route", () => {
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data.error).toContain("Failed to send message");
-    expect(data.code).toBe("EMAIL_SEND_ERROR");
+    expect(data.error).toBe("Failed to send email");
+    expect(data.code).toBe("INTERNAL_SERVER_ERROR");
   });
 
   it("handles JSON parsing errors", async () => {

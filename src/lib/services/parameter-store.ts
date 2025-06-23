@@ -270,7 +270,7 @@ export class ParameterStoreService {
       message,
       environment: this.environment,
       region: this.region,
-      ...(data && { data }),
+      ...(data !== undefined ? { data } : {}),
     };
 
     switch (level) {
@@ -293,7 +293,15 @@ export class ParameterStoreService {
     healthy: boolean;
     region: string;
     environment: string;
-    cacheStats: ReturnType<typeof this.getCacheStats>;
+    cacheStats: {
+      size: number;
+      entries: Array<{
+        parameterName: string;
+        fetchedAt: string;
+        expiresAt: string;
+        isExpired: boolean;
+      }>;
+    };
     lastError?: string;
   }> {
     try {

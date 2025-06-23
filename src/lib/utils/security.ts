@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { headers } from "next/headers";
 
 // Generate CSRF token
 export function generateCSRFToken(): string {
@@ -18,6 +19,31 @@ export function validateCSRFToken(token: string, sessionToken: string): boolean 
 // Verify CSRF token (kept for backwards compatibility)
 export function verifyCSRFToken(token: string, sessionToken: string): boolean {
   return validateCSRFToken(token, sessionToken);
+}
+
+// Get CSRF token from headers (for server components)
+export async function getCSRFToken(): Promise<string | null> {
+  const h = await headers();
+  return h.get("X-CSRF-Token");
+}
+
+// Validate CSRF token from request
+export async function validateCSRFFromHeaders(request: Request): Promise<boolean> {
+  const token = request.headers.get("X-CSRF-Token");
+  const cookieHeader = request.headers.get("Cookie");
+
+  if (!token || !cookieHeader) return false;
+
+  // Extract CSRF cookie value
+  const csrfCookie = cookieHeader
+    .split(";")
+    .find((c) => c.trim().startsWith("_csrf="))
+    ?.trim()
+    .split("=")[1];
+
+  if (!csrfCookie) return false;
+
+  return validateCSRFToken(token, csrfCookie);
 }
 
 // Rate limiting configuration

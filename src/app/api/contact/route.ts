@@ -1,39 +1,48 @@
 import { NextResponse } from "next/server";
 import { contactFormSchema } from "@/lib/schemas/contact";
+import { checkCSRFToken } from "@/lib/security/csrf";
+import {
+  applyRateLimit,
+  createRateLimitResponse,
+  getRateLimitHeaders,
+} from "@/lib/security/rate-limiter";
 import {
   ResendEmailError,
   ResendEmailService,
   ResendRateLimitError,
 } from "@/lib/services/resend-email";
 import { APIError, handleAPIError } from "@/lib/utils/error-handler";
-import { checkRateLimit, getClientIp, sanitizeInput } from "@/lib/utils/security";
+import { sanitizeInput } from "@/lib/utils/security";
+import {
+  enhancedContactFormSchema,
+  validateContactFormServer,
+} from "@/lib/validation/contact-schema";
 
 export async function POST(request: Request) {
   try {
-    // Get client IP for rate limiting
-    const clientIp = getClientIp(request);
+    // Apply rate limiting first
+    const rateLimitResult = applyRateLimit(request);
 
-    // Check rate limit
-    const { allowed, remaining, resetTime } = checkRateLimit(clientIp);
+    if (!rateLimitResult.allowed) {
+      return createRateLimitResponse();
+    }
 
-    if (!allowed) {
+    // Check CSRF token
+    const csrfCheck = await checkCSRFToken(request);
+    if (!csrfCheck.valid) {
       return NextResponse.json(
         {
-          error: "Too many requests. Please try again later.",
-          code: "RATE_LIMIT_EXCEEDED",
-          resetTime: new Date(resetTime).toISOString(),
+          error: csrfCheck.error || "Invalid CSRF token",
+          code: "CSRF_VALIDATION_FAILED",
         },
         {
-          status: 429,
-          headers: {
-            "X-RateLimit-Limit": "5",
-            "X-RateLimit-Remaining": "0",
-            "X-RateLimit-Reset": resetTime.toString(),
-          },
+          status: 403,
+          headers: getRateLimitHeaders(rateLimitResult),
         },
       );
     }
 
+    // Parse request body
     let body: unknown;
     try {
       body = await request.json();
@@ -43,7 +52,10 @@ export async function POST(request: Request) {
           error: "Invalid JSON in request body",
           code: "INVALID_REQUEST",
         },
-        { status: 400 },
+        {
+          status: 400,
+          headers: getRateLimitHeaders(rateLimitResult),
+        },
       );
     }
 
@@ -54,7 +66,10 @@ export async function POST(request: Request) {
           error: "Invalid request body",
           code: "INVALID_REQUEST",
         },
-        { status: 400 },
+        {
+          status: 400,
+          headers: getRateLimitHeaders(rateLimitResult),
+        },
       );
     }
 
@@ -62,42 +77,71 @@ export async function POST(request: Request) {
 
     // Check honeypot field
     if (requestData.honeypot && requestData.honeypot !== "") {
-      // Silently reject bot submissions
-      return NextResponse.json({ success: true });
+      // Silently accept bot submissions but don't process them
+      return NextResponse.json(
+        { success: true },
+        { headers: getRateLimitHeaders(rateLimitResult) },
+      );
     }
 
-    // Sanitize inputs before validation
-    const sanitizedData = {
-      ...requestData,
-      name:
-        typeof requestData.name === "string" ? sanitizeInput(requestData.name) : requestData.name,
-      email:
-        typeof requestData.email === "string"
-          ? sanitizeInput(requestData.email)
-          : requestData.email,
-      message:
-        typeof requestData.message === "string"
-          ? sanitizeInput(requestData.message)
-          : requestData.message,
-    };
+    // Get client IP and headers for server validation
+    const clientIP =
+      request.headers.get("x-forwarded-for")?.split(",")[0] ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
 
-    const validatedData = contactFormSchema.parse(sanitizedData);
+    const headers: Record<string, string> = {};
+    request.headers.forEach((value, key) => {
+      headers[key] = value;
+    });
+
+    // Validate with enhanced schema
+    const validationResult = validateContactFormServer(requestData, clientIP, headers);
+
+    if (!validationResult.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          code: "VALIDATION_ERROR",
+          details: validationResult.errors?.errors.map((err) => ({
+            field: err.path.join("."),
+            message: err.message,
+          })),
+        },
+        {
+          status: 400,
+          headers: getRateLimitHeaders(rateLimitResult),
+        },
+      );
+    }
+
+    const validatedData = validationResult.data!;
 
     // Send email using Resend
     const resendService = ResendEmailService.getInstance();
-    const result = await resendService.sendContactFormEmail(validatedData);
+    const result = await resendService.sendContactFormEmail({
+      name: validatedData.name,
+      email: validatedData.email,
+      message: validatedData.message,
+      gdprConsent: validatedData.gdprConsent,
+    });
+
+    // Log successful submission (for monitoring)
+    console.log("Contact form submission:", {
+      timestamp: new Date().toISOString(),
+      ip: clientIP,
+      emailId: result.id,
+      name: validatedData.name.substring(0, 3) + "***", // Partial name for privacy
+    });
 
     return NextResponse.json(
       {
         success: true,
         emailId: result.id,
+        message: "Thank you for your message. We'll be in touch soon!",
       },
       {
-        headers: {
-          "X-RateLimit-Limit": "5",
-          "X-RateLimit-Remaining": remaining.toString(),
-          "X-RateLimit-Reset": resetTime.toString(),
-        },
+        headers: getRateLimitHeaders(rateLimitResult),
       },
     );
   } catch (error) {
@@ -129,6 +173,19 @@ export async function POST(request: Request) {
       );
     }
 
+    // Generic error handling
+    console.error("Contact form error:", error);
     return handleAPIError(error);
   }
+}
+
+// OPTIONS request for CORS preflight
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, X-CSRF-Token, X-Session-ID",
+    },
+  });
 }

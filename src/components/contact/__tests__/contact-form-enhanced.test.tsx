@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { CSRFProvider } from "@/components/providers/csrf-provider";
 import { ContactFormEnhanced } from "../contact-form-enhanced";
 
 // Mock the toast hook
@@ -14,12 +15,27 @@ vi.mock("@/hooks/use-toast", () => ({
 // Mock fetch
 global.fetch = vi.fn();
 
+// Test wrapper with CSRFProvider
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+  <CSRFProvider>{children}</CSRFProvider>
+);
+
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(ui, { wrapper: TestWrapper });
+};
+
 describe("ContactFormEnhanced", () => {
   const user = userEvent.setup();
 
   beforeEach(() => {
     vi.clearAllMocks();
     (global.fetch as ReturnType<typeof vi.fn>).mockClear();
+    // Mock CSRF token endpoint
+    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ "X-CSRF-Token": "test-csrf-token" }),
+      json: async () => ({ message: "CSRF token provided in X-CSRF-Token header" }),
+    });
   });
 
   afterEach(() => {
@@ -27,7 +43,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("renders all form fields correctly", () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
@@ -38,7 +54,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("shows validation errors for empty fields", async () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     const submitButton = screen.getByRole("button", { name: /send message/i });
 
@@ -56,7 +72,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("enables submit button when all required fields are filled", async () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     const nameInput = screen.getByLabelText(/name/i);
     const emailInput = screen.getByLabelText(/email/i);
@@ -80,7 +96,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("validates email format", async () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     const emailInput = screen.getByLabelText(/email/i);
 
@@ -100,7 +116,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("validates name format", async () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     const nameInput = screen.getByLabelText(/name/i);
 
@@ -120,7 +136,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("shows character count for message field", async () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     const messageInput = screen.getByLabelText(/message/i);
 
@@ -140,7 +156,7 @@ describe("ContactFormEnhanced", () => {
       headers: new Headers(),
     });
 
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     // Fill out the form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
@@ -212,7 +228,7 @@ describe("ContactFormEnhanced", () => {
       }),
     });
 
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     // Fill and submit form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
@@ -246,7 +262,7 @@ describe("ContactFormEnhanced", () => {
       headers: new Headers(),
     });
 
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     // Fill and submit form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
@@ -270,7 +286,7 @@ describe("ContactFormEnhanced", () => {
   it("handles network errors", async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error("Network error"));
 
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     // Fill and submit form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
@@ -292,7 +308,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("honeypot field is hidden and functional", async () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     // Honeypot field should not be visible
     const honeypotLabel = screen.getByText("Leave this field empty");
@@ -311,7 +327,7 @@ describe("ContactFormEnhanced", () => {
       headers: new Headers(),
     });
 
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     // Fill and submit form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
@@ -331,7 +347,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it.skip("provides proper ARIA attributes for accessibility", () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     const nameInput = screen.getByLabelText(/name/i);
     const emailInput = screen.getByLabelText(/email/i);
@@ -348,7 +364,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it.skip("focuses on first error field when validation fails", async () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     // Fill only email (skip name)
     await user.type(screen.getByLabelText(/email/i), "john@example.com");
@@ -365,7 +381,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it.skip("shows field-specific animations on errors", async () => {
-    render(<ContactFormEnhanced />);
+    renderWithProviders(<ContactFormEnhanced />);
 
     const nameInput = screen.getByLabelText(/name/i);
 

@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useState } from "react";
+import { CSRFProvider } from "@/components/providers/csrf-provider";
 import { Toaster } from "@/components/ui/toaster";
 import {
   DEFAULT_FLAGS,
@@ -32,16 +33,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <FeatureFlagProvider
-          config={{
-            store: featureFlagStore,
-            enableCache: true,
-            cacheTimeout: 60000, // 1 minute
-          }}
-        >
-          {children}
-          <Toaster />
-        </FeatureFlagProvider>
+        <CSRFProvider>
+          <FeatureFlagProvider
+            config={{
+              store: featureFlagStore,
+              enableCache: true,
+              cacheTimeout: 60000, // 1 minute
+            }}
+          >
+            {children}
+            <Toaster />
+          </FeatureFlagProvider>
+        </CSRFProvider>
       </NextThemesProvider>
     </QueryClientProvider>
   );

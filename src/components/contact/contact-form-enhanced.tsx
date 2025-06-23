@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useCSRFHeaders } from "@/components/providers/csrf-provider";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -70,6 +71,7 @@ export function ContactFormEnhanced() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
+  const csrfHeaders = useCSRFHeaders();
 
   // Generate unique IDs for form fields
   const nameId = useId();
@@ -122,10 +124,9 @@ export function ContactFormEnhanced() {
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: csrfHeaders,
         body: JSON.stringify(data),
+        credentials: "same-origin",
       });
 
       const result = await response.json();
