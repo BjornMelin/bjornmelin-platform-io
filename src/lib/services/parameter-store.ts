@@ -141,13 +141,22 @@ export class ParameterStoreService {
       }
 
       return response.Parameter.Value;
-    } catch (error: any) {
-      if (error.name === "ParameterNotFound") {
-        throw new ParameterNotFoundError(parameterName);
-      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.name === "ParameterNotFound") {
+          throw new ParameterNotFoundError(parameterName);
+        }
 
-      if (error.name === "AccessDeniedException") {
-        throw new ParameterAccessDeniedError(parameterName);
+        if (error.name === "AccessDeniedException") {
+          throw new ParameterAccessDeniedError(parameterName);
+        }
+
+        throw new ParameterStoreError(
+          `Failed to get parameter: ${parameterName}`,
+          "GET_PARAMETER_ERROR",
+          undefined,
+          error,
+        );
       }
 
       throw new ParameterStoreError(

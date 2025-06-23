@@ -34,7 +34,8 @@ describe("ParameterStoreService", () => {
     vi.stubEnv("AWS_REGION", "us-east-1");
 
     // Clear any existing instance
-    ParameterStoreService.instance = undefined as any;
+    (ParameterStoreService as unknown as { instance: ParameterStoreService | undefined }).instance =
+      undefined;
 
     // Setup mock implementations
     mockSSMSend = vi.fn();
@@ -216,7 +217,9 @@ describe("ParameterStoreService", () => {
       vi.stubEnv("NODE_ENV", "production");
 
       // Create new instance to pick up env change
-      ParameterStoreService.instance = undefined as any;
+      (
+        ParameterStoreService as unknown as { instance: ParameterStoreService | undefined }
+      ).instance = undefined;
       const prodService = ParameterStoreService.getInstance();
 
       prodService.getResendApiKey();
@@ -228,7 +231,9 @@ describe("ParameterStoreService", () => {
       vi.stubEnv("AWS_REGION", "us-west-2");
 
       // Create new instance to pick up env change
-      ParameterStoreService.instance = undefined as any;
+      (
+        ParameterStoreService as unknown as { instance: ParameterStoreService | undefined }
+      ).instance = undefined;
       const _service = ParameterStoreService.getInstance();
 
       expect(mockSSMClient).toHaveBeenCalledWith(

@@ -99,7 +99,7 @@ describe("ResendEmailService", () => {
       vi.mocked(ParameterStoreService.getInstance).mockReturnValue({
         ...mockParameterStoreService,
         getResendApiKey: vi.fn().mockRejectedValue(new Error("PARAMETER_NOT_FOUND")),
-      });
+      } as unknown as ParameterStoreService);
 
       const service = ResendEmailService.getInstance();
 
@@ -109,6 +109,7 @@ describe("ResendEmailService", () => {
           name: "Test",
           email: "test@example.com",
           message: "Test message",
+          gdprConsent: true,
         }),
       ).rejects.toThrow(ResendConfigurationError);
     });
@@ -615,19 +616,19 @@ describe("ResendEmailService", () => {
 
   describe("validateWebhookSignature", () => {
     let service: ResendEmailService;
-    let originalNodeEnv: string | undefined;
+    let _originalNodeEnv: string | undefined;
 
     beforeEach(() => {
       service = ResendEmailService.getInstance();
-      originalNodeEnv = process.env.NODE_ENV;
+      _originalNodeEnv = process.env.NODE_ENV;
     });
 
     afterEach(() => {
-      process.env.NODE_ENV = originalNodeEnv;
+      vi.unstubAllEnvs();
     });
 
     it("should return true in development environment", () => {
-      process.env.NODE_ENV = "development";
+      vi.stubEnv("NODE_ENV", "development");
       const result = service.validateWebhookSignature("payload", "signature", "secret");
       expect(result).toBe(true);
       expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -639,7 +640,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should return false in production environment", () => {
-      process.env.NODE_ENV = "production";
+      vi.stubEnv("NODE_ENV", "production");
       const result = service.validateWebhookSignature("payload", "signature", "secret");
       expect(result).toBe(false);
     });
