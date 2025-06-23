@@ -476,7 +476,7 @@ describe("ResendEmailService", () => {
             message: "Message 1",
             honeypot: "",
             gdprConsent: true,
-          csrfToken: "test-csrf-token",
+            csrfToken: "test-csrf-token",
           } as EnhancedContactFormData,
         },
         {
@@ -486,7 +486,7 @@ describe("ResendEmailService", () => {
             message: "Message 2",
             honeypot: "",
             gdprConsent: true,
-          csrfToken: "test-csrf-token",
+            csrfToken: "test-csrf-token",
           } as EnhancedContactFormData,
         },
       ];
@@ -512,7 +512,7 @@ describe("ResendEmailService", () => {
             message: "Success message",
             honeypot: "",
             gdprConsent: true,
-          csrfToken: "test-csrf-token",
+            csrfToken: "test-csrf-token",
           } as EnhancedContactFormData,
         },
         {
@@ -522,7 +522,7 @@ describe("ResendEmailService", () => {
             message: "Fail message",
             honeypot: "",
             gdprConsent: true,
-          csrfToken: "test-csrf-token",
+            csrfToken: "test-csrf-token",
           } as EnhancedContactFormData,
         },
       ];
