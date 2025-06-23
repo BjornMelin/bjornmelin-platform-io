@@ -1,10 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
+  type EnhancedContactFormData,
   enhancedContactFormSchema,
   serverContactFormSchema,
   validateContactForm,
   validateContactFormServer,
-  type EnhancedContactFormData,
 } from "../contact-schema";
 
 describe("Enhanced Contact Form Schema Validation", () => {
@@ -256,9 +256,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
       const result = enhancedContactFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
-        const timestampError = result.error.errors.find(
-          (e) => e.path.includes("timestamp")
-        );
+        const timestampError = result.error.errors.find((e) => e.path.includes("timestamp"));
         expect(timestampError?.message).toBe("Request expired. Please refresh and try again.");
       }
     });
@@ -300,8 +298,8 @@ describe("Enhanced Contact Form Schema Validation", () => {
         "@example.com", // No local part
         "test test@example.com", // Space in email
         "test@exam ple.com", // Space in domain
-        "a".repeat(65) + "@example.com", // Local part too long
-        "test@" + "a".repeat(254) + ".com", // Domain too long
+        `${"a".repeat(65)}@example.com`, // Local part too long
+        `test@${"a".repeat(254)}.com`, // Domain too long
       ];
 
       invalidEmails.forEach((email) => {
@@ -333,7 +331,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
 
       const result = enhancedContactFormSchema.safeParse(shortData);
       expect(result.success).toBe(false);
-      
+
       if (!result.success) {
         const errors = result.error.errors;
         expect(errors.some((e) => e.path[0] === "name")).toBe(true);
@@ -344,7 +342,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
     it("should enforce maximum lengths", () => {
       const longData = {
         name: "a".repeat(51), // Too long
-        email: "test@" + "a".repeat(250) + ".com", // Too long
+        email: `test@${"a".repeat(250)}.com`, // Too long
         message: "a".repeat(1001), // Too long
         csrfToken: "token123",
         honeypot: "",
@@ -354,7 +352,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
 
       const result = enhancedContactFormSchema.safeParse(longData);
       expect(result.success).toBe(false);
-      
+
       if (!result.success) {
         const errors = result.error.errors;
         expect(errors.some((e) => e.path[0] === "name")).toBe(true);
@@ -377,7 +375,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
       };
 
       const result = validateContactForm(data);
-      
+
       expect(result.success).toBe(true);
       expect(result.sanitized).toBe(true);
       if (result.data) {
@@ -397,7 +395,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
       };
 
       const result = validateContactForm(invalidData);
-      
+
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
     });
@@ -414,11 +412,9 @@ describe("Enhanced Contact Form Schema Validation", () => {
         gdprConsent: true,
       };
 
-      const result = validateContactFormServer(
-        data,
-        "192.168.1.1",
-        { "User-Agent": "Mozilla/5.0" }
-      );
+      const result = validateContactFormServer(data, "192.168.1.1", {
+        "User-Agent": "Mozilla/5.0",
+      });
 
       expect(result.success).toBe(true);
       expect(result.sanitized).toBe(true);
@@ -584,11 +580,11 @@ describe("Enhanced Contact Form Schema Validation", () => {
           honeypot: "",
           gdprConsent: true,
         };
-        
+
         data[field] = value;
 
         const result = enhancedContactFormSchema.safeParse(data);
-        
+
         if (result.success) {
           // Check that dangerous content was removed
           expect(result.data[field as keyof EnhancedContactFormData]).not.toContain("<");
