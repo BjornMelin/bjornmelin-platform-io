@@ -60,7 +60,7 @@ export function CSRFProvider({ children }: { children: React.ReactNode }) {
     const interval = setInterval(fetchCSRFToken, 45 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchCSRFToken]);
 
   const refreshToken = async () => {
     await fetchCSRFToken();

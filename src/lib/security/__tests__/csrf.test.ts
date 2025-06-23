@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   checkCSRFToken,
+  clearTokenStore,
   generateCSRFToken,
   getCSRFTokenFromRequest,
   validateCSRFToken,
@@ -14,16 +15,22 @@ vi.mock("next/headers", () => ({
   })),
 }));
 
+import { headers } from "next/headers";
+
 describe("CSRF Protection", () => {
+  const TEST_SESSION_ID = "test-session-id";
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
     mockHeaders.clear();
-    mockHeaders.set("x-session-id", "test-session-id");
+    mockHeaders.set("x-session-id", TEST_SESSION_ID);
+    clearTokenStore();
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    clearTokenStore();
   });
 
   describe("generateCSRFToken", () => {
@@ -70,19 +77,19 @@ describe("CSRF Protection", () => {
 
     it("should return false when no session ID is available", async () => {
       mockHeaders.delete("x-session-id");
-      const token = generateCSRFToken();
+      const token = generateCSRFToken(TEST_SESSION_ID);
       const result = await validateCSRFToken(token);
       expect(result).toBe(false);
     });
 
     it("should validate a valid token", async () => {
-      const token = generateCSRFToken();
+      const token = generateCSRFToken(TEST_SESSION_ID);
       const result = await validateCSRFToken(token);
       expect(result).toBe(true);
     });
 
     it("should invalidate token after successful validation (one-time use)", async () => {
-      const token = generateCSRFToken();
+      const token = generateCSRFToken(TEST_SESSION_ID);
 
       // First validation should succeed
       const result1 = await validateCSRFToken(token);
@@ -94,7 +101,7 @@ describe("CSRF Protection", () => {
     });
 
     it("should reject expired tokens", async () => {
-      const token = generateCSRFToken();
+      const token = generateCSRFToken(TEST_SESSION_ID);
 
       // Advance time beyond expiry (1 hour + 1 minute)
       vi.advanceTimersByTime(61 * 60 * 1000);
@@ -104,7 +111,7 @@ describe("CSRF Protection", () => {
     });
 
     it("should accept tokens within expiry time", async () => {
-      const token = generateCSRFToken();
+      const token = generateCSRFToken(TEST_SESSION_ID);
 
       // Advance time but stay within expiry (59 minutes)
       vi.advanceTimersByTime(59 * 60 * 1000);
@@ -220,14 +227,26 @@ describe("CSRF Protection", () => {
     });
 
     it("should accept POST requests with valid CSRF token", async () => {
-      const token = generateCSRFToken();
+      const token = generateCSRFToken(TEST_SESSION_ID);
       const request = new Request("http://localhost:3000/api/test", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "x-csrf-token": token,
+          "x-session-id": TEST_SESSION_ID,
         },
       });
+
+      // We need to mock the headers function for the request
+      vi.mocked(headers).mockImplementationOnce(
+        () =>
+          ({
+            get: (key: string) => {
+              if (key === "x-session-id") return TEST_SESSION_ID;
+              return request.headers.get(key);
+            },
+          }) as any,
+      );
 
       const result = await checkCSRFToken(request);
 
@@ -236,14 +255,26 @@ describe("CSRF Protection", () => {
     });
 
     it("should handle case-insensitive header names", async () => {
-      const token = generateCSRFToken();
+      const token = generateCSRFToken(TEST_SESSION_ID);
       const request = new Request("http://localhost:3000/api/test", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-CSRF-Token": token, // Different case
+          "x-session-id": TEST_SESSION_ID,
         },
       });
+
+      // We need to mock the headers function for the request
+      vi.mocked(headers).mockImplementationOnce(
+        () =>
+          ({
+            get: (key: string) => {
+              if (key === "x-session-id") return TEST_SESSION_ID;
+              return request.headers.get(key.toLowerCase());
+            },
+          }) as any,
+      );
 
       const result = await checkCSRFToken(request);
 
@@ -255,8 +286,7 @@ describe("CSRF Protection", () => {
   describe("Security Attack Scenarios", () => {
     it("should prevent CSRF token reuse across different sessions", async () => {
       // Generate token for session 1
-      mockHeaders.set("x-session-id", "session-1");
-      const token = generateCSRFToken();
+      const token = generateCSRFToken("session-1");
 
       // Try to use token with session 2
       mockHeaders.set("x-session-id", "session-2");
@@ -286,8 +316,7 @@ describe("CSRF Protection", () => {
       // Generate multiple tokens
       const tokens = [];
       for (let i = 0; i < 5; i++) {
-        mockHeaders.set("x-session-id", `session-${i}`);
-        tokens.push(generateCSRFToken());
+        tokens.push(generateCSRFToken(`session-${i}`));
       }
 
       // Advance time to trigger cleanup (10 minutes)
@@ -295,7 +324,7 @@ describe("CSRF Protection", () => {
 
       // Generate a new token to ensure cleanup doesn't affect valid tokens
       mockHeaders.set("x-session-id", "session-new");
-      const newToken = generateCSRFToken();
+      const newToken = generateCSRFToken("session-new");
 
       // New token should still be valid
       const result = await validateCSRFToken(newToken);
@@ -303,7 +332,7 @@ describe("CSRF Protection", () => {
     });
 
     it("should prevent timing attacks by consistent response times", async () => {
-      const validToken = generateCSRFToken();
+      const validToken = generateCSRFToken(TEST_SESSION_ID);
       const invalidToken = "x".repeat(64); // Same length as valid token
 
       // Measure validation times (in a real test, we'd measure actual time)

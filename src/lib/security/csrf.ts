@@ -126,3 +126,11 @@ export async function checkCSRFToken(
 
   return { valid: true };
 }
+
+/**
+ * Clear all tokens (for testing purposes)
+ * @internal
+ */
+export function clearTokenStore(): void {
+  tokenStore.clear();
+}

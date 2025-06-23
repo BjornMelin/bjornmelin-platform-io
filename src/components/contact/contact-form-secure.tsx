@@ -138,7 +138,7 @@ export function SecureContactForm() {
         // Handle rate limiting
         if (response.status === 429) {
           const retryAfter = response.headers.get("Retry-After");
-          const resetTime = response.headers.get("X-RateLimit-Reset");
+          const _resetTime = response.headers.get("X-RateLimit-Reset");
 
           throw new Error(`Too many requests. Please try again in ${retryAfter} seconds.`);
         }
