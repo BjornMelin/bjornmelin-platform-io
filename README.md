@@ -1,6 +1,6 @@
 # 🏗️ bjornmelin-platform-io
 
-Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutions architecture through serverless APIs and infrastructure as code. Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices.
+Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutions architecture through serverless APIs and infrastructure as code. Built with React 19, Next.js 15, AWS CDK, and modern DevOps practices.
 
 [![CI](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml)
@@ -14,7 +14,7 @@ Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutio
 [![AWS ML](https://img.shields.io/badge/AWS-Machine%20Learning%20Engineer%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-machine-learning-engineer-associate)
 [![AWS AIF](https://img.shields.io/badge/AWS-AI%20Practitioner-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-ai-practitioner)
 [![AWS CCP](https://img.shields.io/badge/AWS-Cloud%20Practitioner-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-cloud-practitioner)
-[![React](https://img.shields.io/badge/React-19_RC-blue?logo=react)](https://react.dev)
+[![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://react.dev)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-BjornMelin-181717?logo=github)](https://github.com/BjornMelin)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin/)
@@ -36,18 +36,19 @@ Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutio
 
 ### Modern Tech Features
 
-- ⚡ **React 18 RC Integration**
+- ⚡ **React 19 Integration**
 
-  - Document Metadata API
-  - Asset Loading API
-  - Progressive Loading
-  - Optimization Compiler
+  - Server Components
+  - Actions and Forms
+  - Enhanced Hydration
+  - Improved Performance
 
-- 🚀 **Next.js 14 App Router**
+- 🚀 **Next.js 15 App Router**
 
   - Server Components
   - Partial Prerendering
   - Parallel Routes
+  - Enhanced Caching
   - Edge Runtime
 
 - 🔄 **Full-Stack Type Safety**
