@@ -578,7 +578,7 @@ fields @timestamp, @duration
    dig TXT bjornmelin.io +short
    
    # Check DKIM records
-   dig CNAME resend._domainkey.bjornmelin.io +short
+   dig TXT resend._domainkey.bjornmelin.io +short
    ```
 
 4. **Monitor Email Delivery**

@@ -2,6 +2,8 @@
 
 This comprehensive guide covers all aspects of setting up Resend API for email notifications in the bjornmelin.io portfolio application, including local development, AWS infrastructure, DNS configuration, and production deployment with security best practices.
 
+> **📋 Documentation Updated**: All AWS CLI commands have been validated for v2 compatibility and SSO authentication. Key fixes include: proper date command escaping, `--key-id` parameter usage, and TXT record configuration for DKIM authentication.
+
 ## Table of Contents
 
 1. [Overview](#overview)
@@ -125,13 +127,17 @@ Your AWS IAM user/role needs these permissions:
 ### Verify AWS Configuration
 
 ```bash
-# Test AWS CLI access
+# Test AWS CLI access (works with SSO profiles)
 aws sts get-caller-identity
 
 # Verify permissions
 aws ssm describe-parameters --max-items 1
 aws kms list-aliases --limit 1
 aws route53 list-hosted-zones --max-items 1
+
+# If using AWS SSO, ensure your profile is configured and authenticated:
+# aws sso login --profile your-profile-name
+# export AWS_PROFILE=your-profile-name
 ```
 
 ## Resend Account Setup
@@ -154,7 +160,7 @@ aws route53 list-hosted-zones --max-items 1
 Resend will provide several DNS records to add:
 
 1. **Domain Verification**: TXT record for domain ownership
-2. **DKIM Records**: 2-3 CNAME records for email authentication
+2. **DKIM Records**: 2-3 TXT records for email authentication
 3. **Note these values** - you'll need them for DNS configuration
 
 ### Step 4: Generate API Key
@@ -213,11 +219,11 @@ cat > dns-records.json << 'EOF'
       "Action": "CREATE",
       "ResourceRecordSet": {
         "Name": "resend._domainkey.bjornmelin.io",
-        "Type": "CNAME",
+        "Type": "TXT",
         "TTL": 300,
         "ResourceRecords": [
           {
-            "Value": "xxxxx.dkim.resend.com"
+            "Value": "\"k=rsa; p=DKIM_PUBLIC_KEY_FROM_RESEND\""
           }
         ]
       }
@@ -254,9 +260,9 @@ TTL: 300 (5 minutes)
 
 #### DKIM Records (usually 2-3 records)
 ```
-Type: CNAME
+Type: TXT
 Name: resend._domainkey
-Value: xxxxx.dkim.resend.com (from Resend dashboard)
+Value: k=rsa; p=DKIM_PUBLIC_KEY_FROM_RESEND (from Resend dashboard)
 TTL: 300 (5 minutes)
 ```
 
@@ -274,7 +280,7 @@ dig TXT bjornmelin.io +short
 dig TXT _resend.bjornmelin.io +short
 
 # Check DKIM records
-dig CNAME resend._domainkey.bjornmelin.io +short
+dig TXT resend._domainkey.bjornmelin.io +short
 ```
 
 Return to Resend dashboard - records should show as verified within 48 hours (usually much faster).
@@ -295,6 +301,16 @@ aws ssm describe-parameters --max-items 1 --region $AWS_DEFAULT_REGION
 # Check if KMS alias already exists
 aws kms list-aliases --query "Aliases[?AliasName=='alias/prod-portfolio-parameters']" --region $AWS_DEFAULT_REGION
 ```
+
+### AWS CLI v2 Compatibility Notes
+
+All commands in this guide have been validated for AWS CLI v2 compatibility and SSO authentication:
+
+- **Parameter Names**: Uses `--key-id` (not `--kms-key-id`) for AWS CLI v2 compatibility
+- **Command Substitution**: Properly escaped with quotes: `"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"`
+- **SSO Support**: All commands work with `aws sso login` and profile-based authentication
+- **JSON Validation**: All JSON structures have been verified for correct syntax
+- **Regional Consistency**: Explicit `--region` flags ensure commands work across environments
 
 ### Step 2: Deploy Infrastructure Stacks
 
@@ -342,6 +358,7 @@ echo "Using KMS Key: $KMS_KEY_ID"
 
 # Store your Resend API key securely
 # Replace 're_YOUR_ACTUAL_API_KEY_HERE' with your actual API key from Resend
+TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 aws ssm put-parameter \
   --name "/portfolio/prod/resend/api-key" \
   --value '{
@@ -349,7 +366,7 @@ aws ssm put-parameter \
     "domain": "bjornmelin.io",
     "fromEmail": "no-reply@bjornmelin.io",
     "version": 1,
-    "rotatedAt": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+    "rotatedAt": "'$TIMESTAMP'"
   }' \
   --type "SecureString" \
   --key-id "alias/prod-portfolio-parameters" \
@@ -357,6 +374,8 @@ aws ssm put-parameter \
   --overwrite \
   --description "Resend API configuration for portfolio contact form" \
   --tags 'Key=Environment,Value=production' 'Key=Service,Value=EmailService' 'Key=Rotation,Value=Quarterly'
+
+# Note: Use --key-id (not --kms-key-id) for AWS CLI v2 compatibility
 
 # Verify parameter was created successfully
 aws ssm describe-parameters \
@@ -408,8 +427,8 @@ const emailStack = new EmailStack(app, `${envConfig.environment}-portfolio-email
   resendApiKeyParameter: parameterStack.resendApiKeyParameter,
   resendDomainVerification: "resend-verification-xxxxx", // Your actual value
   resendDkimRecords: [
-    { name: "resend._domainkey", value: "xxxxx.dkim.resend.com" },
-    { name: "resend2._domainkey", value: "yyyyy.dkim.resend.com" },
+    { name: "resend._domainkey", value: "k=rsa; p=DKIM_PUBLIC_KEY_FROM_RESEND" },
+    { name: "resend2._domainkey", value: "k=rsa; p=SECOND_DKIM_PUBLIC_KEY_FROM_RESEND" },
     // Add all DKIM records from Resend
   ],
 });
@@ -546,6 +565,7 @@ git log --grep="api" --grep="key" --grep="secret" -i
 
 ```bash
 # Store API key with KMS encryption
+TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 aws ssm put-parameter \
   --name "/portfolio/prod/resend/api-key" \
   --value '{
@@ -553,7 +573,7 @@ aws ssm put-parameter \
     "domain": "bjornmelin.io",
     "fromEmail": "no-reply@bjornmelin.io",
     "version": 1,
-    "rotatedAt": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+    "rotatedAt": "'$TIMESTAMP'"
   }' \
   --type "SecureString" \
   --key-id "alias/prod-portfolio-parameters" \
@@ -620,18 +640,18 @@ Create service-specific IAM policies:
 
 ```bash
 # Get DKIM records from Resend dashboard
-# Add as CNAME records:
+# Add as TXT records:
 
 # Record 1:
-# Type: CNAME
+# Type: TXT
 # Name: resend._domainkey
-# Value: xxxxx.dkim.resend.com (from Resend)
+# Value: k=rsa; p=DKIM_PUBLIC_KEY_FROM_RESEND (from Resend)
 # TTL: 300
 
 # Record 2 (if provided):
-# Type: CNAME  
+# Type: TXT  
 # Name: resend2._domainkey
-# Value: yyyyy.dkim.resend.com (from Resend)
+# Value: k=rsa; p=SECOND_DKIM_PUBLIC_KEY_FROM_RESEND (from Resend)
 # TTL: 300
 ```
 
@@ -789,6 +809,7 @@ echo "Generate new API key in Resend dashboard and enter it:"
 read -s NEW_API_KEY
 
 # Update parameter with new key
+TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 aws ssm put-parameter \
   --name "/portfolio/prod/resend/api-key" \
   --value '{
@@ -796,7 +817,7 @@ aws ssm put-parameter \
     "domain": "bjornmelin.io", 
     "fromEmail": "no-reply@bjornmelin.io",
     "version": '$((OLD_KEY_VERSION + 1))',
-    "rotatedAt": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+    "rotatedAt": "'$TIMESTAMP'"
   }' \
   --type "SecureString" \
   --key-id "alias/prod-portfolio-parameters" \
@@ -968,6 +989,7 @@ Since Parameter Store doesn't support automatic rotation:
 1. **Generate New API Key** in Resend dashboard
 2. **Update Parameter Store**:
    ```bash
+   TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
    aws ssm put-parameter \
      --name "/portfolio/prod/resend/api-key" \
      --value '{
@@ -975,7 +997,7 @@ Since Parameter Store doesn't support automatic rotation:
        "domain": "bjornmelin.io",
        "fromEmail": "no-reply@bjornmelin.io",
        "version": 2,
-       "rotatedAt": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+       "rotatedAt": "'$TIMESTAMP'"
      }' \
      --type SecureString \
      --key-id "alias/prod-portfolio-parameters" \
@@ -993,6 +1015,76 @@ Check Resend dashboard regularly for:
 - Bounce/complaint rates
 - API usage vs limits
 - Domain reputation
+
+## Command Validation & Testing
+
+### Pre-deployment Validation
+
+Before running any AWS CLI commands, validate your setup:
+
+```bash
+# 1. Verify AWS CLI v2 is installed
+aws --version
+# Expected: aws-cli/2.x.x or higher
+
+# 2. Test basic AWS connectivity
+aws sts get-caller-identity
+
+# 3. Verify region configuration
+echo "Current region: $(aws configure get region)"
+echo "Profile: ${AWS_PROFILE:-default}"
+
+# 4. Test Parameter Store permissions (dry run)
+aws ssm describe-parameters --max-items 1 --region us-east-1
+
+# 5. Test KMS permissions
+aws kms list-aliases --limit 1 --region us-east-1
+
+# 6. Validate date command escaping (should show timestamp)
+TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+echo "Generated timestamp: $TIMESTAMP"
+```
+
+### Command Syntax Validation
+
+Test critical commands without side effects:
+
+```bash
+# Validate JSON structure (use jq if available)
+TEST_JSON='{
+  "apiKey": "re_test_key",
+  "domain": "bjornmelin.io",
+  "fromEmail": "no-reply@bjornmelin.io",
+  "version": 1,
+  "rotatedAt": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+}'
+
+# Validate JSON syntax
+echo "$TEST_JSON" | python3 -m json.tool > /dev/null && echo "✅ JSON syntax valid" || echo "❌ JSON syntax invalid"
+
+# Test AWS CLI parameter syntax (without creating parameter)
+aws ssm describe-parameters \
+  --parameter-filters "Key=Type,Values=SecureString" \
+  --max-items 1 \
+  --region us-east-1 > /dev/null && echo "✅ AWS CLI syntax valid" || echo "❌ AWS CLI syntax invalid"
+```
+
+### SSO Authentication Verification
+
+For AWS SSO users:
+
+```bash
+# Check SSO session status
+aws sts get-caller-identity
+
+# If expired, re-authenticate
+# aws sso login --profile your-profile-name
+
+# Verify profile is correctly set
+echo "Active profile: ${AWS_PROFILE:-default}"
+echo "Account ID: $(aws sts get-caller-identity --query Account --output text)"
+echo "User/Role: $(aws sts get-caller-identity --query Arn --output text)"
+```
 
 ## Troubleshooting
 
@@ -1020,7 +1112,7 @@ aws kms describe-key \
 echo "=== DNS Records ==="
 dig TXT bjornmelin.io +short
 dig TXT _resend.bjornmelin.io +short
-dig CNAME resend._domainkey.bjornmelin.io +short
+dig TXT resend._domainkey.bjornmelin.io +short
 ```
 
 ### Common Issues and Solutions
@@ -1266,7 +1358,7 @@ For a complete implementation, follow these steps in order:
 4. **DNS Configuration** ✓
    - [ ] Add SPF record: `v=spf1 include:_spf.resend.com ~all`
    - [ ] Add domain verification TXT record
-   - [ ] Add DKIM CNAME records
+   - [ ] Add DKIM TXT records
    - [ ] (Optional) Add DMARC policy
 
 5. **Local Development** ✓

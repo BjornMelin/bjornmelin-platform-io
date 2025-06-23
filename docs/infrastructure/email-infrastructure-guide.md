@@ -69,7 +69,7 @@ aws ssm put-parameter \
 2. Add domain: bjornmelin.io
 3. Copy verification values:
    - Domain verification TXT record
-   - DKIM CNAME records (usually 2-3 records)
+   - DKIM TXT records (usually 2-3 records)
 
 #### 2.2 Update Email Stack Configuration
 Update `bin/app.ts` with actual values:
@@ -78,8 +78,8 @@ const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   // ... existing config
   resendDomainVerification: "resend-verification-xxxxx",
   resendDkimRecords: [
-    { name: "resend._domainkey", value: "xxxxx.dkim.resend.com" },
-    { name: "resend2._domainkey", value: "xxxxx.dkim.resend.com" },
+    { name: "resend._domainkey", value: "k=rsa; p=DKIM_PUBLIC_KEY_FROM_RESEND" },
+    { name: "resend2._domainkey", value: "k=rsa; p=SECOND_DKIM_PUBLIC_KEY_FROM_RESEND" },
   ],
 });
 ```
@@ -92,7 +92,7 @@ pnpm run deploy:email
 This creates:
 - SPF record: `v=spf1 include:_spf.resend.com ~all`
 - Domain verification TXT record
-- DKIM CNAME records
+- DKIM TXT records
 - CloudWatch monitoring dashboard
 - SNS topic for alarms
 
@@ -235,9 +235,9 @@ TTL: 300
 
 ### DKIM Records (Example)
 ```
-Type: CNAME
+Type: TXT
 Name: resend._domainkey.bjornmelin.io
-Value: xxxxx.dkim.resend.com
+Value: "k=rsa; p=DKIM_PUBLIC_KEY_FROM_RESEND"
 TTL: 300
 ```
 

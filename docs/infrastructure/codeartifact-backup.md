@@ -409,8 +409,8 @@ aws cloudwatch get-metric-statistics \
   --metric-name StorageSize \
   --dimensions Name=Domain,Value=bjornmelin-platform \
                Name=Repository,Value=platform-releases \
-  --start-time $(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%S) \
-  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --start-time "$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%S)" \
+  --end-time "$(date -u +%Y-%m-%dT%H:%M:%S)" \
   --period 86400 \
   --statistics Maximum
 ```
