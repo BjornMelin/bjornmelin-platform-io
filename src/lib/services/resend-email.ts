@@ -556,7 +556,6 @@ export class ResendEmailService {
       name: "Test User",
       email: "test@example.com",
       message: "This is a test message from the contact form.",
-      csrfToken: "test-csrf-token",
       honeypot: "",
       gdprConsent: true,
     };

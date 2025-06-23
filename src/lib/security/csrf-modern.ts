@@ -159,18 +159,26 @@ async function createHMAC(secret: string, data: string): Promise<string> {
   // This is better than nothing for Edge Runtime compatibility
   console.warn("Using fallback hash implementation - not cryptographically secure");
 
-  let hash = 0;
-  const combined = secret + data;
+  // Simple but deterministic hash function for testing
+  const combined = `${secret}:${data}`;
+  let hash1 = 0x9e3779b9;
+  let hash2 = 0x9e3779b9;
+
   for (let i = 0; i < combined.length; i++) {
     const char = combined.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    hash1 = Math.imul(hash1 ^ char, 0x85ebca6b);
+    hash2 = Math.imul(hash2 ^ char, 0xc2b2ae35);
   }
 
-  // Make it look more like a hex hash
-  const hexHash = Math.abs(hash).toString(16).padStart(8, "0");
-  // Repeat and truncate to make it longer
-  return (hexHash + hexHash + hexHash + hexHash).substring(0, 64);
+  hash1 = (hash1 ^ (hash1 >>> 13)) * 0xc2b2ae35;
+  hash2 = (hash2 ^ (hash2 >>> 13)) * 0x85ebca6b;
+  hash1 ^= hash1 >>> 16;
+  hash2 ^= hash2 >>> 16;
+
+  const hexHash1 = Math.abs(hash1).toString(16).padStart(8, "0");
+  const hexHash2 = Math.abs(hash2).toString(16).padStart(8, "0");
+
+  return (hexHash1 + hexHash2 + hexHash1 + hexHash2).substring(0, 64);
 }
 
 /**

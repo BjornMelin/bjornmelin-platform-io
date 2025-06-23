@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   type ContactFormData,
   contactFormSchema,
+  contactFormSchemaWithCSRF,
   serverContactFormSchema,
   validateContactForm,
   validateContactFormServer,
@@ -253,7 +254,7 @@ describe("Contact Form Schema Validation", () => {
         },
       };
 
-      const result = contactFormSchema.safeParse(data);
+      const result = contactFormSchemaWithCSRF.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         const timestampError = result.error.errors.find((e) => e.path.includes("timestamp"));
@@ -460,7 +461,6 @@ describe("Contact Form Schema Validation", () => {
           name: "Test User",
           email: "test@example.com",
           message: "Valid message",
-          csrfToken: "token123",
           honeypot: "",
           gdprConsent: true,
           phone,

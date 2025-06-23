@@ -111,7 +111,6 @@ describe("ResendEmailService", () => {
           message: "Test message",
           honeypot: "",
           gdprConsent: true,
-          csrfToken: "test-csrf-token",
         }),
       ).rejects.toThrow(ResendConfigurationError);
     });
@@ -136,7 +135,6 @@ describe("ResendEmailService", () => {
         message: "Test message",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       const mockResponse = { id: "test-email-id-123" };
@@ -174,7 +172,6 @@ describe("ResendEmailService", () => {
         message: "Test error message",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       const mockError = { message: "Invalid API key" };
@@ -198,7 +195,6 @@ describe("ResendEmailService", () => {
         message: "Test no ID message",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       mockSend.mockResolvedValueOnce({ data: {}, error: null });
@@ -216,7 +212,6 @@ describe("ResendEmailService", () => {
         message: "Test unexpected error",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       const networkError = new Error("Network error");
@@ -244,7 +239,6 @@ describe("ResendEmailService", () => {
         message: "Test max retries",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       const networkError = new Error("Network error");
@@ -272,7 +266,6 @@ describe("ResendEmailService", () => {
         message: "Testing email template generation",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       mockSend.mockResolvedValueOnce({ data: { id: "template-test-id" }, error: null });
@@ -437,7 +430,6 @@ describe("ResendEmailService", () => {
         message: "Testing default values",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       mockSend.mockResolvedValueOnce({ data: { id: "default-email-id" }, error: null });
@@ -476,7 +468,6 @@ describe("ResendEmailService", () => {
             message: "Message 1",
             honeypot: "",
             gdprConsent: true,
-            csrfToken: "test-csrf-token",
           } as ContactFormData,
         },
         {
@@ -486,7 +477,6 @@ describe("ResendEmailService", () => {
             message: "Message 2",
             honeypot: "",
             gdprConsent: true,
-            csrfToken: "test-csrf-token",
           } as ContactFormData,
         },
       ];
@@ -512,7 +502,6 @@ describe("ResendEmailService", () => {
             message: "Success message",
             honeypot: "",
             gdprConsent: true,
-            csrfToken: "test-csrf-token",
           } as ContactFormData,
         },
         {
@@ -522,7 +511,6 @@ describe("ResendEmailService", () => {
             message: "Fail message",
             honeypot: "",
             gdprConsent: true,
-            csrfToken: "test-csrf-token",
           } as ContactFormData,
         },
       ];
@@ -688,7 +676,6 @@ describe("ResendEmailService", () => {
         message: "Testing rate limit",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       const rateLimitError = {
@@ -711,7 +698,6 @@ describe("ResendEmailService", () => {
         message: "Testing validation",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       const validationError = {
@@ -743,7 +729,6 @@ describe("ResendEmailService", () => {
         message: "Testing network error",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       // Test ECONNREFUSED error
@@ -798,7 +783,6 @@ describe("ResendEmailService", () => {
         message: "Testing server error",
         honeypot: "",
         gdprConsent: true,
-        csrfToken: "test-csrf-token",
       };
 
       // Create a custom error that mimics a ResendEmailError with 500 status

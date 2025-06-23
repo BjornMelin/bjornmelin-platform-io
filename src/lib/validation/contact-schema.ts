@@ -95,8 +95,45 @@ const messageSchema = z
     return !repeatedChars.test(message);
   }, "Message appears to be spam");
 
-// Main contact form schema
+// Client-side contact form schema (without CSRF token - handled in headers)
 export const contactFormSchema = z
+  .object({
+    // Core fields with enhanced validation
+    name: nameSchema,
+    email: emailSchema,
+    message: messageSchema,
+
+    // Security fields
+    honeypot: z.string().optional().default(""),
+
+    // GDPR compliance
+    gdprConsent: z
+      .boolean({
+        required_error: "You must accept the privacy policy to submit this form",
+      })
+      .refine((value) => value === true, {
+        message: "You must accept the privacy policy to submit this form",
+      }),
+
+    // Optional fields
+    company: z
+      .string()
+      .max(100, "Company name must be less than 100 characters")
+      .transform(sanitizeText)
+      .optional(),
+    phone: z
+      .string()
+      .regex(/^[\d\s+().-]+$/, "Invalid phone number format")
+      .max(20, "Phone number must be less than 20 characters")
+      .optional(),
+  })
+  .refine((data) => !data.honeypot || data.honeypot === "", {
+    message: "Bot detection triggered",
+    path: ["honeypot"],
+  });
+
+// Full contact form schema with CSRF token for server-side validation
+export const contactFormSchemaWithCSRF = z
   .object({
     // Core fields with enhanced validation
     name: nameSchema,
@@ -133,7 +170,7 @@ export const contactFormSchema = z
       .optional(),
     phone: z
       .string()
-      .regex(/^[\d\s+()-]+$/, "Invalid phone number format")
+      .regex(/^[\d\s+().-]+$/, "Invalid phone number format")
       .max(20, "Phone number must be less than 20 characters")
       .optional(),
   })
@@ -198,7 +235,7 @@ export const serverContactFormSchema = z
       .optional(),
     phone: z
       .string()
-      .regex(/^[\d\s+()-]+$/, "Invalid phone number format")
+      .regex(/^[\d\s+().-]+$/, "Invalid phone number format")
       .max(20, "Phone number must be less than 20 characters")
       .optional(),
 
@@ -238,7 +275,7 @@ export interface ValidationResult {
 }
 
 /**
- * Validate and sanitize contact form data
+ * Validate and sanitize contact form data (client-side)
  */
 export function validateContactForm(data: unknown): ValidationResult {
   try {
@@ -246,6 +283,28 @@ export function validateContactForm(data: unknown): ValidationResult {
     return {
       success: true,
       data: validated,
+      sanitized: true,
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        errors: error,
+      };
+    }
+    throw error;
+  }
+}
+
+/**
+ * Validate contact form data with CSRF token (for API endpoints)
+ */
+export function validateContactFormWithCSRF(data: unknown): ValidationResult {
+  try {
+    const validated = contactFormSchemaWithCSRF.parse(data);
+    return {
+      success: true,
+      data: validated as ContactFormData, // Cast since it includes CSRF
       sanitized: true,
     };
   } catch (error) {
