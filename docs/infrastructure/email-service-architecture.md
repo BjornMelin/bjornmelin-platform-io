@@ -6,50 +6,107 @@ The email service architecture for bjornmelin.io implements a secure, scalable, 
 
 ## High-Level Email Service Flow
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           Email Service Architecture                             │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  Website Contact Form                                                           │
-│         │                                                                       │
-│         ▼                                                                       │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐            │
-│  │   Client-Side   │────│   CSRF Token    │────│   Input         │            │
-│  │   Validation    │    │   Verification  │    │  Sanitization   │            │
-│  └─────────────────┘    └─────────────────┘    └─────────────────┘            │
-│         │                                               │                       │
-│         ▼                                               ▼                       │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐            │
-│  │  API Gateway    │────│   Lambda        │────│  Parameter      │            │
-│  │api.bjornmelin.io│    │Contact Handler  │    │     Store       │            │
-│  └─────────────────┘    └─────────────────┘    └─────────────────┘            │
-│         │                         │                         │                  │
-│         │                         ▼                         ▼                  │
-│         │                ┌─────────────────┐    ┌─────────────────┐            │
-│         │                │   CloudWatch    │    │   KMS Key       │            │
-│         │                │   Metrics       │    │  Encryption     │            │
-│         │                └─────────────────┘    └─────────────────┘            │
-│         │                         │                         │                  │
-│         │                         ▼                         ▼                  │
-│         │                ┌─────────────────┐    ┌─────────────────┐            │
-│         │                │   SNS Alert     │────│  Decrypted      │            │
-│         │                │   Topics        │    │  API Config     │            │
-│         │                └─────────────────┘    └─────────────────┘            │
-│         │                                               │                       │
-│         ▼                                               ▼                       │
-│  ┌─────────────────┐                          ┌─────────────────┐              │
-│  │   Response      │◀─────────────────────────│   Resend API    │              │
-│  │   to Client     │                          │  Email Service  │              │
-│  └─────────────────┘                          └─────────────────┘              │
-│                                                        │                        │
-│                                                        ▼                        │
-│                                               ┌─────────────────┐              │
-│                                               │  Email          │              │
-│                                               │  Delivery       │              │
-│                                               └─────────────────┘              │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    %% Frontend Layer
+    subgraph Frontend ["🌐 Frontend Security Layer"]
+        ContactForm[📝 Contact Form<br/>bjornmelin.io]
+        ClientValidation[✅ Client-Side Validation<br/>Real-time Feedback]
+        CSRFToken[🎫 CSRF Token<br/>Security Protection]
+        InputSanitization[🧹 Input Sanitization<br/>XSS Prevention]
+    end
+    
+    %% API Layer
+    subgraph APILayer ["🚪 API Gateway Layer"]
+        APIGateway[🚪 API Gateway<br/>api.bjornmelin.io<br/>Rate Limiting & CORS]
+        RequestValidation[🔍 Request Validation<br/>Schema & Format Checks]
+        Authentication[🔐 Authentication<br/>Future API Keys]
+    end
+    
+    %% Processing Layer
+    subgraph ProcessingLayer ["⚡ Lambda Processing"]
+        Lambda[⚡ Lambda Function<br/>Contact Form Handler<br/>ARM64 Node.js 20.x]
+        SecurityChecks[🛡️ Security Validation<br/>CSRF, Rate Limit, Spam]
+        BusinessLogic[🔧 Business Logic<br/>Email Template Processing]
+    end
+    
+    %% Configuration Layer
+    subgraph ConfigLayer ["🔒 Configuration & Security"]
+        ParameterStore[🔒 Parameter Store<br/>Secure Configuration<br/>Standard Tier]
+        KMS[🔑 KMS Customer Key<br/>Encryption & Decryption<br/>Auto-rotation Enabled]
+        ConfigCache[💾 Configuration Cache<br/>1-hour TTL<br/>Performance Optimization]
+    end
+    
+    %% External Services
+    subgraph ExternalServices ["📧 External Email Service"]
+        ResendAPI[📧 Resend API<br/>Email Service Provider<br/>3,000 emails/month]
+        EmailDelivery[📬 Email Delivery<br/>DKIM Signing<br/>SPF Validation]
+        DeliveryStatus[📊 Delivery Status<br/>Real-time Tracking]
+    end
+    
+    %% Monitoring Layer
+    subgraph MonitoringLayer ["📊 Monitoring & Alerting"]
+        CloudWatch[📊 CloudWatch<br/>Metrics & Logs<br/>Custom Metrics]
+        SNSAlerts[📢 SNS Alerts<br/>Real-time Notifications<br/>Error Threshold Monitoring]
+        PerformanceMetrics[📈 Performance Metrics<br/>Response Time Tracking]
+    end
+    
+    %% User Flow
+    ContactForm --> ClientValidation
+    ClientValidation --> CSRFToken
+    CSRFToken --> InputSanitization
+    InputSanitization --> APIGateway
+    
+    %% API Processing Flow
+    APIGateway --> RequestValidation
+    RequestValidation --> Authentication
+    Authentication --> Lambda
+    
+    %% Lambda Processing Flow
+    Lambda --> SecurityChecks
+    SecurityChecks --> BusinessLogic
+    BusinessLogic --> ParameterStore
+    
+    %% Configuration Flow
+    ParameterStore --> KMS
+    KMS --> ConfigCache
+    ConfigCache --> Lambda
+    
+    %% Email Service Flow
+    Lambda --> ResendAPI
+    ResendAPI --> EmailDelivery
+    EmailDelivery --> DeliveryStatus
+    
+    %% Response Flow
+    DeliveryStatus -.->|Success Response| Lambda
+    Lambda -.->|JSON Response| APIGateway
+    APIGateway -.->|Thank You Message| ContactForm
+    
+    %% Monitoring Flow
+    Lambda --> CloudWatch
+    APIGateway --> CloudWatch
+    ResendAPI --> CloudWatch
+    CloudWatch --> SNSAlerts
+    CloudWatch --> PerformanceMetrics
+    
+    %% Error Handling
+    Lambda -.->|Errors| SNSAlerts
+    ResendAPI -.->|Delivery Failures| SNSAlerts
+    
+    %% Styling
+    classDef frontend fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef api fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef processing fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    classDef config fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef external fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef monitoring fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    
+    class ContactForm,ClientValidation,CSRFToken,InputSanitization frontend
+    class APIGateway,RequestValidation,Authentication api
+    class Lambda,SecurityChecks,BusinessLogic processing
+    class ParameterStore,KMS,ConfigCache config
+    class ResendAPI,EmailDelivery,DeliveryStatus external
+    class CloudWatch,SNSAlerts,PerformanceMetrics monitoring
 ```
 
 ## Detailed Component Architecture
@@ -122,81 +179,85 @@ The email service architecture for bjornmelin.io implements a secure, scalable, 
 
 ### 3. Lambda Function Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                 Lambda Function Details                         │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Runtime: Node.js 20.x (ARM64)                                │
-│  Memory: 256 MB                                                 │
-│  Timeout: 30 seconds                                            │
-│  Architecture: ARM64 (cost optimized)                          │
-│                                                                 │
-│  Function Flow:                                                 │
-│  ┌─────────────────┐                                           │
-│  │   Event Input   │                                           │
-│  └─────────────────┘                                           │
-│           │                                                     │
-│           ▼                                                     │
-│  ┌─────────────────┐                                           │
-│  │ CORS Handling   │ ◀─── OPTIONS preflight                    │
-│  └─────────────────┘                                           │
-│           │                                                     │
-│           ▼                                                     │
-│  ┌─────────────────┐                                           │
-│  │Request Validation│                                           │
-│  │ ├─ Method check │                                           │
-│  │ ├─ Body parsing │                                           │
-│  │ ├─ Required fields│                                          │
-│  │ └─ Email format │                                           │
-│  └─────────────────┘                                           │
-│           │                                                     │
-│           ▼                                                     │
-│  ┌─────────────────┐                                           │
-│  │Security Checks  │                                           │
-│  │ ├─ CSRF token   │                                           │
-│  │ ├─ Rate limiting│                                           │
-│  │ ├─ Spam detection│                                          │
-│  │ └─ Input sanitization│                                      │
-│  └─────────────────┘                                           │
-│           │                                                     │
-│           ▼                                                     │
-│  ┌─────────────────┐                                           │
-│  │Config Retrieval │                                           │
-│  │ ├─ Parameter Store│                                         │
-│  │ ├─ KMS decryption│                                          │
-│  │ ├─ Config caching│                                          │
-│  │ └─ Error handling│                                          │
-│  └─────────────────┘                                           │
-│           │                                                     │
-│           ▼                                                     │
-│  ┌─────────────────┐                                           │
-│  │ Email Processing│                                           │
-│  │ ├─ Template rendering│                                      │
-│  │ ├─ Resend API call│                                         │
-│  │ ├─ Retry logic  │                                           │
-│  │ └─ Error handling│                                          │
-│  └─────────────────┘                                           │
-│           │                                                     │
-│           ▼                                                     │
-│  ┌─────────────────┐                                           │
-│  │ Monitoring      │                                           │
-│  │ ├─ CloudWatch metrics│                                      │
-│  │ ├─ Error logging│                                           │
-│  │ ├─ Performance tracking│                                    │
-│  │ └─ Success/failure rates│                                   │
-│  └─────────────────┘                                           │
-│           │                                                     │
-│           ▼                                                     │
-│  ┌─────────────────┐                                           │
-│  │Response Format  │                                           │
-│  │ ├─ Success/error status│                                    │
-│  │ ├─ User-friendly message│                                   │
-│  │ ├─ CORS headers │                                           │
-│  │ └─ JSON response│                                           │
-│  └─────────────────┘                                           │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+#### Function Configuration
+- **Runtime**: Node.js 20.x (ARM64)
+- **Memory**: 256 MB
+- **Timeout**: 30 seconds
+- **Architecture**: ARM64 (cost optimized)
+
+#### Processing Flow
+
+```mermaid
+sequenceDiagram
+    participant APIGateway as 🚪 API Gateway
+    participant Lambda as ⚡ Lambda Function
+    participant ValidationModule as ✅ Validation Module
+    participant SecurityModule as 🛡️ Security Module
+    participant ConfigService as 🔒 Config Service
+    participant ParameterStore as 📦 Parameter Store
+    participant KMS as 🔑 KMS
+    participant EmailService as 📧 Email Service
+    participant ResendAPI as 📬 Resend API
+    participant CloudWatch as 📊 CloudWatch
+    
+    Note over APIGateway, CloudWatch: Lambda Function Processing Pipeline
+    
+    %% 1. Request Initialization
+    APIGateway->>Lambda: Event Input (POST /contact)
+    Lambda->>Lambda: Initialize Context & Logger
+    
+    %% 2. CORS & Method Validation
+    alt OPTIONS Request
+        Lambda-->>APIGateway: CORS Preflight Response
+    else POST Request
+        Lambda->>ValidationModule: Validate HTTP Method
+        ValidationModule->>ValidationModule: Parse Request Body
+        ValidationModule->>ValidationModule: Check Required Fields
+        ValidationModule->>ValidationModule: Validate Email Format
+        ValidationModule-->>Lambda: Validation Results
+    end
+    
+    %% 3. Security Validation
+    Lambda->>SecurityModule: Perform Security Checks
+    SecurityModule->>SecurityModule: Verify CSRF Token
+    SecurityModule->>SecurityModule: Check Rate Limits
+    SecurityModule->>SecurityModule: Spam Detection
+    SecurityModule->>SecurityModule: Input Sanitization
+    SecurityModule-->>Lambda: Security Validation Complete
+    
+    %% 4. Configuration Retrieval
+    Lambda->>ConfigService: Get Email Configuration
+    ConfigService->>ParameterStore: GetParameter(resend-config)
+    ParameterStore->>KMS: Decrypt SecureString
+    KMS-->>ParameterStore: Decrypted Value
+    ParameterStore-->>ConfigService: Configuration Data
+    ConfigService->>ConfigService: Cache Configuration (1hr TTL)
+    ConfigService-->>Lambda: Email Configuration
+    
+    %% 5. Email Processing
+    Lambda->>EmailService: Send Contact Email
+    EmailService->>EmailService: Render Email Template
+    EmailService->>EmailService: Prepare API Payload
+    EmailService->>ResendAPI: POST /emails
+    
+    alt Email Send Success
+        ResendAPI-->>EmailService: Email ID & Status
+        EmailService-->>Lambda: Success Response
+        Lambda->>CloudWatch: Record Success Metrics
+    else Email Send Failure
+        ResendAPI-->>EmailService: Error Response
+        EmailService->>EmailService: Retry Logic (Exponential Backoff)
+        EmailService-->>Lambda: Final Error/Success
+        Lambda->>CloudWatch: Record Error Metrics
+    end
+    
+    %% 6. Response & Monitoring
+    Lambda->>CloudWatch: Log Request Details
+    Lambda->>CloudWatch: Record Performance Metrics
+    Lambda-->>APIGateway: JSON Response (200/400/500)
+    
+    %% 7. Error Handling
+    note over Lambda, CloudWatch: All errors logged with context<br/>Performance metrics tracked<br/>Success/failure rates monitored
 ```
 
 ### 4. Parameter Store & KMS Security

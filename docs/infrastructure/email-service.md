@@ -4,6 +4,128 @@
 
 This portfolio site uses **Resend API** as its email service provider for handling contact form submissions. The service was migrated from AWS SES to Resend in June 2025 to reduce complexity and improve developer experience.
 
+## Email Service Architecture Overview
+
+The following diagram shows the current email service implementation architecture:
+
+```mermaid
+graph TB
+    %% Email Service Implementation Architecture
+    subgraph EmailServiceArch [📧 Email Service Implementation Architecture]
+        
+        %% Application Layer
+        subgraph ApplicationLayer [⚛️ Application Layer]
+            NextJSApp[⚛️ Next.js Application<br/>bjornmelin.io<br/>Contact Form]
+            ReactComponents[📝 React Components<br/>Form Validation<br/>User Interface]
+            APIRoutes[🔗 API Routes<br/>/api/contact<br/>Server-Side Processing]
+        end
+        
+        %% Service Layer
+        subgraph ServiceLayer [🔧 Service Implementation Layer]
+            ResendService[📧 ResendEmailService<br/>Singleton Pattern<br/>TypeScript Implementation]
+            
+            subgraph ServiceFeatures [⚡ Service Features]
+                ErrorHandling[🚨 Enhanced Error Handling<br/>Custom Error Types<br/>Retry Logic]
+                BatchSupport[📊 Batch Email Support<br/>Concurrency Control<br/>Rate Management]
+                HealthCheck[❤️ Health Check<br/>Service Monitoring<br/>Status Validation]
+                WebhookSupport[🔗 Webhook Support<br/>Delivery Status<br/>Future Implementation]
+            end
+            
+            subgraph TemplateEngine [📝 Template Engine]
+                ReactEmail[⚛️ React Email Templates<br/>Component-based<br/>TypeScript Support]
+                HTMLTemplates[📄 HTML Templates<br/>Contact Form Layout<br/>Responsive Design]
+                TextFallback[📝 Text Fallback<br/>Plain Text Version<br/>Accessibility]
+            end
+        end
+        
+        %% External Integration Layer
+        subgraph ExternalLayer [🌐 External Integration Layer]
+            ResendAPI[📨 Resend API<br/>resend.com<br/>3k emails/month free]
+            
+            subgraph ResendFeatures [🚀 Resend Features]
+                TypeScriptSDK[💎 TypeScript SDK<br/>Native Support<br/>Type Safety]
+                Analytics[📊 Real-time Analytics<br/>Delivery Tracking<br/>Dashboard UI]
+                DomainManagement[🌐 Domain Management<br/>DNS Configuration<br/>Authentication]
+            end
+        end
+        
+        %% Configuration & Environment
+        subgraph ConfigLayer [⚙️ Configuration Layer]
+            EnvironmentVars[🔧 Environment Variables<br/>API Keys<br/>Configuration]
+            LocalTesting[🧪 Local Development<br/>Easy Testing<br/>No Infrastructure]
+            ProductionConfig[🚀 Production Setup<br/>Domain Verification<br/>DNS Records]
+        end
+        
+        %% Monitoring & Testing
+        subgraph MonitoringLayer [📊 Monitoring & Testing Layer]
+            TestSuite[🧪 Test Suite<br/>97.33% Coverage<br/>28 Comprehensive Tests]
+            StructuredLogging[📝 Structured Logging<br/>Timestamp Logging<br/>Error Tracking]
+            ServiceHealth[❤️ Health Monitoring<br/>API Status Checks<br/>Service Validation]
+        end
+    end
+    
+    %% Service Flow - Request Processing
+    NextJSApp --> ReactComponents
+    ReactComponents --> APIRoutes
+    APIRoutes --> ResendService
+    
+    ResendService --> ServiceFeatures
+    ServiceFeatures --> ErrorHandling
+    ServiceFeatures --> BatchSupport
+    ServiceFeatures --> HealthCheck
+    ServiceFeatures --> WebhookSupport
+    
+    ResendService --> TemplateEngine
+    TemplateEngine --> ReactEmail
+    TemplateEngine --> HTMLTemplates
+    TemplateEngine --> TextFallback
+    
+    ResendService --> ResendAPI
+    ResendAPI --> ResendFeatures
+    ResendFeatures --> TypeScriptSDK
+    ResendFeatures --> Analytics
+    ResendFeatures --> DomainManagement
+    
+    %% Configuration Flow
+    ResendService --> ConfigLayer
+    ConfigLayer --> EnvironmentVars
+    ConfigLayer --> LocalTesting
+    ConfigLayer --> ProductionConfig
+    
+    %% Monitoring Flow
+    ResendService --> MonitoringLayer
+    MonitoringLayer --> TestSuite
+    MonitoringLayer --> StructuredLogging
+    MonitoringLayer --> ServiceHealth
+    
+    %% External Dependencies
+    DomainManagement -.->|DNS Configuration| ProductionConfig
+    Analytics -.->|Delivery Metrics| ServiceHealth
+    TypeScriptSDK -.->|SDK Integration| ResendService
+    
+    %% Feedback Loops
+    ServiceHealth -.->|Health Status| HealthCheck
+    StructuredLogging -.->|Error Events| ErrorHandling
+    TestSuite -.->|Test Results| ServiceFeatures
+    
+    %% Styling
+    classDef appLayer fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef serviceLayer fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef featuresLayer fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef templateLayer fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef externalLayer fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef configLayer fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    classDef monitoringLayer fill:#ffebee,stroke:#c62828,stroke-width:2px
+    
+    class NextJSApp,ReactComponents,APIRoutes appLayer
+    class ResendService serviceLayer
+    class ErrorHandling,BatchSupport,HealthCheck,WebhookSupport featuresLayer
+    class ReactEmail,HTMLTemplates,TextFallback templateLayer
+    class ResendAPI,TypeScriptSDK,Analytics,DomainManagement externalLayer
+    class EnvironmentVars,LocalTesting,ProductionConfig configLayer
+    class TestSuite,StructuredLogging,ServiceHealth monitoringLayer
+```
+
 ## Current Implementation
 
 ### Service Provider: Resend API

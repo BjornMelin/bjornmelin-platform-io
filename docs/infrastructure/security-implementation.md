@@ -14,6 +14,101 @@ This guide provides detailed implementation instructions for security enhancemen
 
 ## Security Features Implementation
 
+### Security Implementation Flow Overview
+
+The following diagram shows the comprehensive security implementation flow for contact form processing:
+
+```mermaid
+graph TB
+    %% Contact Form Security Implementation Flow
+    subgraph SecurityFlow [Security Implementation Pipeline]
+        
+        %% Client Side Security
+        subgraph ClientSide [📱 Client-Side Security Layer]
+            UserForm[📝 Contact Form<br/>Input Collection<br/>Basic Validation]
+            JSValidation[✅ JavaScript Validation<br/>Format Checks<br/>Required Fields]
+            CSRFToken[🎫 CSRF Token Generation<br/>Secure Token Creation<br/>DOM Injection]
+            RateLimitClient[⏱️ Client Rate Limiting<br/>Button Disable State<br/>Submission Tracking]
+            FormEncryption[🔐 Form Data Encryption<br/>HTTPS Transport<br/>Content Encoding]
+        end
+        
+        %% Transport Security
+        subgraph TransportSec [🔒 Transport Security Layer]
+            TLSValidation[🔐 TLS/HTTPS Validation<br/>Certificate Verification<br/>Secure Headers]
+            ContentType[📋 Content-Type Validation<br/>JSON Schema Check<br/>MIME Type Verification]
+            PayloadSize[📏 Payload Size Validation<br/>1MB Maximum<br/>Buffer Overflow Prevention]
+        end
+        
+        %% Server Side Security
+        subgraph ServerSide [🛡️ Server-Side Security Layer]
+            CSRFValidation[🎫 CSRF Token Validation<br/>Token Verification<br/>Session Binding]
+            InputSanitization[🧹 Input Sanitization<br/>XSS Prevention<br/>HTML Stripping]
+            RateLimitServer[⏱️ Server Rate Limiting<br/>IP-based Tracking<br/>Sliding Window]
+            SpamDetection[🍯 Spam Detection<br/>Honeypot Fields<br/>Behavioral Analysis]
+            SchemaValidation[📋 Schema Validation<br/>Zod Type Safety<br/>Field Requirements]
+        end
+        
+        %% Data Processing Security
+        subgraph DataProcessing [💾 Data Processing Security]
+            DataEncryption[🔐 Data Encryption<br/>Parameter Store<br/>KMS Integration]
+            AuditLogging[📊 Audit Logging<br/>CloudWatch Logs<br/>Security Events]
+            ConfigRetrieval[🔒 Secure Config Retrieval<br/>IAM Permissions<br/>Least Privilege]
+            EmailValidation[📧 Email Validation<br/>Format Verification<br/>Domain Checks]
+        end
+        
+        %% Response Security
+        subgraph ResponseSec [📤 Response Security Layer]
+            ErrorHandling[🚨 Secure Error Handling<br/>No Information Leakage<br/>Generic Responses]
+            ResponseHeaders[📋 Security Headers<br/>CORS Configuration<br/>CSP Implementation]
+            SessionCleanup[🧹 Session Cleanup<br/>Token Invalidation<br/>Memory Clearing]
+        end
+    end
+    
+    %% Security Flow - Each layer validates before proceeding
+    UserForm --> JSValidation
+    JSValidation --> CSRFToken
+    CSRFToken --> RateLimitClient
+    RateLimitClient --> FormEncryption
+    
+    FormEncryption --> TLSValidation
+    TLSValidation --> ContentType
+    ContentType --> PayloadSize
+    
+    PayloadSize --> CSRFValidation
+    CSRFValidation --> InputSanitization
+    InputSanitization --> RateLimitServer
+    RateLimitServer --> SpamDetection
+    SpamDetection --> SchemaValidation
+    
+    SchemaValidation --> DataEncryption
+    DataEncryption --> AuditLogging
+    AuditLogging --> ConfigRetrieval
+    ConfigRetrieval --> EmailValidation
+    
+    EmailValidation --> ErrorHandling
+    ErrorHandling --> ResponseHeaders
+    ResponseHeaders --> SessionCleanup
+    
+    %% Security Feedback Loops
+    RateLimitServer -.->|Rate Limit Events| AuditLogging
+    SpamDetection -.->|Threat Detection| AuditLogging
+    CSRFValidation -.->|Token Validation Events| AuditLogging
+    ErrorHandling -.->|Security Incidents| AuditLogging
+    
+    %% Styling
+    classDef clientLayer fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef transportLayer fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef serverLayer fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef dataLayer fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef responseLayer fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    
+    class UserForm,JSValidation,CSRFToken,RateLimitClient,FormEncryption clientLayer
+    class TLSValidation,ContentType,PayloadSize transportLayer
+    class CSRFValidation,InputSanitization,RateLimitServer,SpamDetection,SchemaValidation serverLayer
+    class DataEncryption,AuditLogging,ConfigRetrieval,EmailValidation dataLayer
+    class ErrorHandling,ResponseHeaders,SessionCleanup responseLayer
+```
+
 ### 1. CSRF Protection
 
 #### Implementation Details

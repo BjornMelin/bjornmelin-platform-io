@@ -6,95 +6,110 @@ This document provides a comprehensive guide to the DNS configuration for bjornm
 
 ## DNS Architecture Overview
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           DNS Architecture - bjornmelin.io                      │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  Global DNS Infrastructure                                                      │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                           Route 53 Global DNS                               │ │
-│  │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐        │ │
-│  │  │   Authoritative │    │   Health Checks │    │   Traffic Policy│        │ │
-│  │  │   Name Servers  │    │   & Failover    │    │  (Future Use)   │        │ │
-│  │  └─────────────────┘    └─────────────────┘    └─────────────────┘        │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  Primary Domain: bjornmelin.io                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                                                                             │ │
-│  │  A Record: bjornmelin.io                                                   │ │
-│  │  ├─ Points to: CloudFront Distribution                                     │ │
-│  │  ├─ IPv4: 13.32.xxx.xxx (CloudFront IP)                                   │ │
-│  │  └─ TTL: 300 seconds                                                       │ │
-│  │                                                                             │ │
-│  │  AAAA Record: bjornmelin.io                                                │ │
-│  │  ├─ Points to: CloudFront Distribution                                     │ │
-│  │  ├─ IPv6: 2606:2800:xxx::xxx (CloudFront IPv6)                            │ │
-│  │  └─ TTL: 300 seconds                                                       │ │
-│  │                                                                             │ │
-│  │  CNAME Record: www.bjornmelin.io                                           │ │
-│  │  ├─ Points to: bjornmelin.io                                               │ │
-│  │  └─ TTL: 300 seconds                                                       │ │
-│  │                                                                             │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  API Subdomain: api.bjornmelin.io                                              │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                                                                             │ │
-│  │  A Record: api.bjornmelin.io                                               │ │
-│  │  ├─ Points to: API Gateway Custom Domain                                   │ │
-│  │  ├─ IPv4: 54.230.xxx.xxx (API Gateway IP)                                 │ │
-│  │  └─ TTL: 300 seconds                                                       │ │
-│  │                                                                             │ │
-│  │  AAAA Record: api.bjornmelin.io                                            │ │
-│  │  ├─ Points to: API Gateway Custom Domain                                   │ │
-│  │  ├─ IPv6: 2606:2800:xxx::xxx (API Gateway IPv6)                           │ │
-│  │  └─ TTL: 300 seconds                                                       │ │
-│  │                                                                             │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  Email Authentication Records                                                   │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                                                                             │ │
-│  │  SPF Record: bjornmelin.io (TXT)                                           │ │
-│  │  ├─ Value: "v=spf1 include:_spf.resend.com ~all"                          │ │
-│  │  ├─ Purpose: Authorize Resend to send emails                              │ │
-│  │  └─ TTL: 300 seconds                                                       │ │
-│  │                                                                             │ │
-│  │  DKIM Record 1: resend._domainkey.bjornmelin.io (TXT)                     │ │
-│  │  ├─ Value: "k=rsa; p=DKIM_PUBLIC_KEY_FROM_RESEND"                         │ │
-│  │  ├─ Purpose: DKIM email signature verification                             │ │
-│  │  └─ TTL: 300 seconds                                                       │ │
-│  │                                                                             │ │
-│  │  Domain Verification: _resend.bjornmelin.io (TXT)                          │ │
-│  │  ├─ Value: "resend-verification-xxxxxxxxxxxxx"                             │ │
-│  │  ├─ Purpose: Prove domain ownership to Resend                             │ │
-│  │  └─ TTL: 300 seconds                                                       │ │
-│  │                                                                             │ │
-│  │  DMARC Policy: _dmarc.bjornmelin.io (TXT)                                  │ │
-│  │  ├─ Value: "v=DMARC1; p=none; rua=mailto:dmarc@bjornmelin.io; pct=100"    │ │
-│  │  ├─ Purpose: Email authentication policy                                   │ │
-│  │  └─ TTL: 300 seconds                                                       │ │
-│  │                                                                             │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  Security & Monitoring Records                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                                                                             │ │
-│  │  CAA Record: bjornmelin.io                                                 │ │
-│  │  ├─ Value: "0 issue amazon.com"                                            │ │
-│  │  ├─ Purpose: Restrict certificate issuance to Amazon                       │ │
-│  │  └─ TTL: 3600 seconds                                                      │ │
-│  │                                                                             │ │
-│  │  MX Record: bjornmelin.io (Future Email Hosting)                           │ │
-│  │  ├─ Priority: 10                                                           │ │
-│  │  ├─ Value: mail.bjornmelin.io                                              │ │
-│  │  └─ TTL: 3600 seconds                                                      │ │
-│  │                                                                             │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    %% External DNS Resolution
+    subgraph Internet ["🌐 Internet DNS Resolution"]
+        Users[👥 Internet Users]
+        PublicDNS[🌐 Public DNS Resolvers<br/>8.8.8.8, 1.1.1.1, etc.]
+    end
+    
+    %% Route 53 Infrastructure
+    subgraph Route53Infrastructure ["🏗️ Route 53 Global Infrastructure"]
+        AuthoritativeNS[📋 Authoritative Name Servers<br/>ns-1234.awsdns-12.com<br/>ns-5678.awsdns-34.co.uk<br/>ns-9012.awsdns-56.net<br/>ns-3456.awsdns-78.org]
+        HealthChecks[💓 Health Checks<br/>30-second intervals<br/>Multi-region monitoring]
+        TrafficPolicy[🚦 Traffic Policy<br/>Future: Weighted routing<br/>Failover capabilities]
+    end
+    
+    %% Primary Domain Records
+    subgraph PrimaryDomain ["🏠 Primary Domain: bjornmelin.io"]
+        ApexA[📍 A Record<br/>Alias: CloudFront Distribution<br/>TTL: Alias (AWS managed)]
+        ApexAAAA[📍 AAAA Record<br/>Alias: CloudFront Distribution<br/>IPv6 Support]
+        WWWCname[📍 CNAME Record<br/>www → bjornmelin.io<br/>TTL: 300 seconds]
+    end
+    
+    %% API Subdomain
+    subgraph APISubdomain ["🚪 API Subdomain: api.bjornmelin.io"]
+        APIA[📍 A Record<br/>Alias: API Gateway<br/>Custom Domain]
+        APIAAAA[📍 AAAA Record<br/>Alias: API Gateway<br/>IPv6 Support]
+    end
+    
+    %% Email Authentication
+    subgraph EmailAuth ["📧 Email Authentication Records"]
+        SPF[📬 SPF Record (TXT)<br/>"v=spf1 include:_spf.resend.com ~all"<br/>TTL: 300 seconds]
+        DKIM1[🔐 DKIM Record 1 (TXT)<br/>resend._domainkey<br/>RSA-2048 Public Key]
+        DKIM2[🔐 DKIM Record 2 (TXT)<br/>resend2._domainkey<br/>Backup Key]
+        DMARC[🛡️ DMARC Policy (TXT)<br/>"v=DMARC1; p=none; rua=..."<br/>Monitor Mode]
+        DomainVerify[✅ Domain Verification (TXT)<br/>_resend.bjornmelin.io<br/>Ownership Proof]
+    end
+    
+    %% Security Records
+    subgraph SecurityRecords ["🔒 Security & Compliance"]
+        CAA[🛡️ CAA Record<br/>"0 issue amazon.com"<br/>Certificate Authority Authorization]
+        TLSPolicy[🔐 TLS Policy (Future)<br/>_443._tcp TXT Record<br/>Certificate Transparency]
+        SecurityContact[📞 Security Contact (Future)<br/>_security TXT Record<br/>Incident Response]
+    end
+    
+    %% AWS Services
+    subgraph AWSServices ["☁️ AWS Services"]
+        CloudFront[🌍 CloudFront Distribution<br/>Global CDN<br/>SSL/TLS Termination]
+        APIGateway[🚪 API Gateway<br/>Custom Domain<br/>Regional Endpoint]
+        S3[🪣 S3 Static Website<br/>Origin for CloudFront]
+        ACM[🔒 ACM Certificate<br/>*.bjornmelin.io<br/>Auto-renewal]
+    end
+    
+    %% External Email Service
+    subgraph EmailService ["📧 External Email Service"]
+        ResendAPI[📬 Resend API<br/>Email Service Provider<br/>DKIM Signing]
+        EmailDelivery[📭 Email Delivery<br/>SPF/DKIM Validation<br/>DMARC Compliance]
+    end
+    
+    %% DNS Resolution Flow
+    Users --> PublicDNS
+    PublicDNS --> AuthoritativeNS
+    AuthoritativeNS --> PrimaryDomain
+    AuthoritativeNS --> APISubdomain
+    AuthoritativeNS --> EmailAuth
+    AuthoritativeNS --> SecurityRecords
+    
+    %% Health Monitoring
+    HealthChecks --> CloudFront
+    HealthChecks --> APIGateway
+    TrafficPolicy -.->|Future| HealthChecks
+    
+    %% Service Mapping
+    ApexA --> CloudFront
+    ApexAAAA --> CloudFront
+    WWWCname --> ApexA
+    APIA --> APIGateway
+    APIAAAA --> APIGateway
+    CloudFront --> S3
+    
+    %% Email Flow
+    SPF -.->|Authorizes| ResendAPI
+    DKIM1 -.->|Verifies| EmailDelivery
+    DKIM2 -.->|Backup| EmailDelivery
+    DMARC -.->|Policy| EmailDelivery
+    
+    %% Security Enforcement
+    CAA -.->|Restricts| ACM
+    
+    %% Styling
+    classDef internet fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef route53 fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef domain fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    classDef email fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef security fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef aws fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef external fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
+    class Users,PublicDNS internet
+    class AuthoritativeNS,HealthChecks,TrafficPolicy route53
+    class ApexA,ApexAAAA,WWWCname,APIA,APIAAAA domain
+    class SPF,DKIM1,DKIM2,DMARC,DomainVerify email
+    class CAA,TLSPolicy,SecurityContact security
+    class CloudFront,APIGateway,S3,ACM aws
+    class ResendAPI,EmailDelivery external
 ```
 
 ## Hosted Zone Configuration

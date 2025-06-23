@@ -6,71 +6,132 @@ This document details the serverless API architecture for bjornmelin.io, focusin
 
 ## High-Level API Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                      API Gateway + Lambda Architecture                          │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  Client Applications                                                            │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐            │
-│  │   Web Browser   │    │  Mobile App     │    │   CLI Tools     │            │
-│  │ bjornmelin.io   │    │   (Future)      │    │   (Testing)     │            │
-│  └─────────────────┘    └─────────────────┘    └─────────────────┘            │
-│           │                       │                       │                    │
-│           ▼                       ▼                       ▼                    │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                        HTTPS/TLS 1.2+                                      │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                         CloudFront CDN                                      │ │
-│  │  ├─ Global Edge Locations                                                  │ │
-│  │  ├─ WAF Integration                                                         │ │
-│  │  ├─ DDoS Protection                                                         │ │
-│  │  └─ SSL/TLS Termination                                                     │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                        API Gateway                                          │ │
-│  │                    api.bjornmelin.io                                        │ │
-│  │  ┌─────────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │ Request Processing Pipeline:                                            │ │ │
-│  │  │ ├─ Authentication (Future)                                              │ │ │
-│  │  │ ├─ Authorization (Future)                                               │ │ │
-│  │  │ ├─ Request Validation                                                   │ │ │
-│  │  │ ├─ Rate Limiting                                                        │ │ │
-│  │  │ ├─ CORS Handling                                                        │ │ │
-│  │  │ ├─ Request Transformation                                               │ │ │
-│  │  │ └─ Routing                                                              │ │ │
-│  │  └─────────────────────────────────────────────────────────────────────────┘ │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                        Lambda Function                                      │ │
-│  │                   Contact Form Handler                                      │ │
-│  │  ┌─────────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │ Processing Pipeline:                                                    │ │ │
-│  │  │ ├─ Input Validation & Sanitization                                      │ │ │
-│  │  │ ├─ CSRF Token Verification                                              │ │ │
-│  │  │ ├─ Rate Limiting Check                                                  │ │ │
-│  │  │ ├─ Spam Detection                                                       │ │ │
-│  │  │ ├─ Parameter Store Configuration Retrieval                              │ │ │
-│  │  │ ├─ Email Service Integration                                            │ │ │
-│  │  │ ├─ Error Handling & Logging                                             │ │ │
-│  │  │ └─ Response Formatting                                                  │ │ │
-│  │  └─────────────────────────────────────────────────────────────────────────┘ │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│           │                       │                       │                    │
-│           ▼                       ▼                       ▼                    │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐            │
-│  │  Parameter      │    │   CloudWatch    │    │   Resend API    │            │
-│  │    Store        │    │   Monitoring    │    │ Email Service   │            │
-│  └─────────────────┘    └─────────────────┘    └─────────────────┘            │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    %% API Gateway + Lambda Architecture
+    subgraph ClientApplications ["📱 Client Applications"]
+        WebBrowser[🌐 Web Browser<br/>bjornmelin.io<br/>Contact Form UI]
+        MobileApp[📱 Mobile App<br/>Future Implementation<br/>Cross-platform]
+        CLITools[⚡ CLI Tools<br/>Testing & Development<br/>API Integration]
+    end
+    
+    %% Transport Security Layer
+    subgraph TransportSecurity ["🔒 Transport Security Layer"]
+        HTTPS[🔐 HTTPS/TLS 1.2+<br/>End-to-End Encryption<br/>Certificate Validation]
+    end
+    
+    %% CloudFront CDN Layer
+    subgraph CloudFrontCDN ["🌍 CloudFront CDN Layer"]
+        CloudFront[🌍 CloudFront Distribution<br/>Global Edge Locations<br/>Performance & Security]
+        WAFIntegration[🔥 WAF Integration<br/>Web Application Firewall<br/>Attack Protection]
+        DDoSProtection[🛡️ DDoS Protection<br/>AWS Shield Standard<br/>Traffic Filtering]
+        SSLTermination[🔒 SSL/TLS Termination<br/>Certificate Management<br/>ACM Integration]
+    end
+    
+    %% API Gateway Layer
+    subgraph APIGatewayLayer ["🚪 API Gateway Layer"]
+        APIGateway[🚪 API Gateway<br/>api.bjornmelin.io<br/>Regional Endpoint]
+        
+        subgraph RequestPipeline ["📋 Request Processing Pipeline"]
+            Authentication[🔐 Authentication<br/>Future Implementation<br/>API Key Support]
+            Authorization[👤 Authorization<br/>Future Role-based Access<br/>Permission Control]
+            RequestValidation[✅ Request Validation<br/>Schema Validation<br/>Content-Type Checks]
+            RateLimiting[⏱️ Rate Limiting<br/>2000 req/sec API<br/>100 req/sec per client]
+            CORSHandling[🌐 CORS Handling<br/>Origin Validation<br/>Preflight Support]
+            RequestTransformation[🔄 Request Transformation<br/>Header Injection<br/>Payload Processing]
+            Routing[🎯 Routing<br/>Path-based Routing<br/>Method Validation]
+        end
+    end
+    
+    %% Lambda Function Layer
+    subgraph LambdaLayer ["⚡ Lambda Function Layer"]
+        LambdaFunction[⚡ Lambda Function<br/>Contact Form Handler<br/>Node.js 20.x ARM64]
+        
+        subgraph ProcessingPipeline ["🔧 Processing Pipeline"]
+            InputValidation[✅ Input Validation<br/>Sanitization & Schema<br/>XSS Prevention]
+            CSRFVerification[🎫 CSRF Token Verification<br/>Rolling Tokens<br/>Session Validation]
+            RateLimitCheck[⏱️ Rate Limit Check<br/>Per-IP Tracking<br/>Sliding Window]
+            SpamDetection[🍯 Spam Detection<br/>Honeypot Fields<br/>Behavioral Analysis]
+            ConfigRetrieval[🔒 Config Retrieval<br/>Parameter Store Access<br/>KMS Decryption]
+            EmailIntegration[📧 Email Service Integration<br/>Resend API Client<br/>Template Rendering]
+            ErrorHandling[🚨 Error Handling<br/>Structured Logging<br/>Graceful Degradation]
+            ResponseFormatting[📄 Response Formatting<br/>JSON Structure<br/>CORS Headers]
+        end
+    end
+    
+    %% Backend Services Layer
+    subgraph BackendServices ["☁️ Backend Services Layer"]
+        ParameterStore[🔒 Parameter Store<br/>Secure Configuration<br/>Standard Tier]
+        CloudWatchMonitoring[📊 CloudWatch<br/>Metrics & Logs<br/>Performance Tracking]
+        ResendAPI[📧 Resend API<br/>External Email Service<br/>3k emails/month]
+    end
+    
+    %% Flow Connections - Client to Transport
+    WebBrowser --> HTTPS
+    MobileApp --> HTTPS
+    CLITools --> HTTPS
+    
+    %% Transport to CloudFront
+    HTTPS --> CloudFront
+    
+    %% CloudFront Internal Flow
+    CloudFront --> WAFIntegration
+    WAFIntegration --> DDoSProtection
+    DDoSProtection --> SSLTermination
+    
+    %% CloudFront to API Gateway
+    SSLTermination --> APIGateway
+    
+    %% API Gateway Processing Pipeline
+    APIGateway --> RequestPipeline
+    Authentication --> Authorization
+    Authorization --> RequestValidation
+    RequestValidation --> RateLimiting
+    RateLimiting --> CORSHandling
+    CORSHandling --> RequestTransformation
+    RequestTransformation --> Routing
+    
+    %% API Gateway to Lambda
+    Routing --> LambdaFunction
+    
+    %% Lambda Processing Pipeline
+    LambdaFunction --> ProcessingPipeline
+    InputValidation --> CSRFVerification
+    CSRFVerification --> RateLimitCheck
+    RateLimitCheck --> SpamDetection
+    SpamDetection --> ConfigRetrieval
+    ConfigRetrieval --> EmailIntegration
+    EmailIntegration --> ErrorHandling
+    ErrorHandling --> ResponseFormatting
+    
+    %% Lambda to Backend Services
+    ConfigRetrieval --> ParameterStore
+    LambdaFunction --> CloudWatchMonitoring
+    EmailIntegration --> ResendAPI
+    
+    %% Response Flow (dotted lines)
+    ResponseFormatting -.->|Success Response| APIGateway
+    APIGateway -.->|JSON Response| CloudFront
+    CloudFront -.->|HTTPS Response| ClientApplications
+    
+    %% Monitoring Flow
+    CloudWatchMonitoring -.->|Metrics| APIGateway
+    CloudWatchMonitoring -.->|Logs| LambdaFunction
+    
+    %% Styling
+    classDef client fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef security fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef cdn fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef api fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    classDef lambda fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef backend fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    
+    class WebBrowser,MobileApp,CLITools client
+    class HTTPS,WAFIntegration,DDoSProtection,SSLTermination security
+    class CloudFront cdn
+    class APIGateway,Authentication,Authorization,RequestValidation,RateLimiting,CORSHandling,RequestTransformation,Routing api
+    class LambdaFunction,InputValidation,CSRFVerification,RateLimitCheck,SpamDetection,ConfigRetrieval,EmailIntegration,ErrorHandling,ResponseFormatting lambda
+    class ParameterStore,CloudWatchMonitoring,ResendAPI backend
 ```
 
 ## API Gateway Configuration

@@ -35,6 +35,177 @@ This guide provides a comprehensive migration path from AWS Secrets Manager to A
 3. **KMS Key** for encryption (can reuse existing)
 4. **IAM Permissions** to create parameters and update Lambda functions
 
+## Migration Process Flow
+
+The following diagram illustrates the comprehensive migration process from AWS Secrets Manager to Parameter Store:
+
+```mermaid
+graph TB
+    %% Parameter Store Migration Flow
+    subgraph MigrationProcess [📋 Parameter Store Migration Process]
+        
+        %% Pre-Migration Phase
+        subgraph PreMigration [🔍 Pre-Migration Assessment]
+            CurrentState[📊 Current State Analysis<br/>Secrets Manager Assessment<br/>Cost & Usage Review]
+            Prerequisites[✅ Prerequisites Check<br/>AWS CLI Configuration<br/>IAM Permissions Verification]
+            BackupPlan[💾 Backup Strategy<br/>Secret Value Export<br/>Rollback Procedures]
+        end
+        
+        %% Phase 1: Parameter Creation
+        subgraph Phase1 [🏗️ Phase 1: Parameter Store Setup]
+            ExportSecret[📤 Export Existing Secret<br/>SecretString Extraction<br/>Secure Local Storage]
+            CreateParameter[🔧 Create Parameter<br/>SecureString Type<br/>KMS Encryption]
+            VerifyParameter[✅ Verify Parameter<br/>Decryption Test<br/>Value Validation]
+        end
+        
+        %% Phase 2: Infrastructure Updates
+        subgraph Phase2 [🔄 Phase 2: Infrastructure Migration]
+            UpdateCDK[📝 Update CDK Code<br/>Replace Secrets Manager<br/>Add Parameter References]
+            UpdatePermissions[🔐 Update IAM Policies<br/>SSM GetParameter<br/>KMS Decrypt Permissions]
+            DeployInfra[🚀 Deploy Infrastructure<br/>Stack Updates<br/>Resource Migration]
+        end
+        
+        %% Phase 3: Application Updates
+        subgraph Phase3 [💻 Phase 3: Application Migration]
+            UpdateSDK[🔧 Update SDK Client<br/>Secrets Manager → SSM<br/>API Call Changes]
+            UpdateEnvVars[⚙️ Update Environment<br/>Secret ARN → Parameter Name<br/>Configuration Changes]
+            CodeTesting[🧪 Test Code Changes<br/>Local Testing<br/>Integration Verification]
+        end
+        
+        %% Phase 4: Validation & Testing
+        subgraph Phase4 [✅ Phase 4: Testing & Validation]
+            DevDeployment[🔧 Development Deployment<br/>Test Environment<br/>Functionality Verification]
+            IntegrationTests[🧪 Integration Testing<br/>End-to-End Tests<br/>Performance Validation]
+            SecurityValidation[🔒 Security Validation<br/>Access Control Testing<br/>Encryption Verification]
+        end
+        
+        %% Phase 5: Production Deployment
+        subgraph Phase5 [🚀 Phase 5: Production Migration]
+            ProdDeployment[🚀 Production Deployment<br/>Blue-Green Strategy<br/>Monitoring Setup]
+            FunctionalTest[✅ Functional Testing<br/>Live System Verification<br/>User Experience Testing]
+            MonitoringSetup[📊 Monitoring & Alerts<br/>CloudWatch Configuration<br/>Audit Trail Setup]
+        end
+        
+        %% Phase 6: Cleanup & Documentation
+        subgraph Phase6 [🧹 Phase 6: Cleanup & Finalization]
+            SecretsCleanup[🗑️ Secrets Manager Cleanup<br/>Scheduled Deletion<br/>Resource Decommission]
+            DocumentUpdate[📚 Documentation Updates<br/>Process Documentation<br/>Team Training Materials]
+            CostValidation[💰 Cost Validation<br/>Billing Verification<br/>Savings Confirmation]
+        end
+    end
+    
+    %% Migration Flow Progression
+    CurrentState --> Prerequisites
+    Prerequisites --> BackupPlan
+    
+    BackupPlan --> ExportSecret
+    ExportSecret --> CreateParameter
+    CreateParameter --> VerifyParameter
+    
+    VerifyParameter --> UpdateCDK
+    UpdateCDK --> UpdatePermissions
+    UpdatePermissions --> DeployInfra
+    
+    DeployInfra --> UpdateSDK
+    UpdateSDK --> UpdateEnvVars
+    UpdateEnvVars --> CodeTesting
+    
+    CodeTesting --> DevDeployment
+    DevDeployment --> IntegrationTests
+    IntegrationTests --> SecurityValidation
+    
+    SecurityValidation --> ProdDeployment
+    ProdDeployment --> FunctionalTest
+    FunctionalTest --> MonitoringSetup
+    
+    MonitoringSetup --> SecretsCleanup
+    SecretsCleanup --> DocumentUpdate
+    DocumentUpdate --> CostValidation
+    
+    %% Rollback Paths (Emergency Procedures)
+    ProdDeployment -.->|Issues Detected| BackupPlan
+    FunctionalTest -.->|Failures| DevDeployment
+    SecurityValidation -.->|Security Issues| Phase2
+    
+    %% Validation Loops
+    VerifyParameter -.->|Validation Failed| CreateParameter
+    IntegrationTests -.->|Tests Failed| CodeTesting
+    CostValidation -.->|Cost Issues| DocumentUpdate
+    
+    %% Styling
+    classDef preMigration fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef phase1 fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef phase2 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef phase3 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef phase4 fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef phase5 fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef phase6 fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    
+    class CurrentState,Prerequisites,BackupPlan preMigration
+    class ExportSecret,CreateParameter,VerifyParameter phase1
+    class UpdateCDK,UpdatePermissions,DeployInfra phase2
+    class UpdateSDK,UpdateEnvVars,CodeTesting phase3
+    class DevDeployment,IntegrationTests,SecurityValidation phase4
+    class ProdDeployment,FunctionalTest,MonitoringSetup phase5
+    class SecretsCleanup,DocumentUpdate,CostValidation phase6
+```
+
+### Cost Comparison Architecture
+
+```mermaid
+graph LR
+    %% Cost Comparison: Secrets Manager vs Parameter Store
+    subgraph CostComparison [💰 Cost Comparison Analysis]
+        
+        %% Current State (Secrets Manager)
+        subgraph CurrentCosts [🔴 Current: AWS Secrets Manager]
+            SMStorage[💾 Storage Cost<br/>$0.40/secret/month<br/>Per Secret Billing]
+            SMAPICalls[🔄 API Calls<br/>$0.05/10k calls<br/>Per Request Billing]
+            SMFeatures[⚡ Premium Features<br/>Auto Rotation<br/>Cross-Account Access]
+            SMTotal[💸 Total Cost<br/>$0.40+/month<br/>Ongoing Charges]
+        end
+        
+        %% Target State (Parameter Store)
+        subgraph TargetCosts [🟢 Target: Parameter Store]
+            PSStorage[💾 Storage Cost<br/>FREE (Standard)<br/>No Monthly Charges]
+            PSAPICalls[🔄 API Calls<br/>FREE (Standard)<br/>40 req/sec Limit]
+            PSFeatures[⚙️ Basic Features<br/>Manual Rotation<br/>Same-Account Access]
+            PSTotal[💰 Total Cost<br/>$0.00/month<br/>Zero Charges]
+        end
+        
+        %% Migration Benefits
+        subgraph Benefits [✅ Migration Benefits]
+            CostSavings[💰 Cost Savings<br/>$0.40/month<br/>$4.80/year]
+            Simplicity[🎯 Simplicity<br/>Fewer Components<br/>Reduced Complexity]
+            Reliability[🛡️ Same Security<br/>KMS Encryption<br/>CloudTrail Auditing]
+            FreeTier[🆓 Free Tier<br/>Always Free<br/>No Time Limits]
+        end
+    end
+    
+    %% Cost Flow Connections
+    SMStorage --> CostSavings
+    SMAPICalls --> CostSavings
+    PSStorage --> Simplicity
+    PSAPICalls --> Reliability
+    
+    %% Feature Comparison
+    SMFeatures -.->|Advanced Features| PSFeatures
+    PSFeatures -.->|Simplified Approach| Benefits
+    
+    %% Total Cost Impact
+    SMTotal --> CostSavings
+    PSTotal --> FreeTier
+    
+    %% Styling
+    classDef currentState fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef targetState fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef benefits fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    
+    class SMStorage,SMAPICalls,SMFeatures,SMTotal currentState
+    class PSStorage,PSAPICalls,PSFeatures,PSTotal targetState
+    class CostSavings,Simplicity,Reliability,FreeTier benefits
+```
+
 ## Step-by-Step Migration
 
 ### Phase 1: Create Parameter Store Entry

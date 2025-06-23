@@ -6,43 +6,68 @@ This document provides a comprehensive overview of the AWS infrastructure archit
 
 ## High-Level Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              bjornmelin.io Architecture                          │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  Internet Users                                                                 │
-│       │                                                                         │
-│       ▼                                                                         │
-│  ┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐              │
-│  │   Route 53  │────▶│   CloudFront     │────▶│   S3 Bucket     │              │
-│  │ bjornmelin.io│     │   Distribution   │     │ Static Website  │              │
-│  └─────────────┘     └──────────────────┘     └─────────────────┘              │
-│       │                                                                         │
-│       │ (Contact Form API)                                                      │
-│       ▼                                                                         │
-│  ┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐              │
-│  │ API Gateway │────▶│   Lambda         │────▶│  Parameter      │              │
-│  │ api.bm.io   │     │ Contact Handler  │     │   Store         │              │
-│  └─────────────┘     └──────────────────┘     └─────────────────┘              │
-│                               │                         │                       │
-│                               │                         ▼                       │
-│                               │                ┌─────────────────┐              │
-│                               │                │   KMS Key       │              │
-│                               │                │  Encryption     │              │
-│                               │                └─────────────────┘              │
-│                               ▼                                                 │
-│                      ┌─────────────────┐                                       │
-│                      │   Resend API    │                                       │
-│                      │ (External SaaS) │                                       │
-│                      └─────────────────┘                                       │
-│                                                                                 │
-│  ┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐              │
-│  │ CloudWatch  │────▶│   SNS Topics     │────▶│  CloudTrail     │              │
-│  │ Monitoring  │     │   Alerting       │     │ Audit Logging   │              │
-│  └─────────────┘     └──────────────────┘     └─────────────────┘              │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    %% Users and External Access
+    Users[👥 Internet Users]
+    
+    %% DNS Layer
+    Route53[🌐 Route 53<br/>bjornmelin.io<br/>DNS Management]
+    
+    %% CDN and Web Hosting
+    CloudFront[🌍 CloudFront<br/>Global CDN<br/>SSL/TLS Termination]
+    S3[🪣 S3 Bucket<br/>Static Website<br/>Content Storage]
+    
+    %% API Infrastructure
+    APIGateway[🚪 API Gateway<br/>api.bjornmelin.io<br/>RESTful API]
+    Lambda[⚡ Lambda Function<br/>Contact Form Handler<br/>Node.js 20.x ARM64]
+    
+    %% Configuration and Security
+    ParameterStore[🔒 Parameter Store<br/>Secure Configuration<br/>API Keys]
+    KMS[🔑 KMS Customer Key<br/>Encryption<br/>Auto-rotation]
+    
+    %% External Email Service
+    Resend[📧 Resend API<br/>External SaaS<br/>Email Delivery]
+    
+    %% Monitoring and Logging
+    CloudWatch[📊 CloudWatch<br/>Metrics & Logs<br/>Performance Monitoring]
+    SNS[📢 SNS Topics<br/>Alerting<br/>Notifications]
+    CloudTrail[📋 CloudTrail<br/>Audit Logging<br/>Compliance]
+    
+    %% User Flow
+    Users --> Route53
+    Route53 --> CloudFront
+    CloudFront --> S3
+    
+    %% API Flow
+    Users -.->|Contact Form API| Route53
+    Route53 -.-> APIGateway
+    APIGateway --> Lambda
+    Lambda --> ParameterStore
+    ParameterStore --> KMS
+    Lambda --> Resend
+    
+    %% Monitoring Flow
+    Lambda --> CloudWatch
+    APIGateway --> CloudWatch
+    CloudWatch --> SNS
+    CloudWatch --> CloudTrail
+    
+    %% Styling
+    classDef userClass fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef awsCompute fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef awsStorage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef awsSecurity fill:#ffebee,stroke:#b71c1c,stroke-width:2px
+    classDef external fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef monitoring fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    
+    class Users userClass
+    class Lambda,APIGateway awsCompute
+    class S3,ParameterStore awsStorage
+    class KMS,CloudTrail awsSecurity
+    class Resend external
+    class CloudWatch,SNS monitoring
+    class Route53,CloudFront awsCompute
 ```
 
 ## Architecture Components
@@ -119,115 +144,206 @@ This document provides a comprehensive overview of the AWS infrastructure archit
 
 ## Network Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Network Flow Diagram                     │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Internet ──┐                                                   │
-│             │                                                   │
-│             ▼                                                   │
-│        ┌─────────┐                                              │
-│        │Route 53 │                                              │
-│        │   DNS   │                                              │
-│        └─────────┘                                              │
-│             │                                                   │
-│             ├──── Static Content ──────▶ CloudFront ──▶ S3     │
-│             │                                                   │
-│             └──── API Requests ────────▶ API Gateway ──▶ Lambda │
-│                                                     │           │
-│                                                     ▼           │
-│                                              ┌─────────────┐    │
-│                                              │Parameter    │    │
-│                                              │Store + KMS  │    │
-│                                              └─────────────┘    │
-│                                                     │           │
-│                                                     ▼           │
-│                                              ┌─────────────┐    │
-│                                              │Resend API   │    │
-│                                              │(External)   │    │
-│                                              └─────────────┘    │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    %% External Access
+    Internet[🌐 Internet Users]
+    
+    %% DNS Layer
+    Route53[🌐 Route 53 DNS<br/>bjornmelin.io<br/>Global DNS Resolution]
+    
+    %% Content Delivery
+    subgraph CDN ["Content Delivery Network"]
+        CloudFront[🌍 CloudFront<br/>Global Edge Locations<br/>SSL/TLS Termination<br/>DDoS Protection]
+    end
+    
+    %% Static Hosting
+    subgraph StaticHosting ["Static Website Hosting"]
+        S3[🪣 S3 Bucket<br/>Static Content<br/>Website Files<br/>Versioning Enabled]
+    end
+    
+    %% API Infrastructure  
+    subgraph APIInfra ["API Infrastructure"]
+        APIGateway[🚪 API Gateway<br/>api.bjornmelin.io<br/>RESTful Endpoints<br/>Rate Limiting]
+        Lambda[⚡ Lambda Function<br/>Contact Form Handler<br/>ARM64 Architecture<br/>256MB Memory]
+    end
+    
+    %% Security & Configuration
+    subgraph Security ["Security & Config"]
+        ParameterStore[🔒 Parameter Store<br/>Secure Configuration<br/>Standard Tier<br/>KMS Encrypted]
+        KMS[🔑 KMS Customer Key<br/>Encryption Management<br/>Auto-rotation<br/>Audit Logging]
+    end
+    
+    %% External Services
+    subgraph External ["External Services"]
+        Resend[📧 Resend API<br/>Email Service<br/>3k emails/month<br/>DKIM + SPF]
+    end
+    
+    %% Monitoring
+    subgraph Monitoring ["Monitoring & Logging"]
+        CloudWatch[📊 CloudWatch<br/>Metrics & Logs<br/>Performance Data<br/>Custom Metrics]
+        SNS[📢 SNS Topics<br/>Alert Notifications<br/>Real-time Alerts]
+        CloudTrail[📋 CloudTrail<br/>API Audit Logs<br/>Compliance Tracking<br/>Security Events]
+    end
+    
+    %% Network Flows
+    Internet --> Route53
+    Route53 -->|Static Content| CloudFront
+    CloudFront --> S3
+    
+    Route53 -.->|API Requests| APIGateway
+    APIGateway --> Lambda
+    Lambda --> ParameterStore
+    ParameterStore <--> KMS
+    Lambda --> Resend
+    
+    %% Monitoring Flows
+    Lambda --> CloudWatch
+    APIGateway --> CloudWatch
+    S3 --> CloudWatch
+    CloudWatch --> SNS
+    CloudWatch --> CloudTrail
+    
+    %% Styling
+    classDef internet fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    classDef aws fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef security fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+    classDef external fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef monitoring fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
+    class Internet internet
+    class Route53,CloudFront,S3,APIGateway,Lambda aws
+    class ParameterStore,KMS,CloudTrail security
+    class Resend external
+    class CloudWatch,SNS monitoring
 ```
 
 ## Data Flow Analysis
 
 ### Contact Form Submission Flow
 
-1. **User Interaction**
-   - User fills contact form on website
-   - Form includes CSRF protection and validation
-   - Client-side validation before submission
-
-2. **API Processing**
-   ```
-   Browser ──▶ API Gateway ──▶ Lambda Function
-                                    │
-                                    ▼
-                              Parameter Store ──▶ KMS Decryption
-                                    │
-                                    ▼
-                              Resend API ──▶ Email Delivery
-   ```
-
-3. **Security Validation**
-   - CSRF token verification
-   - Input sanitization and validation
-   - Rate limiting to prevent abuse
-   - Honeypot fields for spam detection
-
-4. **Email Processing**
-   - Secure API key retrieval from Parameter Store
-   - KMS decryption for sensitive data
-   - Resend API integration with retry logic
-   - Error handling and logging
-
-5. **Monitoring & Alerting**
-   - CloudWatch metrics collection
-   - Error rate monitoring
-   - Performance metrics tracking
-   - SNS notifications for issues
+```mermaid
+sequenceDiagram
+    participant User as 👤 User Browser
+    participant CDN as 🌍 CloudFront
+    participant API as 🚪 API Gateway
+    participant Lambda as ⚡ Lambda Function
+    participant PS as 🔒 Parameter Store
+    participant KMS as 🔑 KMS Key
+    participant Resend as 📧 Resend API
+    participant CW as 📊 CloudWatch
+    participant SNS as 📢 SNS
+    
+    Note over User, SNS: Contact Form Submission Process
+    
+    %% 1. Form Submission
+    User->>CDN: Submit Contact Form (POST)
+    Note right of User: CSRF token included<br/>Client-side validation passed
+    
+    CDN->>API: Forward to api.bjornmelin.io
+    API->>Lambda: Invoke contact-form-handler
+    
+    %% 2. Security Validation
+    Lambda->>Lambda: Validate CSRF Token
+    Lambda->>Lambda: Sanitize Input Data
+    Lambda->>Lambda: Check Rate Limits
+    Lambda->>Lambda: Spam Detection
+    
+    %% 3. Configuration Retrieval
+    Lambda->>PS: GetParameter (resend-config)
+    PS->>KMS: Decrypt SecureString
+    KMS-->>PS: Decrypted Configuration
+    PS-->>Lambda: API Configuration
+    
+    %% 4. Email Processing
+    Lambda->>Resend: Send Email Request
+    Note right of Resend: Template rendering<br/>DKIM signing<br/>Delivery processing
+    Resend-->>Lambda: Email ID Response
+    
+    %% 5. Response & Monitoring
+    Lambda->>CW: Record Success Metrics
+    Lambda->>CW: Log Request Details
+    Lambda-->>API: Success Response
+    API-->>CDN: JSON Response
+    CDN-->>User: Thank You Message
+    
+    %% 6. Alerting (if needed)
+    alt Email Send Failure
+        Lambda->>CW: Record Error Metrics
+        CW->>SNS: Trigger Alert
+        SNS->>SNS: Notify Operations Team
+    end
+    
+    %% 7. Audit Logging
+    Note over Lambda, CW: All actions logged to CloudWatch<br/>API calls tracked by CloudTrail
+```
 
 ## Security Architecture
 
 ### Defense in Depth
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Security Layers                             │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Layer 1: Network Security                                     │
-│  ├─ HTTPS enforcement                                           │
-│  ├─ Security headers (CSP, HSTS, etc.)                         │
-│  └─ DDoS protection via CloudFront                             │
-│                                                                 │
-│  Layer 2: API Security                                         │
-│  ├─ CSRF protection                                             │
-│  ├─ Rate limiting                                               │
-│  ├─ Input validation & sanitization                            │
-│  └─ Authentication & authorization                              │
-│                                                                 │
-│  Layer 3: Data Security                                        │
-│  ├─ KMS encryption for secrets                                 │
-│  ├─ Parameter Store SecureString                               │
-│  ├─ TLS 1.2+ for data in transit                              │
-│  └─ Secure key rotation                                        │
-│                                                                 │
-│  Layer 4: Access Control                                       │
-│  ├─ IAM least privilege policies                               │
-│  ├─ Resource-based policies                                    │
-│  ├─ Service-to-service authentication                          │
-│  └─ Regular access reviews                                     │
-│                                                                 │
-│  Layer 5: Monitoring & Auditing                               │
-│  ├─ CloudTrail audit logging                                   │
-│  ├─ CloudWatch monitoring                                      │
-│  ├─ Anomaly detection                                           │
-│  └─ Security alerting                                          │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    %% Security Layers
+    subgraph Layer1 ["🌐 Layer 1: Network Security"]
+        HTTPS[🔒 HTTPS Enforcement<br/>TLS 1.2+ Required]
+        Headers[🛡️ Security Headers<br/>CSP, HSTS, X-Frame-Options]
+        DDoS[🛡️ DDoS Protection<br/>CloudFront Shield]
+        WAF[🔥 WAF Rules<br/>Future Enhancement]
+    end
+    
+    subgraph Layer2 ["🚪 Layer 2: API Security"]
+        CSRF[🎫 CSRF Protection<br/>Rolling Tokens]
+        RateLimit[⏱️ Rate Limiting<br/>Per IP/Session]
+        Validation[✅ Input Validation<br/>Sanitization & XSS Prevention]
+        Auth[🔐 Authentication<br/>Future API Keys]
+    end
+    
+    subgraph Layer3 ["💾 Layer 3: Data Security"]
+        KMSEnc[🔑 KMS Encryption<br/>Customer Managed Keys]
+        ParamStore[🔒 Parameter Store<br/>SecureString Encryption]
+        Transit[🔐 TLS in Transit<br/>End-to-end Encryption]
+        KeyRotation[🔄 Key Rotation<br/>Automatic + Manual]
+    end
+    
+    subgraph Layer4 ["👤 Layer 4: Access Control"]
+        IAM[👥 IAM Policies<br/>Least Privilege]
+        ResourcePolicy[📋 Resource Policies<br/>Service-specific Controls]
+        ServiceAuth[🤝 Service Authentication<br/>Role-based Access]
+        AccessReview[🔍 Access Reviews<br/>Regular Audits]
+    end
+    
+    subgraph Layer5 ["📊 Layer 5: Monitoring & Auditing"]
+        CloudTrail[📋 CloudTrail<br/>API Audit Logging]
+        Monitoring[📈 CloudWatch<br/>Real-time Monitoring]
+        Anomaly[🚨 Anomaly Detection<br/>ML-based Alerts]
+        Alerting[📢 Security Alerting<br/>SNS Notifications]
+    end
+    
+    %% Data Flow Through Layers
+    Internet[🌐 Internet Request] --> Layer1
+    Layer1 --> Layer2
+    Layer2 --> Layer3
+    Layer3 --> Layer4
+    Layer4 --> Layer5
+    
+    %% Feedback Loop
+    Layer5 -.->|Security Events| Layer1
+    Layer5 -.->|Rate Limit Updates| Layer2
+    Layer5 -.->|Access Violations| Layer4
+    
+    %% Styling
+    classDef network fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef api fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef data fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef access fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    classDef monitoring fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    
+    class HTTPS,Headers,DDoS,WAF network
+    class CSRF,RateLimit,Validation,Auth api
+    class KMSEnc,ParamStore,Transit,KeyRotation data
+    class IAM,ResourcePolicy,ServiceAuth,AccessReview access
+    class CloudTrail,Monitoring,Anomaly,Alerting monitoring
 ```
 
 ### Encryption Strategy

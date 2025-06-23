@@ -2,6 +2,195 @@
 
 > **📋 Architecture Reference**: For detailed implementation patterns and security considerations, see the [Email Service Architecture](./email-service-architecture.md) and [API Gateway + Lambda Architecture](./api-lambda-architecture.md) documentation.
 
+## Application Integration Architecture
+
+The following diagram shows the comprehensive application integration architecture and data flow:
+
+```mermaid
+graph TB
+    %% Application Integration Architecture
+    subgraph ApplicationIntegration [🔄 Application Integration Architecture]
+        
+        %% Frontend Layer
+        subgraph Frontend [🌐 Frontend Application Layer]
+            ReactApp[⚛️ React Application<br/>bjornmelin.io<br/>Contact Form UI]
+            FormValidation[✅ Client-Side Validation<br/>Form State Management<br/>Error Handling]
+            APIClient[🔌 API Client<br/>HTTP Request Management<br/>Response Processing]
+        end
+        
+        %% API Gateway Integration
+        subgraph APILayer [🚪 API Gateway Integration Layer]
+            CORS[🌐 CORS Configuration<br/>Origin Validation<br/>Preflight Handling]
+            RequestValidation[📋 Request Validation<br/>Schema Enforcement<br/>Content-Type Checks]
+            APIRouting[🎯 API Routing<br/>Path-based Routing<br/>Method Validation]
+            ErrorResponse[🚨 Error Response<br/>Standardized Formats<br/>Status Code Mapping]
+        end
+        
+        %% Lambda Function Layer
+        subgraph LambdaLayer [⚡ Lambda Function Layer]
+            ContactHandler[⚡ Contact Form Handler<br/>Node.js 20.x Runtime<br/>ARM64 Architecture]
+            
+            subgraph EmailService [📧 Email Service Integration]
+                ServiceSingleton[🔄 EmailService Singleton<br/>Instance Management<br/>Configuration Caching]
+                ConfigRetrieval[🔒 Configuration Retrieval<br/>Parameter Store Access<br/>KMS Decryption]
+                ResendClient[📨 Resend Client<br/>API Integration<br/>Email Composition]
+            end
+            
+            subgraph ErrorHandling [🚨 Error Handling]
+                ValidationErrors[❌ Validation Errors<br/>Input Sanitization<br/>Schema Validation]
+                ServiceErrors[⚠️ Service Errors<br/>API Failures<br/>Rate Limiting]
+                SystemErrors[🔥 System Errors<br/>Configuration Issues<br/>Network Failures]
+            end
+        end
+        
+        %% Backend Services
+        subgraph BackendServices [☁️ Backend Services Layer]
+            ParameterStore[🔒 Parameter Store<br/>Secure Configuration<br/>Encrypted Storage]
+            KMSService[🔑 KMS Service<br/>Encryption/Decryption<br/>Key Management]
+            CloudWatch[📊 CloudWatch<br/>Logging & Monitoring<br/>Metrics Collection]
+            ResendAPI[📧 Resend API<br/>Email Delivery Service<br/>3k emails/month]
+        end
+        
+        %% External Services
+        subgraph External [🌍 External Services]
+            EmailProviders[📨 Email Providers<br/>Gmail, Outlook, etc.<br/>End User Delivery]
+            DNSServices[🌐 DNS Services<br/>Domain Resolution<br/>MX Record Validation]
+        end
+    end
+    
+    %% Integration Flow - Request Path
+    ReactApp --> FormValidation
+    FormValidation --> APIClient
+    APIClient --> CORS
+    
+    CORS --> RequestValidation
+    RequestValidation --> APIRouting
+    APIRouting --> ContactHandler
+    
+    ContactHandler --> ServiceSingleton
+    ServiceSingleton --> ConfigRetrieval
+    ConfigRetrieval --> ParameterStore
+    ParameterStore --> KMSService
+    
+    ConfigRetrieval --> ResendClient
+    ResendClient --> ResendAPI
+    ResendAPI --> DNSServices
+    DNSServices --> EmailProviders
+    
+    %% Error Handling Flows
+    ContactHandler --> ValidationErrors
+    ResendClient --> ServiceErrors
+    ConfigRetrieval --> SystemErrors
+    
+    ValidationErrors --> ErrorResponse
+    ServiceErrors --> ErrorResponse
+    SystemErrors --> ErrorResponse
+    
+    ErrorResponse --> APIClient
+    
+    %% Monitoring & Logging
+    ContactHandler --> CloudWatch
+    ConfigRetrieval --> CloudWatch
+    ResendClient --> CloudWatch
+    ErrorResponse --> CloudWatch
+    
+    %% Response Path
+    ResendAPI -.->|Success Response| ResendClient
+    ResendClient -.->|Email ID| ContactHandler
+    ContactHandler -.->|Success/Error| ErrorResponse
+    ErrorResponse -.->|JSON Response| APIClient
+    APIClient -.->|UI Update| ReactApp
+    
+    %% Styling
+    classDef frontend fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef apiLayer fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef lambdaLayer fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef emailLayer fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef errorLayer fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef backendLayer fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef externalLayer fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    
+    class ReactApp,FormValidation,APIClient frontend
+    class CORS,RequestValidation,APIRouting,ErrorResponse apiLayer
+    class ContactHandler lambdaLayer
+    class ServiceSingleton,ConfigRetrieval,ResendClient emailLayer
+    class ValidationErrors,ServiceErrors,SystemErrors errorLayer
+    class ParameterStore,KMSService,CloudWatch,ResendAPI backendLayer
+    class EmailProviders,DNSServices externalLayer
+```
+
+### Email Service Processing Flow
+
+```mermaid
+sequenceDiagram
+    participant Client as 🌐 Client Application
+    participant API as 🚪 API Gateway
+    participant Lambda as ⚡ Lambda Function
+    participant EmailSvc as 📧 EmailService
+    participant ParamStore as 🔒 Parameter Store
+    participant KMS as 🔑 KMS
+    participant Resend as 📨 Resend API
+    participant Recipient as 📬 Email Recipient
+    participant CW as 📊 CloudWatch
+    
+    Note over Client,CW: Contact Form Submission & Email Processing Flow
+    
+    %% Request Processing
+    Client->>+API: POST /contact<br/>Contact Form Data
+    API->>API: Validate Request<br/>CORS & Schema Check
+    API->>+Lambda: Invoke Handler<br/>Event Processing
+    
+    %% Email Service Initialization
+    Lambda->>+EmailSvc: getInstance()<br/>Singleton Pattern
+    EmailSvc->>EmailSvc: Check Config Cache<br/>1-hour TTL
+    
+    alt Config Cache Miss
+        EmailSvc->>+ParamStore: GetParameter<br/>WithDecryption=true
+        ParamStore->>+KMS: Decrypt Parameter<br/>Customer-Managed Key
+        KMS-->>-ParamStore: Decrypted Value
+        ParamStore-->>-EmailSvc: Configuration Object
+        EmailSvc->>EmailSvc: Cache Config<br/>Set Expiry
+        EmailSvc->>EmailSvc: Initialize Resend Client
+    else Config Cache Hit
+        EmailSvc->>EmailSvc: Use Cached Config
+    end
+    
+    %% Email Processing
+    EmailSvc->>+Resend: Send Email<br/>Template & Recipients
+    Resend->>Resend: Process Request<br/>Validate & Queue
+    Resend-->>-EmailSvc: Email ID<br/>Success Response
+    EmailSvc-->>-Lambda: Email Result<br/>Success/Failure
+    
+    %% Response & Logging
+    Lambda->>+CW: Log Success<br/>Structured Logging
+    Lambda-->>-API: Success Response<br/>Email ID & Message
+    API-->>-Client: HTTP 200<br/>Success Confirmation
+    
+    %% Async Email Delivery
+    Resend->>+Recipient: Deliver Email<br/>SMTP Processing
+    Recipient-->>-Resend: Delivery Status<br/>Success/Bounce
+    
+    %% Error Handling Flows
+    alt Parameter Store Error
+        ParamStore-->>EmailSvc: Error Response
+        EmailSvc-->>Lambda: Configuration Error
+        Lambda->>CW: Log Error<br/>Parameter Access Failed
+        Lambda-->>API: HTTP 500<br/>Service Error
+    end
+    
+    alt Resend API Error
+        Resend-->>EmailSvc: API Error<br/>Rate Limit/Auth
+        EmailSvc-->>Lambda: Email Service Error
+        Lambda->>CW: Log Error<br/>Email Delivery Failed
+        Lambda-->>API: HTTP 500<br/>Email Service Error
+    end
+    
+    alt Email Delivery Failure
+        Recipient-->>Resend: Bounce/Rejection
+        Note over Resend: Future: Webhook Integration<br/>for Delivery Status
+    end
+```
+
 ## Lambda Function Integration
 
 ### Basic Email Service Integration

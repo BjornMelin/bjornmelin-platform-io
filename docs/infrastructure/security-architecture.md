@@ -6,134 +6,185 @@ The security architecture for bjornmelin.io implements a comprehensive defense-i
 
 ## Security Architecture Layers
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           Defense-in-Depth Security                             │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  Layer 7: Application Security                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │ ├─ Input Validation & Sanitization                                        │ │
-│  │ ├─ CSRF Protection with Rolling Tokens                                    │ │
-│  │ ├─ XSS Prevention & Output Encoding                                       │ │
-│  │ ├─ SQL Injection Prevention (N/A - No DB)                                 │ │
-│  │ ├─ Rate Limiting (Per IP/Session)                                         │ │
-│  │ ├─ Honeypot Anti-Spam Fields                                              │ │
-│  │ └─ GDPR Compliance Controls                                               │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  Layer 6: API Security                                                         │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │ ├─ API Gateway Throttling (1000 req/sec)                                  │ │
-│  │ ├─ Request Size Limiting (1MB max)                                        │ │
-│  │ ├─ Content-Type Validation                                                │ │
-│  │ ├─ CORS Policy Enforcement                                                │ │
-│  │ ├─ Request/Response Logging                                               │ │
-│  │ ├─ X-Ray Distributed Tracing                                              │ │
-│  │ └─ Lambda Authorizer (Future)                                             │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  Layer 5: Transport Security                                                   │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │ ├─ TLS 1.2+ Enforcement                                                   │ │
-│  │ ├─ HSTS Headers (Strict Transport Security)                               │ │
-│  │ ├─ Perfect Forward Secrecy                                                │ │
-│  │ ├─ Certificate Pinning (CloudFront)                                       │ │
-│  │ ├─ Strong Cipher Suites Only                                              │ │
-│  │ └─ HTTP to HTTPS Redirects                                                │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  Layer 4: Network Security                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │ ├─ CloudFront WAF (Web Application Firewall)                              │ │
-│  │ ├─ DDoS Protection (CloudFront + Shield)                                  │ │
-│  │ ├─ Geographic Restrictions (If needed)                                    │ │
-│  │ ├─ IP Whitelisting/Blacklisting                                           │ │
-│  │ ├─ VPC Endpoints (For internal traffic)                                   │ │
-│  │ └─ Security Groups & NACLs                                                │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  Layer 3: Identity & Access Management                                         │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │ ├─ IAM Least Privilege Policies                                           │ │
-│  │ ├─ Service-to-Service Authentication                                      │ │
-│  │ ├─ Role-Based Access Control                                              │ │
-│  │ ├─ Resource-Based Policies                                                │ │
-│  │ ├─ MFA for Administrative Access                                          │ │
-│  │ ├─ Cross-Account Role Assumptions                                         │ │
-│  │ └─ Regular Access Reviews                                                 │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  Layer 2: Data Security                                                        │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │ ├─ KMS Customer Managed Keys                                              │ │
-│  │ ├─ Automatic Key Rotation                                                 │ │
-│  │ ├─ Parameter Store SecureString                                           │ │
-│  │ ├─ Encryption at Rest (All data)                                          │ │
-│  │ ├─ Encryption in Transit (All communications)                             │ │
-│  │ ├─ Data Classification Policies                                           │ │
-│  │ └─ Data Retention & Purging                                               │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-│  Layer 1: Infrastructure Security                                              │
-│  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │ ├─ AWS Shared Responsibility Model                                        │ │
-│  │ ├─ Regular Security Patching                                              │ │
-│  │ ├─ Infrastructure as Code (CDK)                                           │ │
-│  │ ├─ Immutable Infrastructure                                               │ │
-│  │ ├─ Security Group Hardening                                               │ │
-│  │ ├─ Resource Tagging for Governance                                        │ │
-│  │ └─ Compliance Frameworks Adherence                                        │ │
-│  └─────────────────────────────────────────────────────────────────────────────┘ │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    %% Defense-in-Depth Security Layers
+    subgraph DefenseInDepth ["🛡️ Defense-in-Depth Security Architecture"]
+        
+        %% Layer 7: Application Security
+        subgraph Layer7 ["🔒 Layer 7: Application Security"]
+            InputValidation[✅ Input Validation & Sanitization<br/>XSS & Injection Prevention]
+            CSRFProtection[🎫 CSRF Protection<br/>Rolling Tokens & Validation]
+            RateLimit[⏱️ Rate Limiting<br/>Per IP/Session Controls]
+            AntiSpam[🍯 Anti-Spam Protection<br/>Honeypot Fields & Detection]
+            GDPRCompliance[📋 GDPR Compliance<br/>Data Protection Controls]
+        end
+        
+        %% Layer 6: API Security
+        subgraph Layer6 ["🚪 Layer 6: API Security"]
+            APIThrottling[🚦 API Gateway Throttling<br/>1000 req/sec limit]
+            RequestValidation[📏 Request Size Limiting<br/>1MB max payload]
+            ContentTypeValidation[📝 Content-Type Validation<br/>JSON schema enforcement]
+            CORSPolicy[🌐 CORS Policy<br/>Origin enforcement]
+            APILogging[📊 Request/Response Logging<br/>X-Ray distributed tracing]
+            LambdaAuth[🔐 Lambda Authorizer<br/>Future authentication]
+        end
+        
+        %% Layer 5: Transport Security
+        subgraph Layer5 ["🔐 Layer 5: Transport Security"]
+            TLSEnforcement[🔒 TLS 1.2+ Enforcement<br/>Strong cipher suites only]
+            HSTSHeaders[🛡️ HSTS Headers<br/>Strict transport security]
+            PerfectForwardSecrecy[🔄 Perfect Forward Secrecy<br/>ECDHE key exchange]
+            CertificatePinning[📌 Certificate Pinning<br/>CloudFront validation]
+            HTTPSRedirects[↗️ HTTP to HTTPS<br/>Automatic redirects]
+        end
+        
+        %% Layer 4: Network Security
+        subgraph Layer4 ["🌐 Layer 4: Network Security"]
+            WAF[🔥 CloudFront WAF<br/>Web application firewall]
+            DDoSProtection[🛡️ DDoS Protection<br/>CloudFront + Shield]
+            GeoRestrictions[🌍 Geographic Restrictions<br/>Country-based controls]
+            IPControl[📍 IP Whitelisting/Blacklisting<br/>Access control lists]
+            VPCEndpoints[🔗 VPC Endpoints<br/>Internal traffic security]
+            SecurityGroups[🛡️ Security Groups & NACLs<br/>Network access control]
+        end
+        
+        %% Layer 3: Identity & Access Management
+        subgraph Layer3 ["👤 Layer 3: Identity & Access Management"]
+            IAMPolicies[📋 IAM Least Privilege<br/>Minimal required permissions]
+            ServiceAuth[🤝 Service-to-Service Auth<br/>Role-based access control]
+            RBAC[👥 Role-Based Access<br/>Resource-based policies]
+            MFA[🔐 MFA Administrative<br/>Multi-factor authentication]
+            CrossAccountRoles[🔄 Cross-Account Roles<br/>Secure role assumptions]
+            AccessReviews[🔍 Regular Access Reviews<br/>Quarterly audits]
+        end
+        
+        %% Layer 2: Data Security
+        subgraph Layer2 ["💾 Layer 2: Data Security"]
+            KMSKeys[🔑 KMS Customer Keys<br/>Customer-managed encryption]
+            KeyRotation[🔄 Automatic Rotation<br/>Annual key rotation]
+            SecureParameters[🔒 Parameter Store<br/>SecureString encryption]
+            EncryptionAtRest[💽 Encryption at Rest<br/>All data encrypted]
+            EncryptionInTransit[🔐 Encryption in Transit<br/>TLS for all communications]
+            DataClassification[📊 Data Classification<br/>Retention & purging policies]
+        end
+        
+        %% Layer 1: Infrastructure Security
+        subgraph Layer1 ["🏗️ Layer 1: Infrastructure Security"]
+            SharedResponsibility[☁️ Shared Responsibility<br/>AWS security model]
+            SecurityPatching[🔧 Security Patching<br/>Regular updates]
+            InfraAsCode[📜 Infrastructure as Code<br/>CDK managed resources]
+            ImmutableInfra[🔒 Immutable Infrastructure<br/>Deployment consistency]
+            ResourceTagging[🏷️ Resource Tagging<br/>Governance & compliance]
+            ComplianceFrameworks[📋 Compliance Adherence<br/>Industry standards]
+        end
+    end
+    
+    %% Security Flow - Attacks must penetrate all layers
+    Users[👥 Internet Users] --> Layer7
+    Layer7 --> Layer6
+    Layer6 --> Layer5
+    Layer5 --> Layer4
+    Layer4 --> Layer3
+    Layer3 --> Layer2
+    Layer2 --> Layer1
+    
+    %% Feedback Loop - Each layer informs others
+    Layer1 -.->|Security Events| Layer4
+    Layer4 -.->|Threat Intelligence| Layer6
+    Layer6 -.->|Attack Patterns| Layer7
+    Layer7 -.->|User Behavior| Layer3
+    
+    %% Styling
+    classDef layer7 fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef layer6 fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef layer5 fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef layer4 fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    classDef layer3 fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef layer2 fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    classDef layer1 fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef external fill:#f5f5f5,stroke:#424242,stroke-width:2px
+    
+    class InputValidation,CSRFProtection,RateLimit,AntiSpam,GDPRCompliance layer7
+    class APIThrottling,RequestValidation,ContentTypeValidation,CORSPolicy,APILogging,LambdaAuth layer6
+    class TLSEnforcement,HSTSHeaders,PerfectForwardSecrecy,CertificatePinning,HTTPSRedirects layer5
+    class WAF,DDoSProtection,GeoRestrictions,IPControl,VPCEndpoints,SecurityGroups layer4
+    class IAMPolicies,ServiceAuth,RBAC,MFA,CrossAccountRoles,AccessReviews layer3
+    class KMSKeys,KeyRotation,SecureParameters,EncryptionAtRest,EncryptionInTransit,DataClassification layer2
+    class SharedResponsibility,SecurityPatching,InfraAsCode,ImmutableInfra,ResourceTagging,ComplianceFrameworks layer1
+    class Users external
 ```
 
 ## Identity & Access Management (IAM) Architecture
 
 ### 1. IAM Policy Structure
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                       IAM Policy Hierarchy                      │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Service Roles & Policies:                                     │
-│                                                                 │
-│  ┌─────────────────┐    ┌─────────────────┐                   │
-│  │ Lambda Function │────│ Execution Role  │                   │
-│  │ Contact Handler │    │                 │                   │
-│  └─────────────────┘    └─────────────────┘                   │
-│           │                       │                            │
-│           ▼                       ▼                            │
-│  ┌─────────────────┐    ┌─────────────────┐                   │
-│  │ CloudWatch Logs │    │ Parameter Store │                   │
-│  │ Write Access    │    │ Read Access     │                   │
-│  └─────────────────┘    └─────────────────┘                   │
-│           │                       │                            │
-│           ▼                       ▼                            │
-│  ┌─────────────────┐    ┌─────────────────┐                   │
-│  │ X-Ray Tracing   │    │ KMS Decrypt     │                   │
-│  │ Write Access    │    │ Access          │                   │
-│  └─────────────────┘    └─────────────────┘                   │
-│                                                                 │
-│  Policy Conditions:                                            │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │ StringEquals Conditions:                                    │ │
-│  │ ├─ "kms:ViaService": "ssm.us-east-1.amazonaws.com"         │ │
-│  │ ├─ "ssm:version": "$LATEST"                                │ │
-│  │ └─ "aws:RequestedRegion": "us-east-1"                      │ │
-│  │                                                             │ │
-│  │ Time-Based Conditions:                                      │ │
-│  │ ├─ "aws:CurrentTime": Business hours restriction           │ │
-│  │ └─ "aws:TokenIssueTime": Token freshness validation        │ │
-│  │                                                             │ │
-│  │ IP-Based Conditions:                                        │ │
-│  │ ├─ "aws:SourceIp": Restrict to known IP ranges            │ │
-│  │ └─ "aws:ViaVPC": Internal VPC access only                  │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    %% IAM Policy Hierarchy
+    subgraph IAMHierarchy ["🔐 IAM Policy & Role Hierarchy"]
+        
+        %% Service Roles & Functions
+        subgraph ServiceLayer ["⚡ Service Layer"]
+            LambdaFunction[⚡ Lambda Function<br/>Contact Handler<br/>Node.js 20.x ARM64]
+            ExecutionRole[👤 Lambda Execution Role<br/>LeastPrivilegePolicy<br/>Service-to-Service Auth]
+        end
+        
+        %% AWS Services Access
+        subgraph AWSServices ["☁️ AWS Services Access"]
+            CloudWatchLogs[📊 CloudWatch Logs<br/>Write Access<br/>CreateLogGroup/Stream]
+            ParameterStore[🔒 Parameter Store<br/>Read Access<br/>GetParameter Only]
+            XRayTracing[🔍 X-Ray Tracing<br/>Write Access<br/>PutTraceSegments]
+            KMSDecrypt[🔑 KMS Decrypt<br/>Decrypt Access<br/>Via SSM Service Only]
+            CloudWatchMetrics[📈 CloudWatch Metrics<br/>Write Access<br/>Custom Namespace Only]
+        end
+        
+        %% Policy Conditions
+        subgraph PolicyConditions ["📋 Policy Condition Enforcement"]
+            StringEquals[📝 StringEquals Conditions<br/>• kms:ViaService: ssm.us-east-1.amazonaws.com<br/>• ssm:version: $LATEST<br/>• aws:RequestedRegion: us-east-1]
+            TimeBasedConditions[⏰ Time-Based Conditions<br/>• aws:CurrentTime: Business hours<br/>• aws:TokenIssueTime: Token freshness]
+            IPBasedConditions[🌐 IP-Based Conditions<br/>• aws:SourceIp: Known IP ranges<br/>• aws:ViaVPC: Internal VPC only]
+        end
+        
+        %% Security Controls
+        subgraph SecurityControls ["🛡️ Security Controls"]
+            LeastPrivilege[🔒 Least Privilege<br/>Minimum Required Permissions<br/>Regular Access Reviews]
+            ConditionValidation[✅ Condition Validation<br/>Context-Based Access<br/>Dynamic Policy Evaluation]
+            CrossAccountPrevention[🚫 Cross-Account Prevention<br/>Account Boundary Enforcement<br/>Resource Isolation]
+        end
+    end
+    
+    %% Access Flow
+    LambdaFunction --> ExecutionRole
+    ExecutionRole --> CloudWatchLogs
+    ExecutionRole --> ParameterStore
+    ExecutionRole --> XRayTracing
+    ExecutionRole --> KMSDecrypt
+    ExecutionRole --> CloudWatchMetrics
+    
+    %% Condition Application
+    ExecutionRole --> PolicyConditions
+    StringEquals --> AWSServices
+    TimeBasedConditions --> AWSServices
+    IPBasedConditions --> AWSServices
+    
+    %% Security Enforcement
+    PolicyConditions --> SecurityControls
+    SecurityControls -.->|Validates| ExecutionRole
+    
+    %% Audit Trail
+    SecurityControls -.->|Logs to| CloudWatchLogs
+    
+    %% Styling
+    classDef service fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef awsService fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef conditions fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef security fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    
+    class LambdaFunction,ExecutionRole service
+    class CloudWatchLogs,ParameterStore,XRayTracing,KMSDecrypt,CloudWatchMetrics awsService
+    class StringEquals,TimeBasedConditions,IPBasedConditions conditions
+    class LeastPrivilege,ConditionValidation,CrossAccountPrevention security
 ```
 
 ### 2. Detailed IAM Policies
@@ -209,142 +260,195 @@ The security architecture for bjornmelin.io implements a comprehensive defense-i
 
 ### 1. KMS Key Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                      KMS Key Management                         │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Customer Managed Key: alias/prod-portfolio-parameters         │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │ Key Specifications:                                         │ │
-│  │ ├─ Key Usage: ENCRYPT_DECRYPT                               │ │
-│  │ ├─ Key Spec: SYMMETRIC_DEFAULT                              │ │
-│  │ ├─ Key Origin: AWS_KMS                                      │ │
-│  │ ├─ Multi-Region: No (Cost optimized)                       │ │
-│  │ ├─ Automatic Rotation: Enabled (Annual)                    │ │
-│  │ └─ Deletion Window: 30 days                                │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-│                                                                 │
-│  Key Policy Configuration:                                     │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │ {                                                           │ │
-│  │   "Version": "2012-10-17",                                  │ │
-│  │   "Statement": [                                            │ │
-│  │     {                                                       │ │
-│  │       "Sid": "AdminAccess",                                 │ │
-│  │       "Effect": "Allow",                                    │ │
-│  │       "Principal": {                                        │ │
-│  │         "AWS": "arn:aws:iam::ACCOUNT:root"                  │ │
-│  │       },                                                    │ │
-│  │       "Action": "kms:*",                                    │ │
-│  │       "Resource": "*"                                       │ │
-│  │     },                                                      │ │
-│  │     {                                                       │ │
-│  │       "Sid": "ParameterStoreAccess",                        │ │
-│  │       "Effect": "Allow",                                    │ │
-│  │       "Principal": {                                        │ │
-│  │         "Service": "ssm.amazonaws.com"                      │ │
-│  │       },                                                    │ │
-│  │       "Action": [                                           │ │
-│  │         "kms:Encrypt",                                      │ │
-│  │         "kms:Decrypt",                                      │ │
-│  │         "kms:ReEncrypt*",                                   │ │
-│  │         "kms:GenerateDataKey*",                             │ │
-│  │         "kms:DescribeKey"                                   │ │
-│  │       ],                                                    │ │
-│  │       "Resource": "*"                                       │ │
-│  │     },                                                      │ │
-│  │     {                                                       │ │
-│  │       "Sid": "LambdaDecryptAccess",                         │ │
-│  │       "Effect": "Allow",                                    │ │
-│  │       "Principal": {                                        │ │
-│  │         "AWS": "arn:aws:iam::ACCOUNT:role/lambda-role"      │ │
-│  │       },                                                    │ │
-│  │       "Action": [                                           │ │
-│  │         "kms:Decrypt",                                      │ │
-│  │         "kms:DescribeKey"                                   │ │
-│  │       ],                                                    │ │
-│  │       "Resource": "*",                                      │ │
-│  │       "Condition": {                                        │ │
-│  │         "StringEquals": {                                   │ │
-│  │           "kms:ViaService": "ssm.us-east-1.amazonaws.com"   │ │
-│  │         }                                                   │ │
-│  │       }                                                     │ │
-│  │     },                                                      │ │
-│  │     {                                                       │ │
-│  │       "Sid": "CloudTrailAccess",                            │ │
-│  │       "Effect": "Allow",                                    │ │
-│  │       "Principal": {                                        │ │
-│  │         "Service": "cloudtrail.amazonaws.com"               │ │
-│  │       },                                                    │ │
-│  │       "Action": [                                           │ │
-│  │         "kms:Encrypt",                                      │ │
-│  │         "kms:GenerateDataKey*",                             │ │
-│  │         "kms:DescribeKey"                                   │ │
-│  │       ],                                                    │ │
-│  │       "Resource": "*"                                       │ │
-│  │     }                                                       │ │
-│  │   ]                                                         │ │
-│  │ }                                                           │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    %% KMS Key Management Architecture
+    subgraph KMSArchitecture ["🔑 KMS Customer Managed Key Architecture"]
+        
+        %% Key Specifications
+        subgraph KeySpecs ["📊 Key Specifications"]
+            CustomerKey[🔑 Customer Managed Key<br/>alias/prod-portfolio-parameters<br/>ENCRYPT_DECRYPT Usage]
+            KeyDetails[📋 Key Details<br/>• Spec: SYMMETRIC_DEFAULT<br/>• Origin: AWS_KMS<br/>• Multi-Region: No (Cost optimized)<br/>• Auto Rotation: Annual<br/>• Deletion Window: 30 days]
+        end
+        
+        %% Key Policy Statements
+        subgraph KeyPolicies ["📋 Key Policy Statements"]
+            AdminAccess[👑 Admin Access<br/>Principal: Account Root<br/>Action: kms:*<br/>Full administrative control]
+            
+            ParameterStoreAccess[🔒 Parameter Store Access<br/>Principal: ssm.amazonaws.com<br/>Actions: Encrypt, Decrypt, ReEncrypt<br/>GenerateDataKey, DescribeKey]
+            
+            LambdaAccess[⚡ Lambda Decrypt Access<br/>Principal: Lambda Execution Role<br/>Actions: Decrypt, DescribeKey<br/>Condition: Via SSM Service Only]
+            
+            CloudTrailAccess[📋 CloudTrail Access<br/>Principal: cloudtrail.amazonaws.com<br/>Actions: Encrypt, GenerateDataKey<br/>DescribeKey for log encryption]
+        end
+        
+        %% Access Controls
+        subgraph AccessControls ["🛡️ Access Controls & Conditions"]
+            ViaServiceCondition[🔗 Via Service Condition<br/>kms:ViaService: ssm.us-east-1.amazonaws.com<br/>Restricts access through specific service]
+            
+            RegionRestriction[🌍 Region Restriction<br/>aws:RequestedRegion: us-east-1<br/>Prevents cross-region access]
+            
+            TimeRestriction[⏰ Time-based Access<br/>aws:CurrentTime conditions<br/>Business hours enforcement]
+        end
+        
+        %% Encryption Operations
+        subgraph EncryptionOps ["🔐 Encryption Operations"]
+            EncryptOperation[🔒 Encrypt Operation<br/>Data → Encrypted Data<br/>Parameter Store Storage]
+            
+            DecryptOperation[🔓 Decrypt Operation<br/>Encrypted Data → Plain Text<br/>Lambda Function Access]
+            
+            KeyRotation[🔄 Key Rotation<br/>Annual Automatic Rotation<br/>Backward Compatibility Maintained]
+        end
+        
+        %% Security Features
+        subgraph SecurityFeatures ["🛡️ Security Features"]
+            AuditLogging[📊 Audit Logging<br/>CloudTrail Integration<br/>All key operations logged]
+            
+            KeyDeletion[🗑️ Secure Deletion<br/>30-day deletion window<br/>Recovery possible during window]
+            
+            CrossAccountProtection[🚫 Cross-Account Protection<br/>Account boundary enforcement<br/>Resource isolation]
+        end
+    end
+    
+    %% Key Usage Flow
+    CustomerKey --> KeyPolicies
+    AdminAccess --> AccessControls
+    ParameterStoreAccess --> EncryptOperation
+    LambdaAccess --> DecryptOperation
+    CloudTrailAccess --> AuditLogging
+    
+    %% Condition Application
+    ViaServiceCondition --> LambdaAccess
+    RegionRestriction --> KeyPolicies
+    TimeRestriction --> AccessControls
+    
+    %% Operational Flow
+    EncryptOperation --> KeyRotation
+    DecryptOperation --> AuditLogging
+    KeyRotation --> SecurityFeatures
+    
+    %% Security Enforcement
+    SecurityFeatures -.->|Monitors| KeyPolicies
+    AuditLogging -.->|Tracks| EncryptionOps
+    
+    %% Styling
+    classDef key fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef policy fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef condition fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef operation fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    classDef security fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    
+    class CustomerKey,KeyDetails key
+    class AdminAccess,ParameterStoreAccess,LambdaAccess,CloudTrailAccess policy
+    class ViaServiceCondition,RegionRestriction,TimeRestriction condition
+    class EncryptOperation,DecryptOperation,KeyRotation operation
+    class AuditLogging,KeyDeletion,CrossAccountProtection security
 ```
 
 ### 2. Data Encryption Flow
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Data Encryption Flow                        │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Parameter Storage Encryption:                                 │
-│                                                                 │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│  │   Plain     │────│     KMS     │────│ Parameter   │         │
-│  │   Text      │    │  Customer   │    │   Store     │         │
-│  │   API Key   │    │Managed Key  │    │SecureString │         │
-│  └─────────────┘    └─────────────┘    └─────────────┘         │
-│                              │                                  │
-│                              ▼                                  │
-│                     ┌─────────────┐                            │
-│                     │ Encrypted   │                            │
-│                     │ Data Key    │                            │
-│                     └─────────────┘                            │
-│                                                                 │
-│  Parameter Retrieval Decryption:                               │
-│                                                                 │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│  │   Lambda    │────│ Parameter   │────│     KMS     │         │
-│  │  Function   │    │   Store     │    │   Decrypt   │         │
-│  │   Request   │    │   Fetch     │    │ Operation   │         │
-│  └─────────────┘    └─────────────┘    └─────────────┘         │
-│                              │                   │              │
-│                              ▼                   ▼              │
-│                     ┌─────────────┐    ┌─────────────┐         │
-│                     │ Encrypted   │    │ Decrypted   │         │
-│                     │   Value     │    │  Plain Text │         │
-│                     └─────────────┘    └─────────────┘         │
-│                                                                 │
-│  Transport Encryption (TLS):                                   │
-│                                                                 │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│  │   Client    │────│ TLS 1.2+    │────│   Server    │         │
-│  │  Browser    │    │ Encryption  │    │             │         │
-│  └─────────────┘    └─────────────┘    └─────────────┘         │
-│                              │                                  │
-│                              ▼                                  │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │ Certificate Hierarchy:                                      │ │
-│  │ ├─ Root CA: Amazon Root CA 1                               │ │
-│  │ ├─ Intermediate: Amazon                                     │ │
-│  │ ├─ Certificate: *.bjornmelin.io                            │ │
-│  │ ├─ Key Exchange: ECDHE (Perfect Forward Secrecy)           │ │
-│  │ └─ Cipher: AES-256-GCM                                     │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    %% Data Encryption Flow Architecture
+    subgraph EncryptionFlow ["🔐 Comprehensive Data Encryption Flow"]
+        
+        %% Parameter Storage Encryption
+        subgraph StorageEncryption ["💾 Parameter Storage Encryption"]
+            PlainTextAPI[📝 Plain Text API Key<br/>Resend Configuration<br/>JSON Format]
+            KMSCustomerKey[🔑 KMS Customer Key<br/>alias/prod-portfolio-parameters<br/>SYMMETRIC_DEFAULT]
+            ParameterStore[🔒 Parameter Store<br/>SecureString Type<br/>Standard Tier]
+            EncryptedDataKey[🔐 Encrypted Data Key<br/>Generated per Parameter<br/>Stored with Data]
+        end
+        
+        %% Parameter Retrieval & Decryption
+        subgraph RetrievalDecryption ["🔓 Parameter Retrieval & Decryption"]
+            LambdaRequest[⚡ Lambda Function<br/>GetParameter Request<br/>WithDecryption: true]
+            ParameterFetch[📦 Parameter Store Fetch<br/>Retrieve Encrypted Value<br/>Parameter Metadata]
+            KMSDecrypt[🔑 KMS Decrypt Operation<br/>Decrypt Data Key<br/>Via Service Condition]
+            DecryptedValue[📄 Decrypted Plain Text<br/>Available to Lambda<br/>Memory-resident Only]
+        end
+        
+        %% Transport Layer Security
+        subgraph TransportSecurity ["🌐 Transport Layer Security (TLS)"]
+            ClientBrowser[🖥️ Client Browser<br/>User Agent<br/>TLS 1.2+ Support]
+            TLSEncryption[🔒 TLS 1.2+ Encryption<br/>End-to-End Security<br/>Certificate Validation]
+            ServerEndpoint[🖥️ Server Endpoint<br/>CloudFront/API Gateway<br/>ACM Certificate]
+        end
+        
+        %% Certificate Hierarchy
+        subgraph CertificateHierarchy ["📜 Certificate Hierarchy & Cryptography"]
+            RootCA[🏛️ Root CA<br/>Amazon Root CA 1<br/>Trust Anchor]
+            IntermediateCA[🔗 Intermediate CA<br/>Amazon Intermediate<br/>Certificate Chain]
+            DomainCert[📋 Domain Certificate<br/>*.bjornmelin.io<br/>SAN: www, api subdomains]
+            KeyExchange[🔄 Key Exchange<br/>ECDHE (Perfect Forward Secrecy)<br/>Ephemeral Keys]
+            CipherSuite[🔐 Cipher Suite<br/>AES-256-GCM<br/>Authenticated Encryption]
+        end
+        
+        %% Encryption in Transit Details
+        subgraph TransitDetails ["🔄 Encryption in Transit Details"]
+            HTTPSEnforcement[🔒 HTTPS Enforcement<br/>301/302 Redirects<br/>HSTS Headers]
+            SessionSecurity[🎫 Session Security<br/>Session Tokens<br/>Secure Cookies]
+            APIEncryption[🚪 API Gateway Encryption<br/>TLS Termination<br/>Backend Security]
+        end
+        
+        %% Security Controls
+        subgraph SecurityControls ["🛡️ Security Controls"]
+            EncryptionAtRest[💽 Encryption at Rest<br/>All stored data encrypted<br/>KMS integration]
+            EncryptionInTransit[🔐 Encryption in Transit<br/>TLS for all communications<br/>Certificate validation]
+            KeyRotation[🔄 Key Rotation<br/>Automatic KMS rotation<br/>Manual API key rotation]
+            AuditTrail[📊 Audit Trail<br/>CloudTrail logging<br/>All encryption operations]
+        end
+    end
+    
+    %% Storage Flow
+    PlainTextAPI --> KMSCustomerKey
+    KMSCustomerKey --> ParameterStore
+    ParameterStore --> EncryptedDataKey
+    
+    %% Retrieval Flow
+    LambdaRequest --> ParameterFetch
+    ParameterFetch --> KMSDecrypt
+    KMSDecrypt --> DecryptedValue
+    
+    %% Transport Flow
+    ClientBrowser --> TLSEncryption
+    TLSEncryption --> ServerEndpoint
+    
+    %% Certificate Chain
+    RootCA --> IntermediateCA
+    IntermediateCA --> DomainCert
+    DomainCert --> KeyExchange
+    KeyExchange --> CipherSuite
+    
+    %% Security Integration
+    TLSEncryption --> TransitDetails
+    HTTPSEnforcement --> SessionSecurity
+    SessionSecurity --> APIEncryption
+    
+    %% Security Controls Integration
+    ParameterStore --> SecurityControls
+    DecryptedValue --> SecurityControls
+    ServerEndpoint --> SecurityControls
+    
+    %% Monitoring and Auditing
+    SecurityControls -.->|Logs All Operations| AuditTrail
+    KMSDecrypt -.->|Audit Trail| AuditTrail
+    TLSEncryption -.->|Connection Logs| AuditTrail
+    
+    %% Styling
+    classDef storage fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef retrieval fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef transport fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    classDef certificate fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef transit fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef security fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+    
+    class PlainTextAPI,KMSCustomerKey,ParameterStore,EncryptedDataKey storage
+    class LambdaRequest,ParameterFetch,KMSDecrypt,DecryptedValue retrieval
+    class ClientBrowser,TLSEncryption,ServerEndpoint transport
+    class RootCA,IntermediateCA,DomainCert,KeyExchange,CipherSuite certificate
+    class HTTPSEnforcement,SessionSecurity,APIEncryption transit
+    class EncryptionAtRest,EncryptionInTransit,KeyRotation,AuditTrail security
 ```
 
 ## Application Security Controls
