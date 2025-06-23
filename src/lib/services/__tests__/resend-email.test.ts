@@ -50,6 +50,11 @@ describe("ResendEmailService", () => {
   let consoleErrorSpy: ReturnType<typeof vi.fn>;
   let consoleWarnSpy: ReturnType<typeof vi.fn>;
 
+  const mockParameterStoreService = {
+    getResendApiKey: vi.fn().mockResolvedValue("test-api-key-from-parameter-store"),
+    clearCache: vi.fn(),
+  };
+
   beforeEach(() => {
     // Clear singleton instance
     // @ts-expect-error - accessing private property for testing
@@ -85,18 +90,27 @@ describe("ResendEmailService", () => {
       expect(instance1).toBe(instance2);
     });
 
-    it("should throw error if RESEND_API_KEY is not configured", () => {
-      // @ts-expect-error - modifying env for testing
-      env.RESEND_API_KEY = "";
+    it("should throw error if RESEND_API_KEY is not configured", async () => {
+      // Clear singleton instance
+      // @ts-expect-error - accessing private property for testing
+      ResendEmailService.instance = undefined;
 
-      expect(() => ResendEmailService.getInstance()).toThrow(ResendConfigurationError);
-      expect(() => ResendEmailService.getInstance()).toThrowError(
-        "RESEND_API_KEY is not configured",
-      );
+      // Mock parameter store to return null
+      vi.mocked(ParameterStoreService.getInstance).mockReturnValue({
+        ...mockParameterStoreService,
+        getResendApiKey: vi.fn().mockRejectedValue(new Error("PARAMETER_NOT_FOUND")),
+      });
 
-      // Restore the key
-      // @ts-expect-error - modifying env for testing
-      env.RESEND_API_KEY = "test-api-key";
+      const service = ResendEmailService.getInstance();
+
+      // The error should be thrown when trying to send an email
+      await expect(
+        service.sendContactFormEmail({
+          name: "Test",
+          email: "test@example.com",
+          message: "Test message",
+        }),
+      ).rejects.toThrow(ResendConfigurationError);
     });
   });
 
@@ -609,19 +623,11 @@ describe("ResendEmailService", () => {
     });
 
     afterEach(() => {
-      Object.defineProperty(process.env, "NODE_ENV", {
-        value: originalNodeEnv,
-        writable: true,
-        configurable: true,
-      });
+      process.env.NODE_ENV = originalNodeEnv;
     });
 
     it("should return true in development environment", () => {
-      Object.defineProperty(process.env, "NODE_ENV", {
-        value: "development",
-        writable: true,
-        configurable: true,
-      });
+      process.env.NODE_ENV = "development";
       const result = service.validateWebhookSignature("payload", "signature", "secret");
       expect(result).toBe(true);
       expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -633,11 +639,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should return false in production environment", () => {
-      Object.defineProperty(process.env, "NODE_ENV", {
-        value: "production",
-        writable: true,
-        configurable: true,
-      });
+      process.env.NODE_ENV = "production";
       const result = service.validateWebhookSignature("payload", "signature", "secret");
       expect(result).toBe(false);
     });

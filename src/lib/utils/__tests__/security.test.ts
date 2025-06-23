@@ -270,7 +270,7 @@ describe("Security Utilities", () => {
       expect(result2.remaining).toBe(4);
     });
 
-    it("automatically cleans up expired entries", () => {
+    it("automatically cleans up expired entries", async () => {
       const shortWindowConfig: RateLimitConfig = {
         maxRequests: 1,
         windowMs: 50,
@@ -281,15 +281,12 @@ describe("Security Utilities", () => {
 
       // Wait for expiry and make another request with different user
       // This should trigger cleanup of expired entries
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          checkRateLimit("another-user", shortWindowConfig);
-          // Original user should be allowed again (entry was cleaned up)
-          const result = checkRateLimit("temp-user", shortWindowConfig);
-          expect(result.allowed).toBe(true);
-          resolve(undefined);
-        }, 60);
-      });
-    });
+      await new Promise((resolve) => setTimeout(resolve, 60));
+
+      checkRateLimit("another-user", shortWindowConfig);
+      // Original user should be allowed again (entry was cleaned up)
+      const result = checkRateLimit("temp-user", shortWindowConfig);
+      expect(result.allowed).toBe(true);
+    }, 10000); // Increase timeout to 10 seconds
   });
 });

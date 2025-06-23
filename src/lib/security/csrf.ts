@@ -28,12 +28,13 @@ setInterval(
 
 /**
  * Generate a CSRF token
+ * @param sessionId - Optional session ID for testing
  */
-export function generateCSRFToken(): string {
+export function generateCSRFToken(sessionId?: string): string {
   const token = randomBytes(32).toString("hex");
-  const sessionId = generateSessionId();
+  const sid = sessionId || generateSessionId();
 
-  tokenStore.set(sessionId, {
+  tokenStore.set(sid, {
     token,
     expires: Date.now() + TOKEN_EXPIRY,
   });
@@ -108,8 +109,8 @@ function getSessionId(headersList: Headers): string | null {
 export async function checkCSRFToken(
   request: Request,
 ): Promise<{ valid: boolean; error?: string }> {
-  // Skip CSRF check for GET requests
-  if (request.method === "GET") {
+  // Skip CSRF check for safe methods
+  if (request.method === "GET" || request.method === "HEAD") {
     return { valid: true };
   }
 
