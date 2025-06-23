@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ContactFormEnhanced } from "@/components/contact/contact-form-enhanced";
+import { ContactForm } from "@/components/contact/contact-form";
 
 export const metadata: Metadata = {
   title: "Contact | Bjorn Melin",
@@ -17,7 +17,7 @@ export default function ContactPage() {
             to you as soon as possible.
           </p>
         </div>
-        <ContactFormEnhanced />
+        <ContactForm />
       </div>
     </main>
   );

@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import { env } from "@/env.mjs";
-import type { EnhancedContactFormData } from "@/lib/validation/contact-schema";
+import type { ContactFormData } from "@/lib/validation/contact-schema";
 import { ParameterStoreService } from "./parameter-store";
 
 // Custom error types for better error handling
@@ -69,7 +69,7 @@ const ContactEmailTemplate = ({
   email,
   message,
   timestamp,
-}: EnhancedContactFormData & { timestamp: string }) => ({
+}: ContactFormData & { timestamp: string }) => ({
   from: `Contact Form <${env.RESEND_FROM_EMAIL || "no-reply@bjornmelin.io"}>`,
   to: env.CONTACT_EMAIL || "bjornmelin16@gmail.com",
   subject: `New Contact Form Submission from ${name}`,
@@ -383,7 +383,7 @@ export class ResendEmailService {
    * Send contact form email with retry logic
    */
   public async sendContactFormEmail(
-    data: EnhancedContactFormData,
+    data: ContactFormData,
     retryOptions?: RetryOptions,
   ): Promise<EmailResult> {
     const operation = `send contact form email from ${data.email}`;
@@ -458,7 +458,7 @@ export class ResendEmailService {
    */
   public async sendBatchEmails(
     emails: Array<{
-      data: EnhancedContactFormData;
+      data: ContactFormData;
       retryOptions?: RetryOptions;
     }>,
     concurrency = 3,
@@ -552,7 +552,7 @@ export class ResendEmailService {
    * Send a test email (useful for development/testing)
    */
   public async sendTestEmail(retryOptions?: RetryOptions): Promise<EmailResult> {
-    const testData: EnhancedContactFormData = {
+    const testData: ContactFormData = {
       name: "Test User",
       email: "test@example.com",
       message: "This is a test message from the contact form.",

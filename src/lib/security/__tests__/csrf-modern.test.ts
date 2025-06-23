@@ -15,6 +15,29 @@ import {
   validateDoubleSubmit,
 } from "../csrf-modern";
 
+// Mock WebCrypto for Node.js environment with more unique values
+let uuidCounter = 0;
+Object.defineProperty(global, "crypto", {
+  value: {
+    randomUUID: () => {
+      uuidCounter++;
+      return `test-uuid-${uuidCounter}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
+    },
+    subtle: {
+      importKey: vi.fn().mockResolvedValue("mock-key"),
+      sign: vi.fn().mockImplementation(() => {
+        // Return different random bytes each time
+        const bytes = new Uint8Array(32);
+        for (let i = 0; i < 32; i++) {
+          bytes[i] = Math.floor(Math.random() * 256);
+        }
+        return Promise.resolve(bytes.buffer);
+      }),
+    },
+  },
+  writable: true,
+});
+
 // Mock Next.js headers
 const mockHeaders = new Map<string, string>();
 vi.mock("next/headers", () => ({
@@ -26,20 +49,6 @@ vi.mock("next/headers", () => ({
     },
   })),
 }));
-
-// Mock global crypto for consistent testing
-const mockCrypto = {
-  subtle: {
-    importKey: vi.fn(),
-    sign: vi.fn(),
-  },
-  randomUUID: vi.fn(),
-};
-
-Object.defineProperty(global, "crypto", {
-  value: mockCrypto,
-  writable: true,
-});
 
 describe("CSRF Modern Implementation", () => {
   beforeEach(() => {
@@ -344,12 +353,16 @@ describe("CSRF Modern Implementation", () => {
   describe("Error Handling", () => {
     it("should handle crypto.subtle failures gracefully", async () => {
       // Mock crypto.subtle to fail
-      mockCrypto.subtle.importKey.mockRejectedValue(new Error("Crypto failure"));
+      const originalImportKey = global.crypto.subtle.importKey;
+      global.crypto.subtle.importKey = vi.fn().mockRejectedValue(new Error("Crypto failure"));
 
       const result = await generateCSRFToken();
 
       expect(result).toHaveProperty("token");
       expect(result).toHaveProperty("sessionId");
+
+      // Restore original
+      global.crypto.subtle.importKey = originalImportKey;
     });
 
     it("should handle malformed URLs in origin validation", async () => {
@@ -362,6 +375,7 @@ describe("CSRF Modern Implementation", () => {
       const result = await validateCSRFToken(token);
 
       expect(result.valid).toBe(false);
+      expect(result.error).toContain("Invalid origin");
     });
   });
 

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { env } from "@/env.mjs";
-import type { EnhancedContactFormData } from "@/lib/validation/contact-schema";
+import type { ContactFormData } from "@/lib/validation/contact-schema";
 import { ParameterStoreService } from "../parameter-store";
 import {
   ResendConfigurationError,
@@ -130,7 +130,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should successfully send contact form email", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "John Doe",
         email: "john@example.com",
         message: "Test message",
@@ -168,7 +168,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should handle Resend API errors", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Jane Doe",
         email: "jane@example.com",
         message: "Test error message",
@@ -192,7 +192,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should handle missing email ID in response", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Bob Smith",
         email: "bob@example.com",
         message: "Test no ID message",
@@ -210,7 +210,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should handle unexpected errors with retry logic", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Alice Johnson",
         email: "alice@example.com",
         message: "Test unexpected error",
@@ -238,7 +238,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should fail after max retries", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Max Retry",
         email: "retry@example.com",
         message: "Test max retries",
@@ -266,7 +266,7 @@ describe("ResendEmailService", () => {
     }, 10000); // Increase timeout for retry test
 
     it("should generate proper email template with timestamp", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Template Test",
         email: "template@example.com",
         message: "Testing email template generation",
@@ -431,7 +431,7 @@ describe("ResendEmailService", () => {
       // @ts-expect-error - modifying env for testing
       env.CONTACT_EMAIL = "";
 
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Default Test",
         email: "default@example.com",
         message: "Testing default values",
@@ -477,7 +477,7 @@ describe("ResendEmailService", () => {
             honeypot: "",
             gdprConsent: true,
             csrfToken: "test-csrf-token",
-          } as EnhancedContactFormData,
+          } as ContactFormData,
         },
         {
           data: {
@@ -487,7 +487,7 @@ describe("ResendEmailService", () => {
             honeypot: "",
             gdprConsent: true,
             csrfToken: "test-csrf-token",
-          } as EnhancedContactFormData,
+          } as ContactFormData,
         },
       ];
 
@@ -513,7 +513,7 @@ describe("ResendEmailService", () => {
             honeypot: "",
             gdprConsent: true,
             csrfToken: "test-csrf-token",
-          } as EnhancedContactFormData,
+          } as ContactFormData,
         },
         {
           data: {
@@ -523,7 +523,7 @@ describe("ResendEmailService", () => {
             honeypot: "",
             gdprConsent: true,
             csrfToken: "test-csrf-token",
-          } as EnhancedContactFormData,
+          } as ContactFormData,
         },
       ];
 
@@ -682,7 +682,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should handle rate limit errors with specific error type", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Rate Limit Test",
         email: "ratelimit@example.com",
         message: "Testing rate limit",
@@ -705,7 +705,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should handle validation errors with specific error type", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Validation Test",
         email: "invalid@example.com",
         message: "Testing validation",
@@ -737,7 +737,7 @@ describe("ResendEmailService", () => {
     });
 
     it("should identify retryable network errors", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Network Test",
         email: "network@example.com",
         message: "Testing network error",
@@ -792,7 +792,7 @@ describe("ResendEmailService", () => {
     }, 10000);
 
     it("should handle 5xx status codes as retryable", async () => {
-      const testData: EnhancedContactFormData = {
+      const testData: ContactFormData = {
         name: "Server Error Test",
         email: "server@example.com",
         message: "Testing server error",

@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
-  type EnhancedContactFormData,
-  enhancedContactFormSchema,
+  type ContactFormData,
+  contactFormSchema,
   serverContactFormSchema,
   validateContactForm,
   validateContactFormServer,
 } from "../contact-schema";
 
-describe("Enhanced Contact Form Schema Validation", () => {
+describe("Contact Form Schema Validation", () => {
   describe("Valid Input Tests", () => {
     it("should validate a complete valid form submission", () => {
       const validData = {
@@ -24,7 +24,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         },
       };
 
-      const result = enhancedContactFormSchema.safeParse(validData);
+      const result = contactFormSchema.safeParse(validData);
       expect(result.success).toBe(true);
     });
 
@@ -46,7 +46,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
           gdprConsent: true,
         };
 
-        const result = enhancedContactFormSchema.safeParse(data);
+        const result = contactFormSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
     });
@@ -61,7 +61,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         gdprConsent: true,
       };
 
-      const result = enhancedContactFormSchema.safeParse(data);
+      const result = contactFormSchema.safeParse(data);
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.email).toBe("test.user@example.com");
@@ -80,7 +80,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         phone: "+1-555-0123",
       };
 
-      const result = enhancedContactFormSchema.safeParse(data);
+      const result = contactFormSchema.safeParse(data);
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.company).toBe("Acme Corp");
@@ -108,7 +108,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
           gdprConsent: true,
         };
 
-        const result = enhancedContactFormSchema.safeParse(data);
+        const result = contactFormSchema.safeParse(data);
         if (expected === "") {
           expect(result.success).toBe(false);
         } else if (result.success) {
@@ -137,7 +137,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
           gdprConsent: true,
         };
 
-        const result = enhancedContactFormSchema.safeParse(data);
+        const result = contactFormSchema.safeParse(data);
         expect(result.success).toBe(false);
         if (!result.success) {
           const messageError = result.error.errors.find((e) => e.path[0] === "message");
@@ -164,7 +164,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         gdprConsent: true,
       };
 
-      const result = enhancedContactFormSchema.safeParse(data);
+      const result = contactFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         const messageError = result.error.errors.find((e) => e.path[0] === "message");
@@ -184,7 +184,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         gdprConsent: true,
       };
 
-      const result = enhancedContactFormSchema.safeParse(data);
+      const result = contactFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         const messageError = result.error.errors.find((e) => e.path[0] === "message");
@@ -211,7 +211,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
           gdprConsent: true,
         };
 
-        const result = enhancedContactFormSchema.safeParse(data);
+        const result = contactFormSchema.safeParse(data);
         expect(result.success).toBe(false);
         if (!result.success) {
           const emailError = result.error.errors.find((e) => e.path[0] === "email");
@@ -230,7 +230,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         gdprConsent: true,
       };
 
-      const result = enhancedContactFormSchema.safeParse(data);
+      const result = contactFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         const honeypotError = result.error.errors.find((e) => e.path[0] === "honeypot");
@@ -253,7 +253,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         },
       };
 
-      const result = enhancedContactFormSchema.safeParse(data);
+      const result = contactFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         const timestampError = result.error.errors.find((e) => e.path.includes("timestamp"));
@@ -282,7 +282,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
           gdprConsent: true,
         };
 
-        const result = enhancedContactFormSchema.safeParse(data);
+        const result = contactFormSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
     });
@@ -312,7 +312,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
           gdprConsent: true,
         };
 
-        const result = enhancedContactFormSchema.safeParse(data);
+        const result = contactFormSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
     });
@@ -329,7 +329,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         gdprConsent: true,
       };
 
-      const result = enhancedContactFormSchema.safeParse(shortData);
+      const result = contactFormSchema.safeParse(shortData);
       expect(result.success).toBe(false);
 
       if (!result.success) {
@@ -350,7 +350,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         company: "a".repeat(101), // Too long
       };
 
-      const result = enhancedContactFormSchema.safeParse(longData);
+      const result = contactFormSchema.safeParse(longData);
       expect(result.success).toBe(false);
 
       if (!result.success) {
@@ -466,7 +466,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
           phone,
         };
 
-        const result = enhancedContactFormSchema.safeParse(data);
+        const result = contactFormSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
     });
@@ -489,7 +489,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
           phone,
         };
 
-        const result = enhancedContactFormSchema.safeParse(data);
+        const result = contactFormSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
     });
@@ -506,7 +506,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         // gdprConsent missing
       };
 
-      const result = enhancedContactFormSchema.safeParse(data);
+      const result = contactFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         const gdprError = result.error.errors.find((e) => e.path[0] === "gdprConsent");
@@ -524,7 +524,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         gdprConsent: false,
       };
 
-      const result = enhancedContactFormSchema.safeParse(data);
+      const result = contactFormSchema.safeParse(data);
       expect(result.success).toBe(false);
       if (!result.success) {
         const gdprError = result.error.errors.find((e) => e.path[0] === "gdprConsent");
@@ -544,7 +544,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         gdprConsent: true,
       };
 
-      const result = enhancedContactFormSchema.safeParse(invalidData);
+      const result = contactFormSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
     });
 
@@ -558,7 +558,7 @@ describe("Enhanced Contact Form Schema Validation", () => {
         gdprConsent: "true", // Should be boolean
       };
 
-      const result = enhancedContactFormSchema.safeParse(data);
+      const result = contactFormSchema.safeParse(data);
       expect(result.success).toBe(false);
     });
   });
@@ -583,13 +583,13 @@ describe("Enhanced Contact Form Schema Validation", () => {
 
         data[field] = value;
 
-        const result = enhancedContactFormSchema.safeParse(data);
+        const result = contactFormSchema.safeParse(data);
 
         if (result.success) {
           // Check that dangerous content was removed
-          expect(result.data[field as keyof EnhancedContactFormData]).not.toContain("<");
-          expect(result.data[field as keyof EnhancedContactFormData]).not.toContain(">");
-          expect(result.data[field as keyof EnhancedContactFormData]).not.toContain("alert");
+          expect(result.data[field as keyof ContactFormData]).not.toContain("<");
+          expect(result.data[field as keyof ContactFormData]).not.toContain(">");
+          expect(result.data[field as keyof ContactFormData]).not.toContain("alert");
         }
       });
     });

@@ -144,12 +144,12 @@ Current coverage focuses on:
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ContactFormEnhanced } from "../contact-form-enhanced";
+import { ContactForm } from "../contact-form";
 
-describe("ContactFormEnhanced", () => {
+describe("ContactForm", () => {
   it("should validate email format", async () => {
     const user = userEvent.setup();
-    render(<ContactFormEnhanced />);
+    render(<ContactForm />);
     
     const emailInput = screen.getByLabelText(/email/i);
     await user.type(emailInput, "invalid-email");

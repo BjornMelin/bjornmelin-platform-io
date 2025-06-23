@@ -90,7 +90,7 @@ export default async function ProjectsPage() {
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-export function ContactFormEnhanced() {
+export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // Implementation
 }
@@ -160,13 +160,13 @@ export function Button({ variant = "default", className }: ButtonProps) {
 ```typescript
 // app/api/contact/route.ts
 import { NextResponse } from "next/server";
-import { enhancedContactFormSchema } from "@/lib/validation/contact-schema";
+import { contactFormSchema } from "@/lib/validation/contact-schema";
 import { z } from "zod";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const validatedData = enhancedContactFormSchema.parse(body);
+    const validatedData = contactFormSchema.parse(body);
     // Implementation
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -186,7 +186,7 @@ export async function POST(request: Request) {
 // lib/validation/contact-schema.ts
 import { z } from "zod";
 
-export const enhancedContactFormSchema = z.object({
+export const contactFormSchema = z.object({
   name: z.string().min(2).max(50),
   email: z.string().email(),
   message: z.string().min(10).max(1000),
@@ -194,7 +194,7 @@ export const enhancedContactFormSchema = z.object({
   gdprConsent: z.boolean(),
 });
 
-export type EnhancedContactFormData = z.infer<typeof enhancedContactFormSchema>;
+export type ContactFormData = z.infer<typeof contactFormSchema>;
 ```
 
 ## Error Handling

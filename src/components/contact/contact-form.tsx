@@ -26,10 +26,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import {
-  type EnhancedContactFormData,
-  enhancedContactFormSchema,
-} from "@/lib/validation/contact-schema";
+import { type ContactFormData, contactFormSchema } from "@/lib/validation/contact-schema";
 
 // Animation variants
 const formVariants = {
@@ -72,7 +69,7 @@ const getFieldErrorMessage = (error: { message?: string; type?: string }): strin
   return "Please check this field";
 };
 
-export function ContactFormEnhanced() {
+export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -95,8 +92,8 @@ export function ContactFormEnhanced() {
     watch,
     setFocus,
     setValue,
-  } = useForm<EnhancedContactFormData>({
-    resolver: zodResolver(enhancedContactFormSchema),
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: {
@@ -118,14 +115,14 @@ export function ContactFormEnhanced() {
 
   // Focus on first error field
   useEffect(() => {
-    const firstErrorField = Object.keys(errors)[0] as keyof EnhancedContactFormData;
+    const firstErrorField = Object.keys(errors)[0] as keyof ContactFormData;
     if (firstErrorField && firstErrorField !== "honeypot") {
       setFocus(firstErrorField);
     }
   }, [errors, setFocus]);
 
   // Handle form submission
-  const onSubmit = async (data: EnhancedContactFormData) => {
+  const onSubmit = async (data: ContactFormData) => {
     if (!csrfReady) {
       toast({
         title: "Please wait",

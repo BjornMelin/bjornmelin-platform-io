@@ -31,7 +31,7 @@ Implemented comprehensive CSRF (Cross-Site Request Forgery) protection for the N
 - Maintains backward compatibility with existing functions
 
 ### 5. Updated Components
-- **ContactFormEnhanced**: Now uses `useCSRFHeaders()` hook
+- **ContactForm**: Now uses `useCSRFHeaders()` hook
 - **App Providers**: Wrapped with CSRFProvider
 - All fetch requests include CSRF token automatically
 

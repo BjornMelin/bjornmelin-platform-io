@@ -220,14 +220,19 @@ function getSessionId(headersList: Headers): string | null {
 function validateOrigin(origin: string | null, host: string | null): boolean {
   if (!origin || !host) return false;
 
-  // Allow same-origin requests
-  const originUrl = new URL(origin);
-  const expectedOrigins = [
-    `https://${host}`,
-    `http://${host}`, // For development
-  ];
+  try {
+    // Allow same-origin requests
+    const originUrl = new URL(origin);
+    const expectedOrigins = [
+      `https://${host}`,
+      `http://${host}`, // For development
+    ];
 
-  return expectedOrigins.includes(origin) || originUrl.hostname === host;
+    return expectedOrigins.includes(origin) || originUrl.hostname === host;
+  } catch {
+    // Invalid URL format
+    return false;
+  }
 }
 
 /**

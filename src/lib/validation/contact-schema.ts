@@ -2,7 +2,7 @@ import DOMPurify from "isomorphic-dompurify";
 import { z } from "zod";
 
 /**
- * Enhanced contact form validation schema with security features
+ * Contact form validation schema with security features
  */
 
 // Custom sanitization function for text inputs
@@ -20,7 +20,7 @@ const sanitizeText = (text: string): string => {
     .trim();
 };
 
-// Enhanced name validation
+// Name validation
 const nameSchema = z
   .string()
   .min(2, "Name must be at least 2 characters")
@@ -32,7 +32,7 @@ const nameSchema = z
     "Invalid characters detected in name",
   );
 
-// Enhanced email validation with additional checks
+// Email validation with additional checks
 const emailSchema = z
   .string()
   .email("Please enter a valid email address")
@@ -72,7 +72,7 @@ const emailSchema = z
     return !disposableDomains.includes(domain);
   }, "Disposable email addresses are not allowed");
 
-// Enhanced message validation with content filtering
+// Message validation with content filtering
 const messageSchema = z
   .string()
   .min(10, "Message must be at least 10 characters")
@@ -95,8 +95,8 @@ const messageSchema = z
     return !repeatedChars.test(message);
   }, "Message appears to be spam");
 
-// Main enhanced contact form schema
-export const enhancedContactFormSchema = z
+// Main contact form schema
+export const contactFormSchema = z
   .object({
     // Core fields with enhanced validation
     name: nameSchema,
@@ -159,7 +159,7 @@ export const enhancedContactFormSchema = z
   );
 
 // Type exports
-export type EnhancedContactFormData = z.infer<typeof enhancedContactFormSchema>;
+export type ContactFormData = z.infer<typeof contactFormSchema>;
 
 // Server-side only validation (additional checks that shouldn't be exposed to client)
 export const serverContactFormSchema = z
@@ -232,7 +232,7 @@ export type ServerContactFormData = z.infer<typeof serverContactFormSchema>;
 // Validation result type
 export interface ValidationResult {
   success: boolean;
-  data?: EnhancedContactFormData;
+  data?: ContactFormData;
   errors?: z.ZodError;
   sanitized?: boolean;
 }
@@ -242,7 +242,7 @@ export interface ValidationResult {
  */
 export function validateContactForm(data: unknown): ValidationResult {
   try {
-    const validated = enhancedContactFormSchema.parse(data);
+    const validated = contactFormSchema.parse(data);
     return {
       success: true,
       data: validated,
@@ -276,7 +276,7 @@ export function validateContactFormServer(
     const validated = serverContactFormSchema.parse(serverData);
     return {
       success: true,
-      data: validated as EnhancedContactFormData,
+      data: validated as ContactFormData,
       sanitized: true,
     };
   } catch (error) {

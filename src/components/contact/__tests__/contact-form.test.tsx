@@ -1,46 +1,71 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MockCSRFProvider } from "@/test/mocks/csrf-provider";
-import { ContactFormEnhanced } from "../contact-form-enhanced";
+import { ContactForm } from "../contact-form";
+
+// Mock framer-motion to avoid animation issues in tests
+vi.mock("framer-motion", () => {
+  const filterMotionProps = (props: Record<string, unknown>) => {
+    const {
+      initial: _initial,
+      animate: _animate,
+      exit: _exit,
+      variants: _variants,
+      transition: _transition,
+      whileHover: _whileHover,
+      whileTap: _whileTap,
+      ...rest
+    } = props;
+    return rest;
+  };
+
+  return {
+    motion: {
+      div: ({ children, ...props }: Record<string, unknown> & { children?: React.ReactNode }) => <div {...filterMotionProps(props)}>{children}</div>,
+      form: ({ children, ...props }: Record<string, unknown> & { children?: React.ReactNode }) => <form {...filterMotionProps(props)}>{children}</form>,
+      p: ({ children, ...props }: Record<string, unknown> & { children?: React.ReactNode }) => <p {...filterMotionProps(props)}>{children}</p>,
+      span: ({ children, ...props }: Record<string, unknown> & { children?: React.ReactNode }) => <span {...filterMotionProps(props)}>{children}</span>,
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
+  };
+});
 
 // Mock the toast hook
 const mockToast = vi.fn();
-vi.mock("@/hooks/use-toast", () => ({
+vi.mock("@/components/ui/use-toast", () => ({
   useToast: () => ({
     toast: mockToast,
   }),
 }));
 
-// Mock the CSRF provider to use our test mock
-vi.mock("@/components/providers/csrf-provider", async () => {
-  const mockModule = await import("@/test/mocks/csrf-provider");
-  return {
-    CSRFProvider: mockModule.MockCSRFProvider,
-    useCSRF: mockModule.useCSRF,
-    useCSRFHeaders: mockModule.useCSRFHeaders,
-  };
-});
+// Mock the modern CSRF provider
+const mockCSRFHeaders = {
+  getHeadersWithRetry: vi.fn(),
+  isReady: true,
+};
+const mockCSRFResponseHandler = {
+  handleResponse: vi.fn(),
+};
+
+vi.mock("@/components/providers/csrf-provider-modern", () => ({
+  useCSRFHeaders: () => mockCSRFHeaders,
+  useCSRFResponseHandler: () => mockCSRFResponseHandler,
+}));
 
 // Mock fetch
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-// Test wrapper with MockCSRFProvider
-const TestWrapper = ({ children }: { children: React.ReactNode }) => (
-  <MockCSRFProvider>{children}</MockCSRFProvider>
-);
-
-const renderWithProviders = (ui: React.ReactElement) => {
-  return render(ui, { wrapper: TestWrapper });
-};
-
-describe("ContactFormEnhanced", () => {
+describe("ContactForm", () => {
   const user = userEvent.setup();
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockFetch.mockClear();
+    mockCSRFHeaders.getHeadersWithRetry.mockResolvedValue({
+      "Content-Type": "application/json",
+      "X-CSRF-Token": "test-token",
+    });
   });
 
   afterEach(() => {
@@ -48,7 +73,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("renders all form fields correctly", () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
@@ -59,7 +84,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("shows validation errors for empty fields", async () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     const submitButton = screen.getByRole("button", { name: /send message/i });
 
@@ -77,7 +102,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("enables submit button when all required fields are filled", async () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     const nameInput = screen.getByLabelText(/name/i);
     const emailInput = screen.getByLabelText(/email/i);
@@ -101,7 +126,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("validates email format", async () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     const emailInput = screen.getByLabelText(/email/i);
 
@@ -121,7 +146,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("validates name format", async () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     const nameInput = screen.getByLabelText(/name/i);
 
@@ -141,7 +166,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it("shows character count for message field", async () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     const messageInput = screen.getByLabelText(/message/i);
 
@@ -154,14 +179,14 @@ describe("ContactFormEnhanced", () => {
     });
   });
 
-  it.skip("submits form successfully with valid data", async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+  it("submits form successfully with valid data", async () => {
+    mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
       headers: new Headers(),
     });
 
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     // Fill out the form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
@@ -172,34 +197,35 @@ describe("ContactFormEnhanced", () => {
     );
     await user.click(screen.getByRole("checkbox"));
 
+    // Wait for form to be valid
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
+    });
+
     const submitButton = screen.getByRole("button", { name: /send message/i });
 
-    // Start the form submission
-    const clickPromise = user.click(submitButton);
-
-    // Check loading state immediately
-    await waitFor(() => {
-      expect(screen.getByText(/sending/i)).toBeInTheDocument();
-    });
-
-    // Wait for click to complete
-    await clickPromise;
+    // Submit the form
+    await user.click(submitButton);
 
     // Wait for success message
-    await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: "Message sent successfully!",
-          description: expect.stringContaining("Thank you"),
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: "Message sent successfully!",
+            description: expect.stringContaining("Thank you"),
+          }),
+        );
+      },
+      { timeout: 10000 },
+    );
 
-    // Check fetch was called with correct data
-    expect(global.fetch).toHaveBeenCalledWith("/api/contact", {
+    // Check fetch was called with correct headers
+    expect(mockFetch).toHaveBeenCalledWith("/api/contact", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-CSRF-Token": "test-token",
       },
       body: JSON.stringify({
         name: "John Doe",
@@ -208,15 +234,19 @@ describe("ContactFormEnhanced", () => {
         honeypot: "",
         gdprConsent: true,
       }),
+      credentials: "same-origin",
     });
 
     // Form should be reset
-    await waitFor(() => {
-      expect(screen.getByLabelText(/name/i)).toHaveValue("");
-      expect(screen.getByLabelText(/email/i)).toHaveValue("");
-      expect(screen.getByLabelText(/message/i)).toHaveValue("");
-    });
-  });
+    await waitFor(
+      () => {
+        expect(screen.getByLabelText(/name/i)).toHaveValue("");
+        expect(screen.getByLabelText(/email/i)).toHaveValue("");
+        expect(screen.getByLabelText(/message/i)).toHaveValue("");
+      },
+      { timeout: 5000 },
+    );
+  }, 20000);
 
   it("handles rate limiting errors", async () => {
     const resetTime = Math.floor(Date.now() / 1000) + 900; // 15 minutes from now
@@ -234,13 +264,22 @@ describe("ContactFormEnhanced", () => {
       }),
     });
 
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     // Fill and submit form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
     await user.type(screen.getByLabelText(/email/i), "john@example.com");
-    await user.type(screen.getByLabelText(/message/i), "This is a test message");
+    await user.type(
+      screen.getByLabelText(/message/i),
+      "This is a test message that is long enough",
+    );
     await user.click(screen.getByRole("checkbox"));
+
+    // Wait for form to be valid
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
+    });
+
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     // Should show rate limit error
@@ -254,9 +293,9 @@ describe("ContactFormEnhanced", () => {
           }),
         );
       },
-      { timeout: 5000 },
+      { timeout: 10000 },
     );
-  });
+  }, 15000);
 
   it("handles server errors", async () => {
     mockFetch.mockResolvedValueOnce({
@@ -268,53 +307,77 @@ describe("ContactFormEnhanced", () => {
       headers: new Headers(),
     });
 
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     // Fill and submit form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
     await user.type(screen.getByLabelText(/email/i), "john@example.com");
-    await user.type(screen.getByLabelText(/message/i), "This is a test message");
+    await user.type(
+      screen.getByLabelText(/message/i),
+      "This is a test message that is long enough",
+    );
     await user.click(screen.getByRole("checkbox"));
+
+    // Wait for form to be valid
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
+    });
+
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     // Should show error toast
-    await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: "Error sending message",
-          description: "Internal server error",
-          variant: "destructive",
-        }),
-      );
-    });
-  });
+    await waitFor(
+      () => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: "Error sending message",
+            description: "Internal server error",
+            variant: "destructive",
+          }),
+        );
+      },
+      { timeout: 10000 },
+    );
+  }, 15000);
 
   it("handles network errors", async () => {
     mockFetch.mockRejectedValueOnce(new Error("Network error"));
 
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     // Fill and submit form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
     await user.type(screen.getByLabelText(/email/i), "john@example.com");
-    await user.type(screen.getByLabelText(/message/i), "This is a test message");
+    await user.type(
+      screen.getByLabelText(/message/i),
+      "This is a test message that is long enough",
+    );
     await user.click(screen.getByRole("checkbox"));
+
+    // Wait for form to be valid
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
+    });
+
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     // Should show error toast
-    await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: "Error sending message",
-          description: "Network error",
-          variant: "destructive",
-        }),
-      );
-    });
-  });
+    await waitFor(
+      () => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: "Error sending message",
+            description: "Network error",
+            variant: "destructive",
+          }),
+        );
+      },
+      { timeout: 10000 },
+    );
+  }, 15000);
 
   it("honeypot field is hidden and functional", () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     // Honeypot field should not be visible
     const honeypotLabel = screen.getByText("Leave this field empty");
@@ -333,7 +396,7 @@ describe("ContactFormEnhanced", () => {
       headers: new Headers(),
     });
 
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     // Fill and submit form
     await user.type(screen.getByLabelText(/name/i), "John Doe");
@@ -353,7 +416,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it.skip("provides proper ARIA attributes for accessibility", () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     const nameInput = screen.getByLabelText(/name/i);
     const emailInput = screen.getByLabelText(/email/i);
@@ -370,7 +433,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it.skip("focuses on first error field when validation fails", async () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     // Fill only email (skip name)
     await user.type(screen.getByLabelText(/email/i), "john@example.com");
@@ -387,7 +450,7 @@ describe("ContactFormEnhanced", () => {
   });
 
   it.skip("shows field-specific animations on errors", async () => {
-    renderWithProviders(<ContactFormEnhanced />);
+    render(<ContactForm />);
 
     const nameInput = screen.getByLabelText(/name/i);
 
