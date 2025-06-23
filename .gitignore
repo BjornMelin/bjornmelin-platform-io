@@ -133,3 +133,7 @@ prisma/client/
 .claude/settings.local.json   # Personal settings, not version controlled
 .taskmaster/state.json
 .taskmaster/reports/
+
+# Generated diagrams
+generated-diagrams/
+**/generated-diagrams/

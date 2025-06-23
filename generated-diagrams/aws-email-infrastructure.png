@@ -1,8 +1,0 @@
-digraph "AWS Email Service Infrastructure - bjornmelin.io" {
-	graph [fontcolor="#2D3436" fontname="Sans-Serif" fontsize=15 label="AWS Email Service Infrastructure - bjornmelin.io" nodesep=0.60 pad=2.0 rankdir=LR ranksep=0.75 splines=ortho]
-	node [fixedsize=true fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 height=1.4 imagescale=true labelloc=b shape=box style=rounded width=1.4]
-	edge [color="#7B8894"]
-	subgraph cluster_External {
-		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label=External labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
-	}
-}
