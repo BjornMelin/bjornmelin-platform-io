@@ -66,10 +66,6 @@ This document serves as a comprehensive index for all documentation in the bjorn
 - [Feature Flags Implementation](./feature-flags-implementation-plan.md) - Feature flag system plan
 
 ### 9. Archived Documentation
-- [Email Migration History](./archive/email/) - Historical email service migration documents
-  - Email migration plan
-  - Service comparison analysis (June 2025)
-  - Migration implementation details
 - [CodeArtifact Original Docs](./archive/codeartifact/) - Original CodeArtifact documentation
   - Integration plan
   - Implementation summary
@@ -124,10 +120,6 @@ bjornmelin-platform-io/
 │   │   └── deployment-secrets-setup.md # Secrets management
 │   │
 │   ├── archive/             # Archived documentation
-│   │   ├── email/          # Email migration history
-│   │   │   ├── email-migration-plan.md
-│   │   │   ├── email-service-comparison-2025.md
-│   │   │   └── email-service-migration.md
 │   │   └── codeartifact/   # Original CodeArtifact docs
 │   │       ├── codeartifact-integration.md
 │   │       ├── codeartifact-implementation-summary.md

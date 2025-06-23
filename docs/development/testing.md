@@ -84,6 +84,12 @@ src/
 │       ├── error-handler.ts
 │       └── __tests__/
 │           └── error-handler.test.ts
+└── app/
+    └── api/
+        └── contact/
+            └── __tests__/
+                ├── route.test.ts
+                └── integration.test.ts
 ```
 
 ### E2E Tests
@@ -136,12 +142,14 @@ Current coverage focuses on:
 ### Unit Test Example
 
 ```typescript
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { ContactForm } from "../contact-form";
 
 describe("ContactForm", () => {
   it("should validate email format", async () => {
+    const user = userEvent.setup();
     render(<ContactForm />);
     
     const emailInput = screen.getByLabelText(/email/i);
