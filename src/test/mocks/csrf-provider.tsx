@@ -24,11 +24,7 @@ export function MockCSRFProvider({ children }: { children: React.ReactNode }) {
     },
   };
 
-  return (
-    <CSRFContext.Provider value={mockContext}>
-      {children}
-    </CSRFContext.Provider>
-  );
+  return <CSRFContext.Provider value={mockContext}>{children}</CSRFContext.Provider>;
 }
 
 export function useCSRF() {
