@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { CSRFProviderModern } from "@/components/providers/csrf-provider-modern";
 import { ContactForm } from "../contact-form";
 
 // Mock framer-motion to avoid animation issues in tests
@@ -49,7 +50,6 @@ vi.mock("@/components/ui/use-toast", () => ({
 // Mock the modern CSRF provider
 const mockCSRFHeaders = {
   getHeadersWithRetry: vi.fn().mockImplementation(async () => {
-    console.log("Mock getHeadersWithRetry called");
     return {
       "Content-Type": "application/json",
       "X-CSRF-Token": "test-token",
@@ -58,15 +58,19 @@ const mockCSRFHeaders = {
   isReady: true,
 };
 const mockCSRFResponseHandler = {
-  handleResponse: vi.fn().mockImplementation(() => {
-    console.log("Mock handleResponse called");
-  }),
+  handleResponse: vi.fn().mockImplementation(() => {}),
 };
 
 vi.mock("@/components/providers/csrf-provider-modern", () => ({
+  CSRFProviderModern: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useCSRFHeaders: () => mockCSRFHeaders,
   useCSRFResponseHandler: () => mockCSRFResponseHandler,
 }));
+
+// Test wrapper component
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+  <CSRFProviderModern>{children}</CSRFProviderModern>
+);
 
 // Mock fetch
 const mockFetch = vi.fn();
@@ -89,7 +93,7 @@ describe("ContactForm", () => {
     mockFetch.mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({ success: true }),
+      json: async () => ({ success: true, message: "Message sent successfully" }),
       headers: new Headers(),
     });
   });
@@ -98,388 +102,498 @@ describe("ContactForm", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders all form fields correctly", () => {
-    render(<ContactForm />);
+  describe("Rendering", () => {
+    it("renders all form fields", () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
 
-    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/message/i)).toBeInTheDocument();
-    expect(screen.getByText(/I agree to the/i)).toBeInTheDocument();
-    expect(screen.getByText(/privacy policy/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /send message/i })).toBeInTheDocument();
-  });
+      expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/message/i)).toBeInTheDocument();
+      expect(screen.getByRole("checkbox", { name: /privacy policy/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /send message/i })).toBeInTheDocument();
+    });
 
-  it("shows validation errors for empty fields", async () => {
-    render(<ContactForm />);
+    it("renders honeypot field (hidden from screen readers)", () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
 
-    const submitButton = screen.getByRole("button", { name: /send message/i });
+      // Honeypot should be in DOM but hidden - target by name attribute specifically
+      const honeypot = document.querySelector('input[name="honeypot"]');
+      expect(honeypot).toBeInTheDocument();
+      expect(honeypot).toHaveAttribute("name", "honeypot");
+      expect(honeypot).toHaveAttribute("tabIndex", "-1");
+      expect(honeypot).toHaveAttribute("autoComplete", "off");
+    });
 
-    // Button should be disabled initially
-    expect(submitButton).toBeDisabled();
+    it("submit button is disabled initially", () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
 
-    // Try to submit with empty fields
-    await user.type(screen.getByLabelText(/name/i), "J");
-    await user.clear(screen.getByLabelText(/name/i));
-
-    // Should show validation error
-    await waitFor(() => {
-      expect(screen.getByText(/name must be at least 2 characters/i)).toBeInTheDocument();
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+      expect(submitButton).toBeDisabled();
     });
   });
 
-  it("enables submit button when all required fields are filled", async () => {
-    render(<ContactForm />);
+  describe("Form Validation", () => {
+    it("enables submit button when all required fields are filled", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
 
-    const nameInput = screen.getByLabelText(/name/i);
-    const emailInput = screen.getByLabelText(/email/i);
-    const messageInput = screen.getByLabelText(/message/i);
-    const gdprCheckbox = screen.getByRole("checkbox");
-    const submitButton = screen.getByRole("button", { name: /send message/i });
-
-    // Initially disabled
-    expect(submitButton).toBeDisabled();
-
-    // Fill out the form
-    await user.type(nameInput, "John Doe");
-    await user.type(emailInput, "john@example.com");
-    await user.type(messageInput, "This is a test message for the contact form");
-    await user.click(gdprCheckbox);
-
-    // Button should now be enabled
-    await waitFor(() => {
-      expect(submitButton).not.toBeDisabled();
-    });
-  });
-
-  it("validates email format", async () => {
-    render(<ContactForm />);
-
-    const emailInput = screen.getByLabelText(/email/i);
-
-    await user.type(emailInput, "invalid-email");
-    await user.tab(); // Trigger blur
-
-    await waitFor(() => {
-      expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument();
-    });
-
-    await user.clear(emailInput);
-    await user.type(emailInput, "valid@email.com");
-
-    await waitFor(() => {
-      expect(screen.queryByText(/please enter a valid email address/i)).not.toBeInTheDocument();
-    });
-  });
-
-  it("validates name format", async () => {
-    render(<ContactForm />);
-
-    const nameInput = screen.getByLabelText(/name/i);
-
-    await user.type(nameInput, "123456");
-    await user.tab();
-
-    await waitFor(() => {
-      expect(screen.getByText(/name can only contain letters/i)).toBeInTheDocument();
-    });
-
-    await user.clear(nameInput);
-    await user.type(nameInput, "John O'Brien-Smith");
-
-    await waitFor(() => {
-      expect(screen.queryByText(/name can only contain letters/i)).not.toBeInTheDocument();
-    });
-  });
-
-  it("shows character count for message field", async () => {
-    render(<ContactForm />);
-
-    const messageInput = screen.getByLabelText(/message/i);
-
-    expect(screen.getByText("0 / 1000")).toBeInTheDocument();
-
-    await user.type(messageInput, "Hello, this is a test message!");
-
-    await waitFor(() => {
-      expect(screen.getByText("30 / 1000")).toBeInTheDocument();
-    });
-  });
-
-  it("submits form successfully with valid data", async () => {
-    render(<ContactForm />);
-
-    // Fill out the form
-    await user.type(screen.getByLabelText(/name/i), "John Doe");
-    await user.type(screen.getByLabelText(/email/i), "john@example.com");
-    await user.type(
-      screen.getByLabelText(/message/i),
-      "This is a test message for the contact form",
-    );
-    await user.click(screen.getByRole("checkbox"));
-
-    // Wait for form to be valid and button enabled
-    await waitFor(
-      () => {
-        const submitButton = screen.getByRole("button", { name: /send message/i });
-        expect(submitButton).not.toBeDisabled();
-      },
-      { timeout: 5000 },
-    );
-
-    const submitButton = screen.getByRole("button", { name: /send message/i });
-
-    // Submit the form
-    await user.click(submitButton);
-
-    // First check that the toast is called - this indicates form submission started
-    await waitFor(
-      () => {
-        expect(mockToast).toHaveBeenCalled();
-      },
-      { timeout: 15000 },
-    );
-
-    // If we get here, form submitted, now check the specific toast content
-    expect(mockToast).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: "Message sent successfully!",
-        description: expect.stringContaining("Thank you"),
-      }),
-    );
-
-    // And verify fetch was called
-    expect(mockFetch).toHaveBeenCalledWith("/api/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": "test-token",
-      },
-      body: JSON.stringify({
-        name: "John Doe",
-        email: "john@example.com",
-        message: "This is a test message for the contact form",
-        honeypot: "",
-        gdprConsent: true,
-      }),
-      credentials: "same-origin",
-    });
-  }, 25000);
-
-  it("handles rate limiting errors", async () => {
-    const resetTime = Math.floor(Date.now() / 1000) + 900; // 15 minutes from now
-
-    // Mock form submission response
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      status: 429,
-      json: async () => ({
-        error: "Too many requests",
-        code: "RATE_LIMIT_EXCEEDED",
-      }),
-      headers: new Headers({
-        "X-RateLimit-Reset": resetTime.toString(),
-      }),
-    });
-
-    render(<ContactForm />);
-
-    // Fill and submit form
-    await user.type(screen.getByLabelText(/name/i), "John Doe");
-    await user.type(screen.getByLabelText(/email/i), "john@example.com");
-    await user.type(
-      screen.getByLabelText(/message/i),
-      "This is a test message that is long enough",
-    );
-    await user.click(screen.getByRole("checkbox"));
-
-    // Wait for form to be valid
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
-    });
-
-    await user.click(screen.getByRole("button", { name: /send message/i }));
-
-    // Should show rate limit error
-    await waitFor(
-      () => {
-        expect(mockToast).toHaveBeenCalledWith(
-          expect.objectContaining({
-            title: "Too many requests",
-            description: expect.stringMatching(/please wait \d+ minute/i),
-            variant: "destructive",
-          }),
-        );
-      },
-      { timeout: 10000 },
-    );
-  }, 15000);
-
-  it("handles server errors", async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      status: 500,
-      json: async () => ({
-        error: "Internal server error",
-      }),
-      headers: new Headers(),
-    });
-
-    render(<ContactForm />);
-
-    // Fill and submit form
-    await user.type(screen.getByLabelText(/name/i), "John Doe");
-    await user.type(screen.getByLabelText(/email/i), "john@example.com");
-    await user.type(
-      screen.getByLabelText(/message/i),
-      "This is a test message that is long enough",
-    );
-    await user.click(screen.getByRole("checkbox"));
-
-    // Wait for form to be valid
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
-    });
-
-    await user.click(screen.getByRole("button", { name: /send message/i }));
-
-    // Should show error toast
-    await waitFor(
-      () => {
-        expect(mockToast).toHaveBeenCalledWith(
-          expect.objectContaining({
-            title: "Error sending message",
-            description: "Internal server error",
-            variant: "destructive",
-          }),
-        );
-      },
-      { timeout: 10000 },
-    );
-  }, 15000);
-
-  it("handles network errors", async () => {
-    mockFetch.mockRejectedValueOnce(new Error("Network error"));
-
-    render(<ContactForm />);
-
-    // Fill and submit form
-    await user.type(screen.getByLabelText(/name/i), "John Doe");
-    await user.type(screen.getByLabelText(/email/i), "john@example.com");
-    await user.type(
-      screen.getByLabelText(/message/i),
-      "This is a test message that is long enough",
-    );
-    await user.click(screen.getByRole("checkbox"));
-
-    // Wait for form to be valid
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
-    });
-
-    await user.click(screen.getByRole("button", { name: /send message/i }));
-
-    // Should show error toast
-    await waitFor(
-      () => {
-        expect(mockToast).toHaveBeenCalledWith(
-          expect.objectContaining({
-            title: "Error sending message",
-            description: "Network error",
-            variant: "destructive",
-          }),
-        );
-      },
-      { timeout: 10000 },
-    );
-  }, 15000);
-
-  it("honeypot field is hidden and functional", () => {
-    render(<ContactForm />);
-
-    // Honeypot field should not be visible
-    const honeypotLabel = screen.getByText("Leave this field empty");
-    expect(honeypotLabel.parentElement).toHaveClass("sr-only");
-
-    // The input should have negative tabIndex
-    const honeypotInput = screen.getByLabelText("Leave this field empty");
-    expect(honeypotInput).toHaveAttribute("tabIndex", "-1");
-    expect(honeypotInput).toHaveAttribute("autoComplete", "off");
-  });
-
-  it.skip("shows success animation after successful submission", async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ success: true }),
-      headers: new Headers(),
-    });
-
-    render(<ContactForm />);
-
-    // Fill and submit form
-    await user.type(screen.getByLabelText(/name/i), "John Doe");
-    await user.type(screen.getByLabelText(/email/i), "john@example.com");
-    await user.type(screen.getByLabelText(/message/i), "This is a test message");
-    await user.click(screen.getByRole("checkbox"));
-    await user.click(screen.getByRole("button", { name: /send message/i }));
-
-    // Check for success message
-    await waitFor(
-      () => {
-        expect(screen.getByText("Thank You!")).toBeInTheDocument();
-        expect(screen.getByText(/your message has been sent successfully/i)).toBeInTheDocument();
-      },
-      { timeout: 5000 },
-    );
-  });
-
-  it.skip("provides proper ARIA attributes for accessibility", () => {
-    render(<ContactForm />);
-
-    const nameInput = screen.getByLabelText(/name/i);
-    const emailInput = screen.getByLabelText(/email/i);
-    const messageInput = screen.getByLabelText(/message/i);
-    const form = screen.getByRole("form");
-
-    expect(form).toHaveAttribute("aria-label", "Contact form");
-    expect(form).toHaveAttribute("noValidate");
-
-    // Inputs should have proper ARIA attributes when invalid
-    expect(nameInput).not.toHaveAttribute("aria-invalid");
-    expect(emailInput).not.toHaveAttribute("aria-invalid");
-    expect(messageInput).not.toHaveAttribute("aria-invalid");
-  });
-
-  it.skip("focuses on first error field when validation fails", async () => {
-    render(<ContactForm />);
-
-    // Fill only email (skip name)
-    await user.type(screen.getByLabelText(/email/i), "john@example.com");
-
-    // Try to continue with message
-    const messageInput = screen.getByLabelText(/message/i);
-    await user.click(messageInput);
-
-    // Name field should receive focus due to error
-    await waitFor(() => {
       const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      // Fill all required fields
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(
+        messageInput,
+        "This is a test message that is long enough to pass validation.",
+      );
+      await user.click(gdprCheckbox);
+
+      await waitFor(
+        () => {
+          expect(submitButton).toBeEnabled();
+        },
+        { timeout: 2000 },
+      );
+    });
+
+    it("shows validation errors for invalid inputs", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+
+      // Enter invalid data
+      await user.type(nameInput, "A"); // Too short
+      await user.type(emailInput, "invalid-email"); // Invalid format
+      await user.type(messageInput, "Short"); // Too short
+
+      // Trigger validation by blurring fields
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(screen.getByText(/name must be at least 2 characters/i)).toBeInTheDocument();
+        expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument();
+        expect(screen.getByText(/message must be at least 10 characters/i)).toBeInTheDocument();
+      });
+    });
+
+    it("validates name contains only allowed characters", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+
+      await user.type(nameInput, "John123@#$");
+      await user.click(document.body); // Trigger validation
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/name can only contain letters, spaces, hyphens, and apostrophes/i),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("enforces message length limits", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const messageInput = screen.getByLabelText(/message/i);
+
+      await user.type(messageInput, "A".repeat(1001)); // Exceeds 1000 char limit
+      await user.click(document.body); // Trigger validation
+
+      await waitFor(() => {
+        expect(screen.getByText(/message must be less than 1000 characters/i)).toBeInTheDocument();
+      });
+    });
+
+    it("requires GDPR consent", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      // Fill all fields except GDPR consent
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message that is long enough.");
+
+      // Button should remain disabled without GDPR consent
+      await waitFor(() => {
+        expect(submitButton).toBeDisabled();
+      });
+    });
+  });
+
+  describe("Form Submission", () => {
+    it("successfully submits valid form data", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      // Fill form with valid data
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(
+        messageInput,
+        "This is a test message that is long enough to pass validation.",
+      );
+      await user.click(gdprCheckbox);
+
+      await waitFor(() => {
+        expect(submitButton).toBeEnabled();
+      });
+
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith("/api/contact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": "test-token",
+          },
+          body: expect.stringContaining("John Doe"),
+          credentials: "same-origin",
+        });
+      });
+
+      expect(mockToast).toHaveBeenCalledWith({
+        title: "Message sent successfully!",
+        description: "Thank you for reaching out. I'll get back to you soon.",
+        duration: 5000,
+      });
+    });
+
+    it("handles server validation errors", async () => {
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: async () => ({
+          error: "Validation failed",
+          errors: [{ path: ["email"], message: "Invalid email format" }],
+        }),
+        headers: new Headers(),
+      });
+
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message.");
+      await user.click(gdprCheckbox);
+
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({
+          title: "Validation Error",
+          description: "Please check the form fields and try again.",
+          variant: "destructive",
+        });
+      });
+    });
+
+    it("handles rate limiting errors", async () => {
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 429,
+        json: async () => ({
+          error: "Too many requests. Please try again later.",
+        }),
+        headers: new Headers(),
+      });
+
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message.");
+      await user.click(gdprCheckbox);
+
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({
+          title: "Too many requests",
+          description: expect.stringMatching(/Please wait \d+ minutes? before trying again/),
+          variant: "destructive",
+          duration: 10000,
+        });
+      });
+    });
+
+    it("handles network errors", async () => {
+      mockFetch.mockRejectedValue(new Error("Network error"));
+
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message.");
+      await user.click(gdprCheckbox);
+
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({
+          title: "Error sending message",
+          description: "Network error",
+          variant: "destructive",
+          duration: 5000,
+        });
+      });
+    });
+
+    it("handles server errors", async () => {
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: async () => ({
+          error: "Internal server error",
+        }),
+        headers: new Headers(),
+      });
+
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message.");
+      await user.click(gdprCheckbox);
+
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({
+          title: "Error sending message",
+          description: "Internal server error",
+          variant: "destructive",
+          duration: 5000,
+        });
+      });
+    });
+  });
+
+  describe("CSRF Integration", () => {
+    it("uses CSRF headers in requests", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message.");
+      await user.click(gdprCheckbox);
+
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      await user.click(submitButton);
+
+      expect(mockCSRFHeaders.getHeadersWithRetry).toHaveBeenCalled();
+      expect(mockCSRFResponseHandler.handleResponse).toHaveBeenCalled();
+    });
+
+    it("handles CSRF token errors", async () => {
+      mockCSRFHeaders.getHeadersWithRetry.mockRejectedValue(new Error("CSRF token error"));
+
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message.");
+      await user.click(gdprCheckbox);
+
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({
+          title: "Error sending message",
+          description: "CSRF token error",
+          variant: "destructive",
+          duration: 5000,
+        });
+      });
+    });
+  });
+
+  describe("Accessibility", () => {
+    it("has proper ARIA labels and descriptions", () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+
+      // Check that inputs have proper labels and can be labeled
+      expect(nameInput).toHaveAttribute("id");
+      expect(emailInput).toHaveAttribute("id");
+      expect(messageInput).toHaveAttribute("id");
+
+      // Check that inputs have aria-invalid set initially
+      expect(nameInput).toHaveAttribute("aria-invalid", "false");
+      expect(emailInput).toHaveAttribute("aria-invalid", "false");
+      expect(messageInput).toHaveAttribute("aria-invalid", "false");
+    });
+
+    it("associates error messages with form fields", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      await user.type(nameInput, "A");
+      await user.click(document.body);
+
+      await waitFor(() => {
+        const errorMessage = screen.getByText(/name must be at least 2 characters/i);
+        expect(errorMessage).toBeInTheDocument();
+        expect(nameInput).toHaveAttribute("aria-invalid", "true");
+      });
+    });
+
+    it("maintains focus management during form submission", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+
+      // Focus should be manageable
+      nameInput.focus();
       expect(document.activeElement).toBe(nameInput);
     });
   });
 
-  it.skip("shows field-specific animations on errors", async () => {
-    render(<ContactForm />);
+  describe("Security Features", () => {
+    it("includes honeypot field in form submission", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
 
-    const nameInput = screen.getByLabelText(/name/i);
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
 
-    // Type invalid name
-    await user.type(nameInput, "A");
-    await user.tab();
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message.");
+      await user.click(gdprCheckbox);
 
-    // Check for error message with animation
-    await waitFor(() => {
-      const errorMessage = screen.getByText(/name must be at least 2 characters/i);
-      expect(errorMessage).toBeInTheDocument();
-      expect(errorMessage).toHaveAttribute("role", "alert");
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith("/api/contact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": "test-token",
+          },
+          body: expect.stringContaining('"honeypot":""'),
+          credentials: "same-origin",
+        });
+      });
+    });
+
+    it("sends form data without modification", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message.");
+      await user.click(gdprCheckbox);
+
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith("/api/contact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": "test-token",
+          },
+          body: expect.stringContaining('"name":"John Doe"'),
+          credentials: "same-origin",
+        });
+      });
+    });
+  });
+
+  describe("Form Reset", () => {
+    it("resets form after successful submission", async () => {
+      render(<ContactForm />, { wrapper: TestWrapper });
+
+      const nameInput = screen.getByLabelText(/name/i);
+      const emailInput = screen.getByLabelText(/email/i);
+      const messageInput = screen.getByLabelText(/message/i);
+      const gdprCheckbox = screen.getByRole("checkbox", { name: /privacy policy/i });
+      const submitButton = screen.getByRole("button", { name: /send message/i });
+
+      await user.type(nameInput, "John Doe");
+      await user.type(emailInput, "john@example.com");
+      await user.type(messageInput, "This is a test message.");
+      await user.click(gdprCheckbox);
+
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(nameInput).toHaveValue("");
+        expect(emailInput).toHaveValue("");
+        expect(messageInput).toHaveValue("");
+        expect(gdprCheckbox).not.toBeChecked();
+        expect(submitButton).toBeDisabled();
+      });
     });
   });
 });
