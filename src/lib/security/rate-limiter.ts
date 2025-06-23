@@ -128,7 +128,7 @@ export function getClientIP(request: Request): string {
 
   // Fallback to a default identifier
   // In a real production app, you'd have better IP detection
-  return "unknown-" + Date.now();
+  return `unknown-${Date.now()}`;
 }
 
 /**

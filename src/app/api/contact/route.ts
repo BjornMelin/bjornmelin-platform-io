@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { contactFormSchema } from "@/lib/schemas/contact";
 import { checkCSRFToken } from "@/lib/security/csrf";
 import {
   applyRateLimit,
@@ -12,11 +11,7 @@ import {
   ResendRateLimitError,
 } from "@/lib/services/resend-email";
 import { APIError, handleAPIError } from "@/lib/utils/error-handler";
-import { sanitizeInput } from "@/lib/utils/security";
-import {
-  enhancedContactFormSchema,
-  validateContactFormServer,
-} from "@/lib/validation/contact-schema";
+import { validateContactFormServer } from "@/lib/validation/contact-schema";
 
 export async function POST(request: Request) {
   try {
@@ -115,7 +110,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const validatedData = validationResult.data!;
+    const validatedData = validationResult.data;
 
     // Send email using Resend
     const resendService = ResendEmailService.getInstance();
@@ -131,7 +126,7 @@ export async function POST(request: Request) {
       timestamp: new Date().toISOString(),
       ip: clientIP,
       emailId: result.id,
-      name: validatedData.name.substring(0, 3) + "***", // Partial name for privacy
+      name: `${validatedData.name.substring(0, 3)}***`, // Partial name for privacy
     });
 
     return NextResponse.json(
