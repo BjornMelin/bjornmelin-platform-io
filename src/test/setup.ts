@@ -5,14 +5,16 @@ import { afterAll, afterEach, beforeAll, vi } from "vitest";
 // Ensure test environment variables are set
 beforeAll(() => {
   // Set required environment variables for tests
-  process.env.NODE_ENV = "test";
-  process.env.NEXT_PUBLIC_APP_URL = "http://localhost:3000";
-  process.env.RESEND_API_KEY = "test-api-key";
-  process.env.RESEND_FROM_EMAIL = "test@example.com";
-  process.env.CONTACT_EMAIL = "test-contact@example.com";
-  process.env.AWS_REGION = "us-east-1";
-  process.env.CSRF_SECRET = "test-csrf-secret-for-testing-only-must-be-32-chars";
-  process.env.SKIP_ENV_VALIDATION = "true";
+  Object.assign(process.env, {
+    NODE_ENV: "test",
+    NEXT_PUBLIC_APP_URL: "http://localhost:3000",
+    RESEND_API_KEY: "test-api-key",
+    RESEND_FROM_EMAIL: "test@example.com",
+    CONTACT_EMAIL: "test-contact@example.com",
+    AWS_REGION: "us-east-1",
+    CSRF_SECRET: "test-csrf-secret-for-testing-only-must-be-32-chars",
+    SKIP_ENV_VALIDATION: "true",
+  });
 
   // Validate that critical environment variables are set
   const requiredEnvVars = ["NEXT_PUBLIC_APP_URL", "RESEND_FROM_EMAIL", "CONTACT_EMAIL"];

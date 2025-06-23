@@ -23,7 +23,7 @@ describe("Environment Setup", () => {
   it("should have proper test environment isolation", () => {
     // Test that we're in test mode
     expect(process.env.NODE_ENV).toBe("test");
-    
+
     // Test that test-specific values are set
     expect(process.env.RESEND_API_KEY).not.toBe(process.env.PROD_RESEND_API_KEY);
     expect(process.env.CONTACT_EMAIL).toContain("test");
