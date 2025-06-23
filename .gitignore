@@ -131,3 +131,5 @@ prisma/client/
 
 # Claude Code - Personal settings (auto-ignored by Claude Code)
 .claude/settings.local.json   # Personal settings, not version controlled
+.taskmaster/state.json
+.taskmaster/reports/
