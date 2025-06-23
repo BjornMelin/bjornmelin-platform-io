@@ -1061,7 +1061,7 @@ describe("CSRF Modern Implementation - Comprehensive Tests", () => {
         const { sessionId } = await generateCSRFToken();
         mockHeaders.set("x-session-id", sessionId);
 
-        const longToken = "a".repeat(1000) + "." + "b".repeat(1000);
+        const longToken = `${"a".repeat(1000)}.${"b".repeat(1000)}`;
         const result = await validateCSRFToken(longToken);
 
         expect(result.valid).toBe(false);

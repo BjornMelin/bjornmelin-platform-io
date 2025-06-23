@@ -1478,17 +1478,19 @@ describe("Contact Form Schema Validation", () => {
       const largeValidData = {
         name: "A".repeat(50), // Maximum length
         email: "test@example.com",
-        message: Array.from({length: 10}, (_, i) => `Sentence ${i + 1} of a long message.`).join(' '), // Valid length with varied content
+        message: Array.from({ length: 10 }, (_, i) => `Sentence ${i + 1} of a long message.`).join(
+          " ",
+        ), // Valid length with varied content
         honeypot: "",
         gdprConsent: true,
-        company: "A Corp " + "B".repeat(93), // Maximum length with valid format
+        company: `A Corp ${"B".repeat(93)}`, // Maximum length with valid format
         phone: "123-456-7890", // Valid format within 20 characters
       };
 
       const startTime = Date.now();
       const result = contactFormSchema.safeParse(largeValidData);
       const endTime = Date.now();
-      
+
       expect(result.success).toBe(true);
       expect(endTime - startTime).toBeLessThan(100); // Should complete in under 100ms
     });
