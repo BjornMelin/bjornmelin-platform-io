@@ -1,228 +1,305 @@
-# Testing Strategies
+# Testing Documentation
 
-## Testing Framework
+## Overview
 
-### Core Tools
+This project implements comprehensive testing strategies including unit tests, integration tests, and end-to-end tests to ensure code quality and reliability.
 
-- Vitest (unit testing)
-- Playwright (E2E testing)
-- React Testing Library
-- TypeScript
-- MSW (Mock Service Worker)
+## Test Stack
 
-## Test Types
-
-### 1. Component Testing
-
-- UI components
-- Server Components
-- Client Components
-- Custom Hooks
-
-### 2. API Testing
-
-- Next.js API Routes
-- External Services Integration
-- Error Handling
-
-### 3. Integration Testing
-
-- Page Flows
-- Form Submissions
-- Data Fetching
-
-## Component Testing
-
-### React Components
-
-```typescript
-import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
-import { Button } from "@/components/ui/button";
-
-describe("Button", () => {
-  it("renders with correct text", () => {
-    render(<Button>Click me</Button>);
-    expect(screen.getByText("Click me")).toBeInTheDocument();
-  });
-
-  it("handles click events", () => {
-    const onClick = vi.fn();
-    render(<Button onClick={onClick}>Click me</Button>);
-    screen.getByText("Click me").click();
-    expect(onClick).toHaveBeenCalled();
-  });
-});
-```
-
-### Server Components
-
-```typescript
-import { Contact } from "@/app/contact/page";
-
-describe("Contact Page", () => {
-  it("renders contact form", () => {
-    render(<Contact />);
-    expect(screen.getByRole("form")).toBeInTheDocument();
-  });
-});
-```
-
-## API Testing
-
-### Contact Form API
-
-```typescript
-import { POST } from "@/app/api/contact/route";
-
-describe("Contact API", () => {
-  it("handles valid submission", async () => {
-    const response = await POST(
-      new Request("api/contact", {
-        method: "POST",
-        body: JSON.stringify({
-          name: "Test User",
-          email: "test@example.com",
-          message: "Test message",
-        }),
-      })
-    );
-
-    expect(response.status).toBe(200);
-  });
-
-  it("validates input", async () => {
-    const response = await POST(
-      new Request("api/contact", {
-        method: "POST",
-        body: JSON.stringify({
-          name: "",
-          email: "invalid",
-          message: "",
-        }),
-      })
-    );
-
-    expect(response.status).toBe(400);
-  });
-});
-```
-
-## Integration Testing
-
-### Form Submission Flow
-
-```typescript
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { ContactForm } from "@/components/contact/contact-form";
-
-describe("Contact Form Flow", () => {
-  it("submits form successfully", async () => {
-    render(<ContactForm />);
-
-    fireEvent.change(screen.getByLabelText("Name"), {
-      target: { value: "Test User" },
-    });
-
-    fireEvent.change(screen.getByLabelText("Email"), {
-      target: { value: "test@example.com" },
-    });
-
-    fireEvent.change(screen.getByLabelText("Message"), {
-      target: { value: "Test message" },
-    });
-
-    fireEvent.click(screen.getByText("Send Message"));
-
-    await waitFor(() => {
-      expect(screen.getByText("Message sent successfully")).toBeInTheDocument();
-    });
-  });
-});
-```
-
-## Test Organization
-
-### Directory Structure
-
-```
-src/
-├── __tests__/
-│   ├── components/
-│   ├── api/
-│   └── integration/
-├── e2e/              # Playwright E2E tests
-│   ├── contact.spec.ts
-│   └── navigation.spec.ts
-└── test-utils/
-    ├── setup.ts
-    └── helpers.ts
-```
-
-### Naming Conventions
-
-- `ComponentName.test.tsx` - Component tests
-- `route.test.ts` - API route tests
-- `flow.test.tsx` - Integration tests
-
-## Best Practices
-
-### 1. Test Organization
-
-- Group related tests
-- Clear test descriptions
-- Proper setup and cleanup
-
-### 2. Testing Principles
-
-- Test behavior, not implementation
-- Write maintainable tests
-- Handle async operations properly
-- Mock external services
-- Use Zod schemas for validation testing
-
-### 3. Coverage Goals
-
-- Components: 80%
-- API Routes: 90%
-- Utility Functions: 100%
-- E2E Critical Paths: 100%
-
-### 4. Performance
-
-- Optimize test execution with Vitest
-- Proper mocking strategies
-- Avoid unnecessary rerenders
-- Parallel test execution
+- **Unit/Integration Tests**: Vitest + Testing Library
+- **E2E Tests**: Playwright
+- **Code Coverage**: Vitest Coverage (V8)
+- **Linting**: Biome
+- **Type Checking**: TypeScript
 
 ## Running Tests
 
+### Prerequisites
+
+- Node.js 20+
+- pnpm (package manager)
+- Docker (for E2E tests locally)
+
+### Unit Tests
+
 ```bash
-# Run all tests
+# Run all unit tests
 pnpm test
 
-# Run specific test file
-pnpm test ComponentName.test.tsx
-
 # Run tests in watch mode
-pnpm test --watch
+pnpm test -- --watch
 
 # Run tests with UI
 pnpm test:ui
 
 # Generate coverage report
 pnpm test:coverage
-
-# Run E2E tests with Playwright
-pnpm test:e2e
 ```
 
-## Continuous Integration
+### E2E Tests
 
-Tests are run automatically on:
+Due to Playwright's system dependencies, E2E tests must run in Docker or CI environment.
 
-- Pull requests
-- Main branch commits
-- Release tags
+#### Using Docker (Recommended for Local Development)
 
-For more detailed testing examples and patterns, refer to the test files in the codebase.
+```bash
+# Quick run with Docker script
+pnpm test:e2e:docker
+
+# Or using docker-compose with volume mounts for reports
+docker-compose -f docker-compose.e2e.yml up --build
+
+# View test reports after run
+open playwright-report/index.html
+```
+
+#### Using GitHub Actions (Automated)
+
+E2E tests run automatically on:
+- Pull requests to main branch
+- Pushes to main or develop branches
+
+View results in the Actions tab of the GitHub repository.
+
+## Test Structure
+
+### Unit Tests
+
+Located alongside source files with `.test.ts` or `.test.tsx` extensions:
+
+```
+src/
+├── components/
+│   └── contact/
+│       ├── contact-form.tsx
+│       └── __tests__/
+│           ├── contact-form.test.tsx
+│           └── contact-form-enhanced.test.tsx
+├── lib/
+│   ├── schemas/
+│   │   ├── contact.ts
+│   │   └── __tests__/
+│   │       └── contact.test.ts
+│   └── utils/
+│       ├── error-handler.ts
+│       └── __tests__/
+│           └── error-handler.test.ts
+```
+
+### E2E Tests
+
+Organized by feature in the `e2e/` directory:
+
+```
+e2e/
+├── fixtures/          # Page Object Models
+│   └── contact-page.ts
+└── contact/          # Contact form tests
+    ├── contact-form.spec.ts
+    ├── rate-limiting.spec.ts
+    ├── security-features.spec.ts
+    └── validation-errors.spec.ts
+```
+
+## Test Configuration
+
+### Vitest Configuration
+
+Tests run in a jsdom environment with the following setup:
+
+- **Environment**: jsdom (for DOM testing)
+- **Setup File**: `src/test/setup.ts`
+- **Coverage Thresholds**: 90% for lines, functions, branches, and statements
+- **Globals**: Enabled for describe, it, expect
+
+### Test Setup
+
+The `src/test/setup.ts` file configures:
+- Testing Library DOM matchers
+- Browser API mocks (matchMedia, IntersectionObserver, ResizeObserver)
+- Crypto API mock for CSRF token generation
+- Automatic cleanup after each test
+
+## Test Coverage Goals
+
+- **Unit Tests**: ~90% coverage for business logic
+- **E2E Tests**: Critical user paths and security features
+
+Current coverage focuses on:
+- Contact form validation and submission
+- Security utilities (rate limiting, CSRF protection)
+- Error handling and user feedback
+- Accessibility compliance
+
+## Writing Tests
+
+### Unit Test Example
+
+```typescript
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { ContactForm } from "../contact-form";
+
+describe("ContactForm", () => {
+  it("should validate email format", async () => {
+    render(<ContactForm />);
+    
+    const emailInput = screen.getByLabelText(/email/i);
+    await user.type(emailInput, "invalid-email");
+    await user.tab();
+    
+    expect(screen.getByText(/valid email/i)).toBeInTheDocument();
+  });
+});
+```
+
+### E2E Test Example
+
+```typescript
+import { test, expect } from "@playwright/test";
+import { ContactPage } from "../fixtures/contact-page";
+
+test("should submit contact form successfully", async ({ page }) => {
+  const contactPage = new ContactPage(page);
+  await contactPage.goto();
+  
+  await contactPage.fillForm({
+    name: "John Doe",
+    email: "john@example.com",
+    message: "Test message",
+    acceptGdpr: true
+  });
+  
+  await contactPage.submit();
+  
+  const toast = await contactPage.getToastMessage();
+  expect(toast.title).toBe("Message sent successfully!");
+});
+```
+
+## Page Object Model
+
+E2E tests use the Page Object Model pattern for maintainability:
+
+```typescript
+export class ContactPage {
+  constructor(private page: Page) {}
+  
+  async fillForm(data: ContactFormData) {
+    await this.page.getByLabel("Name").fill(data.name);
+    await this.page.getByLabel("Email").fill(data.email);
+    await this.page.getByLabel("Message").fill(data.message);
+    if (data.acceptGdpr) {
+      await this.page.getByRole("checkbox").check();
+    }
+  }
+}
+```
+
+## CI/CD Integration
+
+### GitHub Actions Workflow
+
+E2E tests run automatically in CI with:
+- Playwright browsers pre-installed
+- Test artifacts uploaded on failure
+- Parallel test execution
+- Automatic retries for flaky tests
+
+See `.github/workflows/e2e-tests.yml` for configuration.
+
+## Debugging Tests
+
+### Unit Tests
+
+```bash
+# Run specific test file
+pnpm test src/components/contact/__tests__/contact-form.test.tsx
+
+# Run tests matching pattern
+pnpm test -- -t "validation"
+
+# Debug with UI
+pnpm test:ui
+```
+
+### E2E Tests
+
+```bash
+# Run in headed mode (requires display)
+pnpm test:e2e --headed
+
+# Debug specific test
+pnpm test:e2e --debug contact-form.spec.ts
+
+# Generate trace for debugging
+pnpm test:e2e --trace on
+```
+
+## Best Practices
+
+1. **Test Isolation**: Each test should be independent
+2. **Clear Naming**: Use descriptive test names
+3. **Arrange-Act-Assert**: Follow AAA pattern
+4. **Mock External Services**: Use vi.mock() for API mocking
+5. **Test User Behavior**: Focus on user interactions, not implementation
+6. **Accessibility**: Include a11y tests in E2E suite
+
+## Common Issues
+
+### E2E Tests Won't Run Locally
+
+**Problem**: Missing system dependencies for Playwright
+
+**Solution**: Use Docker or install dependencies:
+```bash
+# Use the provided Docker script
+pnpm test:e2e:docker
+
+# Or setup E2E environment (installs Playwright browsers)
+pnpm test:e2e:setup
+```
+
+### Flaky Tests
+
+**Problem**: Tests pass/fail inconsistently
+
+**Solution**: 
+- Add explicit waits: `await page.waitForLoadState('networkidle')`
+- Use test retries in playwright.config.ts
+- Check for race conditions in async code
+
+### Coverage Not Meeting Target
+
+**Problem**: Coverage below 90% threshold
+
+**Solution**:
+- Run `pnpm test:coverage` to identify gaps
+- Focus on testing business logic, not UI details
+- Add edge cases and error scenarios
+
+## Feature Flag Testing
+
+Tests can use feature flags to test different behaviors:
+
+```typescript
+import { describe, it, expect, vi } from "vitest";
+import { evaluateFlag } from "@/lib/feature-flags/evaluator";
+
+vi.mock("@/lib/feature-flags/evaluator", () => ({
+  evaluateFlag: vi.fn().mockResolvedValue(true)
+}));
+
+describe("Feature with flag", () => {
+  it("should show enhanced feature when flag is enabled", async () => {
+    // Test with feature enabled
+  });
+});
+```
+
+## Resources
+
+- [Vitest Documentation](https://vitest.dev/)
+- [Playwright Documentation](https://playwright.dev/)
+- [Testing Library](https://testing-library.com/)
+- [Page Object Model Pattern](https://playwright.dev/docs/pom)

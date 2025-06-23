@@ -43,11 +43,10 @@ Due to Playwright's system dependencies, E2E tests must run in Docker or CI envi
 #### Using Docker (Recommended for Local Development)
 
 ```bash
-# Quick run with Docker
-docker build -f Dockerfile.e2e -t e2e-tests .
-docker run --rm e2e-tests
+# Quick run with Docker script
+pnpm test:e2e:docker
 
-# Using docker-compose with volume mounts for reports
+# Or using docker-compose with volume mounts for reports
 docker-compose -f docker-compose.e2e.yml up --build
 
 # View test reports after run
@@ -85,6 +84,12 @@ src/
 │       ├── error-handler.ts
 │       └── __tests__/
 │           └── error-handler.test.ts
+└── app/
+    └── api/
+        └── contact/
+            └── __tests__/
+                ├── route.test.ts
+                └── integration.test.ts
 ```
 
 ### E2E Tests
@@ -102,6 +107,25 @@ e2e/
     └── validation-errors.spec.ts
 ```
 
+## Test Configuration
+
+### Vitest Configuration
+
+Tests run in a jsdom environment with the following setup:
+
+- **Environment**: jsdom (for DOM testing)
+- **Setup File**: `src/test/setup.ts`
+- **Coverage Thresholds**: 90% for lines, functions, branches, and statements
+- **Globals**: Enabled for describe, it, expect
+
+### Test Setup
+
+The `src/test/setup.ts` file configures:
+- Testing Library DOM matchers
+- Browser API mocks (matchMedia, IntersectionObserver, ResizeObserver)
+- Crypto API mock for CSRF token generation
+- Automatic cleanup after each test
+
 ## Test Coverage Goals
 
 - **Unit Tests**: ~90% coverage for business logic
@@ -118,12 +142,14 @@ Current coverage focuses on:
 ### Unit Test Example
 
 ```typescript
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { ContactForm } from "../contact-form";
 
 describe("ContactForm", () => {
   it("should validate email format", async () => {
+    const user = userEvent.setup();
     render(<ContactForm />);
     
     const emailInput = screen.getByLabelText(/email/i);
@@ -223,7 +249,7 @@ pnpm test:e2e --trace on
 1. **Test Isolation**: Each test should be independent
 2. **Clear Naming**: Use descriptive test names
 3. **Arrange-Act-Assert**: Follow AAA pattern
-4. **Mock External Services**: Use MSW for API mocking
+4. **Mock External Services**: Use vi.mock() for API mocking
 5. **Test User Behavior**: Focus on user interactions, not implementation
 6. **Accessibility**: Include a11y tests in E2E suite
 
@@ -235,12 +261,11 @@ pnpm test:e2e --trace on
 
 **Solution**: Use Docker or install dependencies:
 ```bash
-# Ubuntu/Debian
-sudo apt-get install -y libglib2.0-0 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libatspi2.0-0 libx11-6 libxcomposite1 libxdamage1 libxext6 libxfixes3 libxrandr2
+# Use the provided Docker script
+pnpm test:e2e:docker
 
-# Or use Docker
-docker build -f Dockerfile.e2e -t e2e-tests .
-docker run --rm e2e-tests
+# Or setup E2E environment (installs Playwright browsers)
+pnpm test:e2e:setup
 ```
 
 ### Flaky Tests
@@ -260,6 +285,25 @@ docker run --rm e2e-tests
 - Run `pnpm test:coverage` to identify gaps
 - Focus on testing business logic, not UI details
 - Add edge cases and error scenarios
+
+## Feature Flag Testing
+
+Tests can use feature flags to test different behaviors:
+
+```typescript
+import { describe, it, expect, vi } from "vitest";
+import { evaluateFlag } from "@/lib/feature-flags/evaluator";
+
+vi.mock("@/lib/feature-flags/evaluator", () => ({
+  evaluateFlag: vi.fn().mockResolvedValue(true)
+}));
+
+describe("Feature with flag", () => {
+  it("should show enhanced feature when flag is enabled", async () => {
+    // Test with feature enabled
+  });
+});
+```
 
 ## Resources
 

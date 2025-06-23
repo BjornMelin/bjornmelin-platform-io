@@ -8,7 +8,7 @@ Successfully implemented AWS CodeArtifact integration for automated npm package 
 
 ### Documentation
 - `/workspace/repos/bjornmelin-platform-io/docs/codeartifact-integration.md` - Comprehensive integration plan
-- `/workspace/repos/bjornmelin-platform-io/docs/README-codeartifact.md` - Quick reference guide
+- `/workspace/repos/bjornmelin-platform-io/docs/archive/codeartifact/README-codeartifact.md` - Quick reference guide
 - `/workspace/repos/bjornmelin-platform-io/docs/codeartifact-implementation-summary.md` - This summary
 
 ### GitHub Workflow

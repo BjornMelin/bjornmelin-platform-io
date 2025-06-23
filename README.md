@@ -66,11 +66,13 @@ Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutio
 
 ## 📚 Quick Links
 
+- [📑 Documentation Index](./docs/docs-index.md)
 - [🏛️ Architecture](#️-architecture)
 - [📁 Project Structure](#-project-structure)
 - [🚀 Getting Started](#-getting-started)
 - [🛠️ Tech Stack](#️-tech-stack)
 - [🏗️ AWS Services Integration](#️-aws-services-integration)
+- [📚 Documentation](#-documentation)
 - [💻 Development Scripts](#-development-scripts)
 - [👨‍💻 Author](#-author)
 - [📜 License](#-license)
@@ -156,7 +158,8 @@ bjornmelin-platform-io/
 │   ├── architecture/     # Architecture docs
 │   ├── deployment/       # Deployment guides
 │   ├── development/      # Development guides
-│   └── security/         # Security docs
+│   ├── infrastructure/   # Infrastructure guides
+│   └── docs-index.md     # Complete documentation index
 ├── infrastructure/        # CDK infrastructure code
 │   ├── bin/              # CDK app entry
 │   └── lib/              # Infrastructure code
@@ -285,6 +288,21 @@ Development:
 
 - **IAM**: Role-based access control
 - **WAF**: Basic security rules (optional)
+
+## 📚 Documentation
+
+All project documentation is organized in the `docs/` directory. For easy navigation:
+
+- 📑 **[Complete Documentation Index](./docs/docs-index.md)** - Browse all documentation
+- 🚀 **[Quick Start Guide](./docs/development/getting-started.md)** - Get up and running
+- 🏗️ **[Architecture Overview](./docs/architecture/README.md)** - System design and patterns
+- 🧪 **[Testing Documentation](./docs/development/testing.md)** - Comprehensive testing guide
+
+### Optional Features
+
+The platform includes documentation for optional enterprise features that are not deployed by default:
+
+- 📦 **[AWS CodeArtifact Integration](./docs/infrastructure/codeartifact-backup.md)** - Enterprise-grade npm package backup solution (not deployed)
 
 ## 🔄 Git Workflow & Contributing
 

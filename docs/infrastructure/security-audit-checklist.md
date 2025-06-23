@@ -2,7 +2,7 @@
 
 ## Pre-Deployment Security Review
 
-### Secrets Management
+### Parameter Store & Secrets Management
 - [ ] **KMS Key Configuration**
   - [ ] Customer-managed key created
   - [ ] Key rotation enabled
@@ -10,17 +10,17 @@
   - [ ] Key policy restricts access to specific IAM roles
   - [ ] CloudTrail can use key for log encryption
 
-- [ ] **Secrets Manager Configuration**
-  - [ ] Secret encrypted with customer KMS key
-  - [ ] Version control enabled
-  - [ ] Automatic rotation configured (90 days)
-  - [ ] Resource policy restricts access
+- [ ] **Parameter Store Configuration**
+  - [ ] Parameters encrypted with customer KMS key (SecureString)
+  - [ ] Parameter history maintained
+  - [ ] Manual rotation process documented
+  - [ ] IAM policies restrict access
   - [ ] No default/placeholder values in production
 
 - [ ] **IAM Policies**
   - [ ] Least privilege principle applied
-  - [ ] Condition keys used (e.g., `secretsmanager:VersionStage`)
-  - [ ] Service-specific access (e.g., `kms:ViaService`)
+  - [ ] Condition keys used (e.g., `kms:ViaService`)
+  - [ ] Service-specific access for Parameter Store
   - [ ] No wildcard permissions
   - [ ] Separate policies for read/write access
 
@@ -57,8 +57,8 @@
 
 ### Monitoring & Alerting
 - [ ] **CloudWatch Alarms**
-  - [ ] Unusual secret access patterns
-  - [ ] Failed rotation attempts
+  - [ ] Unusual parameter access patterns
+  - [ ] Failed parameter retrievals
   - [ ] KMS key usage anomalies
   - [ ] Failed email deliveries
 
@@ -69,8 +69,8 @@
   - [ ] Log retention policy defined
 
 - [ ] **Metrics & Dashboards**
-  - [ ] Secret access frequency tracked
-  - [ ] Rotation success/failure rates
+  - [ ] Parameter access frequency tracked
+  - [ ] Manual rotation compliance tracked
   - [ ] Email delivery metrics
   - [ ] Cost tracking enabled
 
@@ -116,8 +116,8 @@
   - [ ] Regular security reviews
 
 ### Recovery Procedures
-- [ ] **Secret Compromise**
-  - [ ] Immediate rotation procedure
+- [ ] **Parameter/Secret Compromise**
+  - [ ] Immediate parameter update procedure
   - [ ] Affected systems inventory
   - [ ] Communication plan
   - [ ] Post-incident review process
@@ -159,11 +159,11 @@
 ## Post-Deployment Validation
 
 ### Functional Testing
-- [ ] **Secret Rotation**
-  - [ ] Manual rotation successful
-  - [ ] Automatic rotation tested
-  - [ ] No service disruption during rotation
-  - [ ] Old keys properly revoked
+- [ ] **Parameter Updates**
+  - [ ] Manual parameter update successful
+  - [ ] Parameter history preserved
+  - [ ] No service disruption during update
+  - [ ] Old API keys properly revoked in external service
 
 - [ ] **Email Delivery**
   - [ ] SPF validation passing
@@ -204,7 +204,7 @@
 
 ### Quarterly
 - [ ] Full security audit
-- [ ] Rotation drill
+- [ ] Manual rotation execution
 - [ ] Compliance review
 - [ ] Training updates
 

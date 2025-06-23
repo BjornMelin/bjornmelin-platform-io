@@ -9,6 +9,7 @@ This document serves as a comprehensive index for all documentation in the bjorn
 - 📋 [Onboarding Checklist](./development/onboarding-checklist.md) - New team member guide
 - 🔄 [Git Workflow Guide](./development/git-workflow-guide.md) - Day-to-day Git operations
 - 📊 [Workflow Diagrams](./development/workflow-diagrams.md) - Visual workflow guides
+- 🧪 [Testing Guide](./development/testing.md) - Comprehensive testing documentation
 
 ## 📚 Documentation Structure
 
@@ -16,6 +17,7 @@ This document serves as a comprehensive index for all documentation in the bjorn
 - [API Overview](./api/README.md) - Main API documentation
 - [Contact API](./api/contact.md) - Contact form endpoint documentation  
 - [Schemas](./api/schemas.md) - API schemas and validation
+- [Utilities](./api/utilities.md) - Utility services and error handling
 
 ### 2. Architecture Documentation
 - [Architecture Overview](./architecture/README.md) - System architecture overview
@@ -26,10 +28,12 @@ This document serves as a comprehensive index for all documentation in the bjorn
 
 ### 3. Infrastructure Documentation
 - [Infrastructure Overview](./infrastructure/README.md) - AWS infrastructure and services
-- [AWS Free Tier Optimization](./infrastructure/AWS_FREE_TIER_OPTIMIZATION_2025.md) - Cost optimization guide
-- [Email Infrastructure Guide](./infrastructure/EMAIL_INFRASTRUCTURE_GUIDE.md) - Email service implementation
-- [Security Audit Checklist](./infrastructure/SECURITY_AUDIT_CHECKLIST.md) - Security review procedures
-- [Application Integration Examples](./infrastructure/APPLICATION_INTEGRATION_EXAMPLES.md) - Code integration examples
+- [AWS Free Tier Optimization](./infrastructure/aws-free-tier-optimization-2025.md) - Cost optimization guide
+- [Email Service Documentation](./infrastructure/email-service.md) - Comprehensive email service guide
+- [Email Infrastructure Guide](./infrastructure/email-infrastructure-guide.md) - Email service implementation
+- [Security Audit Checklist](./infrastructure/security-audit-checklist.md) - Security review procedures
+- [Application Integration Examples](./infrastructure/application-integration-examples.md) - Code integration examples
+- [Parameter Store Migration Guide](./infrastructure/parameter-store-migration-guide.md) - Cost-effective secrets management
 
 ### 4. Development Documentation  
 - [Development Overview](./development/README.md) - Development process and standards
@@ -41,25 +45,37 @@ This document serves as a comprehensive index for all documentation in the bjorn
 - [Testing Guide](./development/testing.md) - Testing strategies and tools
 - [Git Workflow Guide](./development/git-workflow-guide.md) - Quick reference for Git commands
 - [Workflow Diagrams](./development/workflow-diagrams.md) - Visual workflow representations
+- [Naming Conventions](./development/naming-conventions.md) - File and code naming standards
+- [Semantic Release](./development/semantic-release.md) - Automated versioning and releases
 
 ### 5. Deployment Documentation
 - [Deployment Overview](./deployment/README.md) - Deployment processes
 - [CI/CD Pipeline](./deployment/ci-cd.md) - GitHub Actions and automation
 - [Environments](./deployment/environments.md) - Development, staging, and production
 - [Monitoring](./deployment/monitoring.md) - Application monitoring and alerting
+- [Deployment Secrets Setup](./deployment/deployment-secrets-setup.md) - Secrets management guide
 
 ### 6. Testing Documentation
-- [Testing Overview](./TESTING.md) - Comprehensive testing guide
-- [Unit Testing](./development/testing.md#unit-testing) - Component and utility testing
-- [E2E Testing](./TESTING.md#e2e-testing-with-playwright) - End-to-end testing setup
+- [Testing Overview](./development/testing.md) - Comprehensive testing guide
+- [Development Testing](./development/testing.md) - Development testing practices
 
-### 7. Additional Documentation
+### 7. Optional Features Documentation
+- [AWS CodeArtifact Integration](./infrastructure/codeartifact-backup.md) - Enterprise-grade npm package backup solution (not deployed)
+
+### 8. Additional Documentation
 - [Feature Flags Implementation](./feature-flags-implementation-plan.md) - Feature flag system plan
-- [Semantic Release](./SEMANTIC_RELEASE.md) - Automated versioning and releases
-- [Conventional Commits Setup](../CONVENTIONAL_COMMITS_SETUP.md) - Commit validation setup
-- [Email Migration Plan](./email-migration-plan.md) - Email service migration guide
-- [Email Service Comparison](./email-service-comparison-2025.md) - Email providers analysis
-- [CodeArtifact Integration](./codeartifact-integration.md) - AWS CodeArtifact setup
+- [Testing Documentation Fixes](./testing-documentation-fixes.md) - Phase 1.2 testing documentation updates
+- [Phase 2.5 Summary](./development/phase-2.5-summary.md) - File naming standardization summary
+
+### 9. Archived Documentation
+- [Email Migration History](./archive/email/) - Historical email service migration documents
+  - Email migration plan
+  - Service comparison analysis (June 2025)
+  - Migration implementation details
+- [CodeArtifact Original Docs](./archive/codeartifact/) - Original CodeArtifact documentation
+  - Integration plan
+  - Implementation summary
+  - Quick reference guide
 
 ## 📁 Directory Structure
 
@@ -69,7 +85,8 @@ bjornmelin-platform-io/
 │   ├── api/                    # API documentation
 │   │   ├── README.md          # API overview
 │   │   ├── contact.md         # Contact endpoints
-│   │   └── schemas.md         # Data schemas
+│   │   ├── schemas.md         # Data schemas
+│   │   └── utilities.md       # Utility services
 │   │
 │   ├── architecture/          # System architecture
 │   │   ├── README.md         # Architecture overview
@@ -80,10 +97,13 @@ bjornmelin-platform-io/
 │   │
 │   ├── infrastructure/       # Infrastructure docs
 │   │   ├── README.md         # Infrastructure overview
-│   │   ├── AWS_FREE_TIER_OPTIMIZATION_2025.md # Cost optimization
-│   │   ├── EMAIL_INFRASTRUCTURE_GUIDE.md # Email setup
-│   │   ├── SECURITY_AUDIT_CHECKLIST.md # Security review
-│   │   └── APPLICATION_INTEGRATION_EXAMPLES.md # Code examples
+│   │   ├── aws-free-tier-optimization-2025.md # Cost optimization
+│   │   ├── email-service.md  # Email service documentation
+│   │   ├── email-infrastructure-guide.md # Email setup
+│   │   ├── security-audit-checklist.md # Security review
+│   │   ├── application-integration-examples.md # Code examples
+│   │   ├── parameter-store-migration-guide.md # Secrets management
+│   │   └── codeartifact-backup.md # Optional CodeArtifact feature
 │   │
 │   ├── development/          # Development guides
 │   │   ├── README.md         # Development overview
@@ -93,22 +113,35 @@ bjornmelin-platform-io/
 │   │   ├── conventional-commits.md # Commit standards
 │   │   ├── coding-standards.md # Code style
 │   │   ├── testing.md        # Testing guide
+│   │   ├── semantic-release.md # Release automation
+│   │   ├── naming-conventions.md # Naming standards
 │   │   ├── git-workflow-guide.md # Git commands
-│   │   └── workflow-diagrams.md # Visual guides
+│   │   ├── workflow-diagrams.md # Visual guides
+│   │   └── phase-2.5-summary.md # Naming standardization
 │   │
 │   ├── deployment/           # Deployment docs
 │   │   ├── README.md        # Deployment overview
 │   │   ├── ci-cd.md         # CI/CD pipeline
 │   │   ├── environments.md  # Environment setup
-│   │   └── monitoring.md    # Monitoring guide
+│   │   ├── monitoring.md    # Monitoring guide
+│   │   └── deployment-secrets-setup.md # Secrets management
 │   │
-│   ├── TESTING.md           # Testing documentation
-│   ├── SEMANTIC_RELEASE.md  # Release automation
+│   ├── archive/             # Archived documentation
+│   │   ├── email/          # Email migration history
+│   │   │   ├── email-migration-plan.md
+│   │   │   ├── email-service-comparison-2025.md
+│   │   │   └── email-service-migration.md
+│   │   └── codeartifact/   # Original CodeArtifact docs
+│   │       ├── codeartifact-integration.md
+│   │       ├── codeartifact-implementation-summary.md
+│   │       └── README-codeartifact.md
+│   │
+│   ├── feature-flags-implementation-plan.md # Feature flags
+│   ├── testing-documentation-fixes.md # Testing doc updates
 │   └── docs-index.md        # This file
 │
 ├── CONTRIBUTING.md          # Contribution guidelines
-├── README.md               # Project overview
-└── CONVENTIONAL_COMMITS_SETUP.md # Commit setup
+└── README.md               # Project overview
 ```
 
 ## 🎯 Getting Started Path

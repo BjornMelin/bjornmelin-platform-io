@@ -8,6 +8,12 @@ Currently, the platform provides the following API endpoint:
 
 - [Contact Form](./contact.md) - Endpoint for handling contact form submissions
 
+## Utility Services
+
+The API implementation uses several utility services:
+
+- [Utilities Documentation](./utilities.md) - Error handling, security, parameter store, and email services
+
 ## API Structure
 
 The API is implemented using Next.js API routes located in `src/app/api/`:
@@ -77,8 +83,19 @@ API endpoints will be available at `http://localhost:3000/api/`
 
 The API relies on:
 
-- AWS SES for email sending
+- Resend API for email sending
 - Environment variables for configuration
 - Type-safe request/response handling
+
+## Environment Variables
+
+Required environment variables for API functionality:
+
+```env
+# Resend Email Configuration
+RESEND_API_KEY=re_xxxxxxxxxxxxx        # Your Resend API key
+RESEND_FROM_EMAIL=noreply@domain.com   # Sender email address
+RESEND_TO_EMAIL=contact@domain.com     # Recipient email address
+```
 
 For detailed information about specific endpoints, please refer to their individual documentation pages linked above.

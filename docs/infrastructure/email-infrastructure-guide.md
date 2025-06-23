@@ -2,13 +2,13 @@
 
 ## Overview
 
-This guide provides a comprehensive plan for implementing secure email service integration for bjornmelin.io using AWS CDK v2, Secrets Manager, and Route 53.
+This guide provides a comprehensive plan for implementing secure email service integration for bjornmelin.io using AWS CDK v2, Systems Manager Parameter Store, and Route 53.
 
 ## Architecture Overview
 
 The email infrastructure consists of:
 
-1. **Secrets Management Stack**: AWS Secrets Manager with KMS encryption for API keys
+1. **Secrets Management Stack**: AWS Systems Manager Parameter Store with KMS encryption for API keys
 2. **Email Configuration Stack**: Route 53 DNS records for email authentication
 3. **Monitoring & Compliance**: CloudWatch dashboards and CloudTrail audit logging
 4. **Automatic Rotation**: Lambda-based API key rotation every 90 days
@@ -19,10 +19,10 @@ The email infrastructure consists of:
 - **CDK Version**: v2.189.1 (latest as of implementation)
 - **Stacks**: DNS, Storage, Deployment, Monitoring
 - **Domain**: bjornmelin.io (hosted zone exists in Route 53)
-- **Missing**: Secrets management and email service configuration
+- **Missing**: Parameter store configuration and email service setup
 
 ### Gap Analysis
-- No centralized secrets management
+- No centralized parameter/secrets management
 - No email service DNS records (SPF, DKIM)
 - No automatic secret rotation
 - No audit logging for secrets access
@@ -31,31 +31,35 @@ The email infrastructure consists of:
 
 ### Phase 1: Infrastructure Setup (Day 1)
 
-#### 1.1 Deploy Secrets Stack
+#### 1.1 Deploy Parameter Store Configuration
 ```bash
 cd infrastructure
 pnpm install
 pnpm run build
-pnpm run deploy:secrets
+pnpm run deploy:parameters
 ```
 
 This creates:
 - Customer-managed KMS key with rotation
-- Secrets Manager secret for Resend API key
+- Parameter Store SecureString parameter for Resend API key
 - IAM policies for least-privilege access
 - CloudTrail logging integration
 
 #### 1.2 Add Resend API Key
 After stack deployment:
 ```bash
-# Get the secret ARN from CloudFormation outputs
-aws secretsmanager update-secret \
-  --secret-id "prod/portfolio/resend-api-key" \
-  --secret-string '{
+# Store the parameter value
+aws ssm put-parameter \
+  --name "/prod/portfolio/resend-api-key" \
+  --value '{
     "apiKey": "re_YOUR_ACTUAL_API_KEY",
     "domain": "bjornmelin.io",
     "fromEmail": "noreply@bjornmelin.io"
-  }'
+  }' \
+  --type SecureString \
+  --key-id "alias/portfolio-kms-key" \
+  --description "Resend API configuration" \
+  --overwrite
 ```
 
 ### Phase 2: Email Service Configuration (Day 1-2)
@@ -98,28 +102,29 @@ This creates:
 Example integration for contact form handler:
 
 ```typescript
-import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { Resend } from "resend";
 
-const secretsClient = new SecretsManagerClient({});
-let cachedSecret: { apiKey: string; domain: string; fromEmail: string } | null = null;
+const ssmClient = new SSMClient({});
+let cachedConfig: { apiKey: string; domain: string; fromEmail: string } | null = null;
 let cacheExpiry = 0;
 
 async function getResendConfig() {
   const now = Date.now();
-  if (cachedSecret && now < cacheExpiry) {
-    return cachedSecret;
+  if (cachedConfig && now < cacheExpiry) {
+    return cachedConfig;
   }
 
-  const command = new GetSecretValueCommand({
-    SecretId: process.env.RESEND_SECRET_ARN,
+  const command = new GetParameterCommand({
+    Name: process.env.RESEND_PARAMETER_NAME,
+    WithDecryption: true
   });
   
-  const response = await secretsClient.send(command);
-  cachedSecret = JSON.parse(response.SecretString!);
+  const response = await ssmClient.send(command);
+  cachedConfig = JSON.parse(response.Parameter!.Value!);
   cacheExpiry = now + 3600000; // Cache for 1 hour
   
-  return cachedSecret;
+  return cachedConfig;
 }
 
 export async function sendEmail(to: string, subject: string, html: string) {
@@ -140,12 +145,26 @@ export async function sendEmail(to: string, subject: string, html: string) {
 const contactLambda = new lambda.Function(this, "ContactFormHandler", {
   // ... existing config
   environment: {
-    RESEND_SECRET_ARN: secretsStack.resendApiKeySecret.secretArn,
+    RESEND_PARAMETER_NAME: "/prod/portfolio/resend-api-key",
   },
 });
 
-// Grant read access to the secret
-secretsStack.resendApiKeySecret.grantRead(contactLambda);
+// Grant read access to the parameter
+contactLambda.addToRolePolicy(new iam.PolicyStatement({
+  actions: ["ssm:GetParameter"],
+  resources: [`arn:aws:ssm:${this.region}:${this.account}:parameter/prod/portfolio/resend-api-key`],
+}));
+
+// Grant KMS decrypt permissions
+contactLambda.addToRolePolicy(new iam.PolicyStatement({
+  actions: ["kms:Decrypt"],
+  resources: [kmsKey.keyArn],
+  conditions: {
+    StringEquals: {
+      "kms:ViaService": `ssm.${this.region}.amazonaws.com`
+    }
+  }
+}));
 ```
 
 ### Phase 4: Monitoring & Rotation (Day 3-4)
@@ -160,12 +179,20 @@ aws sns subscribe \
   --notification-endpoint your-email@example.com
 ```
 
-#### 4.2 Test Rotation
+#### 4.2 Manual Rotation Process
+Since Parameter Store doesn't support automatic rotation, implement a quarterly manual rotation:
 ```bash
-# Manually trigger rotation to test
-aws secretsmanager rotate-secret \
-  --secret-id "prod/portfolio/resend-api-key" \
-  --rotation-lambda-arn "arn:aws:lambda:region:account:function:RotationLambda"
+# Update parameter with new API key
+aws ssm put-parameter \
+  --name "/prod/portfolio/resend-api-key" \
+  --value '{
+    "apiKey": "re_NEW_API_KEY",
+    "domain": "bjornmelin.io",
+    "fromEmail": "noreply@bjornmelin.io"
+  }' \
+  --type SecureString \
+  --key-id "alias/portfolio-kms-key" \
+  --overwrite
 ```
 
 ## Security Checklist
@@ -175,8 +202,8 @@ aws secretsmanager rotate-secret \
 - [x] Encryption in transit (TLS/HTTPS only)
 - [x] Least privilege IAM policies
 - [x] Audit logging via CloudTrail
-- [x] Automatic rotation capability
-- [x] Secret versioning enabled
+- [x] Manual rotation process documented
+- [x] Parameter history maintained
 - [x] CloudWatch alarms for unusual access patterns
 - [x] KMS key rotation enabled
 - [x] Retention policy on KMS key (30 days)
@@ -184,17 +211,17 @@ aws secretsmanager rotate-secret \
 ## Cost Analysis
 
 ### Monthly Costs (Production)
-- **Secrets Manager**: $0.40 per secret
-- **API Calls**: ~$0.01 (1000 calls @ $0.05/10k)
+- **Parameter Store**: $0.00 (standard parameters free)
+- **API Calls**: $0.00 (standard throughput free)
 - **KMS**: $1.00 per key + $0.03/10k requests
-- **Lambda Rotation**: ~$0.01 (minimal invocations)
-- **CloudWatch**: ~$0.50 (logs, metrics, dashboard)
-- **Total**: ~$2.00/month
+- **CloudWatch**: ~$0.30 (logs, metrics, dashboard)
+- **Total**: ~$1.33/month
 
 ### Cost Optimization
-- Single secret with JSON structure (vs multiple secrets)
-- Caching in Lambda functions (reduce API calls)
-- Appropriate log retention periods
+- Free Parameter Store vs paid Secrets Manager ($0.40/month savings)
+- Single parameter with JSON structure
+- Aggressive caching in Lambda functions (reduce API calls)
+- Optimized log retention periods (3 days for non-critical)
 
 ## DNS Records Reference
 
@@ -226,20 +253,21 @@ TTL: 300
 
 ### Common Issues
 
-1. **Secret Access Denied**
-   - Check IAM role has the managed policy attached
-   - Verify KMS key permissions
-   - Ensure correct secret ARN in environment variables
+1. **Parameter Access Denied**
+   - Check IAM role has ssm:GetParameter permission
+   - Verify KMS decrypt permissions with ViaService condition
+   - Ensure correct parameter name in environment variables
 
 2. **Email Delivery Issues**
    - Verify all DNS records are properly configured
    - Check domain verification status in Resend dashboard
    - Review SPF/DKIM alignment
 
-3. **Rotation Failures**
-   - Check Lambda function logs in CloudWatch
-   - Verify Resend API key has permission to create new keys
-   - Ensure Lambda has internet access (NAT Gateway if in VPC)
+3. **Manual Rotation Process**
+   - Update parameter value in Parameter Store
+   - Update Resend dashboard with new API key
+   - Test email delivery after rotation
+   - Document rotation date and new key version
 
 ## Migration Rollback Plan
 
@@ -247,18 +275,25 @@ If issues arise:
 
 1. **Immediate Rollback**:
    ```bash
-   # Revert to previous secret version
-   aws secretsmanager update-secret-version-stage \
-     --secret-id "prod/portfolio/resend-api-key" \
-     --version-stage AWSCURRENT \
-     --move-to-version-id "previous-version-id"
+   # Parameter Store maintains history - revert if needed
+   # First, get the previous value
+   aws ssm get-parameter-history \
+     --name "/prod/portfolio/resend-api-key" \
+     --with-decryption
+   
+   # Then restore previous value
+   aws ssm put-parameter \
+     --name "/prod/portfolio/resend-api-key" \
+     --value 'PREVIOUS_VALUE' \
+     --type SecureString \
+     --overwrite
    ```
 
 2. **Stack Rollback**:
    ```bash
    # Delete stacks in reverse order
    pnpm run destroy:email
-   pnpm run destroy:secrets
+   pnpm run destroy:parameters
    ```
 
 ## Next Steps
@@ -272,7 +307,8 @@ If issues arise:
 
 ## References
 
-- [AWS Secrets Manager Best Practices](https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html)
+- [AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
+- [Parameter Store Best Practices](https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-store-best-practices.html)
 - [Route 53 DNS Record Types](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)
 - [Resend Documentation](https://resend.com/docs)
 - [AWS CDK v2 API Reference](https://docs.aws.amazon.com/cdk/api/v2/)

@@ -6,7 +6,7 @@
 
 ```typescript
 // lib/email-service.ts
-import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { Resend } from "resend";
 
 interface EmailConfig {
@@ -17,14 +17,14 @@ interface EmailConfig {
 
 export class EmailService {
   private static instance: EmailService;
-  private secretsClient: SecretsManagerClient;
+  private ssmClient: SSMClient;
   private resendClient: Resend | null = null;
   private config: EmailConfig | null = null;
   private configExpiry = 0;
   private readonly CACHE_DURATION = 3600000; // 1 hour
 
   private constructor() {
-    this.secretsClient = new SecretsManagerClient({
+    this.ssmClient = new SSMClient({
       region: process.env.AWS_REGION || "us-east-1",
     });
   }
@@ -44,25 +44,25 @@ export class EmailService {
       return this.config;
     }
 
-    // Fetch fresh config from Secrets Manager
-    const secretArn = process.env.RESEND_SECRET_ARN;
-    if (!secretArn) {
-      throw new Error("RESEND_SECRET_ARN environment variable not set");
+    // Fetch fresh config from Parameter Store
+    const parameterName = process.env.RESEND_PARAMETER_NAME;
+    if (!parameterName) {
+      throw new Error("RESEND_PARAMETER_NAME environment variable not set");
     }
 
     try {
-      const command = new GetSecretValueCommand({
-        SecretId: secretArn,
-        VersionStage: "AWSCURRENT",
+      const command = new GetParameterCommand({
+        Name: parameterName,
+        WithDecryption: true,
       });
 
-      const response = await this.secretsClient.send(command);
+      const response = await this.ssmClient.send(command);
       
-      if (!response.SecretString) {
-        throw new Error("Secret value is empty");
+      if (!response.Parameter?.Value) {
+        throw new Error("Parameter value is empty");
       }
 
-      this.config = JSON.parse(response.SecretString) as EmailConfig;
+      this.config = JSON.parse(response.Parameter.Value) as EmailConfig;
       this.configExpiry = now + this.CACHE_DURATION;
       
       // Initialize Resend client with new config
@@ -70,7 +70,7 @@ export class EmailService {
       
       return this.config;
     } catch (error) {
-      console.error("Failed to retrieve secret:", error);
+      console.error("Failed to retrieve parameter:", error);
       throw new Error("Unable to initialize email service");
     }
   }
@@ -245,7 +245,7 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import type { Construct } from "constructs";
 
 export interface ApiStackProps extends BaseStackProps {
-  resendApiKeySecret: secretsmanager.ISecret;
+  // Other base properties inherited
 }
 
 export class ApiStack extends cdk.Stack {
@@ -258,7 +258,7 @@ export class ApiStack extends cdk.Stack {
       code: lambda.Code.fromAsset("lambda"),
       handler: "contact-form-handler.handler",
       environment: {
-        RESEND_SECRET_ARN: props.resendApiKeySecret.secretArn,
+        RESEND_PARAMETER_NAME: "/prod/portfolio/resend-api-key",
         ENVIRONMENT: props.environment,
       },
       timeout: cdk.Duration.seconds(30),
@@ -267,8 +267,22 @@ export class ApiStack extends cdk.Stack {
       description: "Handles contact form submissions",
     });
 
-    // Grant secret read access
-    props.resendApiKeySecret.grantRead(contactFormLambda);
+    // Grant parameter read access
+    contactFormLambda.addToRolePolicy(new iam.PolicyStatement({
+      actions: ["ssm:GetParameter"],
+      resources: [`arn:aws:ssm:${this.region}:${this.account}:parameter/prod/portfolio/resend-api-key`],
+    }));
+
+    // Grant KMS decrypt permissions
+    contactFormLambda.addToRolePolicy(new iam.PolicyStatement({
+      actions: ["kms:Decrypt"],
+      resources: [props.kmsKeyArn], // Pass KMS key ARN from props
+      conditions: {
+        StringEquals: {
+          "kms:ViaService": `ssm.${this.region}.amazonaws.com`
+        }
+      }
+    }));
 
     // API Gateway
     const api = new apigateway.RestApi(this, "PortfolioApi", {
@@ -461,7 +475,7 @@ VITE_ENABLE_CONTACT_FORM=true
 ### Lambda Environment Variables (Set via CDK)
 ```typescript
 {
-  RESEND_SECRET_ARN: "arn:aws:secretsmanager:region:account:secret:prod/portfolio/resend-api-key",
+  RESEND_PARAMETER_NAME: "/prod/portfolio/resend-api-key",
   ENVIRONMENT: "prod",
   AWS_REGION: "us-east-1"
 }
@@ -474,26 +488,28 @@ VITE_ENABLE_CONTACT_FORM=true
 ```typescript
 // __tests__/email-service.test.ts
 import { EmailService } from "../lib/email-service";
-import { SecretsManagerClient } from "@aws-sdk/client-secrets-manager";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { mockClient } from "aws-sdk-client-mock";
 
-const secretsManagerMock = mockClient(SecretsManagerClient);
+const ssmMock = mockClient(SSMClient);
 
 describe("EmailService", () => {
   beforeEach(() => {
-    secretsManagerMock.reset();
-    process.env.RESEND_SECRET_ARN = "test-secret-arn";
+    ssmMock.reset();
+    process.env.RESEND_PARAMETER_NAME = "/test/resend-api-key";
   });
 
-  it("should cache secret for one hour", async () => {
-    const mockSecret = {
+  it("should cache parameter for one hour", async () => {
+    const mockConfig = {
       apiKey: "test-api-key",
       domain: "test.com",
       fromEmail: "noreply@test.com",
     };
 
-    secretsManagerMock.on(GetSecretValueCommand).resolves({
-      SecretString: JSON.stringify(mockSecret),
+    ssmMock.on(GetParameterCommand).resolves({
+      Parameter: {
+        Value: JSON.stringify(mockConfig),
+      },
     });
 
     const service = EmailService.getInstance();
@@ -512,8 +528,8 @@ describe("EmailService", () => {
       text: "Test message 2",
     });
 
-    // Verify Secrets Manager was only called once
-    expect(secretsManagerMock.calls()).toHaveLength(1);
+    // Verify Parameter Store was only called once
+    expect(ssmMock.calls()).toHaveLength(1);
   });
 });
 ```
@@ -529,9 +545,9 @@ fields @timestamp, @message
 | sort @timestamp desc
 | limit 20
 
--- Track secret access patterns
-fields @timestamp, userIdentity.principalId, requestParameters.secretId
-| filter eventName = "GetSecretValue"
+-- Track parameter access patterns
+fields @timestamp, userIdentity.principalId, requestParameters.name
+| filter eventName = "GetParameter"
 | stats count() by bin(1h)
 
 -- Monitor API latency
@@ -547,11 +563,12 @@ fields @timestamp, @duration
    aws logs tail /aws/lambda/ContactFormHandler --follow
    ```
 
-2. **Verify Secret Access**
+2. **Verify Parameter Access**
    ```bash
-   aws secretsmanager get-secret-value \
-     --secret-id "prod/portfolio/resend-api-key" \
-     --query SecretString \
+   aws ssm get-parameter \
+     --name "/prod/portfolio/resend-api-key" \
+     --with-decryption \
+     --query Parameter.Value \
      --output text | jq .
    ```
 

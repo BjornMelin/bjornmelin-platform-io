@@ -4,11 +4,12 @@ This directory contains all infrastructure-related documentation for the bjornme
 
 ## Quick Links
 
-- [AWS Free Tier Optimization Guide](./AWS_FREE_TIER_OPTIMIZATION_2025.md) - Cost optimization strategies and free tier analysis
-- [Parameter Store Migration Guide](./PARAMETER_STORE_MIGRATION_GUIDE.md) - Step-by-step migration from Secrets Manager
-- [Email Infrastructure Guide](./EMAIL_INFRASTRUCTURE_GUIDE.md) - Complete email service implementation with AWS
-- [Security Audit Checklist](./SECURITY_AUDIT_CHECKLIST.md) - Security review and compliance checklist
-- [Application Integration Examples](./APPLICATION_INTEGRATION_EXAMPLES.md) - Code examples for Lambda and frontend integration
+- [Email Service Documentation](./email-service.md) - Comprehensive email service guide (Resend API)
+- [AWS Free Tier Optimization Guide](./aws-free-tier-optimization-2025.md) - Cost optimization strategies and free tier analysis
+- [Parameter Store Migration Guide](./parameter-store-migration-guide.md) - Step-by-step migration from Secrets Manager
+- [Email Infrastructure Guide](./email-infrastructure-guide.md) - Complete email service implementation with AWS
+- [Security Audit Checklist](./security-audit-checklist.md) - Security review and compliance checklist
+- [Application Integration Examples](./application-integration-examples.md) - Code examples for Lambda and frontend integration
 
 ## Overview
 
@@ -43,7 +44,7 @@ Our infrastructure is optimized to maximize AWS Free Tier usage:
 - **Free Tier Services**: Lambda, API Gateway, CloudWatch basics, KMS requests
 - **Paid Services**: Route 53 ($0.50/month), KMS key ($1.00/month)
 
-See [AWS Free Tier Optimization Guide](./AWS_FREE_TIER_OPTIMIZATION_2025.md) for detailed analysis and recommendations.
+See [AWS Free Tier Optimization Guide](./aws-free-tier-optimization-2025.md) for detailed analysis and recommendations.
 
 ## Security Best Practices
 
@@ -53,7 +54,7 @@ See [AWS Free Tier Optimization Guide](./AWS_FREE_TIER_OPTIMIZATION_2025.md) for
 - ✅ Automated security scanning
 - ✅ Regular security audits
 
-See [Security Audit Checklist](./SECURITY_AUDIT_CHECKLIST.md) for comprehensive security review procedures.
+See [Security Audit Checklist](./security-audit-checklist.md) for comprehensive security review procedures.
 
 ## Quick Start
 
@@ -83,11 +84,12 @@ pnpm run deploy:all
 ```
 docs/infrastructure/
 ├── README.md                               # This file
-├── AWS_FREE_TIER_OPTIMIZATION_2025.md     # Cost optimization analysis
-├── PARAMETER_STORE_MIGRATION_GUIDE.md     # Migration from Secrets Manager
-├── EMAIL_INFRASTRUCTURE_GUIDE.md          # Email service implementation
-├── SECURITY_AUDIT_CHECKLIST.md           # Security review checklist
-└── APPLICATION_INTEGRATION_EXAMPLES.md    # Integration code examples
+├── email-service.md                       # Email service documentation (Resend)
+├── aws-free-tier-optimization-2025.md     # Cost optimization analysis
+├── parameter-store-migration-guide.md     # Migration from Secrets Manager
+├── email-infrastructure-guide.md          # Email service implementation (AWS)
+├── security-audit-checklist.md           # Security review checklist
+└── application-integration-examples.md    # Integration code examples
 ```
 
 ## Related Documentation
