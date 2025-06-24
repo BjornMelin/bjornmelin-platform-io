@@ -156,48 +156,48 @@ graph TB
 ### Cost Comparison Architecture
 
 ```mermaid
-graph LR
+graph TB
     %% Cost Comparison: Secrets Manager vs Parameter Store
-    subgraph CostComparison [💰 Cost Comparison Analysis]
+    subgraph CostComparison ["Cost Comparison Analysis"]
         
         %% Current State (Secrets Manager)
-        subgraph CurrentCosts [🔴 Current: AWS Secrets Manager]
-            SMStorage[💾 Storage Cost<br/>$0.40/secret/month<br/>Per Secret Billing]
-            SMAPICalls[🔄 API Calls<br/>$0.05/10k calls<br/>Per Request Billing]
-            SMFeatures[⚡ Premium Features<br/>Auto Rotation<br/>Cross-Account Access]
-            SMTotal[💸 Total Cost<br/>$0.40+/month<br/>Ongoing Charges]
+        subgraph CurrentCosts ["Current: AWS Secrets Manager"]
+            SMStorage["Storage Cost<br/>$0.40/secret/month<br/>Per Secret Billing"]
+            SMAPICalls["API Calls<br/>$0.05/10k calls<br/>Per Request Billing"]
+            SMFeatures["Premium Features<br/>Auto Rotation<br/>Cross-Account Access"]
+            SMTotal["Total Cost<br/>$0.40+/month<br/>Ongoing Charges"]
         end
         
         %% Target State (Parameter Store)
-        subgraph TargetCosts [🟢 Target: Parameter Store]
-            PSStorage[💾 Storage Cost<br/>FREE (Standard)<br/>No Monthly Charges]
-            PSAPICalls[🔄 API Calls<br/>FREE (Standard)<br/>40 req/sec Limit]
-            PSFeatures[⚙️ Basic Features<br/>Manual Rotation<br/>Same-Account Access]
-            PSTotal[💰 Total Cost<br/>$0.00/month<br/>Zero Charges]
+        subgraph TargetCosts ["Target: Parameter Store"]
+            ParamStorage["Storage Cost<br/>FREE Standard<br/>No Monthly Charges"]
+            ParamAPICalls["API Calls<br/>FREE Standard<br/>40 req/sec Limit"]
+            ParamFeatures["Basic Features<br/>Manual Rotation<br/>Same-Account Access"]
+            ParamTotal["Total Cost<br/>$0.00/month<br/>Zero Charges"]
         end
         
         %% Migration Benefits
-        subgraph Benefits [✅ Migration Benefits]
-            CostSavings[💰 Cost Savings<br/>$0.40/month<br/>$4.80/year]
-            Simplicity[🎯 Simplicity<br/>Fewer Components<br/>Reduced Complexity]
-            Reliability[🛡️ Same Security<br/>KMS Encryption<br/>CloudTrail Auditing]
-            FreeTier[🆓 Free Tier<br/>Always Free<br/>No Time Limits]
+        subgraph Benefits ["Migration Benefits"]
+            CostSavings["Cost Savings<br/>$0.40/month<br/>$4.80/year"]
+            Simplicity["Simplicity<br/>Fewer Components<br/>Reduced Complexity"]
+            Reliability["Same Security<br/>KMS Encryption<br/>CloudTrail Auditing"]
+            FreeTier["Free Tier<br/>Always Free<br/>No Time Limits"]
         end
     end
     
     %% Cost Flow Connections
     SMStorage --> CostSavings
     SMAPICalls --> CostSavings
-    PSStorage --> Simplicity
-    PSAPICalls --> Reliability
+    ParamStorage --> Simplicity
+    ParamAPICalls --> Reliability
     
     %% Feature Comparison
-    SMFeatures -.->|Advanced Features| PSFeatures
-    PSFeatures -.->|Simplified Approach| Benefits
+    SMFeatures -.->|Advanced Features| ParamFeatures
+    ParamFeatures -.->|Simplified Approach| Benefits
     
     %% Total Cost Impact
     SMTotal --> CostSavings
-    PSTotal --> FreeTier
+    ParamTotal --> FreeTier
     
     %% Styling
     classDef currentState fill:#ffebee,stroke:#c62828,stroke-width:2px
@@ -205,7 +205,7 @@ graph LR
     classDef benefits fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     
     class SMStorage,SMAPICalls,SMFeatures,SMTotal currentState
-    class PSStorage,PSAPICalls,PSFeatures,PSTotal targetState
+    class ParamStorage,ParamAPICalls,ParamFeatures,ParamTotal targetState
     class CostSavings,Simplicity,Reliability,FreeTier benefits
 ```
 

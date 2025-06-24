@@ -9,52 +9,52 @@ The following diagram shows the comprehensive application integration architectu
 ```mermaid
 graph TB
     %% Application Integration Architecture
-    subgraph ApplicationIntegration [🔄 Application Integration Architecture]
+    subgraph ApplicationIntegration ["Application Integration Architecture"]
         
         %% Frontend Layer
-        subgraph Frontend [🌐 Frontend Application Layer]
-            ReactApp[⚛️ React Application<br/>bjornmelin.io<br/>Contact Form UI]
-            FormValidation[✅ Client-Side Validation<br/>Form State Management<br/>Error Handling]
-            APIClient[🔌 API Client<br/>HTTP Request Management<br/>Response Processing]
+        subgraph Frontend ["Frontend Application Layer"]
+            ReactApp["React Application<br/>bjornmelin.io<br/>Contact Form UI"]
+            FormValidation["Client-Side Validation<br/>Form State Management<br/>Error Handling"]
+            APIClient["API Client<br/>HTTP Request Management<br/>Response Processing"]
         end
         
         %% API Gateway Integration
-        subgraph APILayer [🚪 API Gateway Integration Layer]
-            CORS[🌐 CORS Configuration<br/>Origin Validation<br/>Preflight Handling]
-            RequestValidation[📋 Request Validation<br/>Schema Enforcement<br/>Content-Type Checks]
-            APIRouting[🎯 API Routing<br/>Path-based Routing<br/>Method Validation]
-            ErrorResponse[🚨 Error Response<br/>Standardized Formats<br/>Status Code Mapping]
+        subgraph APILayer ["API Gateway Integration Layer"]
+            CORS["CORS Configuration<br/>Origin Validation<br/>Preflight Handling"]
+            RequestValidation["Request Validation<br/>Schema Enforcement<br/>Content-Type Checks"]
+            APIRouting["API Routing<br/>Path-based Routing<br/>Method Validation"]
+            ErrorResponse["Error Response<br/>Standardized Formats<br/>Status Code Mapping"]
         end
         
         %% Lambda Function Layer
-        subgraph LambdaLayer [⚡ Lambda Function Layer]
-            ContactHandler[⚡ Contact Form Handler<br/>Node.js 20.x Runtime<br/>ARM64 Architecture]
+        subgraph LambdaLayer ["Lambda Function Layer"]
+            ContactHandler["Contact Form Handler<br/>Node.js 20.x Runtime<br/>ARM64 Architecture"]
             
-            subgraph EmailService [📧 Email Service Integration]
-                ServiceSingleton[🔄 EmailService Singleton<br/>Instance Management<br/>Configuration Caching]
-                ConfigRetrieval[🔒 Configuration Retrieval<br/>Parameter Store Access<br/>KMS Decryption]
-                ResendClient[📨 Resend Client<br/>API Integration<br/>Email Composition]
+            subgraph EmailService ["Email Service Integration"]
+                ServiceSingleton["EmailService Singleton<br/>Instance Management<br/>Configuration Caching"]
+                ConfigRetrieval["Configuration Retrieval<br/>Parameter Store Access<br/>KMS Decryption"]
+                ResendClient["Resend Client<br/>API Integration<br/>Email Composition"]
             end
             
-            subgraph ErrorHandling [🚨 Error Handling]
-                ValidationErrors[❌ Validation Errors<br/>Input Sanitization<br/>Schema Validation]
-                ServiceErrors[⚠️ Service Errors<br/>API Failures<br/>Rate Limiting]
-                SystemErrors[🔥 System Errors<br/>Configuration Issues<br/>Network Failures]
+            subgraph ErrorHandling ["Error Handling"]
+                ValidationErrors["Validation Errors<br/>Input Sanitization<br/>Schema Validation"]
+                ServiceErrors["Service Errors<br/>API Failures<br/>Rate Limiting"]
+                SystemErrors["System Errors<br/>Configuration Issues<br/>Network Failures"]
             end
         end
         
         %% Backend Services
-        subgraph BackendServices [☁️ Backend Services Layer]
-            ParameterStore[🔒 Parameter Store<br/>Secure Configuration<br/>Encrypted Storage]
-            KMSService[🔑 KMS Service<br/>Encryption/Decryption<br/>Key Management]
-            CloudWatch[📊 CloudWatch<br/>Logging & Monitoring<br/>Metrics Collection]
-            ResendAPI[📧 Resend API<br/>Email Delivery Service<br/>3k emails/month]
+        subgraph BackendServices ["Backend Services Layer"]
+            ParameterStore["Parameter Store<br/>Secure Configuration<br/>Encrypted Storage"]
+            KMSService["KMS Service<br/>Encryption/Decryption<br/>Key Management"]
+            CloudWatch["CloudWatch<br/>Logging & Monitoring<br/>Metrics Collection"]
+            ResendAPI["Resend API<br/>Email Delivery Service<br/>3k emails/month"]
         end
         
         %% External Services
-        subgraph External [🌍 External Services]
-            EmailProviders[📨 Email Providers<br/>Gmail, Outlook, etc.<br/>End User Delivery]
-            DNSServices[🌐 DNS Services<br/>Domain Resolution<br/>MX Record Validation]
+        subgraph External ["External Services"]
+            EmailProviders["Email Providers<br/>Gmail, Outlook, etc.<br/>End User Delivery"]
+            DNSServices["DNS Services<br/>Domain Resolution<br/>MX Record Validation"]
         end
     end
     
@@ -123,15 +123,15 @@ graph TB
 
 ```mermaid
 sequenceDiagram
-    participant Client as 🌐 Client Application
-    participant API as 🚪 API Gateway
-    participant Lambda as ⚡ Lambda Function
-    participant EmailSvc as 📧 EmailService
-    participant ParamStore as 🔒 Parameter Store
-    participant KMS as 🔑 KMS
-    participant Resend as 📨 Resend API
-    participant Recipient as 📬 Email Recipient
-    participant CW as 📊 CloudWatch
+    participant Client as Client Application
+    participant API as API Gateway
+    participant Lambda as Lambda Function
+    participant EmailSvc as EmailService
+    participant ParamStore as Parameter Store
+    participant KMS as KMS
+    participant Resend as Resend API
+    participant Recipient as Email Recipient
+    participant CW as CloudWatch
     
     Note over Client,CW: Contact Form Submission & Email Processing Flow
     

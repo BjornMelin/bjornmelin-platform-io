@@ -9,46 +9,46 @@ The email service architecture for bjornmelin.io implements a secure, scalable, 
 ```mermaid
 graph TB
     %% Frontend Layer
-    subgraph Frontend ["🌐 Frontend Security Layer"]
-        ContactForm[📝 Contact Form<br/>bjornmelin.io]
-        ClientValidation[✅ Client-Side Validation<br/>Real-time Feedback]
-        CSRFToken[🎫 CSRF Token<br/>Security Protection]
-        InputSanitization[🧹 Input Sanitization<br/>XSS Prevention]
+    subgraph Frontend ["Frontend Security Layer"]
+        ContactForm["Contact Form<br/>bjornmelin.io"]
+        ClientValidation["Client-Side Validation<br/>Real-time Feedback"]
+        CSRFToken["CSRF Token<br/>Security Protection"]
+        InputSanitization["Input Sanitization<br/>XSS Prevention"]
     end
     
     %% API Layer
-    subgraph APILayer ["🚪 API Gateway Layer"]
-        APIGateway[🚪 API Gateway<br/>api.bjornmelin.io<br/>Rate Limiting & CORS]
-        RequestValidation[🔍 Request Validation<br/>Schema & Format Checks]
-        Authentication[🔐 Authentication<br/>Future API Keys]
+    subgraph APILayer ["API Gateway Layer"]
+        APIGateway["API Gateway<br/>api.bjornmelin.io<br/>Rate Limiting & CORS"]
+        RequestValidation["Request Validation<br/>Schema & Format Checks"]
+        Authentication["Authentication<br/>Future API Keys"]
     end
     
     %% Processing Layer
-    subgraph ProcessingLayer ["⚡ Lambda Processing"]
-        Lambda[⚡ Lambda Function<br/>Contact Form Handler<br/>ARM64 Node.js 20.x]
-        SecurityChecks[🛡️ Security Validation<br/>CSRF, Rate Limit, Spam]
-        BusinessLogic[🔧 Business Logic<br/>Email Template Processing]
+    subgraph ProcessingLayer ["Lambda Processing"]
+        Lambda["Lambda Function<br/>Contact Form Handler<br/>ARM64 Node.js 20.x"]
+        SecurityChecks["Security Validation<br/>CSRF, Rate Limit, Spam"]
+        BusinessLogic["Business Logic<br/>Email Template Processing"]
     end
     
     %% Configuration Layer
-    subgraph ConfigLayer ["🔒 Configuration & Security"]
-        ParameterStore[🔒 Parameter Store<br/>Secure Configuration<br/>Standard Tier]
-        KMS[🔑 KMS Customer Key<br/>Encryption & Decryption<br/>Auto-rotation Enabled]
-        ConfigCache[💾 Configuration Cache<br/>1-hour TTL<br/>Performance Optimization]
+    subgraph ConfigLayer ["Configuration & Security"]
+        ParameterStore["Parameter Store<br/>Secure Configuration<br/>Standard Tier"]
+        KMS["KMS Customer Key<br/>Encryption & Decryption<br/>Auto-rotation Enabled"]
+        ConfigCache["Configuration Cache<br/>1-hour TTL<br/>Performance Optimization"]
     end
     
     %% External Services
-    subgraph ExternalServices ["📧 External Email Service"]
-        ResendAPI[📧 Resend API<br/>Email Service Provider<br/>3,000 emails/month]
-        EmailDelivery[📬 Email Delivery<br/>DKIM Signing<br/>SPF Validation]
-        DeliveryStatus[📊 Delivery Status<br/>Real-time Tracking]
+    subgraph ExternalServices ["External Email Service"]
+        ResendAPI["Resend API<br/>Email Service Provider<br/>3,000 emails/month"]
+        EmailDelivery["Email Delivery<br/>DKIM Signing<br/>SPF Validation"]
+        DeliveryStatus["Delivery Status<br/>Real-time Tracking"]
     end
     
     %% Monitoring Layer
-    subgraph MonitoringLayer ["📊 Monitoring & Alerting"]
-        CloudWatch[📊 CloudWatch<br/>Metrics & Logs<br/>Custom Metrics]
-        SNSAlerts[📢 SNS Alerts<br/>Real-time Notifications<br/>Error Threshold Monitoring]
-        PerformanceMetrics[📈 Performance Metrics<br/>Response Time Tracking]
+    subgraph MonitoringLayer ["Monitoring & Alerting"]
+        CloudWatch["CloudWatch<br/>Metrics & Logs<br/>Custom Metrics"]
+        SNSAlerts["SNS Alerts<br/>Real-time Notifications<br/>Error Threshold Monitoring"]
+        PerformanceMetrics["Performance Metrics<br/>Response Time Tracking"]
     end
     
     %% User Flow
@@ -190,16 +190,16 @@ graph TB
 
 ```mermaid
 sequenceDiagram
-    participant APIGateway as 🚪 API Gateway
-    participant Lambda as ⚡ Lambda Function
-    participant ValidationModule as ✅ Validation Module
-    participant SecurityModule as 🛡️ Security Module
-    participant ConfigService as 🔒 Config Service
-    participant ParameterStore as 📦 Parameter Store
-    participant KMS as 🔑 KMS
-    participant EmailService as 📧 Email Service
-    participant ResendAPI as 📬 Resend API
-    participant CloudWatch as 📊 CloudWatch
+    participant APIGateway as API Gateway
+    participant Lambda as Lambda Function
+    participant ValidationModule as Validation Module
+    participant SecurityModule as Security Module
+    participant ConfigService as Config Service
+    participant ParameterStore as Parameter Store
+    participant KMS as KMS
+    participant EmailService as Email Service
+    participant ResendAPI as Resend API
+    participant CloudWatch as CloudWatch
     
     Note over APIGateway, CloudWatch: Lambda Function Processing Pipeline
     
