@@ -9,79 +9,79 @@ The security architecture for bjornmelin.io implements a comprehensive defense-i
 ```mermaid
 graph TB
     %% Defense-in-Depth Security Layers
-    subgraph DefenseInDepth ["🛡️ Defense-in-Depth Security Architecture"]
+    subgraph DefenseInDepth ["Defense-in-Depth Security Architecture"]
         
         %% Layer 7: Application Security
-        subgraph Layer7 ["🔒 Layer 7: Application Security"]
-            InputValidation[✅ Input Validation & Sanitization<br/>XSS & Injection Prevention]
-            CSRFProtection[🎫 CSRF Protection<br/>Rolling Tokens & Validation]
-            RateLimit[⏱️ Rate Limiting<br/>Per IP/Session Controls]
-            AntiSpam[🍯 Anti-Spam Protection<br/>Honeypot Fields & Detection]
-            GDPRCompliance[📋 GDPR Compliance<br/>Data Protection Controls]
+        subgraph Layer7 ["Layer 7: Application Security"]
+            InputValidation["Input Validation & Sanitization<br/>XSS & Injection Prevention"]
+            CSRFProtection["CSRF Protection<br/>Rolling Tokens & Validation"]
+            RateLimit["Rate Limiting<br/>Per IP/Session Controls"]
+            AntiSpam["Anti-Spam Protection<br/>Honeypot Fields & Detection"]
+            GDPRCompliance["GDPR Compliance<br/>Data Protection Controls"]
         end
         
         %% Layer 6: API Security
-        subgraph Layer6 ["🚪 Layer 6: API Security"]
-            APIThrottling[🚦 API Gateway Throttling<br/>1000 req/sec limit]
-            RequestValidation[📏 Request Size Limiting<br/>1MB max payload]
-            ContentTypeValidation[📝 Content-Type Validation<br/>JSON schema enforcement]
-            CORSPolicy[🌐 CORS Policy<br/>Origin enforcement]
-            APILogging[📊 Request/Response Logging<br/>X-Ray distributed tracing]
-            LambdaAuth[🔐 Lambda Authorizer<br/>Future authentication]
+        subgraph Layer6 ["Layer 6: API Security"]
+            APIThrottling["API Gateway Throttling<br/>1000 req/sec limit"]
+            RequestValidation["Request Size Limiting<br/>1MB max payload"]
+            ContentTypeValidation["Content-Type Validation<br/>JSON schema enforcement"]
+            CORSPolicy["CORS Policy<br/>Origin enforcement"]
+            APILogging["Request/Response Logging<br/>X-Ray distributed tracing"]
+            LambdaAuth["Lambda Authorizer<br/>Future authentication"]
         end
         
         %% Layer 5: Transport Security
-        subgraph Layer5 ["🔐 Layer 5: Transport Security"]
-            TLSEnforcement[🔒 TLS 1.2+ Enforcement<br/>Strong cipher suites only]
-            HSTSHeaders[🛡️ HSTS Headers<br/>Strict transport security]
-            PerfectForwardSecrecy[🔄 Perfect Forward Secrecy<br/>ECDHE key exchange]
-            CertificatePinning[📌 Certificate Pinning<br/>CloudFront validation]
-            HTTPSRedirects[↗️ HTTP to HTTPS<br/>Automatic redirects]
+        subgraph Layer5 ["Layer 5: Transport Security"]
+            TLSEnforcement["TLS 1.2+ Enforcement<br/>Strong cipher suites only"]
+            HSTSHeaders["HSTS Headers<br/>Strict transport security"]
+            PerfectForwardSecrecy["Perfect Forward Secrecy<br/>ECDHE key exchange"]
+            CertificatePinning["Certificate Pinning<br/>CloudFront validation"]
+            HTTPSRedirects["HTTP to HTTPS<br/>Automatic redirects"]
         end
         
         %% Layer 4: Network Security
-        subgraph Layer4 ["🌐 Layer 4: Network Security"]
-            WAF[🔥 CloudFront WAF<br/>Web application firewall]
-            DDoSProtection[🛡️ DDoS Protection<br/>CloudFront + Shield]
-            GeoRestrictions[🌍 Geographic Restrictions<br/>Country-based controls]
-            IPControl[📍 IP Whitelisting/Blacklisting<br/>Access control lists]
-            VPCEndpoints[🔗 VPC Endpoints<br/>Internal traffic security]
-            SecurityGroups[🛡️ Security Groups & NACLs<br/>Network access control]
+        subgraph Layer4 ["Layer 4: Network Security"]
+            WAF["CloudFront WAF<br/>Web application firewall"]
+            DDoSProtection["DDoS Protection<br/>CloudFront + Shield"]
+            GeoRestrictions["Geographic Restrictions<br/>Country-based controls"]
+            IPControl["IP Whitelisting/Blacklisting<br/>Access control lists"]
+            VPCEndpoints["VPC Endpoints<br/>Internal traffic security"]
+            SecurityGroups["Security Groups & NACLs<br/>Network access control"]
         end
         
         %% Layer 3: Identity & Access Management
-        subgraph Layer3 ["👤 Layer 3: Identity & Access Management"]
-            IAMPolicies[📋 IAM Least Privilege<br/>Minimal required permissions]
-            ServiceAuth[🤝 Service-to-Service Auth<br/>Role-based access control]
-            RBAC[👥 Role-Based Access<br/>Resource-based policies]
-            MFA[🔐 MFA Administrative<br/>Multi-factor authentication]
-            CrossAccountRoles[🔄 Cross-Account Roles<br/>Secure role assumptions]
-            AccessReviews[🔍 Regular Access Reviews<br/>Quarterly audits]
+        subgraph Layer3 ["Layer 3: Identity & Access Management"]
+            IAMPolicies["IAM Least Privilege<br/>Minimal required permissions"]
+            ServiceAuth["Service-to-Service Auth<br/>Role-based access control"]
+            RBAC["Role-Based Access<br/>Resource-based policies"]
+            MFA["MFA Administrative<br/>Multi-factor authentication"]
+            CrossAccountRoles["Cross-Account Roles<br/>Secure role assumptions"]
+            AccessReviews["Regular Access Reviews<br/>Quarterly audits"]
         end
         
         %% Layer 2: Data Security
-        subgraph Layer2 ["💾 Layer 2: Data Security"]
-            KMSKeys[🔑 KMS Customer Keys<br/>Customer-managed encryption]
-            KeyRotation[🔄 Automatic Rotation<br/>Annual key rotation]
-            SecureParameters[🔒 Parameter Store<br/>SecureString encryption]
-            EncryptionAtRest[💽 Encryption at Rest<br/>All data encrypted]
-            EncryptionInTransit[🔐 Encryption in Transit<br/>TLS for all communications]
-            DataClassification[📊 Data Classification<br/>Retention & purging policies]
+        subgraph Layer2 ["Layer 2: Data Security"]
+            KMSKeys["KMS Customer Keys<br/>Customer-managed encryption"]
+            KeyRotation["Automatic Rotation<br/>Annual key rotation"]
+            SecureParameters["Parameter Store<br/>SecureString encryption"]
+            EncryptionAtRest["Encryption at Rest<br/>All data encrypted"]
+            EncryptionInTransit["Encryption in Transit<br/>TLS for all communications"]
+            DataClassification["Data Classification<br/>Retention & purging policies"]
         end
         
         %% Layer 1: Infrastructure Security
-        subgraph Layer1 ["🏗️ Layer 1: Infrastructure Security"]
-            SharedResponsibility[☁️ Shared Responsibility<br/>AWS security model]
-            SecurityPatching[🔧 Security Patching<br/>Regular updates]
-            InfraAsCode[📜 Infrastructure as Code<br/>CDK managed resources]
-            ImmutableInfra[🔒 Immutable Infrastructure<br/>Deployment consistency]
-            ResourceTagging[🏷️ Resource Tagging<br/>Governance & compliance]
-            ComplianceFrameworks[📋 Compliance Adherence<br/>Industry standards]
+        subgraph Layer1 ["Layer 1: Infrastructure Security"]
+            SharedResponsibility["Shared Responsibility<br/>AWS security model"]
+            SecurityPatching["Security Patching<br/>Regular updates"]
+            InfraAsCode["Infrastructure as Code<br/>CDK managed resources"]
+            ImmutableInfra["Immutable Infrastructure<br/>Deployment consistency"]
+            ResourceTagging["Resource Tagging<br/>Governance & compliance"]
+            ComplianceFrameworks["Compliance Adherence<br/>Industry standards"]
         end
     end
     
     %% Security Flow - Attacks must penetrate all layers
-    Users[👥 Internet Users] --> Layer7
+    Users["Internet Users"] --> Layer7
     Layer7 --> Layer6
     Layer6 --> Layer5
     Layer5 --> Layer4
@@ -122,35 +122,35 @@ graph TB
 ```mermaid
 graph TB
     %% IAM Policy Hierarchy
-    subgraph IAMHierarchy ["🔐 IAM Policy & Role Hierarchy"]
+    subgraph IAMHierarchy ["IAM Policy & Role Hierarchy"]
         
         %% Service Roles & Functions
-        subgraph ServiceLayer ["⚡ Service Layer"]
-            LambdaFunction[⚡ Lambda Function<br/>Contact Handler<br/>Node.js 20.x ARM64]
-            ExecutionRole[👤 Lambda Execution Role<br/>LeastPrivilegePolicy<br/>Service-to-Service Auth]
+        subgraph ServiceLayer ["Service Layer"]
+            LambdaFunction["Lambda Function<br/>Contact Handler<br/>Node.js 20.x ARM64"]
+            ExecutionRole["Lambda Execution Role<br/>LeastPrivilegePolicy<br/>Service-to-Service Auth"]
         end
         
         %% AWS Services Access
-        subgraph AWSServices ["☁️ AWS Services Access"]
-            CloudWatchLogs[📊 CloudWatch Logs<br/>Write Access<br/>CreateLogGroup/Stream]
-            ParameterStore[🔒 Parameter Store<br/>Read Access<br/>GetParameter Only]
-            XRayTracing[🔍 X-Ray Tracing<br/>Write Access<br/>PutTraceSegments]
-            KMSDecrypt[🔑 KMS Decrypt<br/>Decrypt Access<br/>Via SSM Service Only]
-            CloudWatchMetrics[📈 CloudWatch Metrics<br/>Write Access<br/>Custom Namespace Only]
+        subgraph AWSServices ["AWS Services Access"]
+            CloudWatchLogs["CloudWatch Logs<br/>Write Access<br/>CreateLogGroup/Stream"]
+            ParameterStore["Parameter Store<br/>Read Access<br/>GetParameter Only"]
+            XRayTracing["X-Ray Tracing<br/>Write Access<br/>PutTraceSegments"]
+            KMSDecrypt["KMS Decrypt<br/>Decrypt Access<br/>Via SSM Service Only"]
+            CloudWatchMetrics["CloudWatch Metrics<br/>Write Access<br/>Custom Namespace Only"]
         end
         
         %% Policy Conditions
-        subgraph PolicyConditions ["📋 Policy Condition Enforcement"]
-            StringEquals[📝 StringEquals Conditions<br/>• kms:ViaService: ssm.us-east-1.amazonaws.com<br/>• ssm:version: $LATEST<br/>• aws:RequestedRegion: us-east-1]
-            TimeBasedConditions[⏰ Time-Based Conditions<br/>• aws:CurrentTime: Business hours<br/>• aws:TokenIssueTime: Token freshness]
-            IPBasedConditions[🌐 IP-Based Conditions<br/>• aws:SourceIp: Known IP ranges<br/>• aws:ViaVPC: Internal VPC only]
+        subgraph PolicyConditions ["Policy Condition Enforcement"]
+            StringEquals["StringEquals Conditions<br/>• kms:ViaService: ssm.us-east-1.amazonaws.com<br/>• ssm:version: $LATEST<br/>• aws:RequestedRegion: us-east-1"]
+            TimeBasedConditions["Time-Based Conditions<br/>• aws:CurrentTime: Business hours<br/>• aws:TokenIssueTime: Token freshness"]
+            IPBasedConditions["IP-Based Conditions<br/>• aws:SourceIp: Known IP ranges<br/>• aws:ViaVPC: Internal VPC only"]
         end
         
         %% Security Controls
-        subgraph SecurityControls ["🛡️ Security Controls"]
-            LeastPrivilege[🔒 Least Privilege<br/>Minimum Required Permissions<br/>Regular Access Reviews]
-            ConditionValidation[✅ Condition Validation<br/>Context-Based Access<br/>Dynamic Policy Evaluation]
-            CrossAccountPrevention[🚫 Cross-Account Prevention<br/>Account Boundary Enforcement<br/>Resource Isolation]
+        subgraph SecurityControls ["Security Controls"]
+            LeastPrivilege["Least Privilege<br/>Minimum Required Permissions<br/>Regular Access Reviews"]
+            ConditionValidation["Condition Validation<br/>Context-Based Access<br/>Dynamic Policy Evaluation"]
+            CrossAccountPrevention["Cross-Account Prevention<br/>Account Boundary Enforcement<br/>Resource Isolation"]
         end
     end
     

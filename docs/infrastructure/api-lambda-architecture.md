@@ -9,58 +9,58 @@ This document details the serverless API architecture for bjornmelin.io, focusin
 ```mermaid
 graph TB
     %% API Gateway + Lambda Architecture
-    subgraph ClientApplications ["📱 Client Applications"]
-        WebBrowser[🌐 Web Browser<br/>bjornmelin.io<br/>Contact Form UI]
-        MobileApp[📱 Mobile App<br/>Future Implementation<br/>Cross-platform]
-        CLITools[⚡ CLI Tools<br/>Testing & Development<br/>API Integration]
+    subgraph ClientApplications ["Client Applications"]
+        WebBrowser["Web Browser<br/>bjornmelin.io<br/>Contact Form UI"]
+        MobileApp["Mobile App<br/>Future Implementation<br/>Cross-platform"]
+        CLITools["CLI Tools<br/>Testing & Development<br/>API Integration"]
     end
     
     %% Transport Security Layer
-    subgraph TransportSecurity ["🔒 Transport Security Layer"]
-        HTTPS[🔐 HTTPS/TLS 1.2+<br/>End-to-End Encryption<br/>Certificate Validation]
+    subgraph TransportSecurity ["Transport Security Layer"]
+        HTTPS["HTTPS/TLS 1.2+<br/>End-to-End Encryption<br/>Certificate Validation"]
     end
     
     %% CloudFront CDN Layer
-    subgraph CloudFrontCDN ["🌍 CloudFront CDN Layer"]
-        CloudFront[🌍 CloudFront Distribution<br/>Global Edge Locations<br/>Performance & Security]
-        WAFIntegration[🔥 WAF Integration<br/>Web Application Firewall<br/>Attack Protection]
-        DDoSProtection[🛡️ DDoS Protection<br/>AWS Shield Standard<br/>Traffic Filtering]
-        SSLTermination[🔒 SSL/TLS Termination<br/>Certificate Management<br/>ACM Integration]
+    subgraph CloudFrontCDN ["CloudFront CDN Layer"]
+        CloudFront["CloudFront Distribution<br/>Global Edge Locations<br/>Performance & Security"]
+        WAFIntegration["WAF Integration<br/>Web Application Firewall<br/>Attack Protection"]
+        DDoSProtection["DDoS Protection<br/>AWS Shield Standard<br/>Traffic Filtering"]
+        SSLTermination["SSL/TLS Termination<br/>Certificate Management<br/>ACM Integration"]
     end
     
     %% API Gateway Layer
-    subgraph APIGatewayLayer ["🚪 API Gateway Layer"]
-        APIGateway[🚪 API Gateway<br/>api.bjornmelin.io<br/>Regional Endpoint]
+    subgraph APIGatewayLayer ["API Gateway Layer"]
+        APIGateway["API Gateway<br/>api.bjornmelin.io<br/>Regional Endpoint"]
         
-        subgraph RequestPipeline ["📋 Request Processing Pipeline"]
-            Authentication[🔐 Authentication<br/>Future Implementation<br/>API Key Support]
-            Authorization[👤 Authorization<br/>Future Role-based Access<br/>Permission Control]
-            RequestValidation[✅ Request Validation<br/>Schema Validation<br/>Content-Type Checks]
-            RateLimiting[⏱️ Rate Limiting<br/>2000 req/sec API<br/>100 req/sec per client]
-            CORSHandling[🌐 CORS Handling<br/>Origin Validation<br/>Preflight Support]
-            RequestTransformation[🔄 Request Transformation<br/>Header Injection<br/>Payload Processing]
-            Routing[🎯 Routing<br/>Path-based Routing<br/>Method Validation]
+        subgraph RequestPipeline ["Request Processing Pipeline"]
+            Authentication["Authentication<br/>Future Implementation<br/>API Key Support"]
+            Authorization["Authorization<br/>Future Role-based Access<br/>Permission Control"]
+            RequestValidation["Request Validation<br/>Schema Validation<br/>Content-Type Checks"]
+            RateLimiting["Rate Limiting<br/>2000 req/sec API<br/>100 req/sec per client"]
+            CORSHandling["CORS Handling<br/>Origin Validation<br/>Preflight Support"]
+            RequestTransformation["Request Transformation<br/>Header Injection<br/>Payload Processing"]
+            Routing["Routing<br/>Path-based Routing<br/>Method Validation"]
         end
     end
     
     %% Lambda Function Layer
-    subgraph LambdaLayer ["⚡ Lambda Function Layer"]
-        LambdaFunction[⚡ Lambda Function<br/>Contact Form Handler<br/>Node.js 20.x ARM64]
-        InputValidation[✅ Input Validation<br/>Sanitization & Schema<br/>XSS Prevention]
-        CSRFVerification[🎫 CSRF Token Verification<br/>Rolling Tokens<br/>Session Validation]
-        RateLimitCheck[⏱️ Rate Limit Check<br/>Per-IP Tracking<br/>Sliding Window]
-        SpamDetection[🍯 Spam Detection<br/>Honeypot Fields<br/>Behavioral Analysis]
-        ConfigRetrieval[🔒 Config Retrieval<br/>Parameter Store Access<br/>KMS Decryption]
-        EmailIntegration[📧 Email Service Integration<br/>Resend API Client<br/>Template Rendering]
-        ErrorHandling[🚨 Error Handling<br/>Structured Logging<br/>Graceful Degradation]
-        ResponseFormatting[📄 Response Formatting<br/>JSON Structure<br/>CORS Headers]
+    subgraph LambdaLayer ["Lambda Function Layer"]
+        LambdaFunction["Lambda Function<br/>Contact Form Handler<br/>Node.js 20.x ARM64"]
+        InputValidation["Input Validation<br/>Sanitization & Schema<br/>XSS Prevention"]
+        CSRFVerification["CSRF Token Verification<br/>Rolling Tokens<br/>Session Validation"]
+        RateLimitCheck["Rate Limit Check<br/>Per-IP Tracking<br/>Sliding Window"]
+        SpamDetection["Spam Detection<br/>Honeypot Fields<br/>Behavioral Analysis"]
+        ConfigRetrieval["Config Retrieval<br/>Parameter Store Access<br/>KMS Decryption"]
+        EmailIntegration["Email Service Integration<br/>Resend API Client<br/>Template Rendering"]
+        ErrorHandling["Error Handling<br/>Structured Logging<br/>Graceful Degradation"]
+        ResponseFormatting["Response Formatting<br/>JSON Structure<br/>CORS Headers"]
     end
     
     %% Backend Services Layer
-    subgraph BackendServices ["☁️ Backend Services Layer"]
-        ParameterStore[🔒 Parameter Store<br/>Secure Configuration<br/>Standard Tier]
-        CloudWatchMonitoring[📊 CloudWatch<br/>Metrics & Logs<br/>Performance Tracking]
-        ResendAPI[📧 Resend API<br/>External Email Service<br/>3k emails/month]
+    subgraph BackendServices ["Backend Services Layer"]
+        ParameterStore["Parameter Store<br/>Secure Configuration<br/>Standard Tier"]
+        CloudWatchMonitoring["CloudWatch<br/>Metrics & Logs<br/>Performance Tracking"]
+        ResendAPI["Resend API<br/>External Email Service<br/>3k emails/month"]
     end
     
     %% Flow Connections - Client to Transport

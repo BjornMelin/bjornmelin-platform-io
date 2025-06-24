@@ -45,55 +45,55 @@ The following diagram illustrates the comprehensive migration process from AWS S
 ```mermaid
 graph TB
     %% Parameter Store Migration Flow
-    subgraph MigrationProcess [📋 Parameter Store Migration Process]
+    subgraph MigrationProcess ["Parameter Store Migration Process"]
         
         %% Pre-Migration Phase
-        subgraph PreMigration [🔍 Pre-Migration Assessment]
-            CurrentState[📊 Current State Analysis<br/>Secrets Manager Assessment<br/>Cost & Usage Review]
-            Prerequisites[✅ Prerequisites Check<br/>AWS CLI Configuration<br/>IAM Permissions Verification]
-            BackupPlan[💾 Backup Strategy<br/>Secret Value Export<br/>Rollback Procedures]
+        subgraph PreMigration ["Pre-Migration Assessment"]
+            CurrentState["Current State Analysis<br/>Secrets Manager Assessment<br/>Cost & Usage Review"]
+            Prerequisites["Prerequisites Check<br/>AWS CLI Configuration<br/>IAM Permissions Verification"]
+            BackupPlan["Backup Strategy<br/>Secret Value Export<br/>Rollback Procedures"]
         end
         
         %% Phase 1: Parameter Creation
-        subgraph Phase1 [🏗️ Phase 1: Parameter Store Setup]
-            ExportSecret[📤 Export Existing Secret<br/>SecretString Extraction<br/>Secure Local Storage]
-            CreateParameter[🔧 Create Parameter<br/>SecureString Type<br/>KMS Encryption]
-            VerifyParameter[✅ Verify Parameter<br/>Decryption Test<br/>Value Validation]
+        subgraph Phase1 ["Phase 1: Parameter Store Setup"]
+            ExportSecret["Export Existing Secret<br/>SecretString Extraction<br/>Secure Local Storage"]
+            CreateParameter["Create Parameter<br/>SecureString Type<br/>KMS Encryption"]
+            VerifyParameter["Verify Parameter<br/>Decryption Test<br/>Value Validation"]
         end
         
         %% Phase 2: Infrastructure Updates
-        subgraph Phase2 [🔄 Phase 2: Infrastructure Migration]
-            UpdateCDK[📝 Update CDK Code<br/>Replace Secrets Manager<br/>Add Parameter References]
-            UpdatePermissions[🔐 Update IAM Policies<br/>SSM GetParameter<br/>KMS Decrypt Permissions]
-            DeployInfra[🚀 Deploy Infrastructure<br/>Stack Updates<br/>Resource Migration]
+        subgraph Phase2 ["Phase 2: Infrastructure Migration"]
+            UpdateCDK["Update CDK Code<br/>Replace Secrets Manager<br/>Add Parameter References"]
+            UpdatePermissions["Update IAM Policies<br/>SSM GetParameter<br/>KMS Decrypt Permissions"]
+            DeployInfra["Deploy Infrastructure<br/>Stack Updates<br/>Resource Migration"]
         end
         
         %% Phase 3: Application Updates
-        subgraph Phase3 [💻 Phase 3: Application Migration]
-            UpdateSDK[🔧 Update SDK Client<br/>Secrets Manager → SSM<br/>API Call Changes]
-            UpdateEnvVars[⚙️ Update Environment<br/>Secret ARN → Parameter Name<br/>Configuration Changes]
-            CodeTesting[🧪 Test Code Changes<br/>Local Testing<br/>Integration Verification]
+        subgraph Phase3 ["Phase 3: Application Migration"]
+            UpdateSDK["Update SDK Client<br/>Secrets Manager → SSM<br/>API Call Changes"]
+            UpdateEnvVars["Update Environment<br/>Secret ARN → Parameter Name<br/>Configuration Changes"]
+            CodeTesting["Test Code Changes<br/>Local Testing<br/>Integration Verification"]
         end
         
         %% Phase 4: Validation & Testing
-        subgraph Phase4 [✅ Phase 4: Testing & Validation]
-            DevDeployment[🔧 Development Deployment<br/>Test Environment<br/>Functionality Verification]
-            IntegrationTests[🧪 Integration Testing<br/>End-to-End Tests<br/>Performance Validation]
-            SecurityValidation[🔒 Security Validation<br/>Access Control Testing<br/>Encryption Verification]
+        subgraph Phase4 ["Phase 4: Testing & Validation"]
+            DevDeployment["Development Deployment<br/>Test Environment<br/>Functionality Verification"]
+            IntegrationTests["Integration Testing<br/>End-to-End Tests<br/>Performance Validation"]
+            SecurityValidation["Security Validation<br/>Access Control Testing<br/>Encryption Verification"]
         end
         
         %% Phase 5: Production Deployment
-        subgraph Phase5 [🚀 Phase 5: Production Migration]
-            ProdDeployment[🚀 Production Deployment<br/>Blue-Green Strategy<br/>Monitoring Setup]
-            FunctionalTest[✅ Functional Testing<br/>Live System Verification<br/>User Experience Testing]
-            MonitoringSetup[📊 Monitoring & Alerts<br/>CloudWatch Configuration<br/>Audit Trail Setup]
+        subgraph Phase5 ["Phase 5: Production Migration"]
+            ProdDeployment["Production Deployment<br/>Blue-Green Strategy<br/>Monitoring Setup"]
+            FunctionalTest["Functional Testing<br/>Live System Verification<br/>User Experience Testing"]
+            MonitoringSetup["Monitoring & Alerts<br/>CloudWatch Configuration<br/>Audit Trail Setup"]
         end
         
         %% Phase 6: Cleanup & Documentation
-        subgraph Phase6 [🧹 Phase 6: Cleanup & Finalization]
-            SecretsCleanup[🗑️ Secrets Manager Cleanup<br/>Scheduled Deletion<br/>Resource Decommission]
-            DocumentUpdate[📚 Documentation Updates<br/>Process Documentation<br/>Team Training Materials]
-            CostValidation[💰 Cost Validation<br/>Billing Verification<br/>Savings Confirmation]
+        subgraph Phase6 ["Phase 6: Cleanup & Finalization"]
+            SecretsCleanup["Secrets Manager Cleanup<br/>Scheduled Deletion<br/>Resource Decommission"]
+            DocumentUpdate["Documentation Updates<br/>Process Documentation<br/>Team Training Materials"]
+            CostValidation["Cost Validation<br/>Billing Verification<br/>Savings Confirmation"]
         end
     end
     
