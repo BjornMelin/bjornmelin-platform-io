@@ -46,17 +46,14 @@ graph TB
     %% Lambda Function Layer
     subgraph LambdaLayer ["⚡ Lambda Function Layer"]
         LambdaFunction[⚡ Lambda Function<br/>Contact Form Handler<br/>Node.js 20.x ARM64]
-        
-        subgraph ProcessingPipeline ["🔧 Processing Pipeline"]
-            InputValidation[✅ Input Validation<br/>Sanitization & Schema<br/>XSS Prevention]
-            CSRFVerification[🎫 CSRF Token Verification<br/>Rolling Tokens<br/>Session Validation]
-            RateLimitCheck[⏱️ Rate Limit Check<br/>Per-IP Tracking<br/>Sliding Window]
-            SpamDetection[🍯 Spam Detection<br/>Honeypot Fields<br/>Behavioral Analysis]
-            ConfigRetrieval[🔒 Config Retrieval<br/>Parameter Store Access<br/>KMS Decryption]
-            EmailIntegration[📧 Email Service Integration<br/>Resend API Client<br/>Template Rendering]
-            ErrorHandling[🚨 Error Handling<br/>Structured Logging<br/>Graceful Degradation]
-            ResponseFormatting[📄 Response Formatting<br/>JSON Structure<br/>CORS Headers]
-        end
+        InputValidation[✅ Input Validation<br/>Sanitization & Schema<br/>XSS Prevention]
+        CSRFVerification[🎫 CSRF Token Verification<br/>Rolling Tokens<br/>Session Validation]
+        RateLimitCheck[⏱️ Rate Limit Check<br/>Per-IP Tracking<br/>Sliding Window]
+        SpamDetection[🍯 Spam Detection<br/>Honeypot Fields<br/>Behavioral Analysis]
+        ConfigRetrieval[🔒 Config Retrieval<br/>Parameter Store Access<br/>KMS Decryption]
+        EmailIntegration[📧 Email Service Integration<br/>Resend API Client<br/>Template Rendering]
+        ErrorHandling[🚨 Error Handling<br/>Structured Logging<br/>Graceful Degradation]
+        ResponseFormatting[📄 Response Formatting<br/>JSON Structure<br/>CORS Headers]
     end
     
     %% Backend Services Layer
@@ -95,7 +92,7 @@ graph TB
     Routing --> LambdaFunction
     
     %% Lambda Processing Pipeline
-    LambdaFunction --> ProcessingPipeline
+    LambdaFunction --> InputValidation
     InputValidation --> CSRFVerification
     CSRFVerification --> RateLimitCheck
     RateLimitCheck --> SpamDetection
