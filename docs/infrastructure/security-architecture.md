@@ -190,6 +190,7 @@ graph TB
 ### 2. Detailed IAM Policies
 
 #### Lambda Execution Role Policy
+
 ```json
 {
   "Version": "2012-10-17",
@@ -455,7 +456,7 @@ flowchart TD
 
 ### 1. Input Validation & Sanitization
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                  Input Validation Framework                     │
 ├─────────────────────────────────────────────────────────────────┤
@@ -519,7 +520,7 @@ flowchart TD
 
 ### 2. CSRF Protection
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     CSRF Protection System                      │
 ├─────────────────────────────────────────────────────────────────┤
@@ -575,7 +576,7 @@ flowchart TD
 
 ### 3. Rate Limiting & Anti-Spam
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                   Rate Limiting System                          │
 ├─────────────────────────────────────────────────────────────────┤
@@ -644,7 +645,7 @@ flowchart TD
 
 ### 1. HTTP Security Headers
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Security Headers Configuration               │
 ├─────────────────────────────────────────────────────────────────┤
@@ -710,7 +711,7 @@ flowchart TD
 
 ### 2. TLS/SSL Configuration
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    TLS/SSL Configuration                        │
 ├─────────────────────────────────────────────────────────────────┤
@@ -767,7 +768,7 @@ flowchart TD
 
 ### 1. Security Monitoring
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Security Monitoring System                   │
 ├─────────────────────────────────────────────────────────────────┤
@@ -841,7 +842,7 @@ flowchart TD
 
 ### 2. Incident Response
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Incident Response Plan                      │
 ├─────────────────────────────────────────────────────────────────┤
@@ -906,7 +907,7 @@ flowchart TD
 
 ### 1. Compliance Framework
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Compliance Framework                         │
 ├─────────────────────────────────────────────────────────────────┤
@@ -960,7 +961,7 @@ flowchart TD
 
 ### 2. Security Governance
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Security Governance Process                  │
 ├─────────────────────────────────────────────────────────────────┤
@@ -1022,7 +1023,8 @@ flowchart TD
 ## Security Cost Analysis
 
 ### Monthly Security Costs
-```
+
+```text
 Security Component           | Cost    | Justification
 ----------------------------|---------|---------------------------
 KMS Customer Managed Key    | $1.00   | Data encryption at rest
@@ -1039,6 +1041,7 @@ Future Enhanced Total     | $9.03   | With advanced security
 ```
 
 ### Security ROI Analysis
+
 - **Data Breach Prevention**: Estimated savings of $50,000+ per incident
 - **Compliance Adherence**: Avoid regulatory fines ($10,000+ potential)
 - **Reputation Protection**: Maintain customer trust and business continuity
@@ -1050,17 +1053,20 @@ Future Enhanced Total     | $9.03   | With advanced security
 This security architecture document is part of a comprehensive documentation suite:
 
 ### Architecture Documentation Suite
+
 - **[Architecture Overview](./architecture-overview.md)** - Comprehensive system architecture and design principles
 - **[Email Service Architecture](./email-service-architecture.md)** - Detailed email service flow and technical specifications
 - **[API Gateway + Lambda Architecture](./api-lambda-architecture.md)** - Serverless API architecture and performance
 - **[DNS Configuration Guide](./dns-configuration-guide.md)** - Complete DNS setup and email authentication
 
 ### Security Implementation Guides
+
 - **[Security Implementation Guide](./security-implementation.md)** - Technical guide for implementing security features
 - **[Security Audit Checklist](./security-audit-checklist.md)** - Security review and compliance checklist
 - **[Parameter Store Migration Guide](./parameter-store-migration-guide.md)** - Secure migration from Secrets Manager
 
 ### Operational Documentation
+
 - **[Email Infrastructure Guide](./email-infrastructure-guide.md)** - Complete email service implementation with AWS
 - **[Application Integration Examples](./application-integration-examples.md)** - Secure code examples for Lambda and frontend integration
 

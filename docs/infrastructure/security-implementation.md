@@ -21,46 +21,46 @@ The following diagram shows the comprehensive security implementation flow for c
 ```mermaid
 graph TB
     %% Contact Form Security Implementation Flow
-    subgraph SecurityFlow [Security Implementation Pipeline]
+    subgraph SecurityFlow ["Security Implementation Pipeline"]
         
         %% Client Side Security
-        subgraph ClientSide [📱 Client-Side Security Layer]
-            UserForm[📝 Contact Form<br/>Input Collection<br/>Basic Validation]
-            JSValidation[✅ JavaScript Validation<br/>Format Checks<br/>Required Fields]
-            CSRFToken[🎫 CSRF Token Generation<br/>Secure Token Creation<br/>DOM Injection]
-            RateLimitClient[⏱️ Client Rate Limiting<br/>Button Disable State<br/>Submission Tracking]
-            FormEncryption[🔐 Form Data Encryption<br/>HTTPS Transport<br/>Content Encoding]
+        subgraph ClientSide ["Client-Side Security Layer"]
+            UserForm["Contact Form<br/>Input Collection<br/>Basic Validation"]
+            JSValidation["JavaScript Validation<br/>Format Checks<br/>Required Fields"]
+            CSRFToken["CSRF Token Generation<br/>Secure Token Creation<br/>DOM Injection"]
+            RateLimitClient["Client Rate Limiting<br/>Button Disable State<br/>Submission Tracking"]
+            FormEncryption["Form Data Encryption<br/>HTTPS Transport<br/>Content Encoding"]
         end
         
         %% Transport Security
-        subgraph TransportSec [🔒 Transport Security Layer]
-            TLSValidation[🔐 TLS/HTTPS Validation<br/>Certificate Verification<br/>Secure Headers]
-            ContentType[📋 Content-Type Validation<br/>JSON Schema Check<br/>MIME Type Verification]
-            PayloadSize[📏 Payload Size Validation<br/>1MB Maximum<br/>Buffer Overflow Prevention]
+        subgraph TransportSec ["Transport Security Layer"]
+            TLSValidation["TLS/HTTPS Validation<br/>Certificate Verification<br/>Secure Headers"]
+            ContentType["Content-Type Validation<br/>JSON Schema Check<br/>MIME Type Verification"]
+            PayloadSize["Payload Size Validation<br/>1MB Maximum<br/>Buffer Overflow Prevention"]
         end
         
         %% Server Side Security
-        subgraph ServerSide [🛡️ Server-Side Security Layer]
-            CSRFValidation[🎫 CSRF Token Validation<br/>Token Verification<br/>Session Binding]
-            InputSanitization[🧹 Input Sanitization<br/>XSS Prevention<br/>HTML Stripping]
-            RateLimitServer[⏱️ Server Rate Limiting<br/>IP-based Tracking<br/>Sliding Window]
-            SpamDetection[🍯 Spam Detection<br/>Honeypot Fields<br/>Behavioral Analysis]
-            SchemaValidation[📋 Schema Validation<br/>Zod Type Safety<br/>Field Requirements]
+        subgraph ServerSide ["Server-Side Security Layer"]
+            CSRFValidation["CSRF Token Validation<br/>Token Verification<br/>Session Binding"]
+            InputSanitization["Input Sanitization<br/>XSS Prevention<br/>HTML Stripping"]
+            RateLimitServer["Server Rate Limiting<br/>IP-based Tracking<br/>Sliding Window"]
+            SpamDetection["Spam Detection<br/>Honeypot Fields<br/>Behavioral Analysis"]
+            SchemaValidation["Schema Validation<br/>Zod Type Safety<br/>Field Requirements"]
         end
         
         %% Data Processing Security
-        subgraph DataProcessing [💾 Data Processing Security]
-            DataEncryption[🔐 Data Encryption<br/>Parameter Store<br/>KMS Integration]
-            AuditLogging[📊 Audit Logging<br/>CloudWatch Logs<br/>Security Events]
-            ConfigRetrieval[🔒 Secure Config Retrieval<br/>IAM Permissions<br/>Least Privilege]
-            EmailValidation[📧 Email Validation<br/>Format Verification<br/>Domain Checks]
+        subgraph DataProcessing ["Data Processing Security"]
+            DataEncryption["Data Encryption<br/>Parameter Store<br/>KMS Integration"]
+            AuditLogging["Audit Logging<br/>CloudWatch Logs<br/>Security Events"]
+            ConfigRetrieval["Secure Config Retrieval<br/>IAM Permissions<br/>Least Privilege"]
+            EmailValidation["Email Validation<br/>Format Verification<br/>Domain Checks"]
         end
         
         %% Response Security
-        subgraph ResponseSec [📤 Response Security Layer]
-            ErrorHandling[🚨 Secure Error Handling<br/>No Information Leakage<br/>Generic Responses]
-            ResponseHeaders[📋 Security Headers<br/>CORS Configuration<br/>CSP Implementation]
-            SessionCleanup[🧹 Session Cleanup<br/>Token Invalidation<br/>Memory Clearing]
+        subgraph ResponseSec ["Response Security Layer"]
+            ErrorHandling["Secure Error Handling<br/>No Information Leakage<br/>Generic Responses"]
+            ResponseHeaders["Security Headers<br/>CORS Configuration<br/>CSP Implementation"]
+            SessionCleanup["Session Cleanup<br/>Token Invalidation<br/>Memory Clearing"]
         end
     end
     
@@ -454,12 +454,14 @@ describe('Contact API Security', () => {
 ## Deployment Checklist
 
 ### Pre-deployment
+
 - [ ] All security tests passing
 - [ ] Environment variables configured
 - [ ] CSRF secret generated and stored
 - [ ] Rate limiting tested locally
 
 ### Post-deployment
+
 - [ ] Verify security headers in production
 - [ ] Test CSRF protection with real requests
 - [ ] Monitor rate limiting effectiveness
@@ -470,12 +472,14 @@ describe('Contact API Security', () => {
 ## Monitoring & Maintenance
 
 ### What to Monitor
+
 1. **Failed CSRF validations**: Could indicate attack attempts
 2. **Rate limit hits**: Monitor for legitimate vs malicious traffic
 3. **Validation errors**: Track patterns in rejected inputs
 4. **Response times**: Ensure security doesn't impact performance
 
 ### Regular Maintenance
+
 - Review rate limiting thresholds monthly
 - Update security headers as standards evolve
 - Audit dependencies for vulnerabilities
@@ -486,13 +490,16 @@ describe('Contact API Security', () => {
 ## Future Enhancements
 
 ### If Scale Increases
+
 1. **Distributed Rate Limiting**: Implement Redis/Upstash
 2. **WAF Integration**: Add Cloudflare or similar
 3. **Advanced Monitoring**: Implement security analytics
 4. **Automated Testing**: Add security scanning to CI/CD
 
 ### Current Scale Recommendations
+
 For a portfolio site with ~10 submissions/month:
+
 - Current implementation is sufficient
 - Focus on maintaining security updates
 - Monitor for unusual activity patterns

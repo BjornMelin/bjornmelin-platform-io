@@ -11,56 +11,56 @@ The following diagram shows the current email service implementation architectur
 ```mermaid
 graph TB
     %% Email Service Implementation Architecture
-    subgraph EmailServiceArch [📧 Email Service Implementation Architecture]
+    subgraph EmailServiceArch ["Email Service Implementation Architecture"]
         
         %% Application Layer
-        subgraph ApplicationLayer [⚛️ Application Layer]
-            NextJSApp[⚛️ Next.js Application<br/>bjornmelin.io<br/>Contact Form]
-            ReactComponents[📝 React Components<br/>Form Validation<br/>User Interface]
-            APIRoutes[🔗 API Routes<br/>/api/contact<br/>Server-Side Processing]
+        subgraph ApplicationLayer ["Application Layer"]
+            NextJSApp["Next.js Application<br/>bjornmelin.io<br/>Contact Form"]
+            ReactComponents["React Components<br/>Form Validation<br/>User Interface"]
+            APIRoutes["API Routes<br/>/api/contact<br/>Server-Side Processing"]
         end
         
         %% Service Layer
-        subgraph ServiceLayer [🔧 Service Implementation Layer]
-            ResendService[📧 ResendEmailService<br/>Singleton Pattern<br/>TypeScript Implementation]
+        subgraph ServiceLayer ["Service Implementation Layer"]
+            ResendService["ResendEmailService<br/>Singleton Pattern<br/>TypeScript Implementation"]
             
-            subgraph ServiceFeatures [⚡ Service Features]
-                ErrorHandling[🚨 Enhanced Error Handling<br/>Custom Error Types<br/>Retry Logic]
-                BatchSupport[📊 Batch Email Support<br/>Concurrency Control<br/>Rate Management]
-                HealthCheck[❤️ Health Check<br/>Service Monitoring<br/>Status Validation]
-                WebhookSupport[🔗 Webhook Support<br/>Delivery Status<br/>Future Implementation]
+            subgraph ServiceFeatures ["Service Features"]
+                ErrorHandling["Enhanced Error Handling<br/>Custom Error Types<br/>Retry Logic"]
+                BatchSupport["Batch Email Support<br/>Concurrency Control<br/>Rate Management"]
+                HealthCheck["Health Check<br/>Service Monitoring<br/>Status Validation"]
+                WebhookSupport["Webhook Support<br/>Delivery Status<br/>Future Implementation"]
             end
             
-            subgraph TemplateEngine [📝 Template Engine]
-                ReactEmail[⚛️ React Email Templates<br/>Component-based<br/>TypeScript Support]
-                HTMLTemplates[📄 HTML Templates<br/>Contact Form Layout<br/>Responsive Design]
-                TextFallback[📝 Text Fallback<br/>Plain Text Version<br/>Accessibility]
+            subgraph TemplateEngine ["Template Engine"]
+                ReactEmail["React Email Templates<br/>Component-based<br/>TypeScript Support"]
+                HTMLTemplates["HTML Templates<br/>Contact Form Layout<br/>Responsive Design"]
+                TextFallback["Text Fallback<br/>Plain Text Version<br/>Accessibility"]
             end
         end
         
         %% External Integration Layer
-        subgraph ExternalLayer [🌐 External Integration Layer]
-            ResendAPI[📨 Resend API<br/>resend.com<br/>3k emails/month free]
+        subgraph ExternalLayer ["External Integration Layer"]
+            ResendAPI["Resend API<br/>resend.com<br/>3k emails/month free"]
             
-            subgraph ResendFeatures [🚀 Resend Features]
-                TypeScriptSDK[💎 TypeScript SDK<br/>Native Support<br/>Type Safety]
-                Analytics[📊 Real-time Analytics<br/>Delivery Tracking<br/>Dashboard UI]
-                DomainManagement[🌐 Domain Management<br/>DNS Configuration<br/>Authentication]
+            subgraph ResendFeatures ["Resend Features"]
+                TypeScriptSDK["TypeScript SDK<br/>Native Support<br/>Type Safety"]
+                Analytics["Real-time Analytics<br/>Delivery Tracking<br/>Dashboard UI"]
+                DomainManagement["Domain Management<br/>DNS Configuration<br/>Authentication"]
             end
         end
         
         %% Configuration & Environment
-        subgraph ConfigLayer [⚙️ Configuration Layer]
-            EnvironmentVars[🔧 Environment Variables<br/>API Keys<br/>Configuration]
-            LocalTesting[🧪 Local Development<br/>Easy Testing<br/>No Infrastructure]
-            ProductionConfig[🚀 Production Setup<br/>Domain Verification<br/>DNS Records]
+        subgraph ConfigLayer ["Configuration Layer"]
+            EnvironmentVars["Environment Variables<br/>API Keys<br/>Configuration"]
+            LocalTesting["Local Development<br/>Easy Testing<br/>No Infrastructure"]
+            ProductionConfig["Production Setup<br/>Domain Verification<br/>DNS Records"]
         end
         
         %% Monitoring & Testing
-        subgraph MonitoringLayer [📊 Monitoring & Testing Layer]
-            TestSuite[🧪 Test Suite<br/>97.33% Coverage<br/>28 Comprehensive Tests]
-            StructuredLogging[📝 Structured Logging<br/>Timestamp Logging<br/>Error Tracking]
-            ServiceHealth[❤️ Health Monitoring<br/>API Status Checks<br/>Service Validation]
+        subgraph MonitoringLayer ["Monitoring and Testing Layer"]
+            TestSuite["Test Suite<br/>97.33% Coverage<br/>28 Comprehensive Tests"]
+            StructuredLogging["Structured Logging<br/>Timestamp Logging<br/>Error Tracking"]
+            ServiceHealth["Health Monitoring<br/>API Status Checks<br/>Service Validation"]
         end
     end
     
@@ -176,6 +176,7 @@ RESEND_DOMAIN=domain.com              # Email domain
    - Generate an API key
 
 2. **Configure Environment**
+
    ```bash
    # .env.local
    RESEND_API_KEY=re_your_api_key
@@ -184,6 +185,7 @@ RESEND_DOMAIN=domain.com              # Email domain
    ```
 
 3. **Test Configuration**
+
    ```bash
    pnpm run dev
    # Submit a test message via the contact form
@@ -197,6 +199,7 @@ RESEND_DOMAIN=domain.com              # Email domain
 **Method**: `POST`
 
 **Request Body**:
+
 ```json
 {
   "name": "string",
@@ -206,6 +209,7 @@ RESEND_DOMAIN=domain.com              # Email domain
 ```
 
 **Success Response**:
+
 ```json
 {
   "success": true,
@@ -214,6 +218,7 @@ RESEND_DOMAIN=domain.com              # Email domain
 ```
 
 **Error Responses**:
+
 - `400`: Validation error or missing fields
 - `429`: Rate limit exceeded
 - `500`: Server error
@@ -290,12 +295,14 @@ vi.mock('resend', () => ({
 ### AWS SES to Resend Migration (June 2025)
 
 **Reasons for Migration**:
+
 - 88.5% weighted score for Resend vs 33.75% for fixing AWS SES
 - 30 minutes implementation time vs 2-4 hours to fix SES
 - Near-zero maintenance vs ongoing AWS infrastructure management
 - Superior developer experience with TypeScript support
 
 **Migration Timeline**:
+
 1. **Analysis Phase**: Comprehensive comparison of AWS SES vs Resend
 2. **Implementation**: Added ResendEmailService with enhanced features
 3. **Testing**: Achieved 97.33% test coverage
@@ -305,14 +312,17 @@ vi.mock('resend', () => ({
 ### Cost Analysis
 
 **Low Volume (<3,000 emails/month)**:
+
 - Resend: $0 (free tier)
 - AWS SES: $0 (1,000 free) + Lambda costs
 
 **Medium Volume (10,000 emails/month)**:
+
 - Resend: $20/month
 - AWS SES: $1.00 + ~$0.50 Lambda costs
 
 **High Volume (100,000 emails/month)**:
+
 - Resend: $65/month
 - AWS SES: $10.00 + ~$5 Lambda costs
 
@@ -323,6 +333,7 @@ For this portfolio site's expected volume, Resend's free tier is more than suffi
 ### Resend Dashboard
 
 Access the [Resend Dashboard](https://resend.com/dashboard) for:
+
 - Real-time email delivery status
 - Open and click tracking
 - Bounce and complaint rates
@@ -401,6 +412,7 @@ const emailService = ResendEmailService.getInstance();
 ### Scaling Considerations
 
 If email volume exceeds 50,000/month:
+
 1. Evaluate cost vs AWS SES
 2. Consider custom pricing from Resend
 3. Implement email queueing if needed

@@ -646,6 +646,7 @@ export const ContactForm: React.FC = () => {
 ## Environment Variables
 
 ### Development (.env.development)
+
 ```bash
 # API Configuration
 VITE_API_ENDPOINT=https://api-dev.bjornmelin.io
@@ -655,6 +656,7 @@ VITE_ENABLE_CONTACT_FORM=true
 ```
 
 ### Production (.env.production)
+
 ```bash
 # API Configuration
 VITE_API_ENDPOINT=https://api.bjornmelin.io
@@ -664,6 +666,7 @@ VITE_ENABLE_CONTACT_FORM=true
 ```
 
 ### Lambda Environment Variables (Set via CDK)
+
 ```typescript
 {
   RESEND_PARAMETER_NAME: "/prod/portfolio/resend-api-key",
@@ -750,11 +753,13 @@ fields @timestamp, @duration
 ### Debugging Tips
 
 1. **Check Lambda Logs**
+
    ```bash
    aws logs tail /aws/lambda/ContactFormHandler --follow
    ```
 
 2. **Verify Parameter Access**
+
    ```bash
    aws ssm get-parameter \
      --name "/prod/portfolio/resend-api-key" \
@@ -764,6 +769,7 @@ fields @timestamp, @duration
    ```
 
 3. **Test DNS Records**
+
    ```bash
    # Check SPF record
    dig TXT bjornmelin.io +short

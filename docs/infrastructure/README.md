@@ -5,6 +5,7 @@ This directory contains all infrastructure-related documentation for the bjornme
 ## Quick Links
 
 ### Architecture Documentation
+
 - [Architecture Overview](./architecture-overview.md) - Comprehensive system architecture and design principles
 - [Email Service Architecture](./email-service-architecture.md) - Detailed email service flow and technical specifications
 - [Security Architecture](./security-architecture.md) - Defense-in-depth security layers and compliance
@@ -12,6 +13,7 @@ This directory contains all infrastructure-related documentation for the bjornme
 - [DNS Configuration Guide](./dns-configuration-guide.md) - Complete DNS setup and email authentication
 
 ### Implementation Guides
+
 - [Security Implementation Guide](./security-implementation.md) - Technical guide for implementing security features
 - [Email Service Documentation](./email-service.md) - Comprehensive email service guide (Resend API)
 - [AWS Free Tier Optimization Guide](./aws-free-tier-optimization-2025.md) - Cost optimization strategies and free tier analysis
@@ -25,17 +27,20 @@ This directory contains all infrastructure-related documentation for the bjornme
 The bjornmelin.io infrastructure follows a pragmatic approach, leveraging Vercel for hosting and Resend for email services. While AWS CDK infrastructure is available, the current implementation prioritizes simplicity and cost-effectiveness for a portfolio website with modest traffic.
 
 ### Current Architecture (Simplified)
+
 - **Hosting**: Vercel (automatic scaling, global CDN)
 - **Email Service**: Resend API (3,000 emails/month free tier)
 - **Security**: CSRF protection, rate limiting, input validation
 - **Monitoring**: Vercel logs and Resend dashboard
 
 ### Available Infrastructure (Not Currently Deployed)
+
 The repository includes AWS CDK v2 infrastructure code that can be deployed if scaling requirements change. This includes Route 53, CloudFront, S3, Lambda, and other AWS services.
 
 ## Infrastructure Components
 
 ### Core Services
+
 - **AWS Route 53**: DNS management and domain hosting
 - **AWS CloudFront**: CDN for static content delivery
 - **AWS S3**: Static website hosting and file storage
@@ -43,12 +48,14 @@ The repository includes AWS CDK v2 infrastructure code that can be deployed if s
 - **AWS API Gateway**: RESTful API management
 
 ### Security & Secrets
+
 - **AWS KMS**: Encryption key management
 - **AWS Systems Manager Parameter Store**: Secure configuration storage (recommended)
 - **AWS Secrets Manager**: Secret rotation (for critical secrets only)
 - **AWS IAM**: Identity and access management
 
 ### Monitoring & Operations
+
 - **AWS CloudWatch**: Logs, metrics, and dashboards
 - **AWS CloudTrail**: Audit logging
 - **AWS SNS**: Alert notifications
@@ -77,12 +84,14 @@ See [Security Audit Checklist](./security-audit-checklist.md) for comprehensive 
 ## Quick Start
 
 ### Prerequisites
+
 - AWS Account with appropriate permissions
 - AWS CLI configured
 - Node.js 20.x and pnpm installed
 - AWS CDK CLI installed (`pnpm install -g aws-cdk`)
 
 ### Deployment
+
 ```bash
 cd infrastructure
 pnpm install
@@ -91,6 +100,7 @@ pnpm run deploy:all
 ```
 
 ### Configuration
+
 1. Set up AWS credentials
 2. Configure domain in Route 53
 3. Deploy infrastructure stacks
@@ -99,7 +109,7 @@ pnpm run deploy:all
 
 ## Documentation Structure
 
-```
+```text
 docs/infrastructure/
 ├── README.md                               # This file
 ├── architecture-overview.md                # Comprehensive system architecture
@@ -126,12 +136,14 @@ docs/infrastructure/
 ## Maintenance
 
 ### Regular Tasks
+
 - **Daily**: Monitor CloudWatch dashboards
 - **Weekly**: Review security alerts
 - **Monthly**: Cost analysis and optimization
 - **Quarterly**: Security audit and secret rotation
 
 ### Cost Monitoring
+
 1. Enable AWS Free Tier alerts (85% threshold)
 2. Set up zero-spend budgets
 3. Review monthly billing reports
@@ -140,6 +152,7 @@ docs/infrastructure/
 ## Support
 
 For infrastructure-related questions or issues:
+
 1. Check the relevant documentation in this directory
 2. Review AWS service documentation
 3. Check CloudWatch logs for errors
@@ -148,6 +161,7 @@ For infrastructure-related questions or issues:
 ## Contributing
 
 When updating infrastructure:
+
 1. Update relevant documentation
 2. Test changes in development first
 3. Follow the security checklist

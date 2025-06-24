@@ -135,7 +135,7 @@ graph TB
 
 ### 1. REST API Setup
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                      API Gateway Configuration                  │
 ├─────────────────────────────────────────────────────────────────┤
@@ -187,7 +187,7 @@ graph TB
 
 ### 2. Method Configuration Details
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    POST /contact Method                         │
 ├─────────────────────────────────────────────────────────────────┤
@@ -280,7 +280,7 @@ graph TB
 
 ### 3. CORS Configuration
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     CORS Configuration                          │
 ├─────────────────────────────────────────────────────────────────┤
@@ -333,7 +333,7 @@ graph TB
 
 ### 1. Function Configuration
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                   Lambda Function Configuration                 │
 ├─────────────────────────────────────────────────────────────────┤
@@ -392,7 +392,7 @@ graph TB
 
 ### 2. Function Code Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Lambda Function Code Structure               │
 ├─────────────────────────────────────────────────────────────────┤
@@ -493,7 +493,7 @@ graph TB
 
 ### 3. Performance Optimization
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Performance Optimization                    │
 ├─────────────────────────────────────────────────────────────────┤
@@ -561,7 +561,7 @@ graph TB
 
 ### 1. Parameter Store Integration
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                  Parameter Store Integration                     │
 ├─────────────────────────────────────────────────────────────────┤
@@ -636,7 +636,7 @@ graph TB
 
 ### 2. Email Service Integration
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Email Service Integration                     │
 ├─────────────────────────────────────────────────────────────────┤
@@ -718,7 +718,7 @@ graph TB
 
 ### 3. Monitoring Integration
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Monitoring Integration                        │
 ├─────────────────────────────────────────────────────────────────┤
@@ -830,7 +830,7 @@ graph TB
 
 ### 1. Error Response Patterns
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                      Error Handling Patterns                    │
 ├─────────────────────────────────────────────────────────────────┤
@@ -921,7 +921,8 @@ graph TB
 ## Cost Optimization
 
 ### Monthly Cost Analysis
-```
+
+```text
 Component                    | Cost    | Notes
 ----------------------------|---------|---------------------------
 API Gateway Requests        | $0.00   | Free tier: 1M requests/month
@@ -937,6 +938,7 @@ Total Monthly Cost         | $1.10   | Estimated API/Lambda costs
 ```
 
 ### Scaling Considerations
+
 - **Request Volume**: Current architecture supports 2,000 requests/second
 - **Concurrency**: Limited to 10 concurrent executions (cost control)
 - **Memory**: 256 MB optimal for current workload
@@ -948,17 +950,20 @@ Total Monthly Cost         | $1.10   | Estimated API/Lambda costs
 This API Gateway + Lambda architecture document is part of a comprehensive documentation suite:
 
 ### Architecture Documentation Suite
+
 - **[Architecture Overview](./architecture-overview.md)** - Comprehensive system architecture and design principles
 - **[Email Service Architecture](./email-service-architecture.md)** - Detailed email service flow and technical specifications
 - **[Security Architecture](./security-architecture.md)** - Defense-in-depth security layers and compliance
 - **[DNS Configuration Guide](./dns-configuration-guide.md)** - Complete DNS setup and email authentication
 
 ### Implementation Guides
+
 - **[Email Infrastructure Guide](./email-infrastructure-guide.md)** - Complete email service implementation with AWS
 - **[Application Integration Examples](./application-integration-examples.md)** - Code examples for Lambda and frontend integration
 - **[Resend Complete Setup Guide](../deployment/resend-complete-setup-guide.md)** - Comprehensive deployment instructions
 
 ### Operational Documentation
+
 - **[Security Audit Checklist](./security-audit-checklist.md)** - Security review and compliance checklist
 - **[AWS Free Tier Optimization Guide](./aws-free-tier-optimization-2025.md)** - Cost optimization strategies
 

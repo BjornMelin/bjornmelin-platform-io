@@ -1,7 +1,7 @@
 # AWS CodeArtifact Integration - Optional Feature
 
 > **⚠️ OPTIONAL FEATURE - NOT DEPLOYED**
-> 
+>
 > This documentation describes an optional AWS CodeArtifact integration for automated npm package backups.
 > This feature is **NOT currently deployed** and is provided as a reference implementation that can be
 > enabled if needed in the future.
@@ -25,18 +25,21 @@ AWS CodeArtifact integration provides automated backup of npm releases from the 
 ### Key Features
 
 #### Security
+
 - **OIDC Authentication**: No long-lived AWS credentials stored in GitHub
 - **Least Privilege IAM**: Role limited to CodeArtifact operations only
 - **Branch Protection**: Only main branch can publish by default
 - **CDK Nag Compliance**: Security best practices enforced
 
 #### Automation
+
 - **Triggered on Release**: Automatically backs up packages after successful releases
 - **Manual Trigger**: Workflow dispatch for on-demand backups
 - **Version Verification**: Confirms package upload to CodeArtifact
 - **Idempotent**: Handles existing package versions gracefully
 
 #### Recovery
+
 - **List Versions**: View all available package versions
 - **Download Packages**: Retrieve specific versions locally
 - **Restore to NPM**: Bulk or individual version restoration
@@ -45,6 +48,7 @@ AWS CodeArtifact integration provides automated backup of npm releases from the 
 ## Architecture & Security
 
 ### Components
+
 1. **GitHub Actions OIDC Provider**: Provides temporary AWS credentials
 2. **IAM Role**: Assumes permissions for CodeArtifact operations
 3. **CodeArtifact Domain**: Organization-level artifact management (`bjornmelin-platform`)
@@ -52,6 +56,7 @@ AWS CodeArtifact integration provides automated backup of npm releases from the 
 5. **GitHub Workflow**: Publishes packages on release
 
 ### Security Model
+
 - No long-lived AWS credentials stored in GitHub
 - Temporary credentials via OIDC token exchange
 - Least-privilege IAM policies
@@ -59,7 +64,8 @@ AWS CodeArtifact integration provides automated backup of npm releases from the 
 - Audit trail via CloudTrail
 
 ### Repository Structure
-```
+
+```text
 Domain: bjornmelin-platform
 └── Repository: platform-releases
     └── Package: bjornmelin-platform-io
@@ -67,6 +73,7 @@ Domain: bjornmelin-platform
 ```
 
 ### GitHub Actions OIDC Flow
+
 1. GitHub requests OIDC token from GitHub's provider
 2. Token presented to AWS STS
 3. AWS validates token against trust policy
@@ -74,6 +81,7 @@ Domain: bjornmelin-platform
 5. CodeArtifact operations performed
 
 ### IAM Permissions Required
+
 - `codeartifact:GetAuthorizationToken` - Generate auth tokens
 - `codeartifact:PublishPackageVersion` - Upload packages
 - `codeartifact:DescribePackageVersion` - Verify uploads
@@ -84,6 +92,7 @@ Domain: bjornmelin-platform
 ### 1. AWS Infrastructure Setup
 
 #### Option A: Using Setup Script (Recommended)
+
 ```bash
 # Run the setup script to create all AWS resources
 ./scripts/codeartifact-setup.sh setup
@@ -96,6 +105,7 @@ Domain: bjornmelin-platform
 ```
 
 #### Option B: Using CDK
+
 ```bash
 cd infrastructure
 pnpm install
@@ -105,6 +115,7 @@ pnpm run deploy:codeartifact
 #### Option C: Manual AWS CLI Commands
 
 Create CodeArtifact Domain:
+
 ```bash
 aws codeartifact create-domain \
   --domain bjornmelin-platform \
@@ -112,6 +123,7 @@ aws codeartifact create-domain \
 ```
 
 Create CodeArtifact Repository:
+
 ```bash
 aws codeartifact create-repository \
   --domain bjornmelin-platform \
@@ -121,6 +133,7 @@ aws codeartifact create-repository \
 ```
 
 Connect to npmjs upstream (optional):
+
 ```bash
 aws codeartifact associate-external-connection \
   --domain bjornmelin-platform \
@@ -131,6 +144,7 @@ aws codeartifact associate-external-connection \
 ### 2. GitHub OIDC Setup
 
 Create OIDC Identity Provider:
+
 ```bash
 aws iam create-open-id-connect-provider \
   --url https://token.actions.githubusercontent.com \
@@ -140,6 +154,7 @@ aws iam create-open-id-connect-provider \
 ```
 
 Create IAM Role with Trust Policy:
+
 ```json
 {
   "Version": "2012-10-17",
@@ -162,6 +177,7 @@ Create IAM Role with Trust Policy:
 ```
 
 IAM Policy for CodeArtifact:
+
 ```json
 {
   "Version": "2012-10-17",
@@ -198,6 +214,7 @@ IAM Policy for CodeArtifact:
 ### 3. GitHub Configuration
 
 Add the following secret to your GitHub repository:
+
 - `AWS_ACCOUNT_ID`: Your AWS account ID (shown by setup script)
 
 The workflow is already configured in `.github/workflows/codeartifact-backup.yml`
@@ -205,6 +222,7 @@ The workflow is already configured in `.github/workflows/codeartifact-backup.yml
 ### 4. Testing Strategy
 
 #### Local Testing
+
 ```bash
 # Configure local npm to use CodeArtifact
 export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
@@ -224,6 +242,7 @@ npm publish --dry-run
 ```
 
 #### GitHub Actions Testing
+
 1. Go to Actions → CodeArtifact Backup
 2. Click "Run workflow"
 3. Monitor execution
@@ -241,17 +260,22 @@ npm publish --dry-run
 ### Usage
 
 #### Automatic Backups
+
 Backups happen automatically when:
+
 1. A release workflow completes successfully
 2. The CodeArtifact backup workflow is triggered
 
 #### Manual Backup
+
 Trigger from GitHub Actions:
+
 1. Go to Actions → CodeArtifact Backup
 2. Click "Run workflow"
 3. Optionally specify a version to backup
 
-#### Local Testing
+#### Local Testing - CodeArtifact Setup Script
+
 ```bash
 # Configure npm for CodeArtifact
 ./scripts/codeartifact-setup.sh configure-npm
@@ -263,7 +287,9 @@ Trigger from GitHub Actions:
 ## Scripts & Tools
 
 ### Setup Script (`scripts/codeartifact-setup.sh`)
+
 Manages AWS CodeArtifact infrastructure:
+
 - `setup` - Creates all required AWS resources
 - `configure-npm` - Configures npm for CodeArtifact
 - `test` - Tests publishing capability
@@ -271,7 +297,9 @@ Manages AWS CodeArtifact infrastructure:
 - `cleanup` - Removes all AWS resources
 
 ### Recovery Script (`scripts/codeartifact-recovery.sh`)
+
 Handles package recovery operations:
+
 - `list` - List all available versions
 - `download [version]` - Download specific version
 - `restore [version]` - Restore to npm registry
@@ -280,11 +308,13 @@ Handles package recovery operations:
 ## Recovery Operations
 
 ### List Available Versions
+
 ```bash
 ./scripts/codeartifact-recovery.sh list
 ```
 
 ### Download a Specific Version
+
 ```bash
 # Download latest
 ./scripts/codeartifact-recovery.sh download
@@ -294,6 +324,7 @@ Handles package recovery operations:
 ```
 
 ### Restore to NPM Registry
+
 ```bash
 # Set your NPM token
 export NPM_TOKEN=your-npm-token
@@ -306,6 +337,7 @@ export NPM_TOKEN=your-npm-token
 ```
 
 ### Bulk Migration Script
+
 ```bash
 #!/bin/bash
 # List all package versions
@@ -325,6 +357,7 @@ done
 ## Monitoring & Troubleshooting
 
 ### Check Package Status
+
 ```bash
 # View package info
 aws codeartifact describe-package \
@@ -343,12 +376,14 @@ aws codeartifact list-package-versions \
 ```
 
 ### GitHub Actions Logs
+
 Check workflow runs at:
 `https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeartifact-backup.yml`
 
 ### Common Issues & Solutions
 
 #### Authentication Failures
+
 ```bash
 # Verify OIDC provider exists
 aws iam list-open-id-connect-providers
@@ -358,6 +393,7 @@ aws iam get-role --role-name GitHubActionsCodeArtifact
 ```
 
 #### Publishing Failures
+
 ```bash
 # Check if package already exists
 aws codeartifact describe-package-version \
@@ -369,6 +405,7 @@ aws codeartifact describe-package-version \
 ```
 
 #### Token Issues
+
 ```bash
 # Generate new token (valid for 12 hours)
 aws codeartifact get-authorization-token \
@@ -378,6 +415,7 @@ aws codeartifact get-authorization-token \
 ```
 
 ### Debug Commands
+
 ```bash
 # Check domain status
 aws codeartifact describe-domain --domain bjornmelin-platform
@@ -396,12 +434,14 @@ aws codeartifact get-repository-permissions-policy \
 ## Cost Management
 
 ### Estimated Costs
+
 - **Storage**: $0.05 per GB per month
 - **Data Transfer**: $0.09 per GB (egress to internet)
 - **Requests**: $0.05 per 10,000 requests
 - **Estimated monthly cost**: ~$5-10 for typical usage
 
 ### View Storage Usage
+
 ```bash
 # Check repository size via CloudWatch
 aws cloudwatch get-metric-statistics \
@@ -416,6 +456,7 @@ aws cloudwatch get-metric-statistics \
 ```
 
 ### Implement Lifecycle Policy
+
 ```bash
 # List versions older than 90 days
 aws codeartifact list-package-versions \
@@ -430,27 +471,34 @@ aws codeartifact list-package-versions \
 ## Files Created
 
 ### Documentation
+
 - `/docs/infrastructure/codeartifact-backup.md` - This consolidated guide
 
 ### GitHub Workflow
+
 - `/.github/workflows/codeartifact-backup.yml` - Automated backup workflow
 
 ### Infrastructure as Code
+
 - `/infrastructure/lib/codeartifact-stack.ts` - CDK stack definition
 - `/infrastructure/bin/codeartifact-app.ts` - CDK application entry point
 
 ### Scripts
+
 - `/scripts/codeartifact-setup.sh` - Setup and management script
 - `/scripts/codeartifact-recovery.sh` - Recovery operations script
 
 ### Configuration Updates
+
 - `/infrastructure/package.json` - Added CDK scripts and dependencies
 - `/infrastructure/cdk.json` - Added CodeArtifact context values
 
 ## Advanced Configuration
 
 ### Multiple Branches Support
+
 To allow multiple branches to publish, update the CDK stack:
+
 ```typescript
 new CodeArtifactStack(app, 'BjornmelinCodeArtifactStack', {
   allowedBranches: ['main', 'develop', 'release/*'],
@@ -459,7 +507,9 @@ new CodeArtifactStack(app, 'BjornmelinCodeArtifactStack', {
 ```
 
 ### Custom Domain/Repository Names
+
 Set environment variables before running scripts:
+
 ```bash
 export CODEARTIFACT_DOMAIN=my-custom-domain
 export CODEARTIFACT_REPOSITORY=my-custom-repo
@@ -471,12 +521,14 @@ export AWS_REGION=eu-west-1
 ## Maintenance Tasks
 
 ### Regular Tasks
+
 - Review IAM permissions quarterly
 - Update OIDC thumbprints if GitHub changes them
 - Monitor storage costs and implement lifecycle policies
 - Test recovery procedures monthly
 
 ### Security Best Practices
+
 1. **Least Privilege**: IAM role only has permissions for specific CodeArtifact operations
 2. **OIDC Authentication**: No long-lived credentials stored in GitHub
 3. **Branch Protection**: Only the main branch can publish by default
@@ -495,6 +547,7 @@ export AWS_REGION=eu-west-1
 ## Support
 
 For issues or questions:
+
 1. Check the troubleshooting section above
 2. Review AWS CodeArtifact documentation
 3. Check GitHub Actions logs for detailed error messages

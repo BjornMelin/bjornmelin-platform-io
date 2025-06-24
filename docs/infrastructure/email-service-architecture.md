@@ -113,7 +113,7 @@ graph TB
 
 ### 1. Frontend Security Layer
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Frontend Security                            │
 ├─────────────────────────────────────────────────────────────────┤
@@ -148,7 +148,7 @@ graph TB
 
 ### 2. API Gateway Configuration
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                      API Gateway Setup                          │
 ├─────────────────────────────────────────────────────────────────┤
@@ -180,6 +180,7 @@ graph TB
 ### 3. Lambda Function Architecture
 
 #### Function Configuration
+
 - **Runtime**: Node.js 20.x (ARM64)
 - **Memory**: 256 MB
 - **Timeout**: 30 seconds
@@ -262,7 +263,7 @@ sequenceDiagram
 
 ### 4. Parameter Store & KMS Security
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │              Parameter Store & KMS Architecture                  │
 ├─────────────────────────────────────────────────────────────────┤
@@ -334,7 +335,7 @@ sequenceDiagram
 
 ### 5. DNS Configuration for Email Authentication
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                 DNS Email Authentication                        │
 ├─────────────────────────────────────────────────────────────────┤
@@ -395,7 +396,7 @@ sequenceDiagram
 
 ### 6. Resend API Integration
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Resend API Integration                       │
 ├─────────────────────────────────────────────────────────────────┤
@@ -466,7 +467,7 @@ sequenceDiagram
 
 ### 7. Monitoring & Alerting
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                  Monitoring & Alerting System                   │
 ├─────────────────────────────────────────────────────────────────┤
@@ -549,18 +550,21 @@ sequenceDiagram
 ## Security Considerations
 
 ### 1. Data Protection
+
 - **Encryption at Rest**: All sensitive data encrypted using customer-managed KMS keys
 - **Encryption in Transit**: TLS 1.2+ for all API communications
 - **Parameter Isolation**: Strict IAM policies for parameter access
 - **Key Rotation**: Automatic KMS key rotation with quarterly API key rotation
 
 ### 2. Access Control
+
 - **Least Privilege**: IAM policies grant minimum required permissions
 - **Service-to-Service**: Secure authentication between AWS services
 - **API Security**: CSRF protection, rate limiting, input validation
 - **Audit Logging**: Comprehensive CloudTrail logging for all access
 
 ### 3. Input Validation
+
 - **Client-Side**: Immediate feedback for user experience
 - **Server-Side**: Security-focused validation and sanitization
 - **Content Filtering**: XSS and injection attack prevention
@@ -569,16 +573,19 @@ sequenceDiagram
 ## Performance Optimization
 
 ### 1. Caching Strategy
+
 - **Parameter Caching**: 1-hour cache for configuration data
 - **Connection Reuse**: HTTP keep-alive for API calls
 - **ARM64 Architecture**: Cost and performance optimized Lambda
 
 ### 2. Error Handling
+
 - **Exponential Backoff**: Smart retry logic for transient failures
 - **Circuit Breaker**: Prevent cascade failures
 - **Graceful Degradation**: Fallback mechanisms for service issues
 
 ### 3. Monitoring
+
 - **Real-time Metrics**: Sub-minute resolution for critical metrics
 - **Performance Tracking**: 95th percentile response time monitoring
 - **Cost Tracking**: Resource utilization and cost optimization
@@ -586,16 +593,19 @@ sequenceDiagram
 ## Operational Procedures
 
 ### 1. Deployment Process
+
 - **Infrastructure as Code**: CDK-based deployment
 - **Blue/Green Deployment**: Zero-downtime deployments
 - **Rollback Procedures**: Automated rollback on failure detection
 
 ### 2. Maintenance Windows
+
 - **API Key Rotation**: Quarterly manual rotation
 - **Security Updates**: Monthly security patch reviews
 - **Performance Reviews**: Quarterly performance optimization
 
 ### 3. Incident Response
+
 - **Automated Alerting**: Real-time incident detection
 - **Escalation Procedures**: Clear escalation paths
 - **Post-Incident Reviews**: Continuous improvement process
@@ -603,7 +613,8 @@ sequenceDiagram
 ## Cost Analysis
 
 ### Email Service Costs (Monthly)
-```
+
+```text
 Component                 | Cost    | Notes
 --------------------------|---------|---------------------------
 Parameter Store          | $0.00   | Standard tier (free)
@@ -619,6 +630,7 @@ Total                   | $1.33   | Estimated monthly cost
 ```
 
 ### Scaling Considerations
+
 - **Free Tier Limits**: 3,000 emails/month via Resend
 - **API Gateway**: 1 million requests/month free tier
 - **Lambda**: 1 million invocations/month free tier
@@ -629,12 +641,14 @@ Total                   | $1.33   | Estimated monthly cost
 This email service architecture document is part of a comprehensive documentation suite:
 
 ### Architecture Documentation Suite
+
 - **[Architecture Overview](./architecture-overview.md)** - Comprehensive system architecture and design principles
 - **[Security Architecture](./security-architecture.md)** - Defense-in-depth security layers and compliance
 - **[API Gateway + Lambda Architecture](./api-lambda-architecture.md)** - Serverless API architecture and performance
 - **[DNS Configuration Guide](./dns-configuration-guide.md)** - Complete DNS setup and email authentication
 
 ### Implementation Guides
+
 - **[Email Infrastructure Guide](./email-infrastructure-guide.md)** - Complete email service implementation with AWS
 - **[Application Integration Examples](./application-integration-examples.md)** - Code examples for Lambda and frontend integration
 - **[Resend Complete Setup Guide](../deployment/resend-complete-setup-guide.md)** - Comprehensive deployment instructions

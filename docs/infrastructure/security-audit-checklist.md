@@ -3,6 +3,7 @@
 ## Pre-Deployment Security Review
 
 ### Parameter Store & Secrets Management
+
 - [ ] **KMS Key Configuration**
   - [ ] Customer-managed key created
   - [ ] Key rotation enabled
@@ -25,6 +26,7 @@
   - [ ] Separate policies for read/write access
 
 ### Network Security
+
 - [ ] **API Access**
   - [ ] HTTPS only for all API calls
   - [ ] TLS 1.2 or higher enforced
@@ -38,6 +40,7 @@
   - [ ] VPC configuration if required
 
 ### DNS Security
+
 - [ ] **SPF Record**
   - [ ] Restrictive SPF policy (`~all` or `-all`)
   - [ ] Only authorized senders included
@@ -56,6 +59,7 @@
 ## Operational Security
 
 ### Monitoring & Alerting
+
 - [ ] **CloudWatch Alarms**
   - [ ] Unusual parameter access patterns
   - [ ] Failed parameter retrievals
@@ -75,6 +79,7 @@
   - [ ] Cost tracking enabled
 
 ### Access Control
+
 - [ ] **Human Access**
   - [ ] MFA required for AWS console access
   - [ ] Separate dev/prod access controls
@@ -88,6 +93,7 @@
   - [ ] Regular credential rotation
 
 ### Data Protection
+
 - [ ] **Encryption**
   - [ ] At-rest encryption for all data
   - [ ] In-transit encryption for all communications
@@ -103,6 +109,7 @@
 ## Incident Response
 
 ### Preparation
+
 - [ ] **Response Plan**
   - [ ] Incident response procedures documented
   - [ ] Contact information up-to-date
@@ -116,6 +123,7 @@
   - [ ] Regular security reviews
 
 ### Recovery Procedures
+
 - [ ] **Parameter/Secret Compromise**
   - [ ] Immediate parameter update procedure
   - [ ] Affected systems inventory
@@ -131,6 +139,7 @@
 ## Compliance & Governance
 
 ### Documentation
+
 - [ ] **Security Documentation**
   - [ ] Architecture diagrams current
   - [ ] Security controls documented
@@ -144,6 +153,7 @@
   - [ ] Security training materials
 
 ### Regular Reviews
+
 - [ ] **Quarterly Reviews**
   - [ ] Access permissions audit
   - [ ] Security group rules review
@@ -159,6 +169,7 @@
 ## Post-Deployment Validation
 
 ### Functional Testing
+
 - [ ] **Parameter Updates**
   - [ ] Manual parameter update successful
   - [ ] Parameter history preserved
@@ -172,6 +183,7 @@
   - [ ] Bounce handling working
 
 ### Security Testing
+
 - [ ] **Access Control Testing**
   - [ ] Unauthorized access attempts blocked
   - [ ] Audit logs capturing all access
@@ -187,22 +199,26 @@
 ## Maintenance Schedule
 
 ### Daily
+
 - [ ] Monitor CloudWatch dashboards
 - [ ] Review any security alerts
 - [ ] Check email delivery metrics
 
 ### Weekly
+
 - [ ] Review CloudTrail logs
 - [ ] Check for unusual patterns
 - [ ] Verify backup procedures
 
 ### Monthly
+
 - [ ] Access permission review
 - [ ] Cost analysis
 - [ ] Security patch updates
 - [ ] Documentation updates
 
 ### Quarterly
+
 - [ ] Full security audit
 - [ ] Manual rotation execution
 - [ ] Compliance review

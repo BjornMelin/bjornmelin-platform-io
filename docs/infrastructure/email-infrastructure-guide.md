@@ -18,12 +18,14 @@ The email infrastructure consists of:
 ## Current State Analysis
 
 ### Existing Infrastructure
+
 - **CDK Version**: v2.189.1 (latest as of implementation)
 - **Stacks**: DNS, Storage, Deployment, Monitoring
 - **Domain**: bjornmelin.io (hosted zone exists in Route 53)
 - **Missing**: Parameter store configuration and email service setup
 
 ### Gap Analysis
+
 - No centralized parameter/secrets management
 - No email service DNS records (SPF, DKIM)
 - No automatic secret rotation
@@ -34,6 +36,7 @@ The email infrastructure consists of:
 ### Phase 1: Infrastructure Setup (Day 1)
 
 #### 1.1 Deploy Parameter Store Configuration
+
 ```bash
 cd infrastructure
 pnpm install
@@ -42,13 +45,16 @@ pnpm run deploy:parameters
 ```
 
 This creates:
+
 - Customer-managed KMS key with rotation
 - Parameter Store SecureString parameter for Resend API key
 - IAM policies for least-privilege access
 - CloudTrail logging integration
 
 #### 1.2 Add Resend API Key
+
 After stack deployment:
+
 ```bash
 # Store the parameter value
 aws ssm put-parameter \
@@ -67,6 +73,7 @@ aws ssm put-parameter \
 ### Phase 2: Email Service Configuration (Day 1-2)
 
 #### 2.1 Add Domain to Resend
+
 1. Log into Resend dashboard
 2. Add domain: bjornmelin.io
 3. Copy verification values:
@@ -74,7 +81,9 @@ aws ssm put-parameter \
    - DKIM TXT records (usually 2-3 records)
 
 #### 2.2 Update Email Stack Configuration
+
 Update `bin/app.ts` with actual values:
+
 ```typescript
 const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   // ... existing config
@@ -87,11 +96,13 @@ const emailStack = new EmailStack(app, getStackName("email", "prod"), {
 ```
 
 #### 2.3 Deploy Email Stack
+
 ```bash
 pnpm run deploy:email
 ```
 
 This creates:
+
 - SPF record: `v=spf1 include:_spf.resend.com ~all`
 - Domain verification TXT record
 - DKIM TXT records
@@ -101,6 +112,7 @@ This creates:
 ### Phase 3: Application Integration (Day 2-3)
 
 #### 3.1 Update Lambda Functions
+
 Example integration for contact form handler:
 
 ```typescript
@@ -143,6 +155,7 @@ export async function sendEmail(to: string, subject: string, html: string) {
 ```
 
 #### 3.2 Update Lambda Environment Variables
+
 ```typescript
 const contactLambda = new lambda.Function(this, "ContactFormHandler", {
   // ... existing config
@@ -172,8 +185,10 @@ contactLambda.addToRolePolicy(new iam.PolicyStatement({
 ### Phase 4: Monitoring & Rotation (Day 3-4)
 
 #### 4.1 Set Up Monitoring
+
 1. Access CloudWatch Dashboard: `prod-portfolio-email-dashboard`
 2. Configure SNS email notifications:
+
 ```bash
 aws sns subscribe \
   --topic-arn "arn:aws:sns:region:account:prod-portfolio-email-alarms" \
@@ -182,7 +197,9 @@ aws sns subscribe \
 ```
 
 #### 4.2 Manual Rotation Process
+
 Since Parameter Store doesn't support automatic rotation, implement a quarterly manual rotation:
+
 ```bash
 # Update parameter with new API key
 aws ssm put-parameter \
@@ -213,6 +230,7 @@ aws ssm put-parameter \
 ## Cost Analysis
 
 ### Monthly Costs (Production)
+
 - **Parameter Store**: $0.00 (standard parameters free)
 - **API Calls**: $0.00 (standard throughput free)
 - **KMS**: $1.00 per key + $0.03/10k requests
@@ -220,6 +238,7 @@ aws ssm put-parameter \
 - **Total**: ~$1.33/month
 
 ### Cost Optimization
+
 - Free Parameter Store vs paid Secrets Manager ($0.40/month savings)
 - Single parameter with JSON structure
 - Aggressive caching in Lambda functions (reduce API calls)
@@ -228,7 +247,8 @@ aws ssm put-parameter \
 ## DNS Records Reference
 
 ### SPF Record
-```
+
+```text
 Type: TXT
 Name: bjornmelin.io
 Value: "v=spf1 include:_spf.resend.com ~all"
@@ -236,7 +256,8 @@ TTL: 300
 ```
 
 ### DKIM Records (Example)
-```
+
+```text
 Type: TXT
 Name: resend._domainkey.bjornmelin.io
 Value: "k=rsa; p=DKIM_PUBLIC_KEY_FROM_RESEND"
@@ -244,7 +265,8 @@ TTL: 300
 ```
 
 ### Domain Verification
-```
+
+```text
 Type: TXT
 Name: _resend.bjornmelin.io
 Value: "resend-verification-xxxxx"
@@ -276,6 +298,7 @@ TTL: 300
 If issues arise:
 
 1. **Immediate Rollback**:
+
    ```bash
    # Parameter Store maintains history - revert if needed
    # First, get the previous value
@@ -292,6 +315,7 @@ If issues arise:
    ```
 
 2. **Stack Rollback**:
+
    ```bash
    # Delete stacks in reverse order
    pnpm run destroy:email
@@ -310,12 +334,14 @@ If issues arise:
 ## References
 
 ### Internal Architecture Documentation
+
 - [Email Service Architecture](./email-service-architecture.md) - Detailed email service flow and technical specifications
 - [Security Architecture](./security-architecture.md) - Defense-in-depth security layers and compliance
 - [DNS Configuration Guide](./dns-configuration-guide.md) - Complete DNS setup and email authentication
 - [Architecture Overview](./architecture-overview.md) - Comprehensive system architecture and design principles
 
 ### AWS Documentation
+
 - [AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
 - [Parameter Store Best Practices](https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-store-best-practices.html)
 - [Route 53 DNS Record Types](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)

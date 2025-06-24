@@ -7,6 +7,7 @@ This guide provides a comprehensive migration path from AWS Secrets Manager to A
 ## Why Migrate to Parameter Store?
 
 ### Cost Comparison
+
 | Feature | Secrets Manager | Parameter Store |
 |---------|----------------|-----------------|
 | **Storage Cost** | $0.40/secret/month | FREE (standard parameters) |
@@ -17,12 +18,14 @@ This guide provides a comprehensive migration path from AWS Secrets Manager to A
 | **Multi-Region Replication** | ✅ Available | ❌ Not available |
 
 ### Best Use Cases for Parameter Store
+
 - Static API keys that change infrequently
 - Configuration values
 - Environment-specific settings
 - Non-rotating credentials
 
 ### When to Keep Secrets Manager
+
 - Database credentials requiring automatic rotation
 - Secrets that need cross-account access
 - Multi-region active-active deployments
@@ -211,6 +214,7 @@ graph LR
 ### Phase 1: Create Parameter Store Entry
 
 #### 1.1 Export Existing Secret
+
 ```bash
 # Get current secret value
 aws secretsmanager get-secret-value \
@@ -220,6 +224,7 @@ aws secretsmanager get-secret-value \
 ```
 
 #### 1.2 Create Parameter Store Entry
+
 ```bash
 # Create new parameter with same value
 aws ssm put-parameter \
@@ -233,6 +238,7 @@ aws ssm put-parameter \
 ```
 
 #### 1.3 Verify Parameter Creation
+
 ```bash
 # Verify parameter exists and can be decrypted
 aws ssm get-parameter \
@@ -245,9 +251,11 @@ aws ssm get-parameter \
 ### Phase 2: Update Infrastructure Code
 
 #### 2.1 Update CDK Stack
+
 Replace Secrets Manager references in your CDK code:
 
 **Before (Secrets Manager):**
+
 ```typescript
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
@@ -259,6 +267,7 @@ const resendApiKeySecret = new secretsmanager.Secret(this, 'ResendApiKey', {
 ```
 
 **After (Parameter Store):**
+
 ```typescript
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 
@@ -272,12 +281,15 @@ const resendApiKeyParameter = new ssm.StringParameter(this, 'ResendApiKey', {
 ```
 
 #### 2.2 Update Lambda Permissions
+
 **Before:**
+
 ```typescript
 resendApiKeySecret.grantRead(lambdaFunction);
 ```
 
 **After:**
+
 ```typescript
 lambdaFunction.addToRolePolicy(new iam.PolicyStatement({
   actions: ['ssm:GetParameter'],
@@ -299,7 +311,9 @@ lambdaFunction.addToRolePolicy(new iam.PolicyStatement({
 ### Phase 3: Update Application Code
 
 #### 3.1 Update SDK Client
+
 **Before (Secrets Manager):**
+
 ```typescript
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
@@ -312,6 +326,7 @@ const config = JSON.parse(response.SecretString!);
 ```
 
 **After (Parameter Store):**
+
 ```typescript
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 
@@ -325,7 +340,9 @@ const config = JSON.parse(response.Parameter!.Value!);
 ```
 
 #### 3.2 Update Environment Variables
+
 **Before:**
+
 ```typescript
 environment: {
   RESEND_SECRET_ARN: "arn:aws:secretsmanager:region:account:secret:name"
@@ -333,6 +350,7 @@ environment: {
 ```
 
 **After:**
+
 ```typescript
 environment: {
   RESEND_PARAMETER_NAME: "/prod/portfolio/resend-api-key"
@@ -342,6 +360,7 @@ environment: {
 ### Phase 4: Testing & Validation
 
 #### 4.1 Local Testing
+
 ```bash
 # Set environment variable
 export RESEND_PARAMETER_NAME="/prod/portfolio/resend-api-key"
@@ -351,12 +370,14 @@ npm test
 ```
 
 #### 4.2 Integration Testing
+
 1. Deploy to development environment first
 2. Test all email functionality
 3. Monitor CloudWatch logs for errors
 4. Verify parameter access in CloudTrail
 
 #### 4.3 Performance Testing
+
 ```bash
 # Compare latency between Secrets Manager and Parameter Store
 aws cloudwatch get-metric-statistics \
@@ -372,6 +393,7 @@ aws cloudwatch get-metric-statistics \
 ### Phase 5: Production Deployment
 
 #### 5.1 Pre-Deployment Checklist
+
 - [ ] Parameter created in production
 - [ ] CDK code updated and tested
 - [ ] Lambda code updated and tested
@@ -379,6 +401,7 @@ aws cloudwatch get-metric-statistics \
 - [ ] Rollback plan documented
 
 #### 5.2 Deployment Steps
+
 ```bash
 # 1. Deploy infrastructure changes
 cd infrastructure
@@ -397,6 +420,7 @@ curl -X POST https://api.bjornmelin.io/contact \
 ```
 
 #### 5.3 Post-Deployment Validation
+
 ```bash
 # Check Lambda logs
 aws logs tail /aws/lambda/ContactFormHandler --follow
@@ -410,6 +434,7 @@ aws cloudtrail lookup-events \
 ### Phase 6: Cleanup
 
 #### 6.1 Remove Secrets Manager (After Validation Period)
+
 ```bash
 # Schedule deletion (7-day waiting period)
 aws secretsmanager delete-secret \
@@ -423,6 +448,7 @@ aws secretsmanager delete-secret \
 ```
 
 #### 6.2 Update Documentation
+
 - Update all references from Secrets Manager to Parameter Store
 - Document the manual rotation process
 - Update cost analysis documentation
@@ -432,8 +458,10 @@ aws secretsmanager delete-secret \
 Since Parameter Store doesn't support automatic rotation, implement a quarterly manual process:
 
 ### Rotation Steps
+
 1. **Generate New API Key** in Resend dashboard
 2. **Update Parameter Store**:
+
    ```bash
    aws ssm put-parameter \
      --name "/prod/portfolio/resend-api-key" \
@@ -442,16 +470,21 @@ Since Parameter Store doesn't support automatic rotation, implement a quarterly 
      --key-id "alias/portfolio-kms-key" \
      --overwrite
    ```
+
 3. **Verify New Key Works**:
+
    ```bash
    # Test email sending with new key
    ```
+
 4. **Revoke Old Key** in Resend dashboard
 5. **Document Rotation** in security log
 
 ### Rotation Schedule
+
 - Set quarterly calendar reminders
 - Use CloudWatch Events for automated reminders:
+
   ```bash
   aws events put-rule \
     --name quarterly-rotation-reminder \
@@ -463,7 +496,9 @@ Since Parameter Store doesn't support automatic rotation, implement a quarterly 
 If issues arise during migration:
 
 ### Immediate Rollback
+
 1. **Revert Lambda Environment Variables**:
+
    ```bash
    # Update Lambda to use Secrets Manager again
    aws lambda update-function-configuration \
@@ -472,17 +507,21 @@ If issues arise during migration:
    ```
 
 2. **Restore IAM Permissions**:
+
    ```bash
    # Re-grant Secrets Manager permissions
    ```
 
 3. **Verify Functionality**:
+
    ```bash
    # Test email sending
    ```
 
 ### Parameter History
+
 Parameter Store maintains history, allowing easy recovery:
+
 ```bash
 # View parameter history
 aws ssm get-parameter-history \
@@ -500,17 +539,20 @@ aws ssm put-parameter \
 ## Best Practices
 
 ### Security
+
 1. **Use SecureString Type** - Always encrypt sensitive data
 2. **Restrict IAM Permissions** - Grant minimal required access
 3. **Enable CloudTrail** - Audit all parameter access
 4. **Use KMS ViaService** - Restrict decryption to specific services
 
 ### Performance
+
 1. **Cache Parameters** - Reduce API calls and latency
 2. **Use GetParameters** - Batch retrieve multiple parameters
 3. **Set Appropriate TTL** - Balance freshness vs performance
 
 ### Organization
+
 1. **Use Hierarchical Names** - `/environment/application/component/parameter`
 2. **Tag Parameters** - Enable cost allocation and organization
 3. **Document Parameters** - Use descriptions for clarity
@@ -519,6 +561,7 @@ aws ssm put-parameter \
 ## Monitoring & Alerts
 
 ### CloudWatch Metrics
+
 ```bash
 # Create alarm for failed parameter retrievals
 aws cloudwatch put-metric-alarm \
@@ -534,6 +577,7 @@ aws cloudwatch put-metric-alarm \
 ```
 
 ### Cost Tracking
+
 ```bash
 # Track API usage to ensure within free tier
 aws cloudwatch get-metric-statistics \
@@ -572,21 +616,25 @@ aws cloudwatch get-metric-statistics \
 ## Migration Timeline
 
 ### Week 1
+
 - Day 1-2: Create parameters in development
 - Day 3-4: Update and test code
 - Day 5: Deploy to development
 
 ### Week 2
+
 - Day 1-2: Performance testing
 - Day 3-4: Update documentation
 - Day 5: Production deployment
 
 ### Week 3
+
 - Monitor for issues
 - Gather metrics
 - Schedule Secrets Manager deletion
 
 ### Week 4
+
 - Complete Secrets Manager removal
 - Final documentation updates
 - Team training on rotation process
@@ -594,6 +642,7 @@ aws cloudwatch get-metric-statistics \
 ## Summary
 
 Migrating from Secrets Manager to Parameter Store provides:
+
 - **Cost Savings**: $0.40/month ($4.80/year)
 - **Simplicity**: Fewer moving parts
 - **Reliability**: Same encryption, simpler architecture

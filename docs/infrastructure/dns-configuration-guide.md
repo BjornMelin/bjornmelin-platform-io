@@ -9,59 +9,59 @@ This document provides a comprehensive guide to the DNS configuration for bjornm
 ```mermaid
 graph TB
     %% External DNS Resolution
-    subgraph Internet ["🌐 Internet DNS Resolution"]
-        Users[👥 Internet Users]
-        PublicDNS[🌐 Public DNS Resolvers<br/>8.8.8.8, 1.1.1.1, etc.]
+    subgraph Internet ["Internet DNS Resolution"]
+        Users["Internet Users"]
+        PublicDNS["Public DNS Resolvers<br/>8.8.8.8, 1.1.1.1, etc."]
     end
     
     %% Route 53 Infrastructure
-    subgraph Route53Infrastructure ["🏗️ Route 53 Global Infrastructure"]
-        AuthoritativeNS[📋 Authoritative Name Servers<br/>ns-1234.awsdns-12.com<br/>ns-5678.awsdns-34.co.uk<br/>ns-9012.awsdns-56.net<br/>ns-3456.awsdns-78.org]
-        HealthChecks[💓 Health Checks<br/>30-second intervals<br/>Multi-region monitoring]
-        TrafficPolicy[🚦 Traffic Policy<br/>Future: Weighted routing<br/>Failover capabilities]
+    subgraph Route53Infrastructure ["Route 53 Global Infrastructure"]
+        AuthoritativeNS["Authoritative Name Servers<br/>ns-1234.awsdns-12.com<br/>ns-5678.awsdns-34.co.uk<br/>ns-9012.awsdns-56.net<br/>ns-3456.awsdns-78.org"]
+        HealthChecks["Health Checks<br/>30-second intervals<br/>Multi-region monitoring"]
+        TrafficPolicy["Traffic Policy<br/>Future: Weighted routing<br/>Failover capabilities"]
     end
     
     %% Primary Domain Records
-    subgraph PrimaryDomain ["🏠 Primary Domain: bjornmelin.io"]
-        ApexA[📍 A Record<br/>Alias: CloudFront Distribution<br/>TTL: Alias (AWS managed)]
-        ApexAAAA[📍 AAAA Record<br/>Alias: CloudFront Distribution<br/>IPv6 Support]
-        WWWCname[📍 CNAME Record<br/>www → bjornmelin.io<br/>TTL: 300 seconds]
+    subgraph PrimaryDomain ["Primary Domain: bjornmelin.io"]
+        ApexA["A Record<br/>Alias: CloudFront Distribution<br/>TTL: Alias AWS managed"]
+        ApexAAAA["AAAA Record<br/>Alias: CloudFront Distribution<br/>IPv6 Support"]
+        WWWCname["CNAME Record<br/>www to bjornmelin.io<br/>TTL: 300 seconds"]
     end
     
     %% API Subdomain
-    subgraph APISubdomain ["🚪 API Subdomain: api.bjornmelin.io"]
-        APIA[📍 A Record<br/>Alias: API Gateway<br/>Custom Domain]
-        APIAAAA[📍 AAAA Record<br/>Alias: API Gateway<br/>IPv6 Support]
+    subgraph APISubdomain ["API Subdomain: api.bjornmelin.io"]
+        APIA["A Record<br/>Alias: API Gateway<br/>Custom Domain"]
+        APIAAAA["AAAA Record<br/>Alias: API Gateway<br/>IPv6 Support"]
     end
     
     %% Email Authentication
-    subgraph EmailAuth ["📧 Email Authentication Records"]
-        SPF[📬 SPF Record (TXT)<br/>"v=spf1 include:_spf.resend.com ~all"<br/>TTL: 300 seconds]
-        DKIM1[🔐 DKIM Record 1 (TXT)<br/>resend._domainkey<br/>RSA-2048 Public Key]
-        DKIM2[🔐 DKIM Record 2 (TXT)<br/>resend2._domainkey<br/>Backup Key]
-        DMARC[🛡️ DMARC Policy (TXT)<br/>"v=DMARC1; p=none; rua=..."<br/>Monitor Mode]
-        DomainVerify[✅ Domain Verification (TXT)<br/>_resend.bjornmelin.io<br/>Ownership Proof]
+    subgraph EmailAuth ["Email Authentication Records"]
+        SPF["SPF Record TXT<br/>v=spf1 include:_spf.resend.com ~all<br/>TTL: 300 seconds"]
+        DKIM1["DKIM Record 1 TXT<br/>resend._domainkey<br/>RSA-2048 Public Key"]
+        DKIM2["DKIM Record 2 TXT<br/>resend2._domainkey<br/>Backup Key"]
+        DMARC["DMARC Policy TXT<br/>v=DMARC1; p=none; rua=...<br/>Monitor Mode"]
+        DomainVerify["Domain Verification TXT<br/>_resend.bjornmelin.io<br/>Ownership Proof"]
     end
     
     %% Security Records
-    subgraph SecurityRecords ["🔒 Security & Compliance"]
-        CAA[🛡️ CAA Record<br/>"0 issue amazon.com"<br/>Certificate Authority Authorization]
-        TLSPolicy[🔐 TLS Policy (Future)<br/>_443._tcp TXT Record<br/>Certificate Transparency]
-        SecurityContact[📞 Security Contact (Future)<br/>_security TXT Record<br/>Incident Response]
+    subgraph SecurityRecords ["Security & Compliance"]
+        CAA["CAA Record<br/>0 issue amazon.com<br/>Certificate Authority Authorization"]
+        TLSPolicy["TLS Policy Future<br/>_443._tcp TXT Record<br/>Certificate Transparency"]
+        SecurityContact["Security Contact Future<br/>_security TXT Record<br/>Incident Response"]
     end
     
     %% AWS Services
-    subgraph AWSServices ["☁️ AWS Services"]
-        CloudFront[🌍 CloudFront Distribution<br/>Global CDN<br/>SSL/TLS Termination]
-        APIGateway[🚪 API Gateway<br/>Custom Domain<br/>Regional Endpoint]
-        S3[🪣 S3 Static Website<br/>Origin for CloudFront]
-        ACM[🔒 ACM Certificate<br/>*.bjornmelin.io<br/>Auto-renewal]
+    subgraph AWSServices ["AWS Services"]
+        CloudFront["CloudFront Distribution<br/>Global CDN<br/>SSL/TLS Termination"]
+        APIGateway["API Gateway<br/>Custom Domain<br/>Regional Endpoint"]
+        S3["S3 Static Website<br/>Origin for CloudFront"]
+        ACM["ACM Certificate<br/>*.bjornmelin.io<br/>Auto-renewal"]
     end
     
     %% External Email Service
-    subgraph EmailService ["📧 External Email Service"]
-        ResendAPI[📬 Resend API<br/>Email Service Provider<br/>DKIM Signing]
-        EmailDelivery[📭 Email Delivery<br/>SPF/DKIM Validation<br/>DMARC Compliance]
+    subgraph EmailService ["External Email Service"]
+        ResendAPI["Resend API<br/>Email Service Provider<br/>DKIM Signing"]
+        EmailDelivery["Email Delivery<br/>SPF/DKIM Validation<br/>DMARC Compliance"]
     end
     
     %% DNS Resolution Flow
@@ -116,7 +116,7 @@ graph TB
 
 ### 1. Route 53 Hosted Zone Setup
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Route 53 Hosted Zone                         │
 ├─────────────────────────────────────────────────────────────────┤
@@ -163,7 +163,7 @@ graph TB
 
 ### 2. DNS Record Types and Configuration
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                      DNS Record Configuration                   │
 ├─────────────────────────────────────────────────────────────────┤
@@ -226,7 +226,7 @@ graph TB
 
 ### 1. SPF (Sender Policy Framework)
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                       SPF Configuration                          │
 ├─────────────────────────────────────────────────────────────────┤
@@ -280,7 +280,7 @@ graph TB
 
 ### 2. DKIM (DomainKeys Identified Mail)
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                      DKIM Configuration                          │
 ├─────────────────────────────────────────────────────────────────┤
@@ -343,7 +343,7 @@ graph TB
 
 ### 3. DMARC (Domain-based Message Authentication)
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                      DMARC Configuration                        │
 ├─────────────────────────────────────────────────────────────────┤
@@ -415,7 +415,7 @@ graph TB
 
 ### 4. Domain Verification
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Domain Verification Records                  │
 ├─────────────────────────────────────────────────────────────────┤
@@ -470,7 +470,7 @@ graph TB
 
 ### 1. CAA (Certificate Authority Authorization)
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                       CAA Record Configuration                  │
 ├─────────────────────────────────────────────────────────────────┤
@@ -504,7 +504,7 @@ graph TB
 
 ### 2. Additional Security Records
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Additional Security Records                  │
 ├─────────────────────────────────────────────────────────────────┤
@@ -550,7 +550,7 @@ graph TB
 
 ### 1. Change Management Process
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    DNS Change Management                         │
 ├─────────────────────────────────────────────────────────────────┤
@@ -623,7 +623,7 @@ graph TB
 
 ### 2. Monitoring & Alerting
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    DNS Monitoring & Alerting                    │
 ├─────────────────────────────────────────────────────────────────┤
@@ -698,7 +698,7 @@ graph TB
 
 ### 1. TTL Strategy
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                        TTL Optimization                         │
 ├─────────────────────────────────────────────────────────────────┤
@@ -746,7 +746,7 @@ graph TB
 
 ### 2. Performance Monitoring
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    DNS Performance Monitoring                   │
 ├─────────────────────────────────────────────────────────────────┤
@@ -803,7 +803,7 @@ graph TB
 
 ### 1. DNS Failover Strategy
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     DNS Failover Strategy                       │
 ├─────────────────────────────────────────────────────────────────┤
@@ -864,7 +864,8 @@ graph TB
 ## Cost Optimization
 
 ### Monthly DNS Costs
-```
+
+```text
 Service Component           | Cost    | Notes
 ----------------------------|---------|---------------------------
 Route 53 Hosted Zone       | $0.50   | Standard hosted zone
@@ -879,6 +880,7 @@ Total Monthly DNS Cost     | $1.65   | Estimated total
 ```
 
 ### Cost Optimization Strategies
+
 - **Query Volume Monitoring**: Track queries to identify unusual patterns
 - **Health Check Optimization**: Only monitor critical endpoints
 - **Log Retention**: 7-day retention for cost optimization
@@ -890,17 +892,20 @@ Total Monthly DNS Cost     | $1.65   | Estimated total
 This DNS configuration guide is part of a comprehensive documentation suite:
 
 ### Architecture Documentation Suite
+
 - **[Architecture Overview](./architecture-overview.md)** - Comprehensive system architecture and design principles
 - **[Email Service Architecture](./email-service-architecture.md)** - Detailed email service flow and technical specifications
 - **[Security Architecture](./security-architecture.md)** - Defense-in-depth security layers and compliance
 - **[API Gateway + Lambda Architecture](./api-lambda-architecture.md)** - Serverless API architecture and performance
 
 ### Email & DNS Implementation
+
 - **[Email Infrastructure Guide](./email-infrastructure-guide.md)** - Complete email service implementation with AWS
 - **[Resend Complete Setup Guide](../deployment/resend-complete-setup-guide.md)** - Comprehensive setup guide for email service
 - **[Application Integration Examples](./application-integration-examples.md)** - Code examples for DNS and email integration
 
 ### Operational Documentation
+
 - **[Security Audit Checklist](./security-audit-checklist.md)** - Security review including DNS security
 - **[AWS Free Tier Optimization Guide](./aws-free-tier-optimization-2025.md)** - Cost optimization for DNS services
 
