@@ -120,7 +120,7 @@ jobs:
           NEXT_PUBLIC_ENVIRONMENT: ${{ inputs.environment }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: us-east-1
