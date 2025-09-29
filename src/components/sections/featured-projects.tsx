@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { SectionHeader } from "../shared/section-header";
 import { projectsData } from "@/data/projects";
 import { ProjectCard } from "../projects/project-card";
+import { SectionHeader } from "../shared/section-header";
 
 export function FeaturedProjects() {
   const featuredProjects = projectsData.filter((project) => project.featured);

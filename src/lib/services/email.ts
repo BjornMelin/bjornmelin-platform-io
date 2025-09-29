@@ -1,7 +1,7 @@
-import { SendEmailCommand, type SESClient } from "@aws-sdk/client-ses";
+import { type SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { env } from "@/env.mjs";
-import { type ContactFormData } from "@/lib/schemas/contact";
 import { createSESClient } from "@/lib/aws/ses";
+import type { ContactFormData } from "@/lib/schemas/contact";
 
 export class EmailService {
   private static instance: EmailService;

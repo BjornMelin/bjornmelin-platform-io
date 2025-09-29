@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Project } from "@/types/project";
 import { TechBadge } from "@/components/shared/tech-badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { Project } from "@/types/project";
 
 interface ProjectCardProps {
   project: Project;
@@ -12,9 +12,7 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project, className }: ProjectCardProps) {
   return (
-    <div
-      className={cn("bg-card rounded-lg shadow-lg overflow-hidden", className)}
-    >
+    <div className={cn("bg-card rounded-lg shadow-lg overflow-hidden", className)}>
       <div className="relative h-48">
         <Image
           src={project.image}
@@ -42,33 +40,21 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
         <div className="flex gap-4 pt-2">
           {project.links.github && (
             <Button variant="outline" asChild>
-              <Link
-                href={project.links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href={project.links.github} target="_blank" rel="noopener noreferrer">
                 GitHub
               </Link>
             </Button>
           )}
           {project.links.live && (
             <Button asChild>
-              <Link
-                href={project.links.live}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href={project.links.live} target="_blank" rel="noopener noreferrer">
                 Live Demo
               </Link>
             </Button>
           )}
           {project.links.demo && (
             <Button asChild>
-              <Link
-                href={project.links.demo}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href={project.links.demo} target="_blank" rel="noopener noreferrer">
                 Demo
               </Link>
             </Button>

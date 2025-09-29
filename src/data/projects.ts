@@ -1,4 +1,4 @@
-import { Project } from "@/types/project";
+import type { Project } from "@/types/project";
 
 export const projectsData: Project[] = [
   {
@@ -96,8 +96,7 @@ export const projectsData: Project[] = [
   {
     id: "4",
     title: "Portfolio Website",
-    description:
-      "A modern portfolio website built with Next.js and AWS services.",
+    description: "A modern portfolio website built with Next.js and AWS services.",
     image: "/projects/portfolio.png",
     technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "AWS"],
     category: "Web Development",

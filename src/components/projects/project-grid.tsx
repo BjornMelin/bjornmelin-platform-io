@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Project, ProjectFilterState } from "@/types/project";
-import { ProjectCard } from "./project-card";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -11,16 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Project, ProjectFilterState } from "@/types/project";
+import { ProjectCard } from "./project-card";
 
 interface ProjectGridProps {
   projects: Project[];
   className?: string;
 }
 export function ProjectGrid({ projects, className }: ProjectGridProps) {
-  const categories = [
-    "All",
-    ...Array.from(new Set(projects.map((project) => project.category))),
-  ];
+  const categories = ["All", ...Array.from(new Set(projects.map((project) => project.category)))];
 
   const [filters, setFilters] = useState<ProjectFilterState>({
     category: "All",
@@ -29,7 +26,7 @@ export function ProjectGrid({ projects, className }: ProjectGridProps) {
 
   const filteredProjects = projects
     .filter((project) =>
-      filters.category === "All" ? true : project.category === filters.category
+      filters.category === "All" ? true : project.category === filters.category,
     )
     .sort((a, b) => {
       if (filters.sortBy === "featured") {
@@ -73,9 +70,7 @@ export function ProjectGrid({ projects, className }: ProjectGridProps) {
 
       {filteredProjects.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">
-            No projects found in this category.
-          </p>
+          <p className="text-muted-foreground">No projects found in this category.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

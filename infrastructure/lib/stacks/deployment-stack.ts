@@ -1,7 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
-import { Construct } from "constructs";
-import { DeploymentStackProps } from "../types/stack-props";
+import type { Construct } from "constructs";
+import type { DeploymentStackProps } from "../types/stack-props";
 
 export class DeploymentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: DeploymentStackProps) {
@@ -15,12 +15,7 @@ export class DeploymentStack extends cdk.Stack {
     // Deployment policy for S3 access
     const s3DeploymentPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
-      actions: [
-        "s3:PutObject",
-        "s3:GetObject",
-        "s3:ListBucket",
-        "s3:DeleteObject",
-      ],
+      actions: ["s3:PutObject", "s3:GetObject", "s3:ListBucket", "s3:DeleteObject"],
       resources: [props.bucket.bucketArn, `${props.bucket.bucketArn}/*`],
     });
 

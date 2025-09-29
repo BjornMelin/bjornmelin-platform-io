@@ -1,14 +1,26 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
-const ses = new SESClient({ region: process.env.REGION });
+const requireEnv = (name: string): string => {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing environment variable: ${name}`);
+  }
+  return value;
+};
+
+const region = requireEnv("REGION");
+const senderEmail = requireEnv("SENDER_EMAIL");
+const recipientEmail = requireEnv("RECIPIENT_EMAIL");
+
+const ses = new SESClient({ region });
 
 // Allowed origins (replace with your actual domains)
 const allowedOrigins = [
-  process.env.ALLOWED_ORIGIN!,
-  `https://${process.env.DOMAIN_NAME}`,
-  `https://www.${process.env.DOMAIN_NAME}`,
-];
+  process.env.ALLOWED_ORIGIN,
+  process.env.DOMAIN_NAME ? `https://${process.env.DOMAIN_NAME}` : undefined,
+  process.env.DOMAIN_NAME ? `https://www.${process.env.DOMAIN_NAME}` : undefined,
+].filter((origin): origin is string => typeof origin === "string" && origin.length > 0);
 
 // Types
 interface ContactFormData {
@@ -24,41 +36,37 @@ function validateInput(data: ContactFormData): string | null {
   if (!data.email || !data.email.includes("@")) {
     return "Invalid email address";
   }
-  if (
-    !data.message ||
-    typeof data.message !== "string" ||
-    data.message.length < 10
-  ) {
+  if (!data.message || typeof data.message !== "string" || data.message.length < 10) {
     return "Message must be at least 10 characters long";
   }
   return null;
 }
 
-export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const origin = event.headers.origin || event.headers.Origin;
 
   // CORS headers
   const corsHeaders: {
-    'Access-Control-Allow-Headers': string;
-    'Access-Control-Allow-Methods': string;
-    'Access-Control-Allow-Origin'?: string;
+    "Access-Control-Allow-Headers": string;
+    "Access-Control-Allow-Methods": string;
+    "Access-Control-Allow-Origin"?: string;
   } = {
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
   };
 
   // Validate the origin
-  if (origin && allowedOrigins.includes(origin)) {
-    corsHeaders["Access-Control-Allow-Origin"] = origin;
-  } else {
-    // Optionally, you can return an error response for disallowed origins
-    return {
-      statusCode: 403,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Forbidden" }),
-    };
+  if (origin) {
+    if (allowedOrigins.includes(origin)) {
+      corsHeaders["Access-Control-Allow-Origin"] = origin;
+    } else {
+      // Optionally, you can return an error response for disallowed origins
+      return {
+        statusCode: 403,
+        headers: corsHeaders,
+        body: JSON.stringify({ error: "Forbidden" }),
+      };
+    }
   }
 
   // Handle CORS preflight
@@ -90,9 +98,9 @@ export const handler = async (
     // Send email
     await ses.send(
       new SendEmailCommand({
-        Source: process.env.SENDER_EMAIL,
+        Source: senderEmail,
         Destination: {
-          ToAddresses: [process.env.RECIPIENT_EMAIL!],
+          ToAddresses: [recipientEmail],
         },
         Message: {
           Subject: {
@@ -128,7 +136,7 @@ Time: ${new Date().toISOString()}
             },
           },
         },
-      })
+      }),
     );
 
     return {

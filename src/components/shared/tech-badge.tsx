@@ -20,7 +20,7 @@ export function TechBadge({ name, className, size = "md" }: TechBadgeProps) {
         "bg-primary/10 text-primary hover:bg-primary/20 transition-colors",
         "border border-primary/20",
         sizeClasses[size],
-        className
+        className,
       )}
     >
       {name}

@@ -1,7 +1,7 @@
+import { NextResponse } from "next/server";
 import { contactFormSchema } from "@/lib/schemas/contact";
 import { EmailService } from "@/lib/services/email";
-import { handleAPIError, APIError } from "@/lib/utils/error-handler";
-import { NextResponse } from "next/server";
+import { APIError, handleAPIError } from "@/lib/utils/error-handler";
 
 export async function POST(request: Request) {
   try {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       throw new APIError(
         "Failed to send message. Please try again later.",
         500,
-        "EMAIL_SEND_ERROR"
+        "EMAIL_SEND_ERROR",
       );
     }
     return handleAPIError(error);

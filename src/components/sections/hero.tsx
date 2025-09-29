@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -26,7 +26,7 @@ export function Hero() {
               />
             </div>
           </motion.div>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -37,7 +37,8 @@ export function Hero() {
               Hi, I&apos;m Bjorn Melin
             </h1>
             <p className="mt-6 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl">
-              Senior Data Scientist | Cloud Solutions Architect | 6x AWS Certified | AI/ML & GenAI Innovator
+              Senior Data Scientist | Cloud Solutions Architect | 6x AWS Certified | AI/ML & GenAI
+              Innovator
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link

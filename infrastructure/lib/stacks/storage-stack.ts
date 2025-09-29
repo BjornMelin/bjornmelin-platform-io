@@ -1,11 +1,11 @@
 import * as cdk from "aws-cdk-lib";
-import * as s3 from "aws-cdk-lib/aws-s3";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
-import { Construct } from "constructs";
-import { StorageStackProps } from "../types/stack-props";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import type { Construct } from "constructs";
+import type { StorageStackProps } from "../types/stack-props";
 
 export class StorageStack extends cdk.Stack {
   public readonly bucket: s3.IBucket;
@@ -51,9 +51,7 @@ export class StorageStack extends cdk.Stack {
     logsBucket.addToResourcePolicy(
       new cdk.aws_iam.PolicyStatement({
         effect: cdk.aws_iam.Effect.ALLOW,
-        principals: [
-          new cdk.aws_iam.ServicePrincipal("logging.s3.amazonaws.com"),
-        ],
+        principals: [new cdk.aws_iam.ServicePrincipal("logging.s3.amazonaws.com")],
         actions: ["s3:PutObject"],
         resources: [`${logsBucket.bucketArn}/*`],
         conditions: {
@@ -61,7 +59,7 @@ export class StorageStack extends cdk.Stack {
             "aws:SourceAccount": this.account,
           },
         },
-      })
+      }),
     );
 
     // Origin Access Control for CloudFront
@@ -110,49 +108,40 @@ export class StorageStack extends cdk.Stack {
     });
 
     // Apply OAC to the distribution
-    const cfnDistribution = this.distribution.node
-      .defaultChild as cloudfront.CfnDistribution;
+    const cfnDistribution = this.distribution.node.defaultChild as cloudfront.CfnDistribution;
     cfnDistribution.addPropertyOverride(
       "DistributionConfig.Origins.0.S3OriginConfig.OriginAccessIdentity",
-      ""
+      "",
     );
 
     cfnDistribution.addPropertyOverride(
       "DistributionConfig.Origins.0.OriginAccessControlId",
-      oac.getAtt("Id")
+      oac.getAtt("Id"),
     );
 
     // DNS records
     new route53.ARecord(this, "AliasRecord", {
       recordName: props.domainName,
-      target: route53.RecordTarget.fromAlias(
-        new targets.CloudFrontTarget(this.distribution)
-      ),
+      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(this.distribution)),
       zone: props.hostedZone,
     });
 
     new route53.AaaaRecord(this, "AliasRecordIPv6", {
       recordName: props.domainName,
-      target: route53.RecordTarget.fromAlias(
-        new targets.CloudFrontTarget(this.distribution)
-      ),
+      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(this.distribution)),
       zone: props.hostedZone,
     });
 
     // www subdomain
     new route53.ARecord(this, "WwwAliasRecord", {
       recordName: `www.${props.domainName}`,
-      target: route53.RecordTarget.fromAlias(
-        new targets.CloudFrontTarget(this.distribution)
-      ),
+      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(this.distribution)),
       zone: props.hostedZone,
     });
 
     new route53.AaaaRecord(this, "WwwAliasRecordIPv6", {
       recordName: `www.${props.domainName}`,
-      target: route53.RecordTarget.fromAlias(
-        new targets.CloudFrontTarget(this.distribution)
-      ),
+      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(this.distribution)),
       zone: props.hostedZone,
     });
 
@@ -226,8 +215,7 @@ export class StorageStack extends cdk.Stack {
           override: true,
         },
         referrerPolicy: {
-          referrerPolicy:
-            cloudfront.HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+          referrerPolicy: cloudfront.HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
           override: true,
         },
         xssProtection: {

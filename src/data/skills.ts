@@ -1,5 +1,5 @@
 import { Brain, Cloud, Code, Terminal } from "lucide-react";
-import { ElementType } from "react";
+import type { ElementType } from "react";
 
 export interface SkillCategory {
   name: string;

@@ -56,6 +56,12 @@ interface StructuredDataProps {
   type: "person" | "website" | "both";
 }
 
+const createSchemaKey = (schema: Record<string, unknown>): string => {
+  const type = typeof schema["@type"] === "string" ? (schema["@type"] as string) : "schema";
+  const name = typeof schema.name === "string" ? (schema.name as string) : "default";
+  return `${type}-${name}`;
+};
+
 export default function StructuredData({ type }: StructuredDataProps) {
   const schemas = [];
 
@@ -69,13 +75,14 @@ export default function StructuredData({ type }: StructuredDataProps) {
 
   return (
     <>
-      {schemas.map((schema, index) => (
-        <script
-          key={index}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
+      {schemas.map((schema) => {
+        const record = schema as Record<string, unknown>;
+        return (
+          <script key={createSchemaKey(record)} type="application/ld+json">
+            {JSON.stringify(schema)}
+          </script>
+        );
+      })}
     </>
   );
 }
