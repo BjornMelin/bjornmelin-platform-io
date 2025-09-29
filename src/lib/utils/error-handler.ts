@@ -5,7 +5,7 @@ export class APIError extends Error {
   constructor(
     message: string,
     public statusCode: number = 500,
-    public code: string = "INTERNAL_SERVER_ERROR"
+    public code: string = "INTERNAL_SERVER_ERROR",
   ) {
     super(message);
     this.name = "APIError";
@@ -21,7 +21,7 @@ export function handleAPIError(error: unknown) {
         error: "Validation failed",
         details: error.errors,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -31,18 +31,17 @@ export function handleAPIError(error: unknown) {
         error: error.message,
         code: error.code,
       },
-      { status: error.statusCode }
+      { status: error.statusCode },
     );
   }
 
-  const message =
-    error instanceof Error ? error.message : "An unexpected error occurred";
+  const message = error instanceof Error ? error.message : "An unexpected error occurred";
 
   return NextResponse.json(
     {
       error: message,
       code: "INTERNAL_SERVER_ERROR",
     },
-    { status: 500 }
+    { status: 500 },
   );
 }

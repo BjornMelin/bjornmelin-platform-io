@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
+import { ArrowRight, GraduationCap, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { GraduationCap, Sparkles, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { skillCategories } from "@/data/skills";
@@ -24,12 +23,11 @@ export function About() {
             About Me
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Crafting AI Solutions &{" "}
-            <span className="text-primary">Cloud Architecture</span>
+            Crafting AI Solutions & <span className="text-primary">Cloud Architecture</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Senior Data Scientist and AWS Solutions Architect specializing in
-            AI/ML innovations and scalable cloud architecture
+            Senior Data Scientist and AWS Solutions Architect specializing in AI/ML innovations and
+            scalable cloud architecture
           </p>
         </div>
 
@@ -44,21 +42,17 @@ export function About() {
               <h3 className="text-2xl font-semibold">Background</h3>
             </div>
             <p className="text-muted-foreground leading-relaxed">
-              As a Senior Data Scientist and Cloud Solutions Architect with 6
-              AWS certifications, I specialize in developing cutting-edge AI/ML
-              solutions and GenAI innovations. My expertise spans cloud
-              architecture, machine learning, and building scalable AI solutions
-              that drive business value.
+              As a Senior Data Scientist and Cloud Solutions Architect with 6 AWS certifications, I
+              specialize in developing cutting-edge AI/ML solutions and GenAI innovations. My
+              expertise spans cloud architecture, machine learning, and building scalable AI
+              solutions that drive business value.
             </p>
           </Card>
 
           {/* Skills Grid */}
           <div className="lg:col-span-3 grid sm:grid-cols-2 gap-6">
             {skillCategories.map((category) => (
-              <Card
-                key={category.name}
-                className="p-6 hover:shadow-md transition-shadow"
-              >
+              <Card key={category.name} className="p-6 hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-3 mb-6">
                   <div className={`p-2 rounded-lg ${category.color}`}>
                     <category.Icon className="w-6 h-6" />

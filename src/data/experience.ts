@@ -186,12 +186,7 @@ export const experiences: Experience[] = [
           "process and analyze large datasets efficiently.",
       },
     ],
-    skills: [
-      { name: "Java" },
-      { name: "JavaFX" },
-      { name: "MySQL" },
-      { name: "APIs" },
-    ],
+    skills: [{ name: "Java" }, { name: "JavaFX" }, { name: "MySQL" }, { name: "APIs" }],
   },
 ];
 

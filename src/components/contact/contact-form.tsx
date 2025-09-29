@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type ContactFormData, contactFormSchema } from "@/lib/schemas/contact";
-import { useToast } from "@/hooks/use-toast";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { useId, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { type ContactFormData, contactFormSchema } from "@/lib/schemas/contact";
 
 interface APIErrorResponse {
   error: string;
@@ -20,10 +20,17 @@ interface APIErrorResponse {
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">(
-    "idle"
-  );
+  const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
   const { toast } = useToast();
+  const idPrefix = useId();
+  const fieldIds = useMemo(
+    () => ({
+      name: `${idPrefix}-name`,
+      email: `${idPrefix}-email`,
+      message: `${idPrefix}-message`,
+    }),
+    [idPrefix],
+  );
 
   const {
     register,
@@ -41,16 +48,13 @@ export function ContactForm() {
     setFormStatus("idle");
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/contact`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
       const result = (await response.json()) as APIErrorResponse;
 
@@ -77,8 +81,7 @@ export function ContactForm() {
       setFormStatus("error");
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to send message",
+        description: error instanceof Error ? error.message : "Failed to send message",
         variant: "destructive",
       });
     } finally {
@@ -93,8 +96,7 @@ export function ContactForm() {
           <CheckCircle2 className="h-4 w-4 text-green-600" />
           <AlertTitle>Message Sent Successfully!</AlertTitle>
           <AlertDescription>
-            Thank you for your message. I&apos;ll get back to you as soon as
-            possible.
+            Thank you for your message. I&apos;ll get back to you as soon as possible.
           </AlertDescription>
         </Alert>
       )}
@@ -104,8 +106,7 @@ export function ContactForm() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Failed to Send Message</AlertTitle>
           <AlertDescription>
-            Please try again. If the problem persists, you can email me directly
-            at{" "}
+            Please try again. If the problem persists, you can email me directly at{" "}
             <a
               href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`}
               className="underline hover:text-red-400"
@@ -118,67 +119,63 @@ export function ContactForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor={fieldIds.name}>Name</Label>
           <Input
-            id="name"
+            id={fieldIds.name}
             type="text"
             placeholder="Your name"
             {...register("name")}
-            aria-describedby={errors.name ? "name-error" : undefined}
+            aria-describedby={errors.name ? `${fieldIds.name}-error` : undefined}
             aria-invalid={!!errors.name}
             disabled={isSubmitting}
             className={errors.name ? "border-red-500" : ""}
           />
           {errors.name && (
-            <p id="name-error" className="text-sm text-red-500">
+            <p id={`${fieldIds.name}-error`} className="text-sm text-red-500">
               {errors.name.message}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor={fieldIds.email}>Email</Label>
           <Input
-            id="email"
+            id={fieldIds.email}
             type="email"
             placeholder="your.email@example.com"
             {...register("email")}
-            aria-describedby={errors.email ? "email-error" : undefined}
+            aria-describedby={errors.email ? `${fieldIds.email}-error` : undefined}
             aria-invalid={!!errors.email}
             disabled={isSubmitting}
             className={errors.email ? "border-red-500" : ""}
           />
           {errors.email && (
-            <p id="email-error" className="text-sm text-red-500">
+            <p id={`${fieldIds.email}-error`} className="text-sm text-red-500">
               {errors.email.message}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="message">Message</Label>
+          <Label htmlFor={fieldIds.message}>Message</Label>
           <Textarea
-            id="message"
+            id={fieldIds.message}
             placeholder="Your message..."
             {...register("message")}
-            aria-describedby={errors.message ? "message-error" : undefined}
+            aria-describedby={errors.message ? `${fieldIds.message}-error` : undefined}
             aria-invalid={!!errors.message}
             disabled={isSubmitting}
             rows={5}
             className={errors.message ? "border-red-500" : ""}
           />
           {errors.message && (
-            <p id="message-error" className="text-sm text-red-500">
+            <p id={`${fieldIds.message}-error`} className="text-sm text-red-500">
               {errors.message.message}
             </p>
           )}
         </div>
 
-        <Button
-          type="submit"
-          disabled={isSubmitting || !isValid}
-          className="w-full"
-        >
+        <Button type="submit" disabled={isSubmitting || !isValid} className="w-full">
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

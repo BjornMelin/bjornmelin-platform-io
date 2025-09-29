@@ -1,10 +1,10 @@
 import * as cdk from "aws-cdk-lib";
 import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
+import * as actions from "aws-cdk-lib/aws-cloudwatch-actions";
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
-import * as actions from "aws-cdk-lib/aws-cloudwatch-actions";
-import { Construct } from "constructs";
-import { MonitoringStackProps } from "../types/stack-props";
+import type { Construct } from "constructs";
+import type { MonitoringStackProps } from "../types/stack-props";
 
 export class MonitoringStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: MonitoringStackProps) {
@@ -17,9 +17,7 @@ export class MonitoringStack extends cdk.Stack {
     });
 
     // Add email subscription
-    alertTopic.addSubscription(
-      new subscriptions.EmailSubscription("bjornmelin16@gmail.com")
-    );
+    alertTopic.addSubscription(new subscriptions.EmailSubscription("bjornmelin16@gmail.com"));
 
     // CloudFront Metrics Dashboard
     const dashboard = new cloudwatch.Dashboard(this, "PortfolioDashboard", {
@@ -94,7 +92,7 @@ export class MonitoringStack extends cdk.Stack {
         title: "S3 Errors",
         left: [s3Errors],
         width: 12,
-      })
+      }),
     );
 
     // Create alarms

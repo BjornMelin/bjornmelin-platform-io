@@ -1,8 +1,8 @@
-import * as cdk from "aws-cdk-lib";
-import * as route53 from "aws-cdk-lib/aws-route53";
-import * as acm from "aws-cdk-lib/aws-certificatemanager";
-import * as s3 from "aws-cdk-lib/aws-s3";
-import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
+import type * as cdk from "aws-cdk-lib";
+import type * as acm from "aws-cdk-lib/aws-certificatemanager";
+import type * as cloudfront from "aws-cdk-lib/aws-cloudfront";
+import type * as route53 from "aws-cdk-lib/aws-route53";
+import type * as s3 from "aws-cdk-lib/aws-s3";
 
 export interface BaseStackProps extends cdk.StackProps {
   domainName: string;
@@ -26,4 +26,7 @@ export interface MonitoringStackProps extends BaseStackProps {
 
 export interface EmailStackProps extends BaseStackProps {
   hostedZone: route53.IHostedZone;
+  senderEmail: string;
+  recipientEmail: string;
+  allowedOrigins?: string[];
 }

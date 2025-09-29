@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 export function generatePersonSchema() {
   return {
     "@context": "https://schema.org",
@@ -56,6 +58,15 @@ interface StructuredDataProps {
   type: "person" | "website" | "both";
 }
 
+const createSchemaKey = (schema: Record<string, unknown>): string => {
+  const type = typeof schema["@type"] === "string" ? (schema["@type"] as string) : undefined;
+  const name = typeof schema.name === "string" ? (schema.name as string) : undefined;
+  const baseKey = [type, name].filter(Boolean).join("-");
+  const serialized = JSON.stringify(schema);
+  const digest = createHash("sha256").update(serialized).digest("hex").slice(0, 12);
+  return baseKey ? `${baseKey}-${digest}` : digest;
+};
+
 export default function StructuredData({ type }: StructuredDataProps) {
   const schemas = [];
 
@@ -69,13 +80,14 @@ export default function StructuredData({ type }: StructuredDataProps) {
 
   return (
     <>
-      {schemas.map((schema, index) => (
-        <script
-          key={index}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
+      {schemas.map((schema) => {
+        const record = schema as Record<string, unknown>;
+        return (
+          <script key={createSchemaKey(record)} type="application/ld+json">
+            {JSON.stringify(schema)}
+          </script>
+        );
+      })}
     </>
   );
 }
