@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 export function generatePersonSchema() {
   return {
     "@context": "https://schema.org",
@@ -57,9 +59,12 @@ interface StructuredDataProps {
 }
 
 const createSchemaKey = (schema: Record<string, unknown>): string => {
-  const type = typeof schema["@type"] === "string" ? (schema["@type"] as string) : "schema";
-  const name = typeof schema.name === "string" ? (schema.name as string) : "default";
-  return `${type}-${name}`;
+  const type = typeof schema["@type"] === "string" ? (schema["@type"] as string) : undefined;
+  const name = typeof schema.name === "string" ? (schema.name as string) : undefined;
+  const baseKey = [type, name].filter(Boolean).join("-");
+  const serialized = JSON.stringify(schema);
+  const digest = createHash("sha256").update(serialized).digest("hex").slice(0, 12);
+  return baseKey ? `${baseKey}-${digest}` : digest;
 };
 
 export default function StructuredData({ type }: StructuredDataProps) {

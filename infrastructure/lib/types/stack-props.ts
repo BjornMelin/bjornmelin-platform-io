@@ -26,4 +26,7 @@ export interface MonitoringStackProps extends BaseStackProps {
 
 export interface EmailStackProps extends BaseStackProps {
   hostedZone: route53.IHostedZone;
+  senderEmail: string;
+  recipientEmail: string;
+  allowedOrigins?: string[];
 }

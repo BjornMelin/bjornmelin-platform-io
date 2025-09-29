@@ -15,12 +15,34 @@ const recipientEmail = requireEnv("RECIPIENT_EMAIL");
 
 const ses = new SESClient({ region });
 
-// Allowed origins (replace with your actual domains)
-const allowedOrigins = [
-  process.env.ALLOWED_ORIGIN,
-  process.env.DOMAIN_NAME ? `https://${process.env.DOMAIN_NAME}` : undefined,
-  process.env.DOMAIN_NAME ? `https://www.${process.env.DOMAIN_NAME}` : undefined,
-].filter((origin): origin is string => typeof origin === "string" && origin.length > 0);
+const parseAllowedOrigins = (): string[] => {
+  const origins = new Set<string>();
+  const csvOrigins = process.env.ALLOWED_ORIGINS;
+  if (csvOrigins) {
+    for (const origin of csvOrigins.split(",")) {
+      const trimmed = origin.trim();
+      if (trimmed) {
+        origins.add(trimmed);
+      }
+    }
+  }
+
+  const singleOrigin = process.env.ALLOWED_ORIGIN;
+  if (singleOrigin) {
+    origins.add(singleOrigin);
+  }
+
+  const domainName = process.env.DOMAIN_NAME;
+  if (domainName) {
+    origins.add(`https://${domainName}`);
+    origins.add(`https://www.${domainName}`);
+    origins.add(`https://api.${domainName}`);
+  }
+
+  return Array.from(origins);
+};
+
+const allowedOrigins = parseAllowedOrigins();
 
 // Types
 interface ContactFormData {
