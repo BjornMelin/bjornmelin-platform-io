@@ -67,11 +67,16 @@ const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "pro
 monitoringStack.addDependency(storageStack);
 
 // Email Stack
+const emailConfig = CONFIG.prod.email;
+
 const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   env,
   domainName: CONFIG.prod.domainName,
   environment: CONFIG.prod.environment,
   hostedZone: dnsStack.hostedZone,
+  senderEmail: emailConfig.sender,
+  recipientEmail: emailConfig.recipient,
+  allowedOrigins: emailConfig.allowedOrigins,
   tags: CONFIG.tags,
 });
 

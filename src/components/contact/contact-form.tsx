@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import { useId, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -22,9 +22,15 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
   const { toast } = useToast();
-  const nameId = useId();
-  const emailId = useId();
-  const messageId = useId();
+  const idPrefix = useId();
+  const fieldIds = useMemo(
+    () => ({
+      name: `${idPrefix}-name`,
+      email: `${idPrefix}-email`,
+      message: `${idPrefix}-message`,
+    }),
+    [idPrefix],
+  );
 
   const {
     register,
@@ -113,57 +119,57 @@ export function ContactForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <Label htmlFor={nameId}>Name</Label>
+          <Label htmlFor={fieldIds.name}>Name</Label>
           <Input
-            id={nameId}
+            id={fieldIds.name}
             type="text"
             placeholder="Your name"
             {...register("name")}
-            aria-describedby={errors.name ? `${nameId}-error` : undefined}
+            aria-describedby={errors.name ? `${fieldIds.name}-error` : undefined}
             aria-invalid={!!errors.name}
             disabled={isSubmitting}
             className={errors.name ? "border-red-500" : ""}
           />
           {errors.name && (
-            <p id={`${nameId}-error`} className="text-sm text-red-500">
+            <p id={`${fieldIds.name}-error`} className="text-sm text-red-500">
               {errors.name.message}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor={emailId}>Email</Label>
+          <Label htmlFor={fieldIds.email}>Email</Label>
           <Input
-            id={emailId}
+            id={fieldIds.email}
             type="email"
             placeholder="your.email@example.com"
             {...register("email")}
-            aria-describedby={errors.email ? `${emailId}-error` : undefined}
+            aria-describedby={errors.email ? `${fieldIds.email}-error` : undefined}
             aria-invalid={!!errors.email}
             disabled={isSubmitting}
             className={errors.email ? "border-red-500" : ""}
           />
           {errors.email && (
-            <p id={`${emailId}-error`} className="text-sm text-red-500">
+            <p id={`${fieldIds.email}-error`} className="text-sm text-red-500">
               {errors.email.message}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor={messageId}>Message</Label>
+          <Label htmlFor={fieldIds.message}>Message</Label>
           <Textarea
-            id={messageId}
+            id={fieldIds.message}
             placeholder="Your message..."
             {...register("message")}
-            aria-describedby={errors.message ? `${messageId}-error` : undefined}
+            aria-describedby={errors.message ? `${fieldIds.message}-error` : undefined}
             aria-invalid={!!errors.message}
             disabled={isSubmitting}
             rows={5}
             className={errors.message ? "border-red-500" : ""}
           />
           {errors.message && (
-            <p id={`${messageId}-error`} className="text-sm text-red-500">
+            <p id={`${fieldIds.message}-error`} className="text-sm text-red-500">
               {errors.message.message}
             </p>
           )}

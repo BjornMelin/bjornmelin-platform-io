@@ -19,9 +19,20 @@ export class EmailStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: EmailStackProps) {
     super(scope, id, props);
 
+    const { hostedZone, senderEmail, recipientEmail, allowedOrigins = [] } = props;
+    if (!senderEmail) {
+      throw new Error("EmailStack requires a non-empty senderEmail");
+    }
+    if (!recipientEmail) {
+      throw new Error("EmailStack requires a non-empty recipientEmail");
+    }
+
     const domain = props.domainName;
     const subdomain = `api.${domain}`;
     const apiEndpoint = `https://${subdomain}`;
+    const normalizedAllowedOrigins = Array.from(
+      new Set([...allowedOrigins, `https://${domain}`, `https://www.${domain}`, apiEndpoint]),
+    );
 
     // Create SES Domain Identity
     const domainIdentity = new ses.EmailIdentity(this, "DomainIdentity", {
@@ -36,7 +47,7 @@ export class EmailStack extends cdk.Stack {
 
     // Create DNS TXT record for domain verification
     new route53.TxtRecord(this, "SESVerificationRecord", {
-      zone: props.hostedZone,
+      zone: hostedZone,
       recordName: verificationRecord.recordName,
       values: [verificationRecord.recordValue],
       ttl: cdk.Duration.minutes(60),
@@ -51,7 +62,7 @@ export class EmailStack extends cdk.Stack {
 
     dkimTokens.forEach((dkimToken, index) => {
       new route53.CnameRecord(this, `DKIMCNAMERecord${index}`, {
-        zone: props.hostedZone,
+        zone: hostedZone,
         recordName: `${dkimToken}._domainkey.${domain}`,
         domainName: `${dkimToken}.dkim.amazonses.com`,
       });
@@ -59,7 +70,7 @@ export class EmailStack extends cdk.Stack {
 
     // Create MX record for receiving email
     new route53.MxRecord(this, "SESMxRecord", {
-      zone: props.hostedZone,
+      zone: hostedZone,
       recordName: domain,
       values: [
         {
@@ -76,11 +87,12 @@ export class EmailStack extends cdk.Stack {
       handler: "handler",
       entry: path.join(__dirname, "../functions/contact-form/index.ts"),
       environment: {
-        SENDER_EMAIL: `no-reply@${domain}`,
-        RECIPIENT_EMAIL: "bjornmelin16@gmail.com",
+        SENDER_EMAIL: senderEmail,
+        RECIPIENT_EMAIL: recipientEmail,
         REGION: this.region,
-        ALLOWED_ORIGIN: apiEndpoint, // Use the secure API endpoint
         DOMAIN_NAME: domain,
+        ALLOWED_ORIGIN: normalizedAllowedOrigins[0] ?? apiEndpoint,
+        ALLOWED_ORIGINS: normalizedAllowedOrigins.join(","),
       },
       bundling: {
         minify: true,
@@ -131,7 +143,7 @@ export class EmailStack extends cdk.Stack {
     // Create a certificate for the custom domain
     const certificate = new acm.Certificate(this, "ApiCertificate", {
       domainName: subdomain,
-      validation: acm.CertificateValidation.fromDns(props.hostedZone),
+      validation: acm.CertificateValidation.fromDns(hostedZone),
     });
 
     // Create a custom domain name for the API
@@ -151,7 +163,7 @@ export class EmailStack extends cdk.Stack {
 
     // Create a subdomain DNS record for the API Gateway
     new route53.ARecord(this, "ApiGatewayDnsRecord", {
-      zone: props.hostedZone,
+      zone: hostedZone,
       recordName: subdomain,
       target: route53.RecordTarget.fromAlias(new targets.ApiGatewayDomain(customDomain)),
     });
@@ -165,7 +177,7 @@ export class EmailStack extends cdk.Stack {
 
     // Add CORS options to the API
     const corsOptions: apigateway.CorsOptions = {
-      allowOrigins: [`https://${props.domainName}`, `https://www.${props.domainName}`, apiEndpoint],
+      allowOrigins: normalizedAllowedOrigins,
       allowMethods: ["POST", "OPTIONS"],
       allowHeaders: ["Content-Type"],
     };
@@ -210,7 +222,7 @@ export class EmailStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, "SenderEmailAddress", {
-      value: `no-reply@${domain}`,
+      value: senderEmail,
       description: "Sender Email Address",
       exportName: `${props.environment}-sender-email`,
     });
