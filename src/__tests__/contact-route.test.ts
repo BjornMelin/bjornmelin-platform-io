@@ -1,7 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { APIError } from "@/lib/utils/error-handler";
-
 const sendContactFormEmail = vi.fn();
 const getInstance = vi.fn(() => ({ sendContactFormEmail }));
 
@@ -54,24 +52,64 @@ describe("POST /api/contact", () => {
     expect(response.status).toBe(400);
     const payload = await response.json();
     expect(payload.error).toBe("Validation failed");
+    expect(payload.code).toBe("VALIDATION_ERROR");
     expect(getInstance).not.toHaveBeenCalled();
   });
 
-  it("throws an APIError when the email send fails", async () => {
+  it("returns validation errors when required fields are missing", async () => {
+    const { POST } = await import("@/app/api/contact/route");
+
+    const response = await POST(
+      new Request("http://localhost/api/contact", {
+        method: "POST",
+        body: JSON.stringify({ email: "test@example.com" }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    const payload = await response.json();
+    expect(payload.error).toBe("Validation failed");
+    expect(payload.code).toBe("VALIDATION_ERROR");
+    expect(getInstance).not.toHaveBeenCalled();
+  });
+
+  it("returns validation errors when the request JSON is malformed", async () => {
+    const { POST } = await import("@/app/api/contact/route");
+
+    const response = await POST(
+      new Request("http://localhost/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{ email: 'test@example.com', name: 'Test' ",
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    const payload = await response.json();
+    expect(payload.error).toBe("Validation failed");
+    expect(payload.code).toBe("INVALID_JSON");
+    expect(getInstance).not.toHaveBeenCalled();
+  });
+
+  it("returns a structured error when the email send fails", async () => {
     const { POST } = await import("@/app/api/contact/route");
     sendContactFormEmail.mockRejectedValueOnce(new Error("Unable to send email"));
 
-    await expect(
-      POST(
-        new Request("http://localhost/api/contact", {
-          method: "POST",
-          body: JSON.stringify({
-            name: "Test User",
-            email: "test@example.com",
-            message: "Longer message body for the contact form.",
-          }),
+    const response = await POST(
+      new Request("http://localhost/api/contact", {
+        method: "POST",
+        body: JSON.stringify({
+          name: "Test User",
+          email: "test@example.com",
+          message: "Longer message body for the contact form.",
         }),
-      ),
-    ).rejects.toBeInstanceOf(APIError);
+      }),
+    );
+
+    expect(response.status).toBe(500);
+    expect(await response.json()).toEqual({
+      error: "Failed to send message. Please try again later.",
+      code: "EMAIL_SEND_ERROR",
+    });
   });
 });

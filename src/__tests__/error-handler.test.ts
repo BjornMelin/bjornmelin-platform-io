@@ -31,6 +31,7 @@ describe("handleAPIError", () => {
 
     expect(response.status).toBe(400);
     expect(payload.error).toBe("Validation failed");
+    expect(payload.code).toBe("VALIDATION_ERROR");
     expect(payload.details).toHaveLength(1);
     expect(consoleSpy).toHaveBeenCalledTimes(1);
   });
@@ -56,11 +57,14 @@ describe("handleAPIError", () => {
     });
   });
 
-  it("preserves the message when the error is a generic Error instance", async () => {
+  it("hides the original message when the error is a generic Error instance", async () => {
     const response = handleAPIError(new Error("Boom"));
     const payload = await response.json();
 
     expect(response.status).toBe(500);
-    expect(payload).toEqual({ error: "Boom", code: "INTERNAL_SERVER_ERROR" });
+    expect(payload).toEqual({
+      error: "An unexpected error occurred",
+      code: "INTERNAL_SERVER_ERROR",
+    });
   });
 });
