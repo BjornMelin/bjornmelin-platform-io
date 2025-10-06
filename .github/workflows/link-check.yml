@@ -34,7 +34,6 @@ jobs:
             --exclude localhost
             --exclude 127.0.0.1
             --exclude example.com
-            --exclude-mail
             --timeout 30
             --max-retries 3
             --user-agent "Mozilla/5.0 (compatible; LinkChecker/1.0)"
