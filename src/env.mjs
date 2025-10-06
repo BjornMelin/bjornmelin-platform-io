@@ -3,9 +3,9 @@ import { z } from "zod";
 
 export const env = createEnv({
     server: {
-        AWS_REGION: z.string().min(1).default("us-east-1"),
-        AWS_ACCESS_KEY_ID: z.string().min(1),
-        AWS_SECRET_ACCESS_KEY: z.string().min(1),
+        AWS_REGION: z.string().min(1),
+        AWS_ACCESS_KEY_ID: z.string().min(1).optional(),
+        AWS_SECRET_ACCESS_KEY: z.string().min(1).optional(),
         CONTACT_EMAIL: z.string().email().default("bjornmelin16@gmail.com"),
     },
     client: {
