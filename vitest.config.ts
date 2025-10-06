@@ -2,6 +2,43 @@ import path from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
+const isCi = Boolean(process.env.CI);
+// Enforce 90% coverage by default in all environments.
+// Override via COVERAGE_THRESHOLD_DEFAULT or COVERAGE_THRESHOLD_<METRIC>; set to "0" to disable enforcement (coverage collection still runs).
+const DEFAULT_COVERAGE_THRESHOLD = 90;
+const COVERAGE_METRICS = ["lines", "functions", "branches", "statements"] as const;
+const coverageReporters: string[] = isCi
+  ? ["text", "json", "html", "lcov"]
+  : ["text", "json", "html"];
+
+type CoverageMetric = (typeof COVERAGE_METRICS)[number];
+
+const parseCoverageThreshold = (value: string | undefined, fallback: number): number => {
+  const raw = (value ?? "").trim();
+  if (raw === "" || !/^\d+(\.\d+)?$/.test(raw)) {
+    return fallback;
+  }
+
+  const parsed = Number.parseFloat(raw);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return fallback;
+  }
+
+  return Math.min(parsed, 100);
+};
+
+const coverageDefault = parseCoverageThreshold(
+  process.env.COVERAGE_THRESHOLD_DEFAULT,
+  DEFAULT_COVERAGE_THRESHOLD,
+);
+
+const coverageThresholds = Object.fromEntries(
+  COVERAGE_METRICS.map((metric) => {
+    const envKey = `COVERAGE_THRESHOLD_${metric.toUpperCase()}`;
+    return [metric, parseCoverageThreshold(process.env[envKey], coverageDefault)] as const;
+  }),
+) satisfies Record<CoverageMetric, number>;
+
 export default defineConfig({
   plugins: [react()],
   test: {
@@ -16,7 +53,7 @@ export default defineConfig({
     ],
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html"],
+      reporter: coverageReporters,
       exclude: [
         "node_modules/",
         "src/test/",
@@ -26,12 +63,7 @@ export default defineConfig({
         ".next/**",
         "infrastructure/**",
       ],
-      thresholds: {
-        lines: 90,
-        functions: 90,
-        branches: 90,
-        statements: 90,
-      },
+      thresholds: coverageThresholds,
     },
   },
   resolve: {
