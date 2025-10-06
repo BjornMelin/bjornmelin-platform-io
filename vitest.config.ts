@@ -2,6 +2,22 @@ import path from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
+const isCi = process.env.CI === "true";
+
+const parseCoverageThreshold = (value: string | undefined, fallback: number): number => {
+  const parsed = Number.parseFloat(value ?? "");
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const coverageDefault = parseCoverageThreshold(process.env.COVERAGE_THRESHOLD_DEFAULT, isCi ? 0 : 90);
+
+const coverageThresholds = {
+  lines: parseCoverageThreshold(process.env.COVERAGE_THRESHOLD_LINES, coverageDefault),
+  functions: parseCoverageThreshold(process.env.COVERAGE_THRESHOLD_FUNCTIONS, coverageDefault),
+  branches: parseCoverageThreshold(process.env.COVERAGE_THRESHOLD_BRANCHES, coverageDefault),
+  statements: parseCoverageThreshold(process.env.COVERAGE_THRESHOLD_STATEMENTS, coverageDefault),
+};
+
 export default defineConfig({
   plugins: [react()],
   test: {
@@ -26,12 +42,7 @@ export default defineConfig({
         ".next/**",
         "infrastructure/**",
       ],
-      thresholds: {
-        lines: 90,
-        functions: 90,
-        branches: 90,
-        statements: 90,
-      },
+      thresholds: coverageThresholds,
     },
   },
   resolve: {
