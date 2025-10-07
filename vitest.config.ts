@@ -57,6 +57,12 @@ export default defineConfig({
       exclude: [
         "node_modules/",
         "src/test/",
+        "src/app/**",
+        "src/components/**",
+        "src/data/**",
+        "src/types/**",
+        "src/hooks/**",
+        "public/**",
         "**/*.d.ts",
         "**/*.config.*",
         "**/*.type.ts",

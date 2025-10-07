@@ -19,6 +19,7 @@ export function handleAPIError(error: unknown) {
     return NextResponse.json(
       {
         error: "Validation failed",
+        code: "VALIDATION_ERROR",
         details: error.errors,
       },
       { status: 400 },
@@ -35,11 +36,9 @@ export function handleAPIError(error: unknown) {
     );
   }
 
-  const message = error instanceof Error ? error.message : "An unexpected error occurred";
-
   return NextResponse.json(
     {
-      error: message,
+      error: "An unexpected error occurred",
       code: "INTERNAL_SERVER_ERROR",
     },
     { status: 500 },
