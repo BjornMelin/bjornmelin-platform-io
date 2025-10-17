@@ -30,7 +30,10 @@ jobs:
           args: |
             --verbose
             --no-progress
-            --accept 200
+            --accept 200..=204,301,302,307,308,429,999
+            --exclude-path node_modules
+            --exclude-path .yarn
+            --exclude-path .pnpm
             --exclude-loopback
             --exclude localhost
             --exclude 127.0.0.1
