@@ -30,7 +30,7 @@ jobs:
           args: |
             --verbose
             --no-progress
-            --accept 999
+            --accept 200
             --exclude-loopback
             --exclude localhost
             --exclude 127.0.0.1
