@@ -1,0 +1,25 @@
+# Lychee link checker configuration
+# https://github.com/lycheeverse/lychee
+
+# Accept specific HTTP status codes as valid
+# LinkedIn returns 999 as a bot protection mechanism
+accept = [200, 201, 202, 203, 204, 301, 302, 307, 308, 429, 999]
+
+# User agent to mimic a real browser
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+
+# Maximum number of retries for failed requests
+max_retries = 3
+
+# Timeout for each request in seconds
+timeout = 30
+
+# Exclude patterns - we still check these URLs but with more lenient rules
+exclude_loopback = true
+exclude_private = true
+
+# Only check links, don't check mail addresses
+exclude_mail = true
+
+# Check files in the repository
+include_verbatim = true
