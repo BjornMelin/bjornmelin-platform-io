@@ -3,8 +3,7 @@ import { env } from "@/env.mjs";
 
 let sesClient: SESClient | null = null;
 
-const AWS_ENV_KEYS = ["AWS_REGION", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"] as const;
-type AwsEnvKey = (typeof AWS_ENV_KEYS)[number];
+type AwsEnvKey = "AWS_REGION" | "AWS_ACCESS_KEY_ID" | "AWS_SECRET_ACCESS_KEY";
 
 const envResolvers: Record<AwsEnvKey, () => string | undefined> = {
   AWS_REGION: () => env.AWS_REGION,
