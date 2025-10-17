@@ -77,11 +77,15 @@ describe("EmailService", () => {
       const message = (payload as Record<string, any>).Message as Record<string, any>;
       expect(message.Body.Text.Data).toContain("Name: Jane Doe");
       expect(message.Body.Text.Data).toContain("Email: jane@example.com");
-      expect(message.Body.Text.Data).toContain("Message: Interested in learning more about your work.");
+      expect(message.Body.Text.Data).toContain(
+        "Message: Interested in learning more about your work.",
+      );
       expect(message.Body.Text.Data).toContain("2024-01-01T00:00:00.000Z");
       expect(message.Body.Html.Data).toContain("<p><strong>Name:</strong> Jane Doe</p>");
       expect(message.Body.Html.Data).toContain("<p><strong>Email:</strong> jane@example.com</p>");
-      expect(message.Body.Html.Data).toContain("<p>Interested in learning more about your work.</p>");
+      expect(message.Body.Html.Data).toContain(
+        "<p>Interested in learning more about your work.</p>",
+      );
       expect(message.Body.Html.Data).toContain("2024-01-01T00:00:00.000Z");
     } finally {
       vi.useRealTimers();

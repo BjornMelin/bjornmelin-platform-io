@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
-import { afterEach, beforeEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
+import { afterEach, beforeEach, vi } from "vitest";
 
 const defaultEnv = {
   AWS_REGION: "us-east-1",
