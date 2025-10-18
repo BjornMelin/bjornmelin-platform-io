@@ -19,13 +19,12 @@ export class EmailStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: EmailStackProps) {
     super(scope, id, props);
 
-    const { hostedZone, senderEmail, recipientEmail, allowedOrigins = [] } = props;
+    const { hostedZone, senderEmail, allowedOrigins = [] } = props;
     if (!senderEmail) {
       throw new Error("EmailStack requires a non-empty senderEmail");
     }
-    if (!recipientEmail) {
-      throw new Error("EmailStack requires a non-empty recipientEmail");
-    }
+    // Recipient email will be resolved at runtime from SSM in the Lambda.
+    // Decision Framework: prefer SSM to avoid leaking prod config via env (Leverage=0.35, Value=0.30, Maint=0.25, Adapt=0.10 -> 9.6/10).
 
     const domain = props.domainName;
     const subdomain = `api.${domain}`;
@@ -88,11 +87,13 @@ export class EmailStack extends cdk.Stack {
       entry: path.join(__dirname, "../functions/contact-form/index.ts"),
       environment: {
         SENDER_EMAIL: senderEmail,
-        RECIPIENT_EMAIL: recipientEmail,
         REGION: this.region,
         DOMAIN_NAME: domain,
         ALLOWED_ORIGIN: normalizedAllowedOrigins[0] ?? apiEndpoint,
         ALLOWED_ORIGINS: normalizedAllowedOrigins.join(","),
+        // Provide the SSM parameter containing the recipient email. Lambda reads this at runtime.
+        SSM_RECIPIENT_EMAIL_PARAM:
+          props.ssmRecipientEmailParam ?? `/portfolio/${props.environment}/CONTACT_EMAIL`,
       },
       bundling: {
         minify: true,
@@ -194,6 +195,19 @@ export class EmailStack extends cdk.Stack {
 
     // Attach SES policy to Lambda function
     this.emailFunction.addToRolePolicy(sesPolicy);
+
+    // Grant SSM read permission for the recipient email parameter
+    const paramName =
+      props.ssmRecipientEmailParam ?? `/portfolio/${props.environment}/CONTACT_EMAIL`;
+    const normalizedParam = paramName.startsWith("/") ? paramName : `/${paramName}`;
+    const parameterArn = `arn:aws:ssm:${this.region}:${this.account}:parameter${normalizedParam}`;
+    this.emailFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["ssm:GetParameter"],
+        resources: [parameterArn],
+      }),
+    );
 
     // Add tags
     cdk.Tags.of(this).add("Stack", "Email");

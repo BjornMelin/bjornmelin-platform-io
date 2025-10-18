@@ -77,8 +77,9 @@ const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   environment: CONFIG.prod.environment,
   hostedZone: dnsStack.hostedZone,
   senderEmail: emailConfig.sender,
-  recipientEmail: emailConfig.recipient,
   allowedOrigins: emailConfig.allowedOrigins,
+  // SSM parameter path for the recipient email; defaults to /portfolio/prod/CONTACT_EMAIL if omitted
+  // ssmRecipientEmailParam: "/portfolio/prod/CONTACT_EMAIL",
   tags: CONFIG.tags,
 });
 

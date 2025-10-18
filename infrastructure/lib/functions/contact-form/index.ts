@@ -1,5 +1,6 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { getParameter } from "../../utils/ssm";
 
 const requireEnv = (name: string): string => {
   const value = process.env[name];
@@ -11,7 +12,20 @@ const requireEnv = (name: string): string => {
 
 const region = requireEnv("REGION");
 const senderEmail = requireEnv("SENDER_EMAIL");
-const recipientEmail = requireEnv("RECIPIENT_EMAIL");
+let cachedRecipientEmail: string | null = null;
+async function resolveRecipientEmail(): Promise<string> {
+  if (cachedRecipientEmail) return cachedRecipientEmail;
+  const envRecipient = process.env.RECIPIENT_EMAIL;
+  if (envRecipient) {
+    cachedRecipientEmail = envRecipient;
+    return envRecipient;
+  }
+  const paramName = process.env.SSM_RECIPIENT_EMAIL_PARAM || "/portfolio/prod/CONTACT_EMAIL";
+  const value = await getParameter(paramName, false);
+  if (!value) throw new Error(`Recipient email missing from SSM parameter: ${paramName}`);
+  cachedRecipientEmail = value;
+  return value;
+}
 
 const ses = new SESClient({ region });
 
@@ -118,6 +132,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
 
     // Send email
+    const recipientEmail = await resolveRecipientEmail();
     await ses.send(
       new SendEmailCommand({
         Source: senderEmail,
