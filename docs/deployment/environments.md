@@ -44,8 +44,6 @@ AWS_REGION=us-east-1
 ```bash
 # AWS Configuration
 AWS_REGION=
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
 
 # Application Settings
 NEXT_PUBLIC_API_URL=
@@ -144,14 +142,14 @@ const storageConfig = {
 
 ### Development Security
 
-- Local credentials
+- Local AWS credentials (CLI profile or environment variables)
 - Debug enabled
 - Relaxed CORS
 - Development domains
 
 ### Production Security
 
-- AWS IAM roles
+- GitHub OIDC deployment roles (no long-lived secrets)
 - Strict CORS
 - Production domains
 - Enhanced security
