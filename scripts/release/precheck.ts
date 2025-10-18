@@ -106,8 +106,10 @@ function main() {
     files.filter((f) => f.startsWith("src/app/") && /\/route\.(t|j)sx?$/.test(f));
   const baseApi = new Set(filterRouteImpl(baseFiles));
   const headApi = new Set(filterRouteImpl(headFiles));
-  for (const f of Array.from(baseApi)) if (!headApi.has(f)) setBump("major", `API route removed: ${f}`);
-  for (const f of Array.from(headApi)) if (!baseApi.has(f)) setBump("minor", `API route added: ${f}`);
+  for (const f of Array.from(baseApi))
+    if (!headApi.has(f)) setBump("major", `API route removed: ${f}`);
+  for (const f of Array.from(headApi))
+    if (!baseApi.has(f)) setBump("minor", `API route added: ${f}`);
 
   // If no evidence found, default to patch
   if (evidence.length === 0)
