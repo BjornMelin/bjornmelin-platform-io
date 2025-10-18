@@ -2,7 +2,7 @@
 
 Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS
 solutions architecture through serverless APIs and infrastructure as code.
-Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices.
+Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires Node.js 24.x LTS.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![AWS SAA](https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-solutions-architect-associate)
@@ -63,17 +63,36 @@ Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices.
 
 ## 📚 Quick Links
 
-- [🏛️ Architecture](#️-architecture)
-- [📁 Project Structure](#-project-structure)
-- [🚀 Getting Started](#-getting-started)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [🏗️ AWS Services Integration](#️-aws-services-integration)
-- [💻 Development Scripts](#-development-scripts)
-- [👨‍💻 Author](#-author)
-- [📜 License](#-license)
-- [🌟 Star History](#-star-history)
-- [📚 How to Reference](#-how-to-reference)
-- [🙏 Acknowledgments](#-acknowledgments)
+- [🏗️ bjornmelin-platform-io](#️-bjornmelin-platform-io)
+  - [🌟 Features](#-features)
+    - [Core Platform Features](#core-platform-features)
+    - [Modern Tech Features](#modern-tech-features)
+  - [📚 Quick Links](#-quick-links)
+  - [🏛️ Architecture](#️-architecture)
+    - [System Architecture](#system-architecture)
+    - [Contact Form Flow](#contact-form-flow)
+    - [DNS \& CDN Setup](#dns--cdn-setup)
+  - [📁 Project Structure](#-project-structure)
+    - [Core Components](#core-components)
+  - [🚀 Getting Started](#-getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Initial Setup](#initial-setup)
+    - [Infrastructure Deployment](#infrastructure-deployment)
+    - [Local Development](#local-development)
+  - [🛠️ Tech Stack](#️-tech-stack)
+  - [🏗️ AWS Services Integration](#️-aws-services-integration)
+    - [Core Services](#core-services)
+    - [Compute \& Messaging Services](#compute--messaging-services)
+    - [Development \& Deployment](#development--deployment)
+    - [Security Services](#security-services)
+  - [💻 Development Scripts](#-development-scripts)
+  - [🐳 Run with Docker](#-run-with-docker)
+  - [👨‍💻 Author](#-author)
+    - [Bjorn Melin](#bjorn-melin)
+  - [📜 License](#-license)
+  - [🌟 Star History](#-star-history)
+  - [📚 How to Reference](#-how-to-reference)
+  - [🙏 Acknowledgments](#-acknowledgments)
 
 ## 🏛️ Architecture
 
@@ -298,6 +317,22 @@ yarn serve        # Serve production build locally
 # Infrastructure (in /infrastructure directory)
 yarn cdk deploy   # Deploy AWS infrastructure
 ```
+
+## 🐳 Run with Docker
+
+Build the production image (requires Docker Desktop/daemon running):
+
+```bash
+docker build -t platform-io:node24 .
+```
+
+Run the container and serve the exported site on port 8080:
+
+```bash
+docker run --rm -p 8080:80 platform-io:node24
+```
+
+Open <http://localhost:8080> in your browser. Use Ctrl+C to stop the container.
 
 ## 👨‍💻 Author
 

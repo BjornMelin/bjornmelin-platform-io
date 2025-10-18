@@ -16,7 +16,7 @@ quality, performance, and maintainable architecture.
 
 ### Prerequisites
 
-- Node.js (v20.11.x; enforced by the project engines field)
+- Node.js (24.x LTS; pinned via `.nvmrc` and enforced by the `engines` field)
 - pnpm package manager (enable via `corepack enable pnpm`)
 - AWS CLI configured with appropriate credentials
 - Git
