@@ -1,10 +1,11 @@
 # Infrastructure Architecture
 
-The infrastructure is managed using AWS CDK (Cloud Development Kit) with TypeScript.
+The infrastructure is managed using AWS CDK (Cloud Development Kit) with
+TypeScript.
 
 ## Stack Organization
 
-```
+```text
 infrastructure/
 ├── bin/
 │   └── app.ts               # CDK app entry point

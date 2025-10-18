@@ -1,10 +1,11 @@
 # Frontend Architecture
 
-The frontend is built with Next.js 13+ using the App Router and React Server Components.
+The frontend is built with Next.js 13+ using the App Router and React Server
+Components.
 
 ## Project Structure
 
-```
+```text
 src/
 ├── app/                    # Next.js 13+ App Router pages
 │   ├── about/             # About page

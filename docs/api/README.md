@@ -12,7 +12,7 @@ Currently, the platform provides the following API endpoint:
 
 The API is implemented using Next.js API routes located in `src/app/api/`:
 
-```
+```text
 src/app/api/
 └── contact/
     └── route.ts    # Contact form handler
@@ -81,4 +81,5 @@ The API relies on:
 - Environment variables for configuration
 - Type-safe request/response handling
 
-For detailed information about specific endpoints, please refer to their individual documentation pages linked above.
+For detailed information about specific endpoints, refer to the individual
+documentation pages linked above.
