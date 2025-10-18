@@ -20,5 +20,12 @@
     "typeRoots": ["./node_modules/@types"],
     "outDir": "dist"
   },
-  "exclude": ["node_modules", "cdk.out", "dist"]
+  "exclude": [
+    "node_modules",
+    "cdk.out",
+    "dist",
+    "test",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }
