@@ -33,7 +33,8 @@ All notable changes to this project are documented in this file.
   - Enforce SSM-only resolution (removed RECIPIENT_EMAIL fallback) and added infra tests
     (EmailStack IAM policy, SSM env plumbing, recipient resolver cache). Local infra tests run via Vitest.
   - Add comprehensive infra tests: DNS stack (ACM SANs + outputs), Storage stack (S3 security, OAC wiring,
-    DNS aliases), SSM helper caching, and basic constants coverage. Tests avoid AWS lookups by mocking
+    DNS aliases), cache and security headers policies, Email stack domain/base-path mapping and tracing,
+    Monitoring dashboard and alarms, SSM helper caching, and basic constants coverage. Tests avoid AWS lookups by mocking
     HostedZone.fromLookup and NodejsFunction bundling.
 
 ## [1.2.0] - 2025-10-18

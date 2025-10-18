@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
 import * as cdk from "aws-cdk-lib";
-import { Template, Match } from "aws-cdk-lib/assertions";
+import { Match, Template } from "aws-cdk-lib/assertions";
 import * as route53 from "aws-cdk-lib/aws-route53";
+import { describe, it, vi } from "vitest";
 import { DnsStack } from "../lib/stacks/dns-stack";
 
 describe("DnsStack", () => {
@@ -9,12 +9,14 @@ describe("DnsStack", () => {
     const app = new cdk.App();
 
     // Mock fromLookup to avoid context provider calls
-    const spy = vi.spyOn(route53.HostedZone, "fromLookup").mockImplementation((scope: any, id: string, opts: any) => {
-      return route53.HostedZone.fromHostedZoneAttributes(scope, id, {
-        hostedZoneId: "ZMOCK",
-        zoneName: opts.domainName,
+    const spy = vi
+      .spyOn(route53.HostedZone, "fromLookup")
+      .mockImplementation((scope, id: string, opts: { domainName: string }) => {
+        return route53.HostedZone.fromHostedZoneAttributes(scope as cdk.Stack, id, {
+          hostedZoneId: "ZMOCK",
+          zoneName: opts.domainName,
+        });
       });
-    });
 
     const stack = new DnsStack(app, "Dns", {
       env: { account: "111111111111", region: "us-east-1" },
@@ -40,4 +42,3 @@ describe("DnsStack", () => {
     spy.mockRestore();
   });
 });
-

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@aws-sdk/client-ssm", () => {
   class SSMClient {
@@ -24,4 +24,3 @@ describe("utils/ssm getParameter", () => {
     expect(second).toBe("from-ssm");
   });
 });
-

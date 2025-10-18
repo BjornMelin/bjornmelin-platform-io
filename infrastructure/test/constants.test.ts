@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { CONFIG, getStackName } from "../lib/constants";
 
 describe("constants", () => {
@@ -11,4 +11,3 @@ describe("constants", () => {
     expect(CONFIG.prod.email.sender).toMatch(/@bjornmelin\.io$/);
   });
 });
-
