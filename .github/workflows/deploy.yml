@@ -154,7 +154,8 @@ jobs:
         if: always()
         run: |
           status="${{ steps.smoke.outputs.status }}"
-          http_code="${{ steps.smoke.outputs.http_code || 'n/a' }}"
+          http_code="${{ steps.smoke.outputs.http_code }}"
+          [ -z "$http_code" ] && http_code="n/a"
           {
             echo "## Deployment Summary"
             echo ""
@@ -170,8 +171,10 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
-            const status = '${{ steps.smoke.outputs.status || 'unknown' }}';
-            const httpCode = '${{ steps.smoke.outputs.http_code || 'n/a' }}';
+            const statusRaw = '${{ steps.smoke.outputs.status }}';
+            const httpRaw = '${{ steps.smoke.outputs.http_code }}';
+            const status = statusRaw || 'unknown';
+            const httpCode = httpRaw || 'n/a';
             const url = 'https://bjornmelin.io';
             const lines = [
               `Deployment smoke check ${status === 'success' ? 'succeeded' : 'failed'} for ${url}.`,

@@ -26,7 +26,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 ### Security & Quality
 
-5. **codeql.yml** - GitHub CodeQL security analysis
+5. **codeql.yml** - GitHub CodeQL security analysis (pinned to v3 actions)
    - Runs on: Push, PRs, monthly schedule
    - Scans: JavaScript/TypeScript code for vulnerabilities
 
@@ -111,6 +111,7 @@ Add these badges to your README:
 2. **Concurrency**: Workflows use concurrency groups to cancel redundant runs
 3. **Artifacts**: Test results and build artifacts are uploaded for debugging
 4. **Reusable Setup**: Workflows rely on `./.github/actions/setup-node-pnpm` for consistent Node/pnpm installation and caching
+5. **Workflow Linting**: CI runs actionlint to validate workflow expressions and contexts
 5. **Security**: CodeQL, dependency audits, and automated updates; AWS access uses GitHub OIDC with short-lived credentials
 6. **Automation**: Auto-labeling, auto-assignment, and stale management
 

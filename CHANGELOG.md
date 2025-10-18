@@ -16,6 +16,13 @@ All notable changes to this project are documented in this file.
   Release with auto-generated notes.
 - Release notes configuration via `.github/release.yml` and documentation under `docs/development/releasing.md`.
 
+### CI/Automation
+
+- Auto-release loop guard to prevent re-triggering on release commits.
+- Auto-release now uses the shared composite action for Node/pnpm setup and caching.
+- Added actionlint to CI to validate workflow expressions and contexts.
+- Fixed deploy workflow summary and notification steps to avoid invalid `||` expressions.
+
 ### Changed
 
 - Documentation updates across CI/CD docs to explain the new release process and controls.
