@@ -4,6 +4,28 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import { generateMetadata } from "@/lib/metadata";
 
+const toImageUrl = (input: unknown): string | undefined => {
+  if (typeof input === "string") {
+    return input;
+  }
+
+  if (input instanceof URL) {
+    return input.toString();
+  }
+
+  if (typeof input === "object" && input && "url" in input) {
+    const candidate = (input as { url: unknown }).url;
+    if (typeof candidate === "string") {
+      return candidate;
+    }
+    if (candidate instanceof URL) {
+      return candidate.toString();
+    }
+  }
+
+  return undefined;
+};
+
 describe("generateMetadata", () => {
   beforeEach(() => {
     delete process.env.NEXT_PUBLIC_BASE_URL;
@@ -32,7 +54,21 @@ describe("generateMetadata", () => {
     expect(metadata.description).toBe("About page");
     expect(metadata.metadataBase?.toString()).toBe("https://example.com/");
     expect(metadata.alternates?.canonical).toBe("https://example.com/about");
-    expect(metadata.openGraph?.images?.[0]?.url).toBe("/banner.png");
-    expect(metadata.twitter?.images?.[0]).toBe("/banner.png");
+    const openGraphImages = metadata.openGraph?.images;
+    const ogImageList = Array.isArray(openGraphImages)
+      ? openGraphImages
+      : openGraphImages
+        ? [openGraphImages]
+        : [];
+    const firstOgImage = ogImageList[0];
+    expect(toImageUrl(firstOgImage)).toBe("/banner.png");
+
+    const twitterImages = metadata.twitter?.images;
+    const twitterImageList = Array.isArray(twitterImages)
+      ? twitterImages
+      : twitterImages
+        ? [twitterImages]
+        : [];
+    expect(toImageUrl(twitterImageList[0])).toBe("/banner.png");
   });
 });

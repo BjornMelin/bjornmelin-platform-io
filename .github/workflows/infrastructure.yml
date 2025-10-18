@@ -8,9 +8,6 @@ on:
       - "infrastructure/**"
   workflow_dispatch:
 
-env:
-  AWS_REGION: us-east-1
-
 jobs:
   deploy-infrastructure:
     runs-on: ubuntu-latest
@@ -18,47 +15,52 @@ jobs:
       contents: read
       id-token: write
 
+    env:
+      AWS_REGION: us-east-1
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: "20"
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
+          node-version: "20.11.0"
+          pnpm-version: "10.18.1"
+          install: "false"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          role-session-name: github-actions-infra
           aws-region: ${{ env.AWS_REGION }}
 
-      # Install CDK dependencies
       - name: Install CDK Dependencies
         working-directory: infrastructure
         run: pnpm install --frozen-lockfile
 
-      # Deploy stacks in order
       - name: Deploy DNS Stack
         if: ${{ github.event_name == 'workflow_dispatch' }}
         working-directory: infrastructure
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
         run: pnpm cdk deploy prod-portfolio-dns --require-approval never
 
       - name: Deploy Storage Stack
         working-directory: infrastructure
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
         run: pnpm cdk deploy prod-portfolio-storage --require-approval never
 
       - name: Deploy Email Stack
         working-directory: infrastructure
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
         run: pnpm cdk deploy prod-portfolio-email --require-approval never
 
       - name: Deploy Monitoring Stack
         working-directory: infrastructure
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
         run: pnpm cdk deploy prod-portfolio-monitoring --require-approval never

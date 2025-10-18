@@ -16,6 +16,8 @@ All notable changes to this project are documented in this file.
   `/docs`.
 - Provisioned the `prod-portfolio-deploy` GitHub OIDC IAM role and attached
   scoped S3/CloudFront policies.
+- Added `.markdownlint.json` with a 120-character MD013 limit to keep prose
+  formatting consistent while avoiding unnecessary wraps.
 
 ### Changed
 
@@ -31,6 +33,12 @@ All notable changes to this project are documented in this file.
   hard-coded addresses.
 - Replaced all documentation references to Yarn with pnpm commands aligned to
   current project scripts.
+- Updated `infrastructure.yml` to authenticate via GitHub OIDC, reuse the
+  composite Node/pnpm action, and force Docker bundling to `linux/amd64`.
+- Simplified `e2e-tests.yml` by adopting the composite action in both jobs and
+  removing redundant caching logic.
+- Refreshed `.github/workflows/README.md` to reflect the current workflow set
+  and security posture.
 
 ### Removed
 
@@ -38,3 +46,5 @@ All notable changes to this project are documented in this file.
   now reside in AWS Secrets Manager when explicitly enabled.
 - Removed `npm audit` from the security workflow, relying exclusively on pnpm
   for dependency scanning.
+- Deleted `codeartifact-backup.yml`, `workflow-status.yml`, and
+  `test-matrix.yml` to reduce redundant or low-value automation.

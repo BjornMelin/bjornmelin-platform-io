@@ -14,8 +14,8 @@ permissions:
   pull-requests: write
 
 env:
-  NODE_VERSION: '20'
-  PNPM_VERSION: '9'
+  NODE_VERSION: '20.11.0'
+  PNPM_VERSION: '10.18.1'
 
 jobs:
   audit:
@@ -26,30 +26,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Run pnpm audit
-        run: pnpm audit --audit-level=moderate
+        shell: bash
+        run: |
+          pnpm audit --json > audit-report.json || true
 
-      - name: Run npm audit (for comparison)
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
+      - name: Evaluate audit severity
+        run: node .github/scripts/evaluate-audit.mjs
 
       - name: Check for outdated packages
-        run: pnpm outdated
-        continue-on-error: true
+        run: pnpm outdated || true
 
   dependency-review:
     name: Dependency Review

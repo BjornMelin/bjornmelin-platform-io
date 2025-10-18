@@ -37,7 +37,8 @@ Development deployments are used for testing and include:
 - Local AWS services
 - Test data
 - Development configurations
-- GitHub Actions jobs assume the `dev-portfolio-deploy` IAM role via OIDC
+- GitHub Actions jobs assume an environment-specific OIDC role (for example,
+  a `dev-portfolio-deploy` role) instead of static credentials
 
 ## Deployment Process
 
