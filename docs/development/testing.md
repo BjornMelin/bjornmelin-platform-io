@@ -191,16 +191,16 @@ src/
 
 ```bash
 # Run all tests
-yarn test
+pnpm test
 
 # Run specific test file
-yarn test ComponentName.test.tsx
+pnpm test -- ComponentName.test.tsx
 
 # Run tests in watch mode
-yarn test --watch
+pnpm test -- --watch
 
 # Generate coverage report
-yarn test --coverage
+pnpm test -- --coverage
 ```
 
 ## Continuous Integration

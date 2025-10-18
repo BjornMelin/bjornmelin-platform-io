@@ -4,8 +4,8 @@ This guide will help you set up your development environment for bjornmelin-plat
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
-- Yarn package manager
+- Node.js (v20.11.x; matches the project engines range)
+- pnpm package manager (enable with `corepack enable pnpm`)
 - AWS CLI configured with appropriate credentials
 - Git
 
@@ -21,7 +21,7 @@ This guide will help you set up your development environment for bjornmelin-plat
 2. **Install dependencies:**
 
     ```bash
-    yarn install
+    pnpm install
     ```
 
 3. **Set up environment variables:**
@@ -41,7 +41,7 @@ This guide will help you set up your development environment for bjornmelin-plat
 Run the development server:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 The site will be available at [http://localhost:3000](http://localhost:3000)
@@ -65,7 +65,7 @@ For working with AWS infrastructure:
 3. Install infrastructure dependencies:
 
     ```bash
-    yarn install
+    pnpm install
     ```
 
 4. Deploy infrastructure:
@@ -76,11 +76,11 @@ For working with AWS infrastructure:
 
 ## Available Scripts
 
-- `yarn dev` - Start development server
-- `yarn build` - Build production bundle
-- `yarn start` - Start production server
-- `yarn lint` - Run ESLint
-- `yarn type-check` - Run TypeScript checks
+- `pnpm dev` - Start development server
+- `pnpm build` - Build production bundle
+- `pnpm start` - Start production server
+- `pnpm lint` - Run Biome lint with autofix
+- `pnpm type-check` - Run TypeScript checks
 
 ## Project Structure
 
@@ -95,8 +95,7 @@ For working with AWS infrastructure:
 
 ## Code Style
 
-- ESLint configuration in `.eslintrc.json`
-- Prettier for code formatting
+- Biome handles linting and formatting (`pnpm lint` / `pnpm format`)
 - TypeScript strict mode enabled
 
 ## Testing
@@ -104,7 +103,7 @@ For working with AWS infrastructure:
 Run tests:
 
 ```bash
-yarn test
+pnpm test
 ```
 
 ## Common Issues
@@ -125,7 +124,7 @@ export AWS_DEFAULT_REGION="your_region"
 If port 3000 is already in use, you can specify a different port:
 
 ```bash
-PORT=3001 yarn dev
+PORT=3001 pnpm dev
 ```
 
 ## Next Steps

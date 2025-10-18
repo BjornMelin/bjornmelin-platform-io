@@ -55,7 +55,7 @@ All API endpoints return JSON responses with the following structure:
 The API can be tested locally using the development server:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 API endpoints will be available at `http://localhost:3000/api/`

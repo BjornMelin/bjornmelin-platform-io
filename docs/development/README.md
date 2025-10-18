@@ -16,8 +16,8 @@ quality, performance, and maintainable architecture.
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
-- Yarn package manager
+- Node.js (v20.11.x; enforced by the project engines field)
+- pnpm package manager (enable via `corepack enable pnpm`)
 - AWS CLI configured with appropriate credentials
 - Git
 
@@ -39,8 +39,7 @@ quality, performance, and maintainable architecture.
 
 #### Development Tools
 
-- ESLint
-- Prettier
+- Biome (linting and formatting)
 - Zod for validation
 - React Testing Library
 
@@ -59,8 +58,7 @@ graph LR
 ### 2. Code Quality
 
 - TypeScript for type safety
-- ESLint for code linting
-- Prettier for code formatting
+- Biome for linting and formatting
 - Git hooks for pre-commit checks
 
 ### 3. Testing Requirements
@@ -124,16 +122,16 @@ src/
 
 ```bash
 # Start development server
-yarn dev
+pnpm dev
 
 # Build for production
-yarn build
+pnpm build
 
 # Run type checking
-yarn type-check
+pnpm type-check
 
 # Run linting
-yarn lint
+pnpm lint
 ```
 
 ## Infrastructure Development

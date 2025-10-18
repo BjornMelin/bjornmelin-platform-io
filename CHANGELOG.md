@@ -18,6 +18,7 @@ All notable changes to this project are documented in this file.
 - Updated CodeQL workflow to use `github/codeql-action@v3` and documented the advanced-only configuration.
 - Refactored SES client utility with Google-style docstrings and strict optional environment handling.
 - Parameterized monitoring alert emails via configuration and removed hard-coded addresses.
+- Replaced all documentation references to Yarn with pnpm commands aligned to current project scripts.
 
 ### Removed
 
