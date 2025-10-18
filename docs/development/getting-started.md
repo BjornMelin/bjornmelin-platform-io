@@ -4,7 +4,7 @@ This guide will help you set up your development environment for bjornmelin-plat
 
 ## Prerequisites
 
-- Node.js (v20.11.x; matches the project engines range)
+- Node.js (24.x LTS; pinned via `.nvmrc`)
 - pnpm package manager (enable with `corepack enable pnpm`)
 - AWS CLI configured with appropriate credentials
 - Git
@@ -45,6 +45,22 @@ pnpm dev
 ```
 
 The site will be available at [http://localhost:3000](http://localhost:3000)
+
+## Run with Docker
+
+Build the image (ensure Docker Desktop/daemon is running):
+
+```bash
+docker build -t platform-io:node24 .
+```
+
+Run the container and access the site at <http://localhost:8080>:
+
+```bash
+docker run --rm -p 8080:80 platform-io:node24
+```
+
+Stop the container with Ctrl+C.
 
 ## Infrastructure Development
 

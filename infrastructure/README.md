@@ -40,7 +40,7 @@ graph TD
 ### Prerequisites
 
 - AWS CLI configured
-- Node.js 20+
+- Node.js 24.x LTS (use `nvm use` from repo root)
 - pnpm package manager (align with repository CI version)
 - Domain registered in Route 53
 

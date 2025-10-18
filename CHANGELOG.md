@@ -4,19 +4,42 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-10-18
+
+### Changed
+
+- Runtime upgraded to Node 24 LTS; pin to `v24.10.0` via `.nvmrc` and `"engines": { "node": ">=24 <25" }` in `package.json`.
+- Standardize pnpm activation through Corepack using the exact `packageManager` version (currently `pnpm@10.18.3`).
+- Consolidate GitHub Actions to read Node version from `.nvmrc` and pnpm from `package.json`;
+  remove per-workflow Node/pnpm env pins.
+- Update all CI jobs to cache the pnpm store and run `pnpm install --frozen-lockfile` deterministically.
+- Bump `@types/node` to `^24` in root and infrastructure workspaces; validate type-check and build.
+
 ### Added
 
-- Introduced `.github/actions/setup-node-pnpm` to centralize Node.js/pnpm setup
+- Dockerfile using Node `24-bookworm-slim` for build and a minimalist static server image for runtime (Next.js `output: 'export'`).
+
+### Migration Notes
+
+- Ensure you are on Node 24.x: `nvm use` (reads `.nvmrc`).
+- Corepack is enabled automatically in CI; locally run
+  `corepack enable && corepack use $(node -p "require('./package.json').packageManager")`
+  if needed.
+- No deprecated Node APIs were present; no code changes required beyond version pins.
+
+### Added
+
+- Introduce `.github/actions/setup-node-pnpm` to centralize Node.js/pnpm setup
   and caching across workflows.
-- Implemented `pnpm audit` severity gating with a JSON report evaluator and job
+- Implement `pnpm audit` severity gating with a JSON report evaluator and job
   summary output.
-- Added CDK assertion tests for `DeploymentStack` (legacy IAM toggle) and
+- Add CDK assertion tests for `DeploymentStack` (legacy IAM toggle) and
   `MonitoringStack` (alert recipients).
-- Created markdownlint automation and normalized documentation formatting across
+- Create markdownlint automation and normalize documentation formatting across
   `/docs`.
-- Provisioned the `prod-portfolio-deploy` GitHub OIDC IAM role and attached
+- Provision the `prod-portfolio-deploy` GitHub OIDC IAM role and attach
   scoped S3/CloudFront policies.
-- Added `.markdownlint.json` with a 120-character MD013 limit to keep prose
+- Add `.markdownlint.json` with a 120-character MD013 limit to keep prose
   formatting consistent while avoiding unnecessary wraps.
 
 ### Changed
@@ -42,9 +65,9 @@ All notable changes to this project are documented in this file.
 
 ### Removed
 
-- Eliminated the deprecated legacy IAM user outputs; any temporary access keys
+- Eliminate the deprecated legacy IAM user outputs; any temporary access keys
   now reside in AWS Secrets Manager when explicitly enabled.
 - Removed `npm audit` from the security workflow, relying exclusively on pnpm
   for dependency scanning.
-- Deleted `codeartifact-backup.yml`, `workflow-status.yml`, and
+- Delete `codeartifact-backup.yml`, `workflow-status.yml`, and
   `test-matrix.yml` to reduce redundant or low-value automation.

@@ -8,8 +8,8 @@ This document outlines the deployment process for bjornmelin-platform-io.
 
 - AWS credentials provisioned for the target account
 - AWS CDK CLI (`npm install -g aws-cdk`) or `pnpm dlx aws-cdk`
-- Node.js 20.11.x
-- pnpm 10.18.x (Corepack enables the pinned version automatically)
+- Node.js 24.x LTS (pinned via `.nvmrc`)
+- pnpm 10.18.x (activated via Corepack from `package.json#packageManager`)
 
 ### CDK Deployment Process
 
@@ -66,6 +66,17 @@ CDK stacks do **not** create IAM users or access keys.
    ```bash
    pnpm start
    ```
+
+### Local Container Smoke Test
+
+Build and run the Docker image that serves the static export (requires Docker Desktop/daemon running):
+
+```bash
+docker build -t platform-io:node24 .
+docker run --rm -p 8080:80 platform-io:node24
+```
+
+Open <http://localhost:8080> to verify assets and routes.
 
 ### Environment Variables
 
