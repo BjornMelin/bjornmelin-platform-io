@@ -48,6 +48,18 @@ Environment-specific configurations are managed through:
 - `cdk.context.json` for CDK context values
 - IAM OIDC + region for AWS credentials (no long-lived keys)
 
+### Reading SSM Parameters (Node.js)
+
+For Lambda/back-end code, prefer fetching configuration at startup from SSM:
+
+```ts
+// src/lib/aws/ssm.ts
+import { getParameter } from "@/lib/aws/ssm";
+
+// Example (decrypted secret):
+const contactEmail = await getParameter("/portfolio/prod/CONTACT_EMAIL");
+```
+
 ## Monitoring and Logging
 
 Monitoring is configured through the monitoring stack, which sets up:
