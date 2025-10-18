@@ -13,13 +13,13 @@ const requireEnv = (name: string): string => {
 const region = requireEnv("REGION");
 const senderEmail = requireEnv("SENDER_EMAIL");
 let cachedRecipientEmail: string | null = null;
-async function resolveRecipientEmail(): Promise<string> {
+/**
+ * Resolve the contact recipient email strictly from AWS SSM Parameter Store.
+ * Reads the parameter name from `SSM_RECIPIENT_EMAIL_PARAM` and caches the result
+ * in-process to avoid repeated API calls during warm invocations.
+ */
+export async function resolveRecipientEmail(): Promise<string> {
   if (cachedRecipientEmail) return cachedRecipientEmail;
-  const envRecipient = process.env.RECIPIENT_EMAIL;
-  if (envRecipient) {
-    cachedRecipientEmail = envRecipient;
-    return envRecipient;
-  }
   const paramName = process.env.SSM_RECIPIENT_EMAIL_PARAM || "/portfolio/prod/CONTACT_EMAIL";
   const value = await getParameter(paramName, false);
   if (!value) throw new Error(`Recipient email missing from SSM parameter: ${paramName}`);

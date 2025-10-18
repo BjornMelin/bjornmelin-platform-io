@@ -30,6 +30,8 @@ All notable changes to this project are documented in this file.
 - Infrastructure: Email contact Lambda now reads recipient from AWS SSM Parameter Store; stack passes
   `SSM_RECIPIENT_EMAIL_PARAM` and grants `ssm:GetParameter` on that path. Removes need for
   `RECIPIENT_EMAIL` in Lambda env.
+  - Enforce SSM-only resolution (removed RECIPIENT_EMAIL fallback) and added infra tests
+    (EmailStack IAM policy, SSM env plumbing, recipient resolver cache). Local infra tests run via Vitest.
 
 ## [1.2.0] - 2025-10-18
 

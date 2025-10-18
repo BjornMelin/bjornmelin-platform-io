@@ -18,7 +18,17 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "typeRoots": ["./node_modules/@types"],
+    "types": ["node"],
     "outDir": "dist"
   },
-  "exclude": ["node_modules", "cdk.out", "dist", "test", "**/*.test.ts", "**/*.spec.ts"]
+  "include": ["bin/**/*.ts", "lib/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "cdk.out",
+    "dist",
+    "test",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "vitest.config.ts"
+  ]
 }
