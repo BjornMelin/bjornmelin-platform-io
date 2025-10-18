@@ -1,0 +1,71 @@
+name: Finalize Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from last commit
+        id: ver
+        run: |
+          set -euo pipefail
+          msg=$(git log -1 --pretty=%B)
+          echo "Last commit: $msg"
+          if [[ "$msg" =~ chore\(release\):\ v([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            echo "next=v${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+          else
+            echo "No release commit found; skipping." >> $GITHUB_STEP_SUMMARY
+            echo "skip=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Stop if not a release commit
+        if: steps.ver.outputs.skip == 'true'
+        run: echo "Not a release commit; done."
+
+      - name: Compute current SHA
+        id: headsha
+        if: steps.ver.outputs.skip != 'true'
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create tag (idempotent)
+        if: steps.ver.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const ref = `refs/tags/${{ steps.ver.outputs.next }}`;
+            try {
+              await github.git.createRef({ owner: context.repo.owner, repo: context.repo.repo, ref, sha: '${{ steps.headsha.outputs.sha }}' });
+            } catch (e) {
+              if (e.status === 422 && String(e.message).includes('Reference already exists')) {
+                core.info('Tag exists; continuing.');
+              } else { throw e; }
+            }
+
+      - name: Create GitHub Release (publish)
+        if: steps.ver.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = `${{ steps.ver.outputs.next }}`;
+            await github.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: `Release ${tag}`,
+              target_commitish: '${{ steps.headsha.outputs.sha }}',
+              draft: false,
+              prerelease: false,
+              generate_release_notes: true,
+            });
+
