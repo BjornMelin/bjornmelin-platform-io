@@ -22,13 +22,13 @@ AWS_REGION=us-east-1
 - Development CDK stack
 - Hot reload enabled
 
-### Production
+### Production (GitHub Environment + AWS SSM)
 
-```bash
-# .env.production
-NEXT_PUBLIC_API_URL=https://api.example.com
-AWS_REGION=us-east-1
-```
+- Public client config comes from the GitHub Environment `production` variables:
+  - `NEXT_PUBLIC_BASE_URL`
+  - `NEXT_PUBLIC_API_URL`
+- Server-side values are stored in AWS SSM Parameter Store or Secrets Manager
+  (e.g., `/portfolio/prod/CONTACT_EMAIL`).
 
 #### Production Settings
 
@@ -86,12 +86,11 @@ export class ProductionStack extends Stack {
 
 ## Configuration Management
 
-### Environment Files
+### Environment Files (local only)
 
 ```text
-.env.local          # Local overrides
-.env.development    # Development settings
-.env.production     # Production settings
+.env.local          # Local overrides (not committed)
+.env.development    # Development settings (optional, not required for CI)
 ```
 
 ### Type Safety

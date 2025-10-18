@@ -92,20 +92,16 @@ Open <http://localhost:8080> to verify assets and routes.
 - Safety:
   - Codex runs under reduced privileges; release creation uses `GITHUB_TOKEN` with `contents: write`.
 
-### Environment Variables
+### Environment Variables (production via GitHub Environment)
 
 GitHub Actions environments define the full variable set for each target stage.
-Production uses:
+Production uses GitHub Environment "production" variables and secrets:
 
-- `NEXT_PUBLIC_BASE_URL`
-- `AWS_REGION`
-- `CONTACT_EMAIL`
-- Resend API key (secret)
-- Any feature-specific tokens
-- `AWS_DEPLOY_ROLE_ARN` (repository secret pointing to the deployment IAM role ARN)
+- Variables (public client config): `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_API_URL`
+- Secrets (build-time or CI use): `OPENAI_API_KEY` (Codex), others as needed
+- AWS access uses OIDC via `aws-actions/configure-aws-credentials` (no static keys)
 
-Secrets live in environment-scoped GitHub secrets; infrastructure credentials
-are provided exclusively through role assumption.
+At runtime (Lambda/back-end), prefer AWS SSM Parameter Store / Secrets Manager rather than `.env` files.
 
 ## Deployment Environments
 

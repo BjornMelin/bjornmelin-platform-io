@@ -43,9 +43,10 @@ infrastructure/
 
 Environment-specific configurations are managed through:
 
-- `.env.production` - Production environment variables
-- `cdk.context.json` - CDK context values
-- Environment variables for AWS credentials and region
+- GitHub Environment `production` variables for public client config
+- AWS SSM Parameter Store / Secrets Manager for server-only values
+- `cdk.context.json` for CDK context values
+- IAM OIDC + region for AWS credentials (no long-lived keys)
 
 ## Monitoring and Logging
 

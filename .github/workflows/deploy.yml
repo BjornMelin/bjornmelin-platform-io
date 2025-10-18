@@ -21,8 +21,6 @@ concurrency:
 
 env:
   AWS_REGION: us-east-1
-  NEXT_PUBLIC_BASE_URL: https://bjornmelin.io
-  NEXT_PUBLIC_API_URL: https://api.bjornmelin.io
 
 jobs:
   # Run tests before deployment
@@ -59,6 +57,7 @@ jobs:
     needs: test
     if: needs.test.outputs.tests-passed == 'true'
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       id-token: write
@@ -82,8 +81,8 @@ jobs:
       # Build the Next.js app & export static files
       - name: Build Next.js App (Static Export)
         env:
-          NEXT_PUBLIC_BASE_URL: ${{ env.NEXT_PUBLIC_BASE_URL }}
-          NEXT_PUBLIC_API_URL: ${{ env.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
         run: pnpm build
 
       # Retrieve the S3 bucket name and CloudFront distribution from your CF stack

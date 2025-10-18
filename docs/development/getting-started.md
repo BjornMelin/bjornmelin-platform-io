@@ -24,17 +24,16 @@ This guide will help you set up your development environment for bjornmelin-plat
     pnpm install
     ```
 
-3. **Set up environment variables:**
+3. **Set up environment variables (local):**
 
     ```bash
-    # Copy the example env file
+    # Local-only overrides (not committed)
     cp .env.example .env.local
-
-    # Configure your environment variables:
-    # - AWS credentials
-    # - API endpoints
-    # - Other environment-specific settings
+    # Edit .env.local for developer-only values (optional)
     ```
+
+    Production variables are provided by the GitHub Environment `production`;
+    server-only values are in AWS SSM/Secrets, not in files.
 
 ## Development Server
 
