@@ -20,13 +20,11 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: "20.11.0"
-          pnpm-version: "10.18.1"
           install: "false"
 
       - name: Configure AWS Credentials

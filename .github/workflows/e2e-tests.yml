@@ -24,13 +24,11 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: "20.11.0"
-          pnpm-version: "10.18.1"
           install: "true"
 
       - name: Cache Playwright browsers
@@ -70,7 +68,7 @@ jobs:
         with:
           name: playwright-report-${{ github.sha }}
           path: playwright-report/
-          retention-days: 30
+          retention-days: 7
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -122,13 +120,11 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: "20.11.0"
-          pnpm-version: "10.18.1"
           install: "true"
 
       - name: Run unit tests with coverage
@@ -140,7 +136,7 @@ jobs:
         with:
           name: coverage-report-${{ github.sha }}
           path: coverage/
-          retention-days: 30
+          retention-days: 7
 
       - name: Coverage summary
         if: github.event_name == 'pull_request'

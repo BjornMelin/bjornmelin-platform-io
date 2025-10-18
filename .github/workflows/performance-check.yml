@@ -12,10 +12,6 @@ permissions:
   pull-requests: write
   issues: write
 
-env:
-  NODE_VERSION: '20.11.0'
-  PNPM_VERSION: '10.18.1'
-
 jobs:
   lighthouse:
     name: Lighthouse CI
@@ -23,13 +19,12 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
+          install: "true"
 
       - name: Build application
         run: pnpm build
@@ -79,18 +74,18 @@ jobs:
             });
 
   bundle-size:
+    needs: lighthouse
     name: Bundle Size Check
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
+          install: "true"
 
       - name: Build and analyze bundle
         run: |
@@ -117,4 +112,4 @@ jobs:
           path: |
             bundle-report.md
             .next/analyze/
-          retention-days: 30
+          retention-days: 7

@@ -23,8 +23,6 @@ env:
   AWS_REGION: us-east-1
   NEXT_PUBLIC_BASE_URL: https://bjornmelin.io
   NEXT_PUBLIC_API_URL: https://api.bjornmelin.io
-  NODE_VERSION: '20.11.0'
-  PNPM_VERSION: '10.18.1'
 
 jobs:
   # Run tests before deployment
@@ -35,13 +33,11 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
           install: "true"
 
       - name: Run unit tests
@@ -69,13 +65,11 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
           install: "true"
 
       - name: Configure AWS Credentials
