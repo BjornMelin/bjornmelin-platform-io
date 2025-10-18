@@ -149,4 +149,31 @@ pnpm destroy:all
 2. **Monthly:**
    - Review access logs
    - Verify backup retention
-   - Check cost optimization
+- Check cost optimization
+
+## Tests
+
+- Runner: Vitest (Node environment). No AWS account or credentials are required.
+- Location: `infrastructure/test/*.test.ts`
+- Why it’s fast: tests mock `route53.HostedZone.fromLookup` and stub `aws-cdk-lib/aws-lambda-nodejs.NodejsFunction` to avoid AWS lookups and esbuild bundling.
+
+Commands
+
+```bash
+# Install deps (once)
+pnpm -C infrastructure install
+
+# Run the infra test suite
+pnpm -C infrastructure test
+
+# With coverage (v8)
+pnpm -C infrastructure test:coverage
+
+# Run a single test file
+pnpm -C infrastructure vitest run test/storage-stack.test.ts
+```
+
+Notes
+
+- Type-check/build excludes tests (`tsconfig.json` includes only `bin/**` and `lib/**`).
+- Vitest config lives in `infrastructure/vitest.config.ts` with sensible coverage excludes.
