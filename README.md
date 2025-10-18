@@ -84,6 +84,21 @@ Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires 
     - [Local Development](#local-development)
   - [🧪 Infra Tests (CDK)](#-infra-tests-cdk)
   - [🚢 Releasing](#releasing)
+
+## 📖 Docs
+
+- Development
+  - Getting Started: docs/development/getting-started.md
+  - Development Overview: docs/development/README.md
+  - Testing Strategies: docs/development/testing.md
+  - Releasing: docs/development/releasing.md
+- Deployment
+  - Overview: docs/deployment/README.md
+  - CI/CD Pipeline: docs/deployment/ci-cd.md
+  - Environments: docs/deployment/environments.md
+- Architecture
+  - Overview: docs/architecture/README.md
+  - Frontend: docs/architecture/frontend.md
   - [Releasing](#releasing)
   - [🛠️ Tech Stack](#️-tech-stack)
   - [🏗️ AWS Services Integration](#️-aws-services-integration)
