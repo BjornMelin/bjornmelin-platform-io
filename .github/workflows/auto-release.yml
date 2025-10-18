@@ -102,11 +102,10 @@ jobs:
             core.setOutput('latest', latest);
             core.setOutput('next_version', next);
 
-      - name: Export NEXT_VERSION env
-        run: echo "NEXT_VERSION=${{ steps.version.outputs.next_version }}" >> $GITHUB_ENV
-
       - name: Prepare release branch and commit version bump
         id: bump
+        env:
+          NEXT_VERSION: ${{ steps.version.outputs.next_version }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -125,11 +124,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.bump.outputs.branch }}
           base: main
-          title: "chore(release): ${{ env.NEXT_VERSION }}"
+          title: "chore(release): ${{ steps.version.outputs.next_version }}"
           body: |
             This PR was generated automatically by the Auto Release workflow.
 
-            - Proposed version: `${{ env.NEXT_VERSION }}`
+            - Proposed version: `${{ steps.version.outputs.next_version }}`
             - SemVer floor: `${{ steps.precheck.outputs.floor }}`
             - Codex rationale attached as artifact and summarized below:
 
