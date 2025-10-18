@@ -78,6 +78,20 @@ docker run --rm -p 8080:80 platform-io:node24
 
 Open <http://localhost:8080> to verify assets and routes.
 
+## Automated Releases (Codex-assisted)
+
+- Trigger: Push to `main` or manual dispatch `Auto Release`.
+- Flow:
+  - Prechecks compute a safe SemVer floor from actual code changes (routes/API/env heuristics).
+  - Codex Action reads the full diff and returns a structured JSON decision (bump + rationale).
+  - Floor enforcement prevents lowering; high-risk outputs default to the floor.
+  - The workflow creates a tag `vX.Y.Z` and a draft GitHub Release with `generate_release_notes: true`.
+  - `.github/release.yml` controls categories; PRs labeled `release:skip` are excluded.
+- Overrides:
+  - Labels `semver:override-*` and `release:skip` adjust behavior in edge cases.
+- Safety:
+  - Codex runs under reduced privileges; release creation uses `GITHUB_TOKEN` with `contents: write`.
+
 ### Environment Variables
 
 GitHub Actions environments define the full variable set for each target stage.

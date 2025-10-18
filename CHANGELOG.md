@@ -4,6 +4,22 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Removed
+
+- Removed npm release workflow and semantic-release tooling; this site is not published to npm.
+
+### Added
+
+- Codex-assisted auto-release (PR) workflow that computes a SemVer floor from code changes, uses Codex to decide the
+  final bump from the full diff, and opens a Release PR with a package.json version bump.
+- Finalize-release workflow that, upon merging the Release PR to `main`, tags the merge commit and publishes a GitHub
+  Release with auto-generated notes.
+- Release notes configuration via `.github/release.yml` and documentation under `docs/development/releasing.md`.
+
+### Changed
+
+- Documentation updates across CI/CD docs to explain the new release process and controls.
+
 ## [1.2.0] - 2025-10-18
 
 ### Changed
