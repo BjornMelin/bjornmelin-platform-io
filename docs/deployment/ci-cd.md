@@ -6,152 +6,122 @@ This document outlines the deployment process for bjornmelin-platform-io.
 
 ### Prerequisites
 
-- AWS credentials configured
-- AWS CDK CLI installed
-- Node.js and Yarn
+- AWS credentials provisioned for the target account
+- AWS CDK CLI (`npm install -g aws-cdk`) or `pnpm dlx aws-cdk`
+- Node.js 20.11.x
+- pnpm 10.18.x (Corepack enables the pinned version automatically)
 
 ### CDK Deployment Process
 
-1. Navigate to infrastructure directory:
+1. Install dependencies in the infrastructure workspace:
 
-```bash
-cd infrastructure
-```
+   ```bash
+   cd infrastructure
+   pnpm install
+   ```
 
-2. Install dependencies:
+2. Build the CDK app:
 
-```bash
-yarn install
-```
+   ```bash
+   pnpm build
+   ```
 
-3. Build the CDK app:
+3. Review changes prior to deployment:
 
-```bash
-yarn build
-```
+   ```bash
+   pnpm cdk diff
+   ```
 
-4. Review infrastructure changes:
+4. Deploy the stacks that need to change:
 
-```bash
-cdk diff
-```
+   ```bash
+   pnpm cdk deploy prod-portfolio-storage
+   pnpm cdk deploy prod-portfolio-monitoring
+   pnpm cdk deploy prod-portfolio-deployment
+   ```
 
-5. Deploy all stacks:
+   Use `pnpm cdk deploy --all` when a coordinated full rollout is required.
 
-```bash
-cdk deploy --all
-```
-
-Or deploy specific stacks:
-
-```bash
-cdk deploy EmailStack DnsStack
-```
+All environments assume AWS roles through GitHub’s OpenID Connect provider. The
+CDK stacks do **not** create IAM users or access keys.
 
 ## Next.js Application Deployment
 
 ### Production Build
 
-1. Install dependencies:
+1. Install web application dependencies from the repository root:
 
-```bash
-yarn install
-```
+   ```bash
+   pnpm install
+   ```
 
-2. Build the application:
+2. Produce an optimized build:
 
-```bash
-yarn build
-```
+   ```bash
+   pnpm build
+   ```
 
-3. Start production server:
+3. Run the production server locally (optional smoke test):
 
-```bash
-yarn start
-```
+   ```bash
+   pnpm start
+   ```
 
 ### Environment Variables
 
-Ensure all required environment variables are set:
+GitHub Actions environments define the full variable set for each target stage.
+Production uses:
 
-- AWS credentials
-- API endpoints
-- Other configuration values
+- `NEXT_PUBLIC_BASE_URL`
+- `AWS_REGION`
+- `CONTACT_EMAIL`
+- Resend API key (secret)
+- Any feature-specific tokens
+
+Secrets live in environment-scoped GitHub secrets; infrastructure credentials
+are provided exclusively through role assumption.
 
 ## Deployment Environments
 
 ### Development
 
-- Used for testing and development
-- Deployed manually through CDK
-- Separate AWS resources
+- Ad hoc deployments via CDK or branch workflows
+- Shares infrastructure code with production
+- Uses the `dev-portfolio-deploy` OIDC role for automation
 
 ### Production
 
-- Live environment
-- Deployed through CDK
-- Production-grade resources
-- Enhanced monitoring
+- Deployments run through GitHub Actions using the `prod-portfolio-deploy`
+  role
+- Daily security audit workflow with pnpm audit severity gating
+- CodeQL advanced workflow is the single SARIF publisher (default setup is
+  disabled)
 
 ## Monitoring
 
-### CloudWatch Metrics
-
-- Application performance
-- Error rates
-- Resource utilization
-
-### Logging
-
-- Application logs
-- Infrastructure logs
-- Access logs
+- SNS alert recipients are configured in `CONFIG.prod.alerts.emails`
+- CloudWatch dashboards and alarms are provisioned by `MonitoringStack`
+- Audit SNS subscriptions are parameterized and can be rotated without code change
 
 ## Rollback Procedures
 
-If issues are detected:
+1. Review CloudWatch alarms and deployment logs.
+2. Identify the faulty change via `pnpm cdk diff`.
+3. Redeploy the previous stack version:
 
-1. Identify the problem
-2. Review CloudWatch logs
-3. Revert infrastructure:
+   ```bash
+   pnpm cdk deploy --all --previous-parameters
+   ```
 
-```bash
-cdk deploy --all --previous-version
-```
+4. Re-run the CI pipeline to confirm the rollback.
 
 ## Security Considerations
 
-- Environment variable management
-- AWS IAM roles and policies
-- Resource access controls
-- Encryption at rest and in transit
-
-## Best Practices
-
-1. Always review `cdk diff` before deployment
-2. Test changes in development first
-3. Monitor deployment logs
-4. Maintain documentation
-5. Regular security updates
-
-## Troubleshooting
-
-Common issues and solutions:
-
-### Permission Issues
-
-- Verify AWS credentials
-- Check IAM roles
-- Review resource policies
-
-### Deployment Failures
-
-- Check CloudWatch logs
-- Verify environment variables
-- Review stack events
-
-### Performance Issues
-
-- Monitor CloudWatch metrics
-- Check resource utilization
-- Review application logs
+- GitHub OIDC federation is enforced across all workflows; no IAM access keys
+  are provisioned.
+- Secrets are stored in AWS Secrets Manager and referenced via GitHub
+  environment variables.
+- pnpm audit runs on every push/PR and fails the build on high or critical
+  findings.
+- CodeQL default setup is disabled in repository settings; the advanced
+  workflow manages scanning.

@@ -13,28 +13,28 @@ This guide will help you set up your development environment for bjornmelin-plat
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/bjornmelin/bjornmelin-platform-io.git
-cd bjornmelin-platform-io
-```
+    ```bash
+    git clone https://github.com/bjornmelin/bjornmelin-platform-io.git
+    cd bjornmelin-platform-io
+    ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 
-```bash
-yarn install
-```
+    ```bash
+    yarn install
+    ```
 
-3. Set up environment variables:
+3. **Set up environment variables:**
 
-```bash
-# Copy the example env file
-cp .env.example .env.local
+    ```bash
+    # Copy the example env file
+    cp .env.example .env.local
 
-# Configure your environment variables:
-# - AWS credentials
-# - API endpoints
-# - Other environment-specific settings
-```
+    # Configure your environment variables:
+    # - AWS credentials
+    # - API endpoints
+    # - Other environment-specific settings
+    ```
 
 ## Development Server
 
@@ -52,27 +52,27 @@ For working with AWS infrastructure:
 
 1. Install AWS CDK globally:
 
-```bash
-npm install -g aws-cdk
-```
+    ```bash
+    npm install -g aws-cdk
+    ```
 
 2. Navigate to infrastructure directory:
 
-```bash
-cd infrastructure
-```
+    ```bash
+    cd infrastructure
+    ```
 
 3. Install infrastructure dependencies:
 
-```bash
-yarn install
-```
+    ```bash
+    yarn install
+    ```
 
 4. Deploy infrastructure:
 
-```bash
-cdk deploy
-```
+    ```bash
+    cdk deploy
+    ```
 
 ## Available Scripts
 
@@ -84,7 +84,7 @@ cdk deploy
 
 ## Project Structure
 
-```
+```text
 .
 ├── src/                  # Application source code
 ├── public/              # Static files
@@ -111,7 +111,8 @@ yarn test
 
 ### AWS Credentials
 
-Ensure your AWS credentials are properly configured in `~/.aws/credentials` or through environment variables:
+Ensure your AWS credentials are properly configured in `~/.aws/credentials`
+or through environment variables:
 
 ```bash
 export AWS_ACCESS_KEY_ID="your_access_key"

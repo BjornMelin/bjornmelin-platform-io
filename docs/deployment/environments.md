@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document outlines the environment configurations for bjornmelin-platform-io.
+This document outlines the environment configurations for
+bjornmelin-platform-io.
 
 ## Environment Types
 
@@ -89,7 +90,7 @@ export class ProductionStack extends Stack {
 
 ### Environment Files
 
-```
+```text
 .env.local          # Local overrides
 .env.development    # Development settings
 .env.production     # Production settings
@@ -141,14 +142,14 @@ const storageConfig = {
 
 ## Security Settings
 
-### Development
+### Development Security
 
 - Local credentials
 - Debug enabled
 - Relaxed CORS
 - Development domains
 
-### Production
+### Production Security
 
 - AWS IAM roles
 - Strict CORS
@@ -157,7 +158,7 @@ const storageConfig = {
 
 ## Monitoring Configuration
 
-### Development
+### Development Monitoring
 
 ```typescript
 // Low priority alerts
@@ -167,7 +168,7 @@ const monitoringConfig = {
 };
 ```
 
-### Production
+### Production Monitoring
 
 ```typescript
 // High priority alerts
@@ -179,14 +180,14 @@ const monitoringConfig = {
 
 ## Deployment Configuration
 
-### Development
+### Development Deployment
 
 ```bash
 # Development deployment
 cdk deploy --context environment=development
 ```
 
-### Production
+### Production Deployment
 
 ```bash
 # Production deployment

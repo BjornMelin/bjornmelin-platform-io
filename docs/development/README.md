@@ -2,7 +2,9 @@
 
 ## Introduction
 
-This section provides comprehensive documentation for developers working on the bjornmelin-platform-io project. Our development process emphasizes code quality, performance, and maintainable architecture.
+This section provides comprehensive documentation for developers working on the
+bjornmelin-platform-io project. Our development process emphasizes code
+quality, performance, and maintainable architecture.
 
 ## Documentation Structure
 
@@ -72,7 +74,7 @@ graph LR
 
 ### Code Organization
 
-```
+```text
 src/
 ├── app/          # Next.js 13+ pages and API routes
 ├── components/   # React components
@@ -155,4 +157,5 @@ yarn lint
 - API documentation
 - Infrastructure documentation
 
-For more detailed information, refer to the specific guides in each section of the development documentation.
+For more detailed information, refer to the specific guides in each section of
+the development documentation.

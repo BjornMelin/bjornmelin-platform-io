@@ -143,7 +143,7 @@ describe("Contact Form Flow", () => {
 
 ### Directory Structure
 
-```
+```text
 src/
 ├── __tests__/
 │   ├── components/
