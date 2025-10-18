@@ -2,6 +2,13 @@ export const CONFIG = {
   dev: {
     domainName: "dev.bjornmelin.io",
     environment: "dev" as const,
+    alerts: {
+      emails: ["dev-contact@bjornmelin.io"],
+    },
+    legacyDeploymentUser: {
+      enabled: false,
+      secretName: "/dev/bjornmelin-platform-io/legacy-deployment-user",
+    },
     email: {
       sender: "no-reply@dev.bjornmelin.io",
       recipient: "dev-contact@bjornmelin.io",
@@ -15,6 +22,13 @@ export const CONFIG = {
   prod: {
     domainName: "bjornmelin.io",
     environment: "prod" as const,
+    alerts: {
+      emails: ["bjornmelin16@gmail.com"],
+    },
+    legacyDeploymentUser: {
+      enabled: false,
+      secretName: "/prod/bjornmelin-platform-io/legacy-deployment-user",
+    },
     email: {
       sender: "no-reply@bjornmelin.io",
       recipient: "bjornmelin16@gmail.com",

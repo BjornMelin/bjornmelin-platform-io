@@ -2,7 +2,8 @@
 
 ## Introduction
 
-This document provides an overview of deployment processes and practices for bjornmelin-platform-io.
+This document provides an overview of deployment processes and practices for
+bjornmelin-platform-io.
 
 ## Deployment Architecture
 
@@ -17,12 +18,16 @@ This document provides an overview of deployment processes and practices for bjo
 
 ### Production Deployment
 
-Production deployments are managed through AWS CDK and include:
+Production deployments are managed through AWS CDK and GitHub Actions assuming
+the `prod-portfolio-deploy` IAM role. The complete rollout includes:
 
 - Infrastructure deployment
 - Application deployment
 - Environment configuration
 - Monitoring setup
+
+GitHub Actions uses an `AWS_DEPLOY_ROLE_ARN` repository secret to assume the
+deployment IAM role through OIDC, eliminating long-lived AWS credentials.
 
 ### Development Deployment
 
@@ -32,6 +37,8 @@ Development deployments are used for testing and include:
 - Local AWS services
 - Test data
 - Development configurations
+- GitHub Actions jobs assume an environment-specific OIDC role (for example,
+  a `dev-portfolio-deploy` role) instead of static credentials
 
 ## Deployment Process
 
@@ -92,17 +99,20 @@ Development deployments are used for testing and include:
 ### Common Commands
 
 ```bash
+# Navigate to the infrastructure workspace
+cd infrastructure
+
 # Deploy all stacks
-cdk deploy --all
+pnpm cdk deploy --all
 
-# Deploy specific stack
-cdk deploy EmailStack
+# Deploy a specific stack
+pnpm cdk deploy prod-portfolio-email
 
-# Verify deployment
-cdk diff
+# Review planned changes without deploying
+pnpm cdk diff
 
-# Roll back deployment
-cdk deploy --all --previous-version
+# Roll back to the previous successful deployment
+pnpm cdk deploy --all --previous-parameters
 ```
 
 ### Important Links
@@ -112,4 +122,5 @@ cdk deploy --all --previous-version
 - Error Logs
 - Health Checks
 
-For detailed information about specific aspects of deployment, please refer to the individual documentation sections listed above.
+For detailed information about specific aspects of deployment, refer to the
+individual documentation sections listed above.

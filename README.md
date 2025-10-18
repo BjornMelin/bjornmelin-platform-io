@@ -1,6 +1,8 @@
 # 🏗️ bjornmelin-platform-io
 
-Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutions architecture through serverless APIs and infrastructure as code. Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices.
+Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS
+solutions architecture through serverless APIs and infrastructure as code.
+Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![AWS SAA](https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-solutions-architect-associate)
@@ -9,8 +11,8 @@ Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutio
 [![AWS ML](https://img.shields.io/badge/AWS-Machine%20Learning%20Engineer%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-machine-learning-engineer-associate)
 [![AWS AIF](https://img.shields.io/badge/AWS-AI%20Practitioner-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-ai-practitioner)
 [![AWS CCP](https://img.shields.io/badge/AWS-Cloud%20Practitioner-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-cloud-practitioner)
-[![React](https://img.shields.io/badge/React-19_RC-blue?logo=react)](https://react.dev)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-18.3.1-blue?logo=react)](https://react.dev)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2.33-black?logo=next.js)](https://nextjs.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-BjornMelin-181717?logo=github)](https://github.com/BjornMelin)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin/)
 [![Coursera](https://img.shields.io/badge/Coursera-2A73CC?logo=coursera&logoColor=white)](https://www.coursera.org/learner/bjorn-melin)
@@ -22,7 +24,7 @@ Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutio
 
 - 🏗️ **Cloud Native Architecture**: Production-grade AWS infrastructure with CDK
 - 🔐 **Enterprise Security**: Zero-trust architecture with AWS Cognito
-- 🚀 **CI/CD Pipeline**: Automated deployments with GitHub Actions
+- 🚀 **CI/CD Pipeline**: GitHub Actions assumes short-lived AWS roles via OIDC
 - 📊 **Observability**: Comprehensive monitoring and logging
 - 🔄 **Multi-Environment**: Development, staging, and production
 - 🛡️ **Infrastructure as Code**: Complete AWS CDK implementation
@@ -308,7 +310,9 @@ yarn cdk deploy   # Deploy AWS infrastructure
 [![AWS Certified AI Practitioner](https://images.credly.com/size/110x110/images/4d4693bb-530e-4bca-9327-de07f3aa2348/image.png)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-ai-practitioner)
 [![AWS Certified Cloud Practitioner](https://images.credly.com/size/110x110/images/00634f82-b07f-4bbd-a6bb-53de397fc3a6/image.png)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-cloud-practitioner)
 
-AWS-certified Solutions Architect, Developer, SysOps Administrator, and Machine Learning Engineer with expertise in cloud architecture and modern development practices. Connect with me on:
+AWS-certified Solutions Architect, Developer, SysOps Administrator, and Machine
+Learning Engineer with expertise in cloud architecture and modern development
+practices. Connect with me on:
 
 - [GitHub](https://github.com/BjornMelin)
 - [LinkedIn](https://www.linkedin.com/in/bjorn-melin/)
@@ -317,7 +321,8 @@ AWS-certified Solutions Architect, Developer, SysOps Administrator, and Machine 
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file
+for details.
 
 ## 🌟 Star History
 
@@ -341,8 +346,10 @@ If you use this project in your research or work, please cite it as:
 
 Standard Citation:
 
-```
-Melin, B. (2024). bjornmelin-platform-io: Cloud-Native Portfolio Platform [Computer software]. GitHub. https://github.com/bjornmelin/bjornmelin-platform-io
+```text
+Melin, B. (2024). bjornmelin-platform-io: Cloud-Native Portfolio Platform
+[Computer software]. GitHub.
+https://github.com/bjornmelin/bjornmelin-platform-io
 ```
 
 ## 🙏 Acknowledgments
@@ -353,8 +360,5 @@ Melin, B. (2024). bjornmelin-platform-io: Cloud-Native Portfolio Platform [Compu
 
 ---
 
-<div align="center">
-
-Built with React 18 + Next.js 14 by [Bjorn Melin](https://bjornmelin.io)
-
-</div>
+Built with React 18 + Next.js 14 by
+[Bjorn Melin](https://bjornmelin.io).

@@ -4,8 +4,8 @@ This guide will help you set up your development environment for bjornmelin-plat
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
-- Yarn package manager
+- Node.js (v20.11.x; matches the project engines range)
+- pnpm package manager (enable with `corepack enable pnpm`)
 - AWS CLI configured with appropriate credentials
 - Git
 
@@ -13,35 +13,35 @@ This guide will help you set up your development environment for bjornmelin-plat
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/bjornmelin/bjornmelin-platform-io.git
-cd bjornmelin-platform-io
-```
+    ```bash
+    git clone https://github.com/bjornmelin/bjornmelin-platform-io.git
+    cd bjornmelin-platform-io
+    ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 
-```bash
-yarn install
-```
+    ```bash
+    pnpm install
+    ```
 
-3. Set up environment variables:
+3. **Set up environment variables:**
 
-```bash
-# Copy the example env file
-cp .env.example .env.local
+    ```bash
+    # Copy the example env file
+    cp .env.example .env.local
 
-# Configure your environment variables:
-# - AWS credentials
-# - API endpoints
-# - Other environment-specific settings
-```
+    # Configure your environment variables:
+    # - AWS credentials
+    # - API endpoints
+    # - Other environment-specific settings
+    ```
 
 ## Development Server
 
 Run the development server:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 The site will be available at [http://localhost:3000](http://localhost:3000)
@@ -52,39 +52,39 @@ For working with AWS infrastructure:
 
 1. Install AWS CDK globally:
 
-```bash
-npm install -g aws-cdk
-```
+    ```bash
+    npm install -g aws-cdk
+    ```
 
 2. Navigate to infrastructure directory:
 
-```bash
-cd infrastructure
-```
+    ```bash
+    cd infrastructure
+    ```
 
 3. Install infrastructure dependencies:
 
-```bash
-yarn install
-```
+    ```bash
+    pnpm install
+    ```
 
 4. Deploy infrastructure:
 
-```bash
-cdk deploy
-```
+    ```bash
+    cdk deploy
+    ```
 
 ## Available Scripts
 
-- `yarn dev` - Start development server
-- `yarn build` - Build production bundle
-- `yarn start` - Start production server
-- `yarn lint` - Run ESLint
-- `yarn type-check` - Run TypeScript checks
+- `pnpm dev` - Start development server
+- `pnpm build` - Build production bundle
+- `pnpm start` - Start production server
+- `pnpm lint` - Run Biome lint with autofix
+- `pnpm type-check` - Run TypeScript checks
 
 ## Project Structure
 
-```
+```text
 .
 ├── src/                  # Application source code
 ├── public/              # Static files
@@ -95,8 +95,7 @@ cdk deploy
 
 ## Code Style
 
-- ESLint configuration in `.eslintrc.json`
-- Prettier for code formatting
+- Biome handles linting and formatting (`pnpm lint` / `pnpm format`)
 - TypeScript strict mode enabled
 
 ## Testing
@@ -104,14 +103,15 @@ cdk deploy
 Run tests:
 
 ```bash
-yarn test
+pnpm test
 ```
 
 ## Common Issues
 
 ### AWS Credentials
 
-Ensure your AWS credentials are properly configured in `~/.aws/credentials` or through environment variables:
+Ensure your AWS credentials are properly configured in `~/.aws/credentials`
+or through environment variables:
 
 ```bash
 export AWS_ACCESS_KEY_ID="your_access_key"
@@ -124,7 +124,7 @@ export AWS_DEFAULT_REGION="your_region"
 If port 3000 is already in use, you can specify a different port:
 
 ```bash
-PORT=3001 yarn dev
+PORT=3001 pnpm dev
 ```
 
 ## Next Steps

@@ -3,8 +3,7 @@ import { env } from "@/env.mjs";
 
 let sesClient: SESClient | null = null;
 
-const AWS_ENV_KEYS = ["AWS_REGION", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"] as const;
-type AwsEnvKey = (typeof AWS_ENV_KEYS)[number];
+type AwsEnvKey = "AWS_REGION" | "AWS_ACCESS_KEY_ID" | "AWS_SECRET_ACCESS_KEY";
 
 const envResolvers: Record<AwsEnvKey, () => string | undefined> = {
   AWS_REGION: () => env.AWS_REGION,
@@ -12,6 +11,12 @@ const envResolvers: Record<AwsEnvKey, () => string | undefined> = {
   AWS_SECRET_ACCESS_KEY: () => env.AWS_SECRET_ACCESS_KEY,
 };
 
+/**
+ * Safely read an optional AWS environment variable, trimming empty strings.
+ *
+ * @param key Identifier for the AWS configuration value.
+ * @returns Normalized string or undefined when unset.
+ */
 const readOptionalAwsEnv = (key: AwsEnvKey): string | undefined => {
   const value = envResolvers[key]();
   if (typeof value !== "string") {
@@ -22,6 +27,13 @@ const readOptionalAwsEnv = (key: AwsEnvKey): string | undefined => {
   return trimmed === "" ? undefined : trimmed;
 };
 
+/**
+ * Retrieve a required AWS environment variable or throw when missing.
+ *
+ * @param key Identifier for the AWS configuration value.
+ * @returns Normalized configuration string.
+ * @throws Error when the variable is absent or blank.
+ */
 const readRequiredAwsEnv = (key: AwsEnvKey): string => {
   const value = readOptionalAwsEnv(key);
   if (!value) {
@@ -31,6 +43,12 @@ const readRequiredAwsEnv = (key: AwsEnvKey): string => {
   return value;
 };
 
+/**
+ * Create or reuse a singleton SES client configured via environment variables.
+ *
+ * @returns Initialized SES client scoped to the configured region.
+ * @throws Error when required region or credential pairing is invalid.
+ */
 export function createSESClient(): SESClient {
   if (!sesClient) {
     const region = readRequiredAwsEnv("AWS_REGION");

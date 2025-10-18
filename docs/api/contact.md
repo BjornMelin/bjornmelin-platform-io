@@ -38,7 +38,8 @@ The contact form API handles submission of contact form messages.
 
 ## Implementation Details
 
-The contact form endpoint uses AWS SES (Simple Email Service) to send emails. The implementation can be found in:
+The contact form endpoint uses AWS SES (Simple Email Service) to send emails.
+The implementation can be found in:
 
 - `src/app/api/contact/route.ts` - API route handler
 - `src/lib/services/email.ts` - Email service implementation

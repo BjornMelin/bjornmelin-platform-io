@@ -192,36 +192,36 @@ new cloudwatch.Alarm(this, "ResponseTimeAlarm", {
 
 1. Structured Logging
 
-```typescript
-logger.info({
-  event: "api_request",
-  path: "/api/contact",
-  duration: 123,
-  status: 200,
-});
-```
+    ```typescript
+    logger.info({
+      event: "api_request",
+      path: "/api/contact",
+      duration: 123,
+      status: 200,
+    });
+    ```
 
 2. Error Logging
 
-```typescript
-logger.error({
-  event: "api_error",
-  error: error.message,
-  stack: error.stack,
-  context: requestContext,
-});
-```
+    ```typescript
+    logger.error({
+      event: "api_error",
+      error: error.message,
+      stack: error.stack,
+      context: requestContext,
+    });
+    ```
 
 3. Audit Logging
 
-```typescript
-logger.info({
-  event: "audit",
-  action: "email_sent",
-  recipient: "user@example.com",
-  timestamp: new Date().toISOString(),
-});
-```
+    ```typescript
+    logger.info({
+      event: "audit",
+      action: "email_sent",
+      recipient: "user@example.com",
+      timestamp: new Date().toISOString(),
+    });
+    ```
 
 ## Monitoring Tools Access
 

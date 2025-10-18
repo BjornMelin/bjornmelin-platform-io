@@ -1,6 +1,7 @@
 # Documentation
 
-Welcome to the bjornmelin-platform-io documentation. This documentation is organized into several main sections:
+Welcome to the bjornmelin-platform-io documentation. This documentation is
+organized into several main sections:
 
 ## 📚 Contents
 
@@ -11,7 +12,7 @@ Welcome to the bjornmelin-platform-io documentation. This documentation is organ
 
 ## 📁 Directory Structure
 
-```
+```text
 docs/
 ├── architecture/
 │   ├── README.md              # Architecture overview

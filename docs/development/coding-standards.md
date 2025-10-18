@@ -75,7 +75,7 @@ export function ContactForm() {
 
 ## File Structure
 
-```
+```text
 feature/
 ├── components/     # Feature-specific components
 │   ├── server/    # Server components

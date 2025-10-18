@@ -52,20 +52,9 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
     - Runs on: Push, PRs, weekly schedule
     - Features: Markdown link validation, issue creation on failure
 
-11. **workflow-status.yml** - Monitor workflow health
-    - Runs on: Weekly schedule
-    - Features: Success rate tracking, stale workflow detection
-
-### Testing
-
-12. **test-matrix.yml** - Cross-platform testing
-    - Runs on: Push, PRs
-    - Matrix: Node 20/21/22, Ubuntu/Windows/macOS
-    - Features: Comprehensive compatibility testing
-
 ### Performance
 
-13. **performance-check.yml** - Performance monitoring
+11. **performance-check.yml** - Performance monitoring
     - Runs on: Push to main, PRs
     - Features: Lighthouse CI, bundle size analysis
     - Metrics: Performance, accessibility, SEO, best practices
@@ -84,6 +73,7 @@ Required secrets:
 - `CODECOV_TOKEN` - For code coverage reporting (optional)
 - `NPM_TOKEN` - For npm publishing (if applicable)
 - `AWS_DEPLOY_ROLE_ARN` - For AWS deployments (if using)
+- `AWS_REGION` - Deployment region (default: `us-east-1`)
 
 ## Branch Protection Settings
 
@@ -114,8 +104,8 @@ Add these badges to your README:
 1. **Caching**: All workflows use pnpm caching for faster builds
 2. **Concurrency**: Workflows use concurrency groups to cancel redundant runs
 3. **Artifacts**: Test results and build artifacts are uploaded for debugging
-4. **Matrix Testing**: Comprehensive testing across Node versions and OS platforms
-5. **Security**: CodeQL, dependency audits, and automated updates
+4. **Reusable Setup**: All workflows rely on `./.github/actions/setup-node-pnpm` for consistent Node/pnpm installation and caching
+5. **Security**: CodeQL, dependency audits, and automated updates; AWS access uses GitHub OIDC with short-lived credentials
 6. **Automation**: Auto-labeling, auto-assignment, and stale management
 
 ## Troubleshooting

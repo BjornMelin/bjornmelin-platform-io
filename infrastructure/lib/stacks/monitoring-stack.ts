@@ -16,8 +16,13 @@ export class MonitoringStack extends cdk.Stack {
       topicName: `${props.environment}-portfolio-alerts`,
     });
 
-    // Add email subscription
-    alertTopic.addSubscription(new subscriptions.EmailSubscription("bjornmelin16@gmail.com"));
+    if (props.alertEmailAddresses.length === 0) {
+      throw new Error("MonitoringStack requires at least one alert email address.");
+    }
+
+    for (const emailAddress of props.alertEmailAddresses) {
+      alertTopic.addSubscription(new subscriptions.EmailSubscription(emailAddress));
+    }
 
     // CloudFront Metrics Dashboard
     const dashboard = new cloudwatch.Dashboard(this, "PortfolioDashboard", {

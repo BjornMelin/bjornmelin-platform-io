@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document outlines the environment configurations for bjornmelin-platform-io.
+This document outlines the environment configurations for
+bjornmelin-platform-io.
 
 ## Environment Types
 
@@ -43,8 +44,6 @@ AWS_REGION=us-east-1
 ```bash
 # AWS Configuration
 AWS_REGION=
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
 
 # Application Settings
 NEXT_PUBLIC_API_URL=
@@ -89,7 +88,7 @@ export class ProductionStack extends Stack {
 
 ### Environment Files
 
-```
+```text
 .env.local          # Local overrides
 .env.development    # Development settings
 .env.production     # Production settings
@@ -141,23 +140,23 @@ const storageConfig = {
 
 ## Security Settings
 
-### Development
+### Development Security
 
-- Local credentials
+- Local AWS credentials (CLI profile or environment variables)
 - Debug enabled
 - Relaxed CORS
 - Development domains
 
-### Production
+### Production Security
 
-- AWS IAM roles
+- GitHub OIDC deployment roles (no long-lived secrets)
 - Strict CORS
 - Production domains
 - Enhanced security
 
 ## Monitoring Configuration
 
-### Development
+### Development Monitoring
 
 ```typescript
 // Low priority alerts
@@ -167,7 +166,7 @@ const monitoringConfig = {
 };
 ```
 
-### Production
+### Production Monitoring
 
 ```typescript
 // High priority alerts
@@ -179,14 +178,14 @@ const monitoringConfig = {
 
 ## Deployment Configuration
 
-### Development
+### Development Deployment
 
 ```bash
 # Development deployment
 cdk deploy --context environment=development
 ```
 
-### Production
+### Production Deployment
 
 ```bash
 # Production deployment

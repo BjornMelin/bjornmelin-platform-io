@@ -47,6 +47,7 @@ const deploymentStack = new DeploymentStack(app, getStackName("deployment", "pro
   environment: CONFIG.prod.environment,
   bucket: storageStack.bucket,
   distribution: storageStack.distribution,
+  legacyIamUser: CONFIG.prod.legacyDeploymentUser,
   tags: CONFIG.tags,
 });
 
@@ -60,6 +61,7 @@ const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "pro
   environment: CONFIG.prod.environment,
   bucket: storageStack.bucket,
   distribution: storageStack.distribution,
+  alertEmailAddresses: CONFIG.prod.alerts.emails,
   tags: CONFIG.tags,
 });
 

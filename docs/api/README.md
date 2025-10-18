@@ -12,7 +12,7 @@ Currently, the platform provides the following API endpoint:
 
 The API is implemented using Next.js API routes located in `src/app/api/`:
 
-```
+```text
 src/app/api/
 └── contact/
     └── route.ts    # Contact form handler
@@ -55,7 +55,7 @@ All API endpoints return JSON responses with the following structure:
 The API can be tested locally using the development server:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 API endpoints will be available at `http://localhost:3000/api/`
@@ -81,4 +81,5 @@ The API relies on:
 - Environment variables for configuration
 - Type-safe request/response handling
 
-For detailed information about specific endpoints, please refer to their individual documentation pages linked above.
+For detailed information about specific endpoints, refer to the individual
+documentation pages linked above.

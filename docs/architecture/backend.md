@@ -1,12 +1,13 @@
 # Backend Architecture
 
-The backend architecture is primarily serverless, utilizing Next.js API routes and AWS services.
+The backend architecture is primarily serverless, using Next.js API routes and
+AWS services.
 
 ## API Routes
 
 Located in `src/app/api/`:
 
-```
+```text
 api/
 └── contact/
     └── route.ts    # Contact form endpoint

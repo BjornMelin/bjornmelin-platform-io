@@ -1,10 +1,35 @@
 /* @vitest-environment node */
 
+import type { SendEmailCommandInput } from "@aws-sdk/client-ses";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ContactFormData } from "@/lib/schemas/contact";
 
 const sendSpy = vi.fn();
 const sendEmailCommandPayloads: unknown[] = [];
+
+const extractSesBody = (payload: SendEmailCommandInput): { htmlData: string; textData: string } => {
+  const message = payload.Message;
+  if (!message) {
+    throw new Error("Expected the SES payload to include a message.");
+  }
+
+  const body = message.Body;
+  if (!body) {
+    throw new Error("Expected the SES message to include a body.");
+  }
+
+  const text = body.Text;
+  if (!text?.Data) {
+    throw new Error("Expected the SES message body to include text content.");
+  }
+
+  const html = body.Html;
+  if (!html?.Data) {
+    throw new Error("Expected the SES message body to include HTML content.");
+  }
+
+  return { htmlData: html.Data, textData: text.Data };
+};
 
 vi.mock("@/lib/aws/ses", () => ({
   createSESClient: vi.fn(() => ({
@@ -60,7 +85,7 @@ describe("EmailService", () => {
       expect(sendSpy).toHaveBeenCalledTimes(1);
       expect(sendEmailCommandPayloads).toHaveLength(1);
 
-      const payload = sendEmailCommandPayloads[0] as Record<string, unknown>;
+      const payload = sendEmailCommandPayloads[0] as SendEmailCommandInput;
       expect(payload).toMatchObject({
         Source: "no-reply@example.com",
         Destination: {
@@ -74,19 +99,16 @@ describe("EmailService", () => {
         },
       });
 
-      const message = (payload as Record<string, any>).Message as Record<string, any>;
-      expect(message.Body.Text.Data).toContain("Name: Jane Doe");
-      expect(message.Body.Text.Data).toContain("Email: jane@example.com");
-      expect(message.Body.Text.Data).toContain(
-        "Message: Interested in learning more about your work.",
-      );
-      expect(message.Body.Text.Data).toContain("2024-01-01T00:00:00.000Z");
-      expect(message.Body.Html.Data).toContain("<p><strong>Name:</strong> Jane Doe</p>");
-      expect(message.Body.Html.Data).toContain("<p><strong>Email:</strong> jane@example.com</p>");
-      expect(message.Body.Html.Data).toContain(
-        "<p>Interested in learning more about your work.</p>",
-      );
-      expect(message.Body.Html.Data).toContain("2024-01-01T00:00:00.000Z");
+      const { htmlData, textData } = extractSesBody(payload);
+
+      expect(textData).toContain("Name: Jane Doe");
+      expect(textData).toContain("Email: jane@example.com");
+      expect(textData).toContain("Message: Interested in learning more about your work.");
+      expect(textData).toContain("2024-01-01T00:00:00.000Z");
+      expect(htmlData).toContain("<p><strong>Name:</strong> Jane Doe</p>");
+      expect(htmlData).toContain("<p><strong>Email:</strong> jane@example.com</p>");
+      expect(htmlData).toContain("<p>Interested in learning more about your work.</p>");
+      expect(htmlData).toContain("2024-01-01T00:00:00.000Z");
     } finally {
       vi.useRealTimers();
     }

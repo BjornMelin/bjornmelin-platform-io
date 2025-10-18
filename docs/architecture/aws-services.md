@@ -1,12 +1,14 @@
 # AWS Services
 
-This document outlines the AWS services used in the bjornmelin-platform-io platform.
+This document outlines the AWS services used in the
+bjornmelin-platform-io platform.
 
 ## Core Services
 
 ### AWS CDK
 
-Used for Infrastructure as Code (IaC) to define and provision AWS infrastructure. Our CDK stacks are organized in `infrastructure/lib/stacks/`:
+Used for Infrastructure as Code (IaC) to define and provision AWS
+infrastructure. Our CDK stacks live in `infrastructure/lib/stacks/`:
 
 - **DNS Stack** (`dns-stack.ts`): Manages DNS configuration
 - **Email Stack** (`email-stack.ts`): Configures email services
@@ -24,7 +26,7 @@ Used for Infrastructure as Code (IaC) to define and provision AWS infrastructure
 
 The infrastructure code is organized as follows:
 
-```
+```text
 infrastructure/
 ├── bin/
 │   └── app.ts                 # CDK app entry point
