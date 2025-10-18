@@ -25,39 +25,39 @@ Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires 
 
 ### Core Platform Features
 
-- 🏗️ **Cloud Native Architecture**: Production-grade AWS infrastructure with CDK
-- 🔐 **Enterprise Security**: Zero-trust architecture with AWS Cognito
-- 🚀 **CI/CD Pipeline**: GitHub Actions assumes short-lived AWS roles via OIDC
-- 📊 **Observability**: Comprehensive monitoring and logging
-- 🔄 **Multi-Environment**: Development, staging, and production
-- 🛡️ **Infrastructure as Code**: Complete AWS CDK implementation
-- 📱 **Modern Frontend**: Next.js with Tailwind CSS
-- 🌐 **Global Delivery**: CloudFront CDN integration
+- **Cloud Native Architecture**: Production-grade AWS infrastructure with CDK
+- **Enterprise Security**: Zero-trust architecture with AWS Cognito
+- **CI/CD Pipeline**: GitHub Actions assumes short-lived AWS roles via OIDC
+- **Observability**: Comprehensive monitoring and logging
+- **Multi-Environment**: Development, staging, and production
+- **Infrastructure as Code**: Complete AWS CDK implementation
+- **Modern Frontend**: Next.js with Tailwind CSS
+- **Global Delivery**: CloudFront CDN integration
 
-### Modern Tech Features
+### ⚡ Modern Tech Features
 
-- ⚡ **React 18 RC Integration**
+- **React 18 RC Integration**
 
   - Document Metadata API
   - Asset Loading API
   - Progressive Loading
   - Optimization Compiler
 
-- 🚀 **Next.js 14 App Router**
+- **Next.js 14 App Router**
 
   - Server Components
   - Partial Prerendering
   - Parallel Routes
   - Edge Runtime
 
-- 🔄 **Full-Stack Type Safety**
+- **Full-Stack Type Safety**
 
   - End-to-end typesafe APIs with tRPC
   - Runtime validation
   - Strict TypeScript
   - Comprehensive error handling
 
-- ⚡ Performance First
+- Performance First
 
   - Edge deployment
   - Streaming SSR
@@ -69,8 +69,9 @@ Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires 
 - [🏗️ bjornmelin-platform-io](#️-bjornmelin-platform-io)
   - [🌟 Features](#-features)
     - [Core Platform Features](#core-platform-features)
-    - [Modern Tech Features](#modern-tech-features)
+    - [⚡ Modern Tech Features](#-modern-tech-features)
   - [📚 Quick Links](#-quick-links)
+  - [📖 Docs](#-docs)
   - [🏛️ Architecture](#️-architecture)
     - [System Architecture](#system-architecture)
     - [Contact Form Flow](#contact-form-flow)
@@ -82,8 +83,22 @@ Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires 
     - [Initial Setup](#initial-setup)
     - [Infrastructure Deployment](#infrastructure-deployment)
     - [Local Development](#local-development)
-  - [🧪 Infra Tests (CDK)](#-infra-tests-cdk)
-  - [🚢 Releasing](#releasing)
+  - [🛠️ Tech Stack](#️-tech-stack)
+  - [🏗️ AWS Services Integration](#️-aws-services-integration)
+    - [Core Services](#core-services)
+    - [Compute \& Messaging Services](#compute--messaging-services)
+    - [Development \& Deployment](#development--deployment)
+    - [Security Services](#security-services)
+  - [💻 Development Scripts](#-development-scripts)
+  - [🐳 Run with Docker](#-run-with-docker)
+  - [Releasing](#releasing)
+  - [Infra Tests (CDK)](#infra-tests-cdk)
+  - [👨‍💻 Author](#-author)
+    - [Bjorn Melin](#bjorn-melin)
+  - [📜 License](#-license)
+  - [Star History](#star-history)
+  - [How to Reference](#how-to-reference)
+  - [Acknowledgments](#acknowledgments)
 
 ## 📖 Docs
 
@@ -100,20 +115,20 @@ Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires 
   - Overview: docs/architecture/README.md
   - Frontend: docs/architecture/frontend.md
   - [Releasing](#releasing)
-  - [🛠️ Tech Stack](#️-tech-stack)
-  - [🏗️ AWS Services Integration](#️-aws-services-integration)
+  - [Tech Stack](#️-tech-stack)
+  - [AWS Services Integration](#️-aws-services-integration)
     - [Core Services](#core-services)
     - [Compute \& Messaging Services](#compute--messaging-services)
     - [Development \& Deployment](#development--deployment)
     - [Security Services](#security-services)
-  - [💻 Development Scripts](#-development-scripts)
-  - [🐳 Run with Docker](#-run-with-docker)
-  - [👨‍💻 Author](#-author)
+  - [Development Scripts](#-development-scripts)
+  - [Run with Docker](#-run-with-docker)
+  - [Author](#-author)
     - [Bjorn Melin](#bjorn-melin)
-  - [📜 License](#-license)
-  - [🌟 Star History](#-star-history)
-  - [📚 How to Reference](#-how-to-reference)
-  - [🙏 Acknowledgments](#-acknowledgments)
+  - [License](#-license)
+  - [Star History](#star-history)
+  - [How to Reference](#how-to-reference)
+  - [Acknowledgments](#acknowledgments)
 
 ## 🏛️ Architecture
 
@@ -362,15 +377,17 @@ docker run --rm -p 8080:80 platform-io:node24
 
 Open <http://localhost:8080> in your browser. Use Ctrl+C to stop the container.
 
-If you see a docker-credential-desktop error, ensure Docker Desktop (or your Docker daemon) is running and you’re logged in.
+If you see a docker-credential-desktop error, ensure Docker Desktop (or your Docker daemon)
+is running and you’re logged in.
 
 ## Releasing
 
 See docs/development/releasing.md for the Codex-assisted auto-release process, controls, and setup.
 
-## 🧪 Infra Tests (CDK)
+## Infra Tests (CDK)
 
-Fast, local CDK assertions are available under `infrastructure/test/` using Vitest. See infrastructure/README.md#tests for commands.
+Fast, local CDK assertions are available under `infrastructure/test/` using Vitest.
+See [infrastructure/README.md#tests](infrastructure/README.md#tests) for commands.
 
 ## 👨‍💻 Author
 
@@ -397,11 +414,11 @@ practices. Connect with me on:
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file
 for details.
 
-## 🌟 Star History
+## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=bjornmelin/bjornmelin-platform-io&type=Date)](https://star-history.com/#bjornmelin/bjornmelin-platform-io&Date)
 
-## 📚 How to Reference
+## How to Reference
 
 If you use this project in your research or work, please cite it as:
 
@@ -425,7 +442,7 @@ Melin, B. (2024). bjornmelin-platform-io: Cloud-Native Portfolio Platform
 https://github.com/bjornmelin/bjornmelin-platform-io
 ```
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - AWS Documentation and Best Practices
 - AWS CDK Patterns Community
