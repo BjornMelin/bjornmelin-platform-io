@@ -26,6 +26,9 @@ the `prod-portfolio-deploy` IAM role. The complete rollout includes:
 - Environment configuration
 - Monitoring setup
 
+GitHub Actions uses an `AWS_DEPLOY_ROLE_ARN` repository secret to assume the
+deployment IAM role through OIDC, eliminating long-lived AWS credentials.
+
 ### Development Deployment
 
 Development deployments are used for testing and include:

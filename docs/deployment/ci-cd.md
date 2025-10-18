@@ -77,6 +77,7 @@ Production uses:
 - `CONTACT_EMAIL`
 - Resend API key (secret)
 - Any feature-specific tokens
+- `AWS_DEPLOY_ROLE_ARN` (repository secret pointing to the deployment IAM role ARN)
 
 Secrets live in environment-scoped GitHub secrets; infrastructure credentials
 are provided exclusively through role assumption.
