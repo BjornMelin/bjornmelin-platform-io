@@ -129,12 +129,70 @@ jobs:
             --distribution-id ${{ steps.stack-outputs.outputs.distribution }} \
             --paths "/*"
 
-      # Verify the site is live at your real domain
-      - name: Verify Deployment
+  smoke-check:
+    name: Post-Deploy Smoke Check
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: needs.deploy.result == 'success'
+
+    steps:
+      - name: Run smoke check
+        id: smoke
         run: |
-          HTTP_CODE=$(curl -o /dev/null -s -w "%{http_code}" https://bjornmelin.io)
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "Website verification failed at https://bjornmelin.io with HTTP code: $HTTP_CODE"
-            exit 1
+          set +e
+          url="https://bjornmelin.io"
+          http_code=$(curl --retry 3 --retry-delay 5 --max-time 15 -s -o /tmp/response "$url" -w "%{http_code}")
+          exit_code=$?
+
+          echo "http_code=$http_code" >> "$GITHUB_OUTPUT"
+          echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
+
+          if [ "$exit_code" -eq 0 ] && [ "$http_code" -ge 200 ] && [ "$http_code" -lt 400 ]; then
+            echo "status=success" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=failure" >> "$GITHUB_OUTPUT"
+            echo "Smoke check failed for $url (exit: $exit_code, status: $http_code)."
+            echo "----- Response Body (truncated) -----"
+            head -c 2048 /tmp/response || true
           fi
-          echo "Deployment verified. Received HTTP 200 from https://bjornmelin.io"
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          status="${{ steps.smoke.outputs.status }}"
+          http_code="${{ steps.smoke.outputs.http_code || 'n/a' }}"
+          {
+            echo "## Deployment Summary"
+            echo ""
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo "- Workflow Run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- Smoke Check Status: ${status:-unknown}"
+            echo "- HTTP Status Code: ${http_code}"
+            echo "- Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Notify on commit
+        if: always()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const status = '${{ steps.smoke.outputs.status || 'unknown' }}';
+            const httpCode = '${{ steps.smoke.outputs.http_code || 'n/a' }}';
+            const url = 'https://bjornmelin.io';
+            const lines = [
+              `Deployment smoke check ${status === 'success' ? 'succeeded' : 'failed'} for ${url}.`,
+              `HTTP status: ${httpCode}.`,
+              `Workflow run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            ];
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: lines.join('\n')
+            });
+
+      - name: Fail when smoke check failed
+        if: ${{ steps.smoke.outputs.status == 'failure' }}
+        run: |
+          echo "Smoke check did not succeed. Failing workflow."
+          exit 1
