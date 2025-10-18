@@ -32,12 +32,17 @@ const coverageDefault = parseCoverageThreshold(
   DEFAULT_COVERAGE_THRESHOLD,
 );
 
-const coverageThresholds = Object.fromEntries(
-  COVERAGE_METRICS.map((metric) => {
-    const envKey = `COVERAGE_THRESHOLD_${metric.toUpperCase()}`;
-    return [metric, parseCoverageThreshold(process.env[envKey], coverageDefault)] as const;
-  }),
-) satisfies Record<CoverageMetric, number>;
+const coverageThresholds: Record<CoverageMetric, number> = {
+  lines: coverageDefault,
+  functions: coverageDefault,
+  branches: coverageDefault,
+  statements: coverageDefault,
+};
+
+for (const metric of COVERAGE_METRICS) {
+  const envKey = `COVERAGE_THRESHOLD_${metric.toUpperCase()}`;
+  coverageThresholds[metric] = parseCoverageThreshold(process.env[envKey], coverageDefault);
+}
 
 export default defineConfig({
   plugins: [react()],
