@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "cdk": "cdk",
     "deploy:dns": "cdk deploy prod-portfolio-dns",
     "deploy:storage": "cdk deploy prod-portfolio-storage",
@@ -17,14 +18,13 @@
     "diff": "cdk diff"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.0",
-    "@types/jest": "30.0.0",
-    "@types/node": "^24.0.0",
+    "@types/aws-lambda": "8.10.150",
+    "@types/node": "24.8.0",
     "aws-cdk": "^2.178.2",
-    "jest": "30.2.0",
-    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "vitest": "^3.2.4",
+    "esbuild": "^0.25.11"
   },
   "pnpm": {
     "overrides": {
@@ -32,7 +32,8 @@
       "test-exclude": "^7.0.0"
     },
     "onlyBuiltDependencies": [
-      "unrs-resolver"
+      "unrs-resolver",
+      "esbuild"
     ]
   },
   "dependencies": {
