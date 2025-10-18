@@ -18,17 +18,27 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.0",
-    "@types/jest": "^29.5.14",
+    "@types/jest": "30.0.0",
     "@types/node": "^24.0.0",
     "aws-cdk": "^2.178.2",
-    "jest": "^29.7.0",
+    "jest": "30.2.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "~5.2.2"
+    "typescript": "~5.9.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "glob": "^11.0.0",
+      "test-exclude": "^7.0.0"
+    },
+    "onlyBuiltDependencies": [
+      "unrs-resolver"
+    ]
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.721.0",
-    "aws-cdk-lib": "^2.189.1",
+    "@aws-sdk/client-ses": "3.913.0",
+    "@aws-sdk/client-ssm": "3.913.0",
+    "aws-cdk-lib": "2.220.0",
     "constructs": "^10.4.0",
     "source-map-support": "^0.5.21"
   }
