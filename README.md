@@ -5,6 +5,9 @@ solutions architecture through serverless APIs and infrastructure as code.
 Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires Node.js 24.x LTS.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![CI](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml)
+[![Security Audit](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml)
+[![CodeQL](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml)
 [![AWS SAA](https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-solutions-architect-associate)
 [![AWS DVA](https://img.shields.io/badge/AWS-Developer%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-developer-associate)
 [![AWS SysOps](https://img.shields.io/badge/AWS-SysOps%20Administrator%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-sysops-administrator-associate)
@@ -78,7 +81,9 @@ Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires 
     - [Prerequisites](#prerequisites)
     - [Initial Setup](#initial-setup)
     - [Infrastructure Deployment](#infrastructure-deployment)
-  - [Local Development](#local-development)
+    - [Local Development](#local-development)
+  - [🧪 Infra Tests (CDK)](#-infra-tests-cdk)
+  - [🚢 Releasing](#releasing)
   - [Releasing](#releasing)
   - [🛠️ Tech Stack](#️-tech-stack)
   - [🏗️ AWS Services Integration](#️-aws-services-integration)

@@ -11,6 +11,7 @@ quality, performance, and maintainable architecture.
 - [Getting Started](./getting-started.md) - Setup and initial development guide
 - [Coding Standards](./coding-standards.md) - Code style and best practices
 - [Testing Strategies](./testing.md) - Testing methodologies and tools
+ - [Releasing](../development/releasing.md) - Codex-assisted release automation
 
 ## Development Environment
 
@@ -25,7 +26,7 @@ quality, performance, and maintainable architecture.
 
 #### Frontend
 
-- Next.js 13+ (App Router)
+- Next.js 14+ (App Router)
 - React 18
 - TypeScript
 - Tailwind CSS
@@ -132,6 +133,15 @@ pnpm type-check
 
 # Run linting
 pnpm lint
+
+## Release Process
+
+Releases are created automatically by the Codex-assisted workflows:
+
+- Auto Release PR creator: analyzes the full diff, enforces a SemVer floor, proposes version bump.
+- Finalize Release: tags the merged release commit and publishes a GitHub Release (no drafts).
+
+See the full guide at [Releasing](../development/releasing.md).
 ```
 
 ## Infrastructure Development

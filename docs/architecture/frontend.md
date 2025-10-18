@@ -7,7 +7,7 @@ Components.
 
 ```text
 src/
-├── app/                    # Next.js 13+ App Router pages
+├── app/                    # Next.js 14+ App Router pages
 │   ├── about/             # About page
 │   ├── api/               # API routes
 │   ├── contact/           # Contact page
