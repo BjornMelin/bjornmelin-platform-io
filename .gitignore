@@ -15,6 +15,7 @@
 
 # testing
 /coverage
+infrastructure/coverage
 
 # next.js build output
 /.next/
