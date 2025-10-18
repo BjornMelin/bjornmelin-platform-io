@@ -28,8 +28,6 @@ updates:
     labels:
       - "dependencies"
       - "automated"
-    reviewers:
-      - "bjornmelin"
     assignees:
       - "bjornmelin"
 
@@ -47,7 +45,5 @@ updates:
     labels:
       - "ci"
       - "automated"
-    reviewers:
-      - "bjornmelin"
     assignees:
       - "bjornmelin"
