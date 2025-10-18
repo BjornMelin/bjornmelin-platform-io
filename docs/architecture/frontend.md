@@ -1,6 +1,6 @@
 # Frontend Architecture
 
-The frontend is built with Next.js 13+ using the App Router and React Server
+The frontend is built with Next.js 14+ using the App Router and React Server
 Components.
 
 ## Project Structure
@@ -29,7 +29,7 @@ src/
 
 ## Key Technologies
 
-- **Next.js 13+**: React framework with App Router and Server Components
+- **Next.js 14+**: React framework with App Router and Server Components
 - **TypeScript**: Type-safe JavaScript
 - **Tailwind CSS**: Utility-first CSS framework
 - **shadcn/ui**: UI component library
@@ -93,5 +93,5 @@ src/
 
 - Component-first architecture
 - Type-safe development with TypeScript
-- Consistent code formatting with ESLint
+- Consistent lint/format with Biome
 - Modular and reusable component design

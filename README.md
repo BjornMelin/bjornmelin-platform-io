@@ -207,9 +207,16 @@ bjornmelin-platform-io/
 ### Prerequisites
 
 ```bash
-Node.js >= 18.0.0
-yarn >= 4.0.0
+Node.js >= 24.0.0 (LTS)
+pnpm (via Corepack)
 AWS CLI configured
+```
+
+Enable Corepack and activate the pinned pnpm version from package.json:
+
+```bash
+corepack enable
+corepack use $(node -p "require('./package.json').packageManager")
 ```
 
 ### Initial Setup
@@ -220,29 +227,30 @@ git clone https://github.com/bjornmelin/bjornmelin-platform-io.git
 cd bjornmelin-platform-io
 
 # Install dependencies
-yarn install
+pnpm install
 
 # Configure AWS credentials
 aws configure
 
-# Configure environment
-cp .env.production .env.local
+# Configure local environment (local-only values)
+cp .env.example .env.local
+# Note: Production configuration is provided by the GitHub Environment (vars)
+# and AWS SSM/Secrets. No .env.production is used.
 ```
 
 ### Infrastructure Deployment
 
 ```bash
-# Deploy infrastructure
-cd infrastructure
-yarn install
-yarn cdk deploy
+# Deploy infrastructure (from repo root)
+pnpm -C infrastructure install
+pnpm -C infrastructure cdk deploy
 ```
 
 ### Local Development
 
 ```bash
 # Start development server
-yarn dev
+pnpm dev
 ```
 
 ## 🛠️ Tech Stack
@@ -272,9 +280,8 @@ Infrastructure:
 
 Development:
   Tools:
-    - yarn 4.0
-    - ESLint
-    - Prettier
+    - pnpm 10 (Corepack)
+    - Biome (lint + format)
     - TypeScript
     - PostCSS
 ```
@@ -308,14 +315,14 @@ Development:
 
 ```bash
 # Development
-yarn dev          # Start development server
-yarn build        # Build production application
-yarn start        # Start production server
-yarn lint         # Run ESLint
-yarn serve        # Serve production build locally
+pnpm dev          # Start development server
+pnpm build        # Build production application
+pnpm start        # Start production server
+pnpm lint         # Run Biome lint/format checks
+pnpm serve        # Serve static export locally
 
-# Infrastructure (in /infrastructure directory)
-yarn cdk deploy   # Deploy AWS infrastructure
+# Infrastructure (package scripts under /infrastructure)
+pnpm -C infrastructure cdk deploy   # Deploy AWS infrastructure
 ```
 
 ## 🐳 Run with Docker
@@ -333,6 +340,12 @@ docker run --rm -p 8080:80 platform-io:node24
 ```
 
 Open <http://localhost:8080> in your browser. Use Ctrl+C to stop the container.
+
+If you see a docker-credential-desktop error, ensure Docker Desktop (or your Docker daemon) is running and you’re logged in.
+
+## 🧪 Infra Tests (CDK)
+
+Fast, local CDK assertions are available under `infrastructure/test/` using Vitest. See infrastructure/README.md#tests for commands.
 
 ## 👨‍💻 Author
 

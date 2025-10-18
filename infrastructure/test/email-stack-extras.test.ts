@@ -1,14 +1,20 @@
 import * as cdk from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import * as route53 from "aws-cdk-lib/aws-route53";
+import type { Construct } from "constructs";
 import { describe, it, vi } from "vitest";
 import { EmailStack } from "../lib/stacks/email-stack";
 
 // Avoid bundling during test by stubbing NodejsFunction
 vi.mock("aws-cdk-lib/aws-lambda-nodejs", async () => {
   const lambdaCore = await import("aws-cdk-lib/aws-lambda");
+  type MinimalProps = {
+    runtime: lambdaCore.Runtime;
+    handler?: string;
+    environment?: Record<string, string>;
+  };
   class NodejsFunction extends lambdaCore.Function {
-    constructor(scope: any, id: string, props: any) {
+    constructor(scope: Construct, id: string, props: MinimalProps) {
       super(scope, id, {
         runtime: props.runtime,
         handler: props.handler ?? "handler",
