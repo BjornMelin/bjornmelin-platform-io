@@ -5,7 +5,7 @@
 ### Core Tools
 
 - React Testing Library
-- Jest
+- Vitest
 - TypeScript
 - MSW (Mock Service Worker)
 
@@ -45,7 +45,7 @@ describe("Button", () => {
   });
 
   it("handles click events", () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     render(<Button onClick={onClick}>Click me</Button>);
     screen.getByText("Click me").click();
     expect(onClick).toHaveBeenCalled();

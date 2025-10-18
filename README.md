@@ -78,7 +78,8 @@ Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires 
     - [Prerequisites](#prerequisites)
     - [Initial Setup](#initial-setup)
     - [Infrastructure Deployment](#infrastructure-deployment)
-    - [Local Development](#local-development)
+  - [Local Development](#local-development)
+  - [Releasing](#releasing)
   - [🛠️ Tech Stack](#️-tech-stack)
   - [🏗️ AWS Services Integration](#️-aws-services-integration)
     - [Core Services](#core-services)
@@ -342,6 +343,10 @@ docker run --rm -p 8080:80 platform-io:node24
 Open <http://localhost:8080> in your browser. Use Ctrl+C to stop the container.
 
 If you see a docker-credential-desktop error, ensure Docker Desktop (or your Docker daemon) is running and you’re logged in.
+
+## Releasing
+
+See docs/development/releasing.md for the Codex-assisted auto-release process, controls, and setup.
 
 ## 🧪 Infra Tests (CDK)
 

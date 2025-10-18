@@ -65,10 +65,10 @@ Stop the container with Ctrl+C.
 
 For working with AWS infrastructure:
 
-1. Install AWS CDK globally:
+1. Use AWS CDK without global install:
 
     ```bash
-    npm install -g aws-cdk
+    pnpm dlx aws-cdk --version
     ```
 
 2. Navigate to infrastructure directory:
@@ -86,7 +86,7 @@ For working with AWS infrastructure:
 4. Deploy infrastructure:
 
     ```bash
-    cdk deploy
+    pnpm cdk deploy
     ```
 
 ## Available Scripts
@@ -104,8 +104,7 @@ For working with AWS infrastructure:
 ├── src/                  # Application source code
 ├── public/              # Static files
 ├── infrastructure/      # AWS CDK infrastructure
-├── docs/               # Documentation
-└── prisma/             # Database schema and migrations
+└── docs/               # Documentation
 ```
 
 ## Code Style

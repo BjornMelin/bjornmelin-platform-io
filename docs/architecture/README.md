@@ -47,9 +47,9 @@ graph LR
 
 ## Core Components
 
-### Frontend (Next.js 13+)
+### Frontend (Next.js 14+)
 
-- **Technology**: React with Next.js 13+ App Router
+- **Technology**: React with Next.js 14+ App Router
 - **Features**:
   - Server Components
   - App Router
