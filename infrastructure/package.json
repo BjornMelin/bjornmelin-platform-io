@@ -1,6 +1,6 @@
 {
   "name": "infrastructure",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "bin": "bin/app.js",
   "scripts": {
     "build": "tsc",
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.0",
     "@types/jest": "^29.5.14",
-    "@types/node": "^20.7.1",
+    "@types/node": "^24.0.0",
     "aws-cdk": "^2.178.2",
     "jest": "^29.7.0",
     "ts-jest": "^29.2.5",
