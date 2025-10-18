@@ -2,9 +2,9 @@
   "name": "bjornmelin-platform-io",
   "version": "1.1.0",
   "private": true,
-  "packageManager": "pnpm@10.18.3",
+  "packageManager": "pnpm@10.18.3+sha512.bbd16e6d7286fd7e01f6b3c0b3c932cda2965c06a908328f74663f10a9aea51f1129eea615134bf992831b009eabe167ecb7008b597f40ff9bc75946aadfb08d",
   "engines": {
-    "node": ">=20.11.0 <21"
+    "node": ">=24 <25"
   },
   "scripts": {
     "dev": "next dev",
@@ -73,7 +73,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^20.19.0",
+    "@types/node": "^24.0.0",
     "@types/react": "^18.3.26",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.5.2",
