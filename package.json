@@ -23,9 +23,7 @@
     "test:e2e:docker": "./scripts/run-e2e-tests.sh",
     "test:e2e:setup": "./scripts/setup-e2e.sh",
     "serve": "pnpm dlx serve out",
-    "prepare": "husky",
-    "semantic-release": "semantic-release",
-    "semantic-release:dry-run": "semantic-release --dry-run --no-ci"
+    "prepare": "husky"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch": "^3.908.0",
@@ -64,16 +62,10 @@
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@playwright/test": "^1.56.1",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^13.0.1",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^11.0.6",
-    "@semantic-release/npm": "^12.0.2",
-    "@semantic-release/release-notes-generator": "^14.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^24.0.0",
+    "@types/node": "^24.8.0",
     "@types/react": "^18.3.26",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.5.2",
@@ -89,7 +81,7 @@
     "markdownlint-cli": "^0.45.0",
     "playwright": "^1.56.1",
     "postcss": "^8.4.35",
-    "semantic-release": "^24.2.9",
+
     "shadcn-ui": "^0.9.4",
     "tailwindcss": "^3.4.1",
     "typescript": "~5.8.3",
