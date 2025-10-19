@@ -13,9 +13,14 @@ on:
         required: false
         default: false
 
-concurrency:
-  group: e2e-${{ github.ref }}
-  cancel-in-progress: true
+  concurrency:
+    group: e2e-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   e2e-tests:
@@ -85,7 +90,7 @@ jobs:
 
       - name: Comment PR with results
         uses: actions/github-script@v8
-        if: github.event_name == 'pull_request' && always()
+        if: github.event_name == 'pull_request' && steps.detect.outputs.present == 'true' && always() && github.event.pull_request.head.repo.fork == false
         env:
           JOB_STATUS: ${{ job.status }}
         with:
@@ -111,12 +116,16 @@ jobs:
             **Workflow:** [Run #${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `;
             
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+            try {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (err) {
+              core.warning(`Skipping PR comment: ${err?.message ?? err}`);
+            }
 
   # Run unit tests in parallel
   unit-tests:
@@ -147,15 +156,13 @@ jobs:
           retention-days: 7
 
       - name: Coverage summary
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && always() && github.event.pull_request.head.repo.fork == false
         uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
             const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
-            
             const formatPercentage = (num) => `${num.toFixed(2)}%`;
-            
             const comment = `## Test Coverage Report
             
             | Type | Coverage |
@@ -167,13 +174,16 @@ jobs:
             
             **Target:** 90% coverage
             `;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+            try {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (err) {
+              core.warning(`Skipping coverage PR comment: ${err?.message ?? err}`);
+            }
       - name: Detect E2E tests presence
         id: detect
         run: |
