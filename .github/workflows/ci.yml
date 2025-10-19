@@ -164,33 +164,6 @@ jobs:
           du -sh out/
           find out -type f -name "*.js" -o -name "*.css" | head -20
 
-  forward-compat-node-25:
-    name: Forward-compat (Node 25)
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Setup Node.js 25
-        uses: actions/setup-node@v6
-        with:
-          node-version: '25'
-          cache: pnpm
-      - name: Activate pinned pnpm via Corepack
-        run: |
-          corepack enable
-          corepack use $(node -p "require('./package.json').packageManager")
-      - name: Install deps
-        run: pnpm install --frozen-lockfile
-      - name: Type-check
-        run: pnpm type-check
-      - name: Build
-        run: pnpm build
-
   all-checks-passed:
     name: All CI Checks Passed
     runs-on: ubuntu-latest
