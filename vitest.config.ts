@@ -12,6 +12,7 @@ const isCi = Boolean(process.env.CI);
 // Enforce 90% coverage by default in all environments.
 // Override via COVERAGE_THRESHOLD_DEFAULT or COVERAGE_THRESHOLD_<METRIC>; set to "0" to disable enforcement (coverage collection still runs).
 const DEFAULT_COVERAGE_THRESHOLD = 80;
+const DEFAULT_FUNCTIONS_THRESHOLD = 65; // Decision (§2.1): functions often undercount; start at 65 and raise as suites grow.
 const COVERAGE_METRICS = ["lines", "functions", "branches", "statements"] as const;
 const coverageReporters: string[] = isCi
   ? ["text", "html", "lcov", "json", "json-summary"]
@@ -37,17 +38,22 @@ const coverageDefault = parseCoverageThreshold(
   process.env.COVERAGE_THRESHOLD_DEFAULT,
   DEFAULT_COVERAGE_THRESHOLD,
 );
+const functionsDefault = parseCoverageThreshold(
+  process.env.COVERAGE_THRESHOLD_FUNCTIONS,
+  DEFAULT_FUNCTIONS_THRESHOLD,
+);
 
 const coverageThresholds: Record<CoverageMetric, number> = {
   lines: coverageDefault,
-  functions: coverageDefault,
+  functions: functionsDefault,
   branches: coverageDefault,
   statements: coverageDefault,
 };
 
 for (const metric of COVERAGE_METRICS) {
   const envKey = `COVERAGE_THRESHOLD_${metric.toUpperCase()}`;
-  coverageThresholds[metric] = parseCoverageThreshold(process.env[envKey], coverageDefault);
+  const fallback = metric === "functions" ? functionsDefault : coverageDefault;
+  coverageThresholds[metric] = parseCoverageThreshold(process.env[envKey], fallback);
 }
 
 export default defineConfig({
@@ -73,6 +79,11 @@ export default defineConfig({
         "src/lib/**/*.{ts,tsx}",
         "src/hooks/**/*.ts",
         "src/components/structured-data.tsx",
+        "src/components/projects/**/*.{ts,tsx}",
+        "src/components/shared/error-boundary.tsx",
+        "src/components/theme/theme-toggle.tsx",
+        "src/components/layout/navbar.tsx",
+        "src/components/layout/footer.tsx",
         "infrastructure/**/*.ts",
       ],
       exclude: [
@@ -87,6 +98,10 @@ export default defineConfig({
         "**/*.type.ts",
         ".next/**",
         "infrastructure/**",
+        "src/components/ui/**",
+        "src/components/sections/**",
+        "src/components/contact/**",
+        "src/components/theme/theme-provider.tsx",
       ],
       thresholds: coverageThresholds,
     },

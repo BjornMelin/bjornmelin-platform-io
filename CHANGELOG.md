@@ -17,6 +17,10 @@ All notable changes to this project are documented in this file.
   Release with auto-generated notes.
 - Release notes configuration via `.github/release.yml` and documentation under `docs/development/releasing.md`.
  - CI: Explicit pnpm installation via `pnpm/action-setup@v4` in all workflows using pnpm to guarantee availability on PATH before caching/usage.
+ - Tests: Added missing suites for UI and API error paths
+   - Components: Theme toggle (render), ErrorBoundary (fallback), Navbar/Footer (smoke), Projects grid/card (filtering + links)
+   - API: `/api/contact` invalid JSON and validation errors (400 with codes)
+ - JSDoc: Added `@fileoverview` and symbol docs for touched components (theme, layout, projects, contact form) to follow Google style.
 
 ### CI/Automation
 
@@ -27,6 +31,7 @@ All notable changes to this project are documented in this file.
  - Standardized pnpm setup across all workflows: install pnpm via `pnpm/action-setup@v4` before any pnpm command or `cache: pnpm` usage; rely on `package.json:packageManager` for the version.
  - Shellcheck cleanup in workflows: quote `$GITHUB_OUTPUT`, prefer grouped redirects, and use `read -r` in loops.
  - Ensured composite action `.github/actions/setup-node-pnpm` remains for Node setup and caching; now strictly preceded by pnpm installation.
+ - Deploy: Ensure `NEXT_PUBLIC_APP_URL` is exported in build environment so Next.js env validation passes; build reads repository `vars`.
 
 ### Changed
 
@@ -41,6 +46,8 @@ All notable changes to this project are documented in this file.
     DNS aliases), cache and security headers policies, Email stack domain/base-path mapping and tracing,
     Monitoring dashboard and alarms, SSM helper caching, and basic constants coverage. Tests avoid AWS lookups by mocking
     HostedZone.fromLookup and NodejsFunction bundling.
+ - Vitest config: broaden coverage to include new component targets while excluding library wrappers/sections; use v8 reporters (`text, html, lcov, json, json-summary`).
+ - Coverage thresholds: keep 80% for lines/branches/statements; start functions at 65% (env-overridable via `COVERAGE_THRESHOLD_FUNCTIONS`), with intent to raise as targeted suites land.
 
 ## [1.2.0] - 2025-10-18
 
