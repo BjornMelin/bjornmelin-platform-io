@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   e2e-tests:
+    if: ${{ hashFiles('e2e/**','tests/e2e/**','playwright/tests/**') != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     

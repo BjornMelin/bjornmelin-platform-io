@@ -50,10 +50,12 @@ jobs:
         if: steps.guard.outputs.skip != 'true'
         run: |
           pnpm dlx ts-node scripts/release/precheck.ts > precheck.json
-          echo "floor=$(jq -r .bump_floor precheck.json)" >> $GITHUB_OUTPUT
-          echo "evidence<<EOF" >> $GITHUB_OUTPUT
-          jq -r '.evidence[]' precheck.json >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "floor=$(jq -r .bump_floor precheck.json)"
+            echo "evidence<<EOF"
+            jq -r '.evidence[]' precheck.json
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Run Codex for final decision
         id: codex
@@ -87,15 +89,15 @@ jobs:
           set -euo pipefail
           if [ ! -f codex_release.json ]; then
             echo "Codex JSON missing; falling back to precheck floor" >&2
-            echo "bump=${{ steps.precheck.outputs.floor }}" >> $GITHUB_OUTPUT
+            echo "bump=${{ steps.precheck.outputs.floor }}" >> "$GITHUB_OUTPUT"
           else
             bump=$(jq -r .bump codex_release.json || echo '')
             case "$bump" in major|minor|patch) ;; *) bump="${{ steps.precheck.outputs.floor }}";; esac
             # enforce floor
             floor="${{ steps.precheck.outputs.floor }}"
             ord() { case "$1" in patch) echo 1;; minor) echo 2;; major) echo 3;; esac; }
-            [ $(ord "$bump") -lt $(ord "$floor") ] && bump="$floor"
-            echo "bump=$bump" >> $GITHUB_OUTPUT
+            if [ "$(ord "$bump")" -lt "$(ord "$floor")" ]; then bump="$floor"; fi
+            echo "bump=$bump" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Compute next version
