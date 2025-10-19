@@ -171,6 +171,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+      - name: Install pnpm (action)
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Setup Node.js 25
         uses: actions/setup-node@v6
         with:
