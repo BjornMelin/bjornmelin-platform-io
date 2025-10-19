@@ -83,6 +83,8 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
           NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          AWS_REGION: ${{ env.AWS_REGION }}
         run: pnpm build
 
       # Retrieve the S3 bucket name and CloudFront distribution from your CF stack
