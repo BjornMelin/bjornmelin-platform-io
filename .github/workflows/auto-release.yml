@@ -96,7 +96,7 @@ jobs:
 
       - name: Compute next version
         id: version
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         if: steps.guard.outputs.skip != 'true'
         with:
           script: |
