@@ -21,7 +21,6 @@ describe("structured-data", () => {
 
   it("renders both person and website JSON-LD", () => {
     render(<StructuredData type="both" />);
-    const _scripts = screen.getAllByRole("generic", { hidden: true });
     // We can query by type attribute instead (role generic for fragments), assert count by DOM query:
     const jsonLd = document.querySelectorAll('script[type="application/ld+json"]');
     expect(jsonLd.length).toBe(2);
