@@ -3,8 +3,9 @@
   "files": {
     "ignoreUnknown": true,
     "includes": ["**/*.{js,jsx,ts,tsx,json,css}"],
-    "ignores": ["README.md", "**/*.md"],
     "experimentalScannerIgnores": [
+      "README.md",
+      "**/*.md",
       "node_modules/**",
       ".next/**",
       "out/**",
