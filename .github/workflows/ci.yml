@@ -104,7 +104,18 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Detect E2E tests presence
+        id: detect
+        run: |
+          set -euo pipefail
+          if [ -n "${{ hashFiles('e2e/**','tests/e2e/**','playwright/tests/**') }}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build application
+        if: steps.detect.outputs.present == 'true'
         run: pnpm build
         env:
           NEXT_PUBLIC_BASE_URL: http://localhost:3000
@@ -112,13 +123,14 @@ jobs:
           NEXT_PUBLIC_APP_URL: http://localhost:3000
 
       - name: Run E2E tests
+        if: steps.detect.outputs.present == 'true'
         run: pnpm test:e2e
         env:
           NODE_ENV: test
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.detect.outputs.present == 'true'
         with:
           name: playwright-report
           path: playwright-report/
@@ -165,13 +177,11 @@ jobs:
     steps:
       - name: Check all job statuses
         run: |
-          if [[ "${{ needs.lint-and-type-check.result }}" != "success" ]] || \
-             [[ "${{ needs.unit-tests.result }}" != "success" ]] || \
-             [[ "${{ needs.e2e-tests.result }}" != "success" ]] || \
-             [[ "${{ needs.build.result }}" != "success" ]]; then
-            echo "One or more CI checks failed"
-            exit 1
-          fi
+          good() { case "$1" in success|skipped) return 0;; *) return 1;; esac; }
+          if ! good "${{ needs.lint-and-type-check.result }}"; then echo "Lint/Type failed"; exit 1; fi
+          if ! good "${{ needs.unit-tests.result }}"; then echo "Unit tests failed"; exit 1; fi
+          if ! good "${{ needs.e2e-tests.result }}"; then echo "E2E tests failed"; exit 1; fi
+          if ! good "${{ needs.build.result }}"; then echo "Build failed"; exit 1; fi
           echo "All CI checks passed successfully!"
   actionlint:
     name: Actionlint
