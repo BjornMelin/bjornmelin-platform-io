@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * @fileoverview Responsive site navigation bar with theme toggle.
+ */
+
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
@@ -7,6 +11,11 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 const NavSeparator = () => <span className="text-muted-foreground/30">|</span>;
 
+/**
+ * Top navigation with links and a mobile menu toggle.
+ *
+ * @returns The site navigation bar.
+ */
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 

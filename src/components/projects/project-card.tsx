@@ -10,6 +10,13 @@ interface ProjectCardProps {
   className?: string;
 }
 
+/**
+ * Card component showing a project summary.
+ *
+ * @param project Project data to display.
+ * @param className Optional wrapping class names.
+ * @returns Project card element.
+ */
 export function ProjectCard({ project, className }: ProjectCardProps) {
   return (
     <div className={cn("bg-card rounded-lg shadow-lg overflow-hidden", className)}>
@@ -64,3 +71,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
     </div>
   );
 }
+/**
+ * @fileoverview Presentation of a single project, including image, tech stack,
+ * and external links.
+ */

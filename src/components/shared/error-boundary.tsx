@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * @fileoverview Simple error boundary for client components providing a minimal
+ * fallback UI with a refresh affordance.
+ */
+
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
 interface Props {
@@ -10,6 +15,9 @@ interface State {
   hasError: boolean;
 }
 
+/**
+ * Error boundary to catch rendering errors and display a fallback.
+ */
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,

@@ -10,7 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check --write .",
+    "lint": "biome check . --write --error-on-warnings",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "type-check": "tsc --noEmit",

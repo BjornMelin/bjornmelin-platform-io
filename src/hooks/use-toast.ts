@@ -1,4 +1,10 @@
 "use client";
+/**
+ * @fileoverview Toast state management utilities:
+ * - `reducer` to manage toast lifecycle (add, update, dismiss, remove).
+ * - `useToast` React hook for consuming and dispatching toasts.
+ * - `toast` helper for creating a toast with updater and dismiss functions.
+ */
 
 // Inspired by react-hot-toast library
 import * as React from "react";
@@ -46,7 +52,13 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
-const addToRemoveQueue = (toastId: string) => {
+/**
+ * Queue a toast for removal after TOAST_REMOVE_DELAY.
+ *
+ * @param toastId Unique toast identifier.
+ * @returns void
+ */
+const addToRemoveQueue = (toastId: string): void => {
   if (toastTimeouts.has(toastId)) {
     return;
   }
@@ -62,6 +74,13 @@ const addToRemoveQueue = (toastId: string) => {
   toastTimeouts.set(toastId, timeout);
 };
 
+/**
+ * Reducer for managing toast state.
+ *
+ * @param state Current toast state.
+ * @param action Discriminated action for toast operations.
+ * @returns New toast state.
+ */
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_TOAST":
@@ -119,7 +138,13 @@ const listeners: Array<(state: State) => void> = [];
 
 let memoryState: State = { toasts: [] };
 
-function dispatch(action: Action) {
+/**
+ * Dispatch an action to mutate the in-memory toast state and notify listeners.
+ *
+ * @param action Toast reducer action.
+ * @returns void
+ */
+function dispatch(action: Action): void {
   memoryState = reducer(memoryState, action);
   listeners.forEach((listener) => {
     listener(memoryState);
@@ -128,6 +153,12 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">;
 
+/**
+ * Create a toast and return controls for updating or dismissing it.
+ *
+ * @param props Toast visual and behavioral properties (without id).
+ * @returns Controller with `id`, `update`, and `dismiss`.
+ */
 function toast({ ...props }: Toast) {
   const id = genId();
 
@@ -157,6 +188,11 @@ function toast({ ...props }: Toast) {
   };
 }
 
+/**
+ * React hook to observe toasts and access dispatch helpers.
+ *
+ * @returns Object containing current toasts, `toast` creator, and `dismiss`.
+ */
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 

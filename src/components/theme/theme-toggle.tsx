@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * @fileoverview ThemeToggle component renders a dropdown allowing users to switch
+ * between light, dark, and system themes using next-themes.
+ */
+
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -11,6 +16,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+/**
+ * Toggle button with dropdown to change theme.
+ *
+ * @returns React element containing the theme selection UI.
+ */
 export function ThemeToggle() {
   const { setTheme } = useTheme();
 

@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * @fileoverview Interactive projects grid supporting category filters and sorting.
+ */
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +20,13 @@ interface ProjectGridProps {
   projects: Project[];
   className?: string;
 }
+/**
+ * Render a grid of projects with category filter chips and a sort dropdown.
+ *
+ * @param projects Collection of projects to render.
+ * @param className Optional additional class names for outer container.
+ * @returns Filterable/sortable projects grid.
+ */
 export function ProjectGrid({ projects, className }: ProjectGridProps) {
   const categories = ["All", ...Array.from(new Set(projects.map((project) => project.category)))];
 

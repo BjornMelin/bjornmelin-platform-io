@@ -1,6 +1,15 @@
+/**
+ * @fileoverview Structured data helpers and component for rendering JSON-LD
+ * schemas for Person and WebSite entities.
+ */
 import { createHash } from "node:crypto";
 
-export function generatePersonSchema() {
+/**
+ * Builds a JSON-LD Person schema for the portfolio owner.
+ *
+ * @returns JSON-LD compliant schema object with basic person details.
+ */
+export function generatePersonSchema(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -39,7 +48,12 @@ export function generatePersonSchema() {
   };
 }
 
-export function generateWebsiteSchema() {
+/**
+ * Builds a JSON-LD WebSite schema for the portfolio.
+ *
+ * @returns JSON-LD compliant WebSite schema object.
+ */
+export function generateWebsiteSchema(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -54,10 +68,20 @@ export function generateWebsiteSchema() {
   };
 }
 
+/**
+ * Props for the StructuredData component.
+ */
 interface StructuredDataProps {
   type: "person" | "website" | "both";
 }
 
+/**
+ * Creates a stable React key from a JSON-LD schema by hashing its contents and
+ * prefixing with the schema's @type and name when present.
+ *
+ * @param schema Arbitrary JSON-LD schema.
+ * @returns Stable key string safe for React keys.
+ */
 const createSchemaKey = (schema: Record<string, unknown>): string => {
   const type = typeof schema["@type"] === "string" ? (schema["@type"] as string) : undefined;
   const name = typeof schema.name === "string" ? (schema.name as string) : undefined;
@@ -67,7 +91,13 @@ const createSchemaKey = (schema: Record<string, unknown>): string => {
   return baseKey ? `${baseKey}-${digest}` : digest;
 };
 
-export default function StructuredData({ type }: StructuredDataProps) {
+/**
+ * Renders one or both JSON-LD schemas as <script type="application/ld+json">.
+ *
+ * @param type Controls which schemas are emitted.
+ * @returns React fragment containing the JSON-LD script elements.
+ */
+export default function StructuredData({ type }: StructuredDataProps): JSX.Element {
   const schemas = [];
 
   if (type === "person" || type === "both") {

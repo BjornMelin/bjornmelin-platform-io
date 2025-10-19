@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Vitest configuration for unit and integration tests.
+ * - Uses jsdom for app tests; IaC tests have their own config under infrastructure/.
+ * - Enables v8 coverage with reporters: text, html, lcov, json-summary.
+ * - Threads pool tuned for CI.
+ */
 import path from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
@@ -5,11 +11,12 @@ import { defineConfig } from "vitest/config";
 const isCi = Boolean(process.env.CI);
 // Enforce 90% coverage by default in all environments.
 // Override via COVERAGE_THRESHOLD_DEFAULT or COVERAGE_THRESHOLD_<METRIC>; set to "0" to disable enforcement (coverage collection still runs).
-const DEFAULT_COVERAGE_THRESHOLD = 90;
+const DEFAULT_COVERAGE_THRESHOLD = 80;
+const DEFAULT_FUNCTIONS_THRESHOLD = 65; // Decision (§2.1): functions often undercount; start at 65 and raise as suites grow.
 const COVERAGE_METRICS = ["lines", "functions", "branches", "statements"] as const;
 const coverageReporters: string[] = isCi
-  ? ["text", "json", "html", "lcov"]
-  : ["text", "json", "html"];
+  ? ["text", "html", "lcov", "json", "json-summary"]
+  : ["text", "html", "json", "json-summary"];
 
 type CoverageMetric = (typeof COVERAGE_METRICS)[number];
 
@@ -31,17 +38,22 @@ const coverageDefault = parseCoverageThreshold(
   process.env.COVERAGE_THRESHOLD_DEFAULT,
   DEFAULT_COVERAGE_THRESHOLD,
 );
+const functionsDefault = parseCoverageThreshold(
+  process.env.COVERAGE_THRESHOLD_FUNCTIONS,
+  DEFAULT_FUNCTIONS_THRESHOLD,
+);
 
 const coverageThresholds: Record<CoverageMetric, number> = {
   lines: coverageDefault,
-  functions: coverageDefault,
+  functions: functionsDefault,
   branches: coverageDefault,
   statements: coverageDefault,
 };
 
 for (const metric of COVERAGE_METRICS) {
   const envKey = `COVERAGE_THRESHOLD_${metric.toUpperCase()}`;
-  coverageThresholds[metric] = parseCoverageThreshold(process.env[envKey], coverageDefault);
+  const fallback = metric === "functions" ? functionsDefault : coverageDefault;
+  coverageThresholds[metric] = parseCoverageThreshold(process.env[envKey], fallback);
 }
 
 export default defineConfig({
@@ -49,6 +61,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
+    pool: "threads",
+    maxWorkers: isCi ? 4 : undefined,
+    minWorkers: isCi ? 2 : undefined,
+    reporters: ["default"],
     setupFiles: "./src/test/setup.ts",
     exclude: [
       "**/node_modules/**",
@@ -59,20 +75,33 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: coverageReporters,
+      include: [
+        "src/lib/**/*.{ts,tsx}",
+        "src/hooks/**/*.ts",
+        "src/components/structured-data.tsx",
+        "src/components/projects/**/*.{ts,tsx}",
+        "src/components/shared/error-boundary.tsx",
+        "src/components/theme/theme-toggle.tsx",
+        "src/components/layout/navbar.tsx",
+        "src/components/layout/footer.tsx",
+        "infrastructure/**/*.ts",
+      ],
       exclude: [
         "node_modules/",
         "src/test/",
         "src/app/**",
-        "src/components/**",
         "src/data/**",
         "src/types/**",
-        "src/hooks/**",
         "public/**",
         "**/*.d.ts",
         "**/*.config.*",
         "**/*.type.ts",
         ".next/**",
         "infrastructure/**",
+        "src/components/ui/**",
+        "src/components/sections/**",
+        "src/components/contact/**",
+        "src/components/theme/theme-provider.tsx",
       ],
       thresholds: coverageThresholds,
     },

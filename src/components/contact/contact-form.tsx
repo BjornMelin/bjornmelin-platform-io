@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * @fileoverview Contact form component with client-side validation and POST to
+ * /api/contact. Displays success/error alerts and toasts.
+ */
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { useId, useMemo, useState } from "react";
@@ -18,6 +23,11 @@ interface APIErrorResponse {
   details?: Array<{ message: string; path: string[] }>;
 }
 
+/**
+ * Contact form UI with validation and submission logic.
+ *
+ * @returns A fully accessible contact form.
+ */
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");

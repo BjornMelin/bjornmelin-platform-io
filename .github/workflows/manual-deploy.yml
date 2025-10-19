@@ -62,6 +62,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Install pnpm (action)
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
@@ -85,6 +88,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+
+      - name: Install pnpm (action)
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -115,9 +121,9 @@ jobs:
         id: deployment-url
         run: |
           if [[ "${{ inputs.environment }}" == "production" ]]; then
-            echo "url=https://bjornmelin.io" >> $GITHUB_OUTPUT
+            echo "url=https://bjornmelin.io" >> "$GITHUB_OUTPUT"
           else
-            echo "url=https://${{ inputs.environment }}.bjornmelin.io" >> $GITHUB_OUTPUT
+            echo "url=https://${{ inputs.environment }}.bjornmelin.io" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create deployment record

@@ -20,6 +20,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install pnpm (action)
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
@@ -31,13 +34,13 @@ jobs:
         run: |
           echo "Checking for outdated dependencies..."
           OUTDATED=$(pnpm outdated --format json || echo '[]')
-          echo "outdated=$OUTDATED" >> $GITHUB_OUTPUT
+          echo "outdated=$OUTDATED" >> "$GITHUB_OUTPUT"
           
           if [ "$OUTDATED" != "[]" ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
+            echo "has_updates=true" >> "$GITHUB_OUTPUT"
             echo "Found outdated dependencies"
           else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
+            echo "has_updates=false" >> "$GITHUB_OUTPUT"
             echo "All dependencies are up to date"
           fi
 

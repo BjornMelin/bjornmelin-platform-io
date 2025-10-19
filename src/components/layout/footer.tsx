@@ -4,6 +4,11 @@ import { GitHubLogoIcon, LinkedInLogoIcon } from "@radix-ui/react-icons";
 import { BookOpenCheck, BookText, Mail } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * Footer component.
+ *
+ * @returns Footer markup for the site.
+ */
 export function Footer() {
   return (
     <footer className="border-t border-border">
@@ -93,3 +98,6 @@ export function Footer() {
     </footer>
   );
 }
+/**
+ * @fileoverview Site footer with social links and copyright.
+ */

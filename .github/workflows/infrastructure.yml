@@ -22,6 +22,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
+      - name: Install pnpm (action)
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
