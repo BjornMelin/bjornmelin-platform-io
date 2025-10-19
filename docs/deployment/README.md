@@ -80,7 +80,7 @@ Production configuration is sourced at deploy/build time from:
 - GitHub Actions secrets (build-only):
   - e.g., `OPENAI_API_KEY` for Codex-assisted releases.
 - AWS SSM Parameter Store / Secrets Manager (server-side runtime):
-  - e.g., `/portfolio/prod/CONTACT_EMAIL` consumed by the Email Lambda.
+  - e.g., `/portfolio/prod/CONTACT_EMAIL` (store as `SecureString`) consumed by the Email Lambda.
 
 No `.env.production` file is used. Local development uses `.env.local` only.
 

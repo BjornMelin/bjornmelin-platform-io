@@ -28,7 +28,10 @@ AWS_REGION=us-east-1
   - `NEXT_PUBLIC_BASE_URL`
   - `NEXT_PUBLIC_API_URL`
 - Server-side values are stored in AWS SSM Parameter Store or Secrets Manager
-  (e.g., `/portfolio/prod/CONTACT_EMAIL`).
+  (e.g., `/portfolio/prod/CONTACT_EMAIL` stored as a `SecureString`).
+- CDK deployment expects the following environment variables before synth:
+  - `PROD_ALERT_EMAILS` (comma-separated list of alert recipients; required)
+  - `DEV_ALERT_EMAILS` (optional override for development alerts)
 
 #### Production Settings
 
