@@ -13,9 +13,9 @@ on:
         required: false
         default: false
 
-  concurrency:
-    group: e2e-${{ github.ref }}
-    cancel-in-progress: true
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -38,6 +38,16 @@ jobs:
         uses: ./.github/actions/setup-node-pnpm
         with:
           install: "true"
+
+      - name: Detect E2E tests presence
+        id: detect
+        run: |
+          set -euo pipefail
+          if [ -n "${{ hashFiles('e2e/**','tests/e2e/**','playwright/tests/**') }}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -184,12 +194,4 @@ jobs:
             } catch (err) {
               core.warning(`Skipping coverage PR comment: ${err?.message ?? err}`);
             }
-      - name: Detect E2E tests presence
-        id: detect
-        run: |
-          set -euo pipefail
-          if [ -n "${{ hashFiles('e2e/**','tests/e2e/**','playwright/tests/**') }}" ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
+      # E2E detection runs in e2e-tests job
