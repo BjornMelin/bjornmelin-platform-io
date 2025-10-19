@@ -135,7 +135,7 @@ jobs:
           git add package.json
           git commit -m "chore(release): ${NEXT_VERSION}"
           git push -u origin "$BRANCH"
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
 
       - name: Open Release PR
         uses: peter-evans/create-pull-request@v6
