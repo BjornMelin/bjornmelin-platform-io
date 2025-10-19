@@ -25,6 +25,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Install pnpm (action)
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
+
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
@@ -44,6 +49,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+
+      - name: Install pnpm (action)
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -78,6 +88,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - name: Install pnpm (action)
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -123,6 +138,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+
+      - name: Install pnpm (action)
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
