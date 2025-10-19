@@ -38,8 +38,6 @@ jobs:
       - name: Install pnpm (action)
         if: steps.guard.outputs.skip != 'true'
         uses: pnpm/action-setup@v4
-        with:
-          version: 10.18.3
 
       - name: Setup Node.js and pnpm
         if: steps.guard.outputs.skip != 'true'

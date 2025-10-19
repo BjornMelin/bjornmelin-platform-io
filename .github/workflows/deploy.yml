@@ -35,8 +35,6 @@ jobs:
 
       - name: Install pnpm (action)
         uses: pnpm/action-setup@v4
-        with:
-          version: 10.18.3
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -73,8 +71,6 @@ jobs:
 
       - name: Install pnpm (action)
         uses: pnpm/action-setup@v4
-        with:
-          version: 10.18.3
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
