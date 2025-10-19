@@ -1,16 +1,21 @@
 # 🏗️ bjornmelin-platform-io
 
-Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutions architecture through serverless APIs and infrastructure as code. Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices.
+Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS
+solutions architecture through serverless APIs and infrastructure as code.
+Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires Node.js 24.x LTS.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![CI](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml)
+[![Security Audit](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml)
+[![CodeQL](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml)
 [![AWS SAA](https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-solutions-architect-associate)
 [![AWS DVA](https://img.shields.io/badge/AWS-Developer%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-developer-associate)
 [![AWS SysOps](https://img.shields.io/badge/AWS-SysOps%20Administrator%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-sysops-administrator-associate)
 [![AWS ML](https://img.shields.io/badge/AWS-Machine%20Learning%20Engineer%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-machine-learning-engineer-associate)
 [![AWS AIF](https://img.shields.io/badge/AWS-AI%20Practitioner-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-ai-practitioner)
 [![AWS CCP](https://img.shields.io/badge/AWS-Cloud%20Practitioner-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-cloud-practitioner)
-[![React](https://img.shields.io/badge/React-19_RC-blue?logo=react)](https://react.dev)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-18.3.1-blue?logo=react)](https://react.dev)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2.33-black?logo=next.js)](https://nextjs.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-BjornMelin-181717?logo=github)](https://github.com/BjornMelin)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin/)
 [![Coursera](https://img.shields.io/badge/Coursera-2A73CC?logo=coursera&logoColor=white)](https://www.coursera.org/learner/bjorn-melin)
@@ -20,39 +25,39 @@ Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutio
 
 ### Core Platform Features
 
-- 🏗️ **Cloud Native Architecture**: Production-grade AWS infrastructure with CDK
-- 🔐 **Enterprise Security**: Zero-trust architecture with AWS Cognito
-- 🚀 **CI/CD Pipeline**: Automated deployments with GitHub Actions
-- 📊 **Observability**: Comprehensive monitoring and logging
-- 🔄 **Multi-Environment**: Development, staging, and production
-- 🛡️ **Infrastructure as Code**: Complete AWS CDK implementation
-- 📱 **Modern Frontend**: Next.js with Tailwind CSS
-- 🌐 **Global Delivery**: CloudFront CDN integration
+- **Cloud Native Architecture**: Production-grade AWS infrastructure with CDK
+- **Enterprise Security**: Zero-trust architecture with AWS Cognito
+- **CI/CD Pipeline**: GitHub Actions assumes short-lived AWS roles via OIDC
+- **Observability**: Comprehensive monitoring and logging
+- **Multi-Environment**: Development, staging, and production
+- **Infrastructure as Code**: Complete AWS CDK implementation
+- **Modern Frontend**: Next.js with Tailwind CSS
+- **Global Delivery**: CloudFront CDN integration
 
-### Modern Tech Features
+### ⚡ Modern Tech Features
 
-- ⚡ **React 18 RC Integration**
+- **React 18 RC Integration**
 
   - Document Metadata API
   - Asset Loading API
   - Progressive Loading
   - Optimization Compiler
 
-- 🚀 **Next.js 14 App Router**
+- **Next.js 14 App Router**
 
   - Server Components
   - Partial Prerendering
   - Parallel Routes
   - Edge Runtime
 
-- 🔄 **Full-Stack Type Safety**
+- **Full-Stack Type Safety**
 
   - End-to-end typesafe APIs with tRPC
   - Runtime validation
   - Strict TypeScript
   - Comprehensive error handling
 
-- ⚡ Performance First
+- Performance First
 
   - Edge deployment
   - Streaming SSR
@@ -61,17 +66,69 @@ Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutio
 
 ## 📚 Quick Links
 
-- [🏛️ Architecture](#️-architecture)
-- [📁 Project Structure](#-project-structure)
-- [🚀 Getting Started](#-getting-started)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [🏗️ AWS Services Integration](#️-aws-services-integration)
-- [💻 Development Scripts](#-development-scripts)
-- [👨‍💻 Author](#-author)
-- [📜 License](#-license)
-- [🌟 Star History](#-star-history)
-- [📚 How to Reference](#-how-to-reference)
-- [🙏 Acknowledgments](#-acknowledgments)
+- [🏗️ bjornmelin-platform-io](#️-bjornmelin-platform-io)
+  - [🌟 Features](#-features)
+    - [Core Platform Features](#core-platform-features)
+    - [⚡ Modern Tech Features](#-modern-tech-features)
+  - [📚 Quick Links](#-quick-links)
+  - [📖 Docs](#-docs)
+  - [🏛️ Architecture](#️-architecture)
+    - [System Architecture](#system-architecture)
+    - [Contact Form Flow](#contact-form-flow)
+    - [DNS \& CDN Setup](#dns--cdn-setup)
+  - [📁 Project Structure](#-project-structure)
+    - [Core Components](#core-components)
+  - [🚀 Getting Started](#-getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Initial Setup](#initial-setup)
+    - [Infrastructure Deployment](#infrastructure-deployment)
+    - [Local Development](#local-development)
+  - [🛠️ Tech Stack](#️-tech-stack)
+  - [🏗️ AWS Services Integration](#️-aws-services-integration)
+    - [Core Services](#core-services)
+    - [Compute \& Messaging Services](#compute--messaging-services)
+    - [Development \& Deployment](#development--deployment)
+    - [Security Services](#security-services)
+  - [💻 Development Scripts](#-development-scripts)
+  - [🐳 Run with Docker](#-run-with-docker)
+  - [Releasing](#releasing)
+  - [Infra Tests (CDK)](#infra-tests-cdk)
+  - [👨‍💻 Author](#-author)
+    - [Bjorn Melin](#bjorn-melin)
+  - [📜 License](#-license)
+  - [Star History](#star-history)
+  - [How to Reference](#how-to-reference)
+  - [Acknowledgments](#acknowledgments)
+
+## 📖 Docs
+
+- Development
+  - Getting Started: docs/development/getting-started.md
+  - Development Overview: docs/development/README.md
+  - Testing Strategies: docs/development/testing.md
+  - Releasing: docs/development/releasing.md
+- Deployment
+  - Overview: docs/deployment/README.md
+  - CI/CD Pipeline: docs/deployment/ci-cd.md
+  - Environments: docs/deployment/environments.md
+- Architecture
+  - Overview: docs/architecture/README.md
+  - Frontend: docs/architecture/frontend.md
+  - [Releasing](#releasing)
+  - [Tech Stack](#️-tech-stack)
+  - [AWS Services Integration](#️-aws-services-integration)
+    - [Core Services](#core-services)
+    - [Compute \& Messaging Services](#compute--messaging-services)
+    - [Development \& Deployment](#development--deployment)
+    - [Security Services](#security-services)
+  - [Development Scripts](#-development-scripts)
+  - [Run with Docker](#-run-with-docker)
+  - [Author](#-author)
+    - [Bjorn Melin](#bjorn-melin)
+  - [License](#-license)
+  - [Star History](#star-history)
+  - [How to Reference](#how-to-reference)
+  - [Acknowledgments](#acknowledgments)
 
 ## 🏛️ Architecture
 
@@ -186,9 +243,16 @@ bjornmelin-platform-io/
 ### Prerequisites
 
 ```bash
-Node.js >= 18.0.0
-yarn >= 4.0.0
+Node.js >= 24.0.0 (LTS)
+pnpm (via Corepack)
 AWS CLI configured
+```
+
+Enable Corepack and activate the pinned pnpm version from package.json:
+
+```bash
+corepack enable
+corepack use $(node -p "require('./package.json').packageManager")
 ```
 
 ### Initial Setup
@@ -199,29 +263,30 @@ git clone https://github.com/bjornmelin/bjornmelin-platform-io.git
 cd bjornmelin-platform-io
 
 # Install dependencies
-yarn install
+pnpm install
 
 # Configure AWS credentials
 aws configure
 
-# Configure environment
-cp .env.production .env.local
+# Configure local environment (local-only values)
+cp .env.example .env.local
+# Note: Production configuration is provided by the GitHub Environment (vars)
+# and AWS SSM/Secrets. No .env.production is used.
 ```
 
 ### Infrastructure Deployment
 
 ```bash
-# Deploy infrastructure
-cd infrastructure
-yarn install
-yarn cdk deploy
+# Deploy infrastructure (from repo root)
+pnpm -C infrastructure install
+pnpm -C infrastructure cdk deploy
 ```
 
 ### Local Development
 
 ```bash
 # Start development server
-yarn dev
+pnpm dev
 ```
 
 ## 🛠️ Tech Stack
@@ -251,9 +316,8 @@ Infrastructure:
 
 Development:
   Tools:
-    - yarn 4.0
-    - ESLint
-    - Prettier
+    - pnpm 10 (Corepack)
+    - Biome (lint + format)
     - TypeScript
     - PostCSS
 ```
@@ -287,15 +351,43 @@ Development:
 
 ```bash
 # Development
-yarn dev          # Start development server
-yarn build        # Build production application
-yarn start        # Start production server
-yarn lint         # Run ESLint
-yarn serve        # Serve production build locally
+pnpm dev          # Start development server
+pnpm build        # Build production application
+pnpm start        # Start production server
+pnpm lint         # Run Biome lint/format checks
+pnpm serve        # Serve static export locally
 
-# Infrastructure (in /infrastructure directory)
-yarn cdk deploy   # Deploy AWS infrastructure
+# Infrastructure (package scripts under /infrastructure)
+pnpm -C infrastructure cdk deploy   # Deploy AWS infrastructure
 ```
+
+## 🐳 Run with Docker
+
+Build the production image (requires Docker Desktop/daemon running):
+
+```bash
+docker build -t platform-io:node24 .
+```
+
+Run the container and serve the exported site on port 8080:
+
+```bash
+docker run --rm -p 8080:80 platform-io:node24
+```
+
+Open <http://localhost:8080> in your browser. Use Ctrl+C to stop the container.
+
+If you see a docker-credential-desktop error, ensure Docker Desktop (or your Docker daemon)
+is running and you’re logged in.
+
+## Releasing
+
+See docs/development/releasing.md for the Codex-assisted auto-release process, controls, and setup.
+
+## Infra Tests (CDK)
+
+Fast, local CDK assertions are available under `infrastructure/test/` using Vitest.
+See [infrastructure/README.md#tests](infrastructure/README.md#tests) for commands.
 
 ## 👨‍💻 Author
 
@@ -308,7 +400,9 @@ yarn cdk deploy   # Deploy AWS infrastructure
 [![AWS Certified AI Practitioner](https://images.credly.com/size/110x110/images/4d4693bb-530e-4bca-9327-de07f3aa2348/image.png)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-ai-practitioner)
 [![AWS Certified Cloud Practitioner](https://images.credly.com/size/110x110/images/00634f82-b07f-4bbd-a6bb-53de397fc3a6/image.png)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-cloud-practitioner)
 
-AWS-certified Solutions Architect, Developer, SysOps Administrator, and Machine Learning Engineer with expertise in cloud architecture and modern development practices. Connect with me on:
+AWS-certified Solutions Architect, Developer, SysOps Administrator, and Machine
+Learning Engineer with expertise in cloud architecture and modern development
+practices. Connect with me on:
 
 - [GitHub](https://github.com/BjornMelin)
 - [LinkedIn](https://www.linkedin.com/in/bjorn-melin/)
@@ -317,13 +411,14 @@ AWS-certified Solutions Architect, Developer, SysOps Administrator, and Machine 
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file
+for details.
 
-## 🌟 Star History
+## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=bjornmelin/bjornmelin-platform-io&type=Date)](https://star-history.com/#bjornmelin/bjornmelin-platform-io&Date)
 
-## 📚 How to Reference
+## How to Reference
 
 If you use this project in your research or work, please cite it as:
 
@@ -341,11 +436,13 @@ If you use this project in your research or work, please cite it as:
 
 Standard Citation:
 
-```
-Melin, B. (2024). bjornmelin-platform-io: Cloud-Native Portfolio Platform [Computer software]. GitHub. https://github.com/bjornmelin/bjornmelin-platform-io
+```text
+Melin, B. (2024). bjornmelin-platform-io: Cloud-Native Portfolio Platform
+[Computer software]. GitHub.
+https://github.com/bjornmelin/bjornmelin-platform-io
 ```
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - AWS Documentation and Best Practices
 - AWS CDK Patterns Community
@@ -353,8 +450,5 @@ Melin, B. (2024). bjornmelin-platform-io: Cloud-Native Portfolio Platform [Compu
 
 ---
 
-<div align="center">
-
-Built with React 18 + Next.js 14 by [Bjorn Melin](https://bjornmelin.io)
-
-</div>
+Built with React 18 + Next.js 14 by
+[Bjorn Melin](https://bjornmelin.io).

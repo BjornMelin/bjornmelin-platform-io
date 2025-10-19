@@ -11,61 +11,55 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
    - Jobs: Lint, type check, unit tests, E2E tests, build
    - Features: pnpm caching, parallel jobs, artifact uploads
 
-2. **release.yml** - Automated release workflow using semantic-release
-   - Runs on: Push to main
-   - Features: Automatic versioning, changelog generation, GitHub releases
-   - Requires: GITHUB_TOKEN, NPM_TOKEN (if publishing)
+2. **auto-release.yml** - Codex-assisted release PR creator
+   - Runs on: Push to main, manual dispatch
+   - Features: Precheck SemVer floor; Codex full-diff SemVer decision; opens Release PR with package.json version bump
+   - Requires: `OPENAI_API_KEY` (Actions secret)
 
-3. **manual-deploy.yml** - Manual deployment workflow
+3. **finalize-release.yml** - Publish tag and GitHub Release after PR merge
+   - Runs on: Push to main
+   - Features: Creates `vX.Y.Z` tag on the merged release commit; publishes GitHub Release with auto-generated notes
+
+4. **manual-deploy.yml** - Manual deployment workflow
    - Runs on: Workflow dispatch
    - Features: Environment selection, test skipping option, deployment tracking
 
 ### Security & Quality
 
-4. **codeql.yml** - GitHub CodeQL security analysis
-   - Runs on: Push, PRs, weekly schedule
+5. **codeql.yml** - GitHub CodeQL security analysis (pinned to v3 actions)
+   - Runs on: Push, PRs, monthly schedule
    - Scans: JavaScript/TypeScript code for vulnerabilities
 
-5. **security-audit.yml** - Dependency security audit
-   - Runs on: Push, PRs, daily schedule
+6. **security-audit.yml** - Dependency security audit
+   - Runs on: Push, PRs, monthly schedule
    - Features: pnpm audit, dependency review
 
-6. **dependency-update.yml** - Automated dependency updates
-   - Runs on: Weekly schedule
+7. **dependency-update.yml** - Automated dependency updates
+   - Runs on: Monthly schedule
    - Features: Non-major updates, automated PR creation
 
 ### Maintenance
 
-7. **branch-protection.yml** - PR validation and protection
+8. **branch-protection.yml** - PR validation and protection
    - Runs on: Pull requests to main
    - Features: Conventional commit check, merge conflict detection, auto-labeling
 
-8. **pr-labeler.yml** - Automatic PR labeling
+9. **pr-labeler.yml** - Automatic PR labeling
    - Runs on: PR opened/edited
    - Features: Path-based labels, conventional commit labels
 
-9. **stale.yml** - Manage stale issues and PRs
-   - Runs on: Daily schedule
-   - Features: Auto-close inactive items, configurable timelines
+10. **stale.yml** - Manage stale issues and PRs
 
-10. **link-check.yml** - Check for broken links
-    - Runs on: Push, PRs, weekly schedule
+- Runs on: Daily schedule
+- Features: Auto-close inactive items, configurable timelines
+
+11. **link-check.yml** - Check for broken links
+    - Runs on: Push, PRs, monthly schedule
     - Features: Markdown link validation, issue creation on failure
-
-11. **workflow-status.yml** - Monitor workflow health
-    - Runs on: Weekly schedule
-    - Features: Success rate tracking, stale workflow detection
-
-### Testing
-
-12. **test-matrix.yml** - Cross-platform testing
-    - Runs on: Push, PRs
-    - Matrix: Node 20/21/22, Ubuntu/Windows/macOS
-    - Features: Comprehensive compatibility testing
 
 ### Performance
 
-13. **performance-check.yml** - Performance monitoring
+11. **performance-check.yml** - Performance monitoring
     - Runs on: Push to main, PRs
     - Features: Lighthouse CI, bundle size analysis
     - Metrics: Performance, accessibility, SEO, best practices
@@ -80,14 +74,17 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 ## Environment Variables & Secrets
 
 Required secrets:
+
 - `GITHUB_TOKEN` - Automatically provided by GitHub
 - `CODECOV_TOKEN` - For code coverage reporting (optional)
-- `NPM_TOKEN` - For npm publishing (if applicable)
+  
 - `AWS_DEPLOY_ROLE_ARN` - For AWS deployments (if using)
+- `AWS_REGION` - Deployment region (default: `us-east-1`)
 
 ## Branch Protection Settings
 
 Recommended branch protection for `main`:
+
 - Require PR reviews (1+)
 - Dismiss stale PR approvals
 - Require status checks:
@@ -106,7 +103,6 @@ Add these badges to your README:
 [![CI](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml)
 [![Security Audit](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml)
-[![Release](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/release.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/release.yml)
 ```
 
 ## Best Practices
@@ -114,13 +110,15 @@ Add these badges to your README:
 1. **Caching**: All workflows use pnpm caching for faster builds
 2. **Concurrency**: Workflows use concurrency groups to cancel redundant runs
 3. **Artifacts**: Test results and build artifacts are uploaded for debugging
-4. **Matrix Testing**: Comprehensive testing across Node versions and OS platforms
-5. **Security**: CodeQL, dependency audits, and automated updates
+4. **Reusable Setup**: Workflows rely on `./.github/actions/setup-node-pnpm` for consistent Node/pnpm installation and caching
+5. **Workflow Linting**: CI runs actionlint to validate workflow expressions and contexts
+5. **Security**: CodeQL, dependency audits, and automated updates; AWS access uses GitHub OIDC with short-lived credentials
 6. **Automation**: Auto-labeling, auto-assignment, and stale management
 
 ## Troubleshooting
 
 If workflows fail:
+
 1. Check the workflow logs in the Actions tab
 2. Verify all required secrets are set
 3. Ensure branch protection rules aren't blocking required checks

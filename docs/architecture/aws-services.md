@@ -1,12 +1,14 @@
 # AWS Services
 
-This document outlines the AWS services used in the bjornmelin-platform-io platform.
+This document outlines the AWS services used in the
+bjornmelin-platform-io platform.
 
 ## Core Services
 
 ### AWS CDK
 
-Used for Infrastructure as Code (IaC) to define and provision AWS infrastructure. Our CDK stacks are organized in `infrastructure/lib/stacks/`:
+Used for Infrastructure as Code (IaC) to define and provision AWS
+infrastructure. Our CDK stacks live in `infrastructure/lib/stacks/`:
 
 - **DNS Stack** (`dns-stack.ts`): Manages DNS configuration
 - **Email Stack** (`email-stack.ts`): Configures email services
@@ -24,7 +26,7 @@ Used for Infrastructure as Code (IaC) to define and provision AWS infrastructure
 
 The infrastructure code is organized as follows:
 
-```
+```text
 infrastructure/
 ├── bin/
 │   └── app.ts                 # CDK app entry point
@@ -41,9 +43,22 @@ infrastructure/
 
 Environment-specific configurations are managed through:
 
-- `.env.production` - Production environment variables
-- `cdk.context.json` - CDK context values
-- Environment variables for AWS credentials and region
+- GitHub Environment `production` variables for public client config
+- AWS SSM Parameter Store / Secrets Manager for server-only values
+- `cdk.context.json` for CDK context values
+- IAM OIDC + region for AWS credentials (no long-lived keys)
+
+### Reading SSM Parameters (Node.js)
+
+For Lambda/back-end code, prefer fetching configuration at startup from SSM:
+
+```ts
+// src/lib/aws/ssm.ts
+import { getParameter } from "@/lib/aws/ssm";
+
+// Example (decrypted secret):
+const contactEmail = await getParameter("/portfolio/prod/CONTACT_EMAIL");
+```
 
 ## Monitoring and Logging
 

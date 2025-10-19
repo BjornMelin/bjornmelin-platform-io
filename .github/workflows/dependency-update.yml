@@ -2,16 +2,12 @@ name: Dependency Update Check
 
 on:
   schedule:
-    - cron: '0 9 * * 1' # Every Monday at 9:00 AM UTC
+    - cron: '0 9 1 * *' # Monthly on the 1st at 09:00 UTC
   workflow_dispatch:
 
 permissions:
   contents: write
   pull-requests: write
-
-env:
-  NODE_VERSION: '20'
-  PNPM_VERSION: '9'
 
 jobs:
   update-dependencies:
@@ -20,23 +16,15 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
         with:
-          version: ${{ env.PNPM_VERSION }}
+          install: "true"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
 
       - name: Check for updates
         id: check-updates
@@ -90,5 +78,5 @@ jobs:
           labels: |
             dependencies
             automated
-          assignees: bjornmelin
-          reviewers: bjornmelin
+          assignees: BjornMelin
+          reviewers: BjornMelin

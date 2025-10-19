@@ -1,0 +1,27 @@
+changelog:
+  exclude:
+    labels:
+      - release:skip
+    authors:
+      - dependabot[bot]
+  categories:
+    - title: Breaking Changes
+      labels:
+        - breaking-change
+        - Semver-Major
+    - title: Features
+      labels:
+        - feat
+        - enhancement
+        - Semver-Minor
+    - title: Fixes
+      labels:
+        - fix
+        - bug
+    - title: Docs
+      labels:
+        - docs
+    - title: Other Changes
+      labels:
+        - "*"
+

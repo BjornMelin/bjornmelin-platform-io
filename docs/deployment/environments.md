@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document outlines the environment configurations for bjornmelin-platform-io.
+This document outlines the environment configurations for
+bjornmelin-platform-io.
 
 ## Environment Types
 
@@ -21,13 +22,16 @@ AWS_REGION=us-east-1
 - Development CDK stack
 - Hot reload enabled
 
-### Production
+### Production (GitHub Environment + AWS SSM)
 
-```bash
-# .env.production
-NEXT_PUBLIC_API_URL=https://api.example.com
-AWS_REGION=us-east-1
-```
+- Public client config comes from the GitHub Environment `production` variables:
+  - `NEXT_PUBLIC_BASE_URL`
+  - `NEXT_PUBLIC_API_URL`
+- Server-side values are stored in AWS SSM Parameter Store or Secrets Manager
+  (e.g., `/portfolio/prod/CONTACT_EMAIL` stored as a `SecureString`).
+- CDK deployment expects the following environment variables before synth:
+  - `PROD_ALERT_EMAILS` (comma-separated list of alert recipients; required)
+  - `DEV_ALERT_EMAILS` (optional override for development alerts)
 
 #### Production Settings
 
@@ -43,8 +47,6 @@ AWS_REGION=us-east-1
 ```bash
 # AWS Configuration
 AWS_REGION=
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
 
 # Application Settings
 NEXT_PUBLIC_API_URL=
@@ -87,12 +89,11 @@ export class ProductionStack extends Stack {
 
 ## Configuration Management
 
-### Environment Files
+### Environment Files (local only)
 
-```
-.env.local          # Local overrides
-.env.development    # Development settings
-.env.production     # Production settings
+```text
+.env.local          # Local overrides (not committed)
+.env.development    # Development settings (optional, not required for CI)
 ```
 
 ### Type Safety
@@ -141,23 +142,23 @@ const storageConfig = {
 
 ## Security Settings
 
-### Development
+### Development Security
 
-- Local credentials
+- Local AWS credentials (CLI profile or environment variables)
 - Debug enabled
 - Relaxed CORS
 - Development domains
 
-### Production
+### Production Security
 
-- AWS IAM roles
+- GitHub OIDC deployment roles (no long-lived secrets)
 - Strict CORS
 - Production domains
 - Enhanced security
 
 ## Monitoring Configuration
 
-### Development
+### Development Monitoring
 
 ```typescript
 // Low priority alerts
@@ -167,7 +168,7 @@ const monitoringConfig = {
 };
 ```
 
-### Production
+### Production Monitoring
 
 ```typescript
 // High priority alerts
@@ -179,14 +180,14 @@ const monitoringConfig = {
 
 ## Deployment Configuration
 
-### Development
+### Development Deployment
 
 ```bash
 # Development deployment
 cdk deploy --context environment=development
 ```
 
-### Production
+### Production Deployment
 
 ```bash
 # Production deployment

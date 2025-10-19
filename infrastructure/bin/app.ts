@@ -60,6 +60,7 @@ const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "pro
   environment: CONFIG.prod.environment,
   bucket: storageStack.bucket,
   distribution: storageStack.distribution,
+  alertEmailAddresses: CONFIG.prod.alerts.emails,
   tags: CONFIG.tags,
 });
 
@@ -75,8 +76,10 @@ const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   environment: CONFIG.prod.environment,
   hostedZone: dnsStack.hostedZone,
   senderEmail: emailConfig.sender,
-  recipientEmail: emailConfig.recipient,
-  allowedOrigins: emailConfig.allowedOrigins,
+  // Convert readonly config array to mutable array to satisfy EmailStackProps.
+  allowedOrigins: [...emailConfig.allowedOrigins],
+  // SSM parameter path for the recipient email; defaults to /portfolio/prod/CONTACT_EMAIL if omitted
+  // ssmRecipientEmailParam: "/portfolio/prod/CONTACT_EMAIL",
   tags: CONFIG.tags,
 });
 

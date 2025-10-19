@@ -2,20 +2,23 @@
 
 ## Introduction
 
-This section provides comprehensive documentation for developers working on the bjornmelin-platform-io project. Our development process emphasizes code quality, performance, and maintainable architecture.
+This section provides comprehensive documentation for developers working on the
+bjornmelin-platform-io project. Our development process emphasizes code
+quality, performance, and maintainable architecture.
 
 ## Documentation Structure
 
 - [Getting Started](./getting-started.md) - Setup and initial development guide
 - [Coding Standards](./coding-standards.md) - Code style and best practices
 - [Testing Strategies](./testing.md) - Testing methodologies and tools
+ - [Releasing](../development/releasing.md) - Codex-assisted release automation
 
 ## Development Environment
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
-- Yarn package manager
+- Node.js (24.x LTS; pinned via `.nvmrc` and enforced by the `engines` field)
+- pnpm package manager (enable via `corepack enable pnpm`)
 - AWS CLI configured with appropriate credentials
 - Git
 
@@ -23,7 +26,7 @@ This section provides comprehensive documentation for developers working on the 
 
 #### Frontend
 
-- Next.js 13+ (App Router)
+- Next.js 14+ (App Router)
 - React 18
 - TypeScript
 - Tailwind CSS
@@ -37,8 +40,7 @@ This section provides comprehensive documentation for developers working on the 
 
 #### Development Tools
 
-- ESLint
-- Prettier
+- Biome (linting and formatting)
 - Zod for validation
 - React Testing Library
 
@@ -57,8 +59,7 @@ graph LR
 ### 2. Code Quality
 
 - TypeScript for type safety
-- ESLint for code linting
-- Prettier for code formatting
+- Biome for linting and formatting
 - Git hooks for pre-commit checks
 
 ### 3. Testing Requirements
@@ -72,7 +73,7 @@ graph LR
 
 ### Code Organization
 
-```
+```text
 src/
 ├── app/          # Next.js 13+ pages and API routes
 ├── components/   # React components
@@ -122,16 +123,25 @@ src/
 
 ```bash
 # Start development server
-yarn dev
+pnpm dev
 
 # Build for production
-yarn build
+pnpm build
 
 # Run type checking
-yarn type-check
+pnpm type-check
 
 # Run linting
-yarn lint
+pnpm lint
+
+## Release Process
+
+Releases are created automatically by the Codex-assisted workflows:
+
+- Auto Release PR creator: analyzes the full diff, enforces a SemVer floor, proposes version bump.
+- Finalize Release: tags the merged release commit and publishes a GitHub Release (no drafts).
+
+See the full guide at [Releasing](../development/releasing.md).
 ```
 
 ## Infrastructure Development
@@ -155,4 +165,5 @@ yarn lint
 - API documentation
 - Infrastructure documentation
 
-For more detailed information, refer to the specific guides in each section of the development documentation.
+For more detailed information, refer to the specific guides in each section of
+the development documentation.

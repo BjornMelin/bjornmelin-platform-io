@@ -5,7 +5,7 @@
 ### Core Tools
 
 - React Testing Library
-- Jest
+- Vitest
 - TypeScript
 - MSW (Mock Service Worker)
 
@@ -45,7 +45,7 @@ describe("Button", () => {
   });
 
   it("handles click events", () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     render(<Button onClick={onClick}>Click me</Button>);
     screen.getByText("Click me").click();
     expect(onClick).toHaveBeenCalled();
@@ -143,7 +143,7 @@ describe("Contact Form Flow", () => {
 
 ### Directory Structure
 
-```
+```text
 src/
 ├── __tests__/
 │   ├── components/
@@ -191,16 +191,16 @@ src/
 
 ```bash
 # Run all tests
-yarn test
+pnpm test
 
 # Run specific test file
-yarn test ComponentName.test.tsx
+pnpm test -- ComponentName.test.tsx
 
 # Run tests in watch mode
-yarn test --watch
+pnpm test -- --watch
 
 # Generate coverage report
-yarn test --coverage
+pnpm test -- --coverage
 ```
 
 ## Continuous Integration

@@ -21,10 +21,6 @@ concurrency:
 
 env:
   AWS_REGION: us-east-1
-  NEXT_PUBLIC_BASE_URL: https://bjornmelin.io
-  NEXT_PUBLIC_API_URL: https://api.bjornmelin.io
-  NODE_VERSION: '20'
-  PNPM_VERSION: '9'
 
 jobs:
   # Run tests before deployment
@@ -35,20 +31,12 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: "20"
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          install: "true"
 
       - name: Run unit tests
         id: run-tests
@@ -69,59 +57,34 @@ jobs:
     needs: test
     if: needs.test.outputs.tests-passed == 'true'
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       id-token: write
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: "20"
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          install: "true"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          role-session-name: github-actions-deploy
           aws-region: ${{ env.AWS_REGION }}
-
-      # Install root dependencies (i.e., for Next.js)
-      - name: Install Root Dependencies
-        run: pnpm install --frozen-lockfile
-
-      # Install dependencies in the infrastructure directory (if needed)
-      - name: Install Infrastructure Dependencies
-        working-directory: ./infrastructure
-        run: pnpm install --frozen-lockfile
 
       # Build the Next.js app & export static files
       - name: Build Next.js App (Static Export)
         env:
-          NEXT_PUBLIC_BASE_URL: ${{ env.NEXT_PUBLIC_BASE_URL }}
-          NEXT_PUBLIC_API_URL: ${{ env.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          AWS_REGION: ${{ env.AWS_REGION }}
         run: pnpm build
 
       # Retrieve the S3 bucket name and CloudFront distribution from your CF stack
@@ -161,12 +124,73 @@ jobs:
             --distribution-id ${{ steps.stack-outputs.outputs.distribution }} \
             --paths "/*"
 
-      # Verify the site is live at your real domain
-      - name: Verify Deployment
+  smoke-check:
+    name: Post-Deploy Smoke Check
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: needs.deploy.result == 'success'
+
+    steps:
+      - name: Run smoke check
+        id: smoke
         run: |
-          HTTP_CODE=$(curl -o /dev/null -s -w "%{http_code}" https://bjornmelin.io)
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "Website verification failed at https://bjornmelin.io with HTTP code: $HTTP_CODE"
-            exit 1
+          set +e
+          url="https://bjornmelin.io"
+          http_code=$(curl --retry 3 --retry-delay 5 --max-time 15 -s -o /tmp/response "$url" -w "%{http_code}")
+          exit_code=$?
+
+          echo "http_code=$http_code" >> "$GITHUB_OUTPUT"
+          echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
+
+          if [ "$exit_code" -eq 0 ] && [ "$http_code" -ge 200 ] && [ "$http_code" -lt 400 ]; then
+            echo "status=success" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=failure" >> "$GITHUB_OUTPUT"
+            echo "Smoke check failed for $url (exit: $exit_code, status: $http_code)."
+            echo "----- Response Body (truncated) -----"
+            head -c 2048 /tmp/response || true
           fi
-          echo "Deployment verified. Received HTTP 200 from https://bjornmelin.io"
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          status="${{ steps.smoke.outputs.status }}"
+          http_code="${{ steps.smoke.outputs.http_code }}"
+          [ -z "$http_code" ] && http_code="n/a"
+          {
+            echo "## Deployment Summary"
+            echo ""
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo "- Workflow Run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- Smoke Check Status: ${status:-unknown}"
+            echo "- HTTP Status Code: ${http_code}"
+            echo "- Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Notify on commit
+        if: always()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const statusRaw = '${{ steps.smoke.outputs.status }}';
+            const httpRaw = '${{ steps.smoke.outputs.http_code }}';
+            const status = statusRaw || 'unknown';
+            const httpCode = httpRaw || 'n/a';
+            const url = 'https://bjornmelin.io';
+            const lines = [
+              `Deployment smoke check ${status === 'success' ? 'succeeded' : 'failed'} for ${url}.`,
+              `HTTP status: ${httpCode}.`,
+              `Workflow run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            ];
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: lines.join('\n')
+            });
+
+      - name: Fail when smoke check failed
+        if: ${{ steps.smoke.outputs.status == 'failure' }}
+        run: |
+          echo "Smoke check did not succeed. Failing workflow."
+          exit 1

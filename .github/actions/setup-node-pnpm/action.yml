@@ -1,0 +1,34 @@
+name: setup-node-pnpm
+description: Set up Node.js (from .nvmrc), activate pinned pnpm via Corepack, and optionally install deps (cached).
+inputs:
+  install:
+    description: Run pnpm install after setup.
+    required: false
+    default: "true"
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js from .nvmrc
+      uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      with:
+        node-version-file: .nvmrc
+        cache: pnpm
+
+    - name: Enable Corepack and activate pinned pnpm
+      shell: bash
+      run: |
+        set -euo pipefail
+        corepack enable
+        # Read exact packageManager (e.g., pnpm@10.18.3) from package.json and activate it
+        PM=$(node -p "require('./package.json').packageManager")
+        if [[ -z "$PM" ]]; then
+          echo "package.json:packageManager is empty; expected an exact pnpm version" >&2
+          exit 1
+        fi
+        echo "Activating $PM via Corepack"
+        corepack use "$PM"
+
+    - name: Install dependencies
+      if: ${{ inputs.install == 'true' }}
+      shell: bash
+      run: pnpm install --frozen-lockfile

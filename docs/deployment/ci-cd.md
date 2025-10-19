@@ -6,152 +6,144 @@ This document outlines the deployment process for bjornmelin-platform-io.
 
 ### Prerequisites
 
-- AWS credentials configured
-- AWS CDK CLI installed
-- Node.js and Yarn
+- AWS credentials provisioned for the target account
+- AWS CDK CLI via `pnpm dlx aws-cdk` (no global install required)
+- Node.js 24.x LTS (pinned via `.nvmrc`)
+- pnpm 10.18.x (activated via Corepack from `package.json#packageManager`)
 
 ### CDK Deployment Process
 
-1. Navigate to infrastructure directory:
+1. Install dependencies in the infrastructure workspace:
 
-```bash
-cd infrastructure
-```
+   ```bash
+   cd infrastructure
+   pnpm install
+   ```
 
-2. Install dependencies:
+2. Build the CDK app:
 
-```bash
-yarn install
-```
+   ```bash
+   pnpm build
+   ```
 
-3. Build the CDK app:
+3. Review changes prior to deployment:
 
-```bash
-yarn build
-```
+   ```bash
+   pnpm cdk diff
+   ```
 
-4. Review infrastructure changes:
+4. Deploy the stacks that need to change:
 
-```bash
-cdk diff
-```
+   ```bash
+   pnpm cdk deploy prod-portfolio-storage
+   pnpm cdk deploy prod-portfolio-monitoring
+   pnpm cdk deploy prod-portfolio-deployment
+   ```
 
-5. Deploy all stacks:
+   Use `pnpm cdk deploy --all` when a coordinated full rollout is required.
 
-```bash
-cdk deploy --all
-```
-
-Or deploy specific stacks:
-
-```bash
-cdk deploy EmailStack DnsStack
-```
+All environments assume AWS roles through GitHub’s OpenID Connect provider. The
+CDK stacks do **not** create IAM users or access keys.
 
 ## Next.js Application Deployment
 
 ### Production Build
 
-1. Install dependencies:
+1. Install web application dependencies from the repository root:
+
+   ```bash
+   pnpm install
+   ```
+
+2. Produce an optimized build:
+
+   ```bash
+   pnpm build
+   ```
+
+3. Run the production server locally (optional smoke test):
+
+   ```bash
+   pnpm start
+   ```
+
+### Local Container Smoke Test
+
+Build and run the Docker image that serves the static export (requires Docker Desktop/daemon running):
 
 ```bash
-yarn install
+docker build -t platform-io:node24 .
+docker run --rm -p 8080:80 platform-io:node24
 ```
 
-2. Build the application:
+Open <http://localhost:8080> to verify assets and routes.
 
-```bash
-yarn build
-```
+## Automated Releases (Codex-assisted)
 
-3. Start production server:
+- Trigger: Push to `main` or manual dispatch `Auto Release`.
+- Flow:
+  - Prechecks compute a safe SemVer floor from actual code changes (routes/API/env heuristics).
+  - Codex Action reads the full diff and returns a structured JSON decision (bump + rationale).
+  - Floor enforcement prevents lowering; high-risk outputs default to the floor.
+  - The workflow creates a tag `vX.Y.Z` and a draft GitHub Release with `generate_release_notes: true`.
+  - `.github/release.yml` controls categories; PRs labeled `release:skip` are excluded.
+- Overrides:
+  - Labels `semver:override-*` and `release:skip` adjust behavior in edge cases.
+- Safety:
+  - Codex runs under reduced privileges; release creation uses `GITHUB_TOKEN` with `contents: write`.
 
-```bash
-yarn start
-```
+### Environment Variables (production via GitHub Environment)
 
-### Environment Variables
+GitHub Actions environments define the full variable set for each target stage.
+Production uses GitHub Environment "production" variables and secrets:
 
-Ensure all required environment variables are set:
+- Variables (public client config): `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_API_URL`
+- Secrets (build-time or CI use): `OPENAI_API_KEY` (Codex), others as needed
+- AWS access uses OIDC via `aws-actions/configure-aws-credentials` (no static keys)
 
-- AWS credentials
-- API endpoints
-- Other configuration values
+At runtime (Lambda/back-end), prefer AWS SSM Parameter Store / Secrets Manager rather than `.env` files.
 
 ## Deployment Environments
 
 ### Development
 
-- Used for testing and development
-- Deployed manually through CDK
-- Separate AWS resources
+- Ad hoc deployments via CDK or branch workflows
+- Shares infrastructure code with production
+- Uses the `dev-portfolio-deploy` OIDC role for automation
 
 ### Production
 
-- Live environment
-- Deployed through CDK
-- Production-grade resources
-- Enhanced monitoring
+- Deployments run through GitHub Actions using the `prod-portfolio-deploy`
+  role
+- Daily security audit workflow with pnpm audit severity gating
+- CodeQL advanced workflow is the single SARIF publisher (default setup is
+  disabled)
 
 ## Monitoring
 
-### CloudWatch Metrics
-
-- Application performance
-- Error rates
-- Resource utilization
-
-### Logging
-
-- Application logs
-- Infrastructure logs
-- Access logs
+- SNS alert recipients are configured in `CONFIG.prod.alerts.emails`
+- CloudWatch dashboards and alarms are provisioned by `MonitoringStack`
+- Audit SNS subscriptions are parameterized and can be rotated without code change
 
 ## Rollback Procedures
 
-If issues are detected:
+1. Review CloudWatch alarms and deployment logs.
+2. Identify the faulty change via `pnpm cdk diff`.
+3. Redeploy the previous stack version:
 
-1. Identify the problem
-2. Review CloudWatch logs
-3. Revert infrastructure:
+   ```bash
+   pnpm cdk deploy --all --previous-parameters
+   ```
 
-```bash
-cdk deploy --all --previous-version
-```
+4. Re-run the CI pipeline to confirm the rollback.
 
 ## Security Considerations
 
-- Environment variable management
-- AWS IAM roles and policies
-- Resource access controls
-- Encryption at rest and in transit
-
-## Best Practices
-
-1. Always review `cdk diff` before deployment
-2. Test changes in development first
-3. Monitor deployment logs
-4. Maintain documentation
-5. Regular security updates
-
-## Troubleshooting
-
-Common issues and solutions:
-
-### Permission Issues
-
-- Verify AWS credentials
-- Check IAM roles
-- Review resource policies
-
-### Deployment Failures
-
-- Check CloudWatch logs
-- Verify environment variables
-- Review stack events
-
-### Performance Issues
-
-- Monitor CloudWatch metrics
-- Check resource utilization
-- Review application logs
+- GitHub OIDC federation is enforced across all workflows; no IAM access keys
+  are provisioned.
+- Secrets are stored in AWS Secrets Manager and referenced via GitHub
+  environment variables.
+- pnpm audit runs on every push/PR and fails the build on high or critical
+  findings.
+- CodeQL default setup is disabled in repository settings; the advanced
+  workflow manages scanning.

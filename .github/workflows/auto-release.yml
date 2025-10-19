@@ -1,0 +1,151 @@
+name: Auto Release (PR)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: auto-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Guard - skip if release commit
+        id: guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          msg=$(git log -1 --pretty=%B)
+          if [[ "$msg" =~ ^chore\(release\):\ v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Release commit detected; skipping auto-release to prevent loops." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node.js and pnpm
+        if: steps.guard.outputs.skip != 'true'
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install: "true"
+
+      - name: Compute semver floor (prechecks)
+        id: precheck
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          pnpm dlx ts-node scripts/release/precheck.ts > precheck.json
+          echo "floor=$(jq -r .bump_floor precheck.json)" >> $GITHUB_OUTPUT
+          echo "evidence<<EOF" >> $GITHUB_OUTPUT
+          jq -r '.evidence[]' precheck.json >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Run Codex for final decision
+        id: codex
+        uses: openai/codex-action@v1
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          safety-strategy: drop-sudo
+          output-file: codex_release.json
+          prompt: |
+            You are an expert release manager. Read the repository diff and decide the correct SemVer bump.
+            Rules (never violate):
+            - The bump cannot be lower than this floor: ${{ steps.precheck.outputs.floor }}.
+            - Major for breaking public changes (removed routes, stricter API/env requirements, signature removals).
+            - Minor for additive, backward-compatible changes (new routes/endpoints/optional fields).
+            - Patch for fixes, docs, refactors not changing public behavior.
+
+            Return strict JSON with keys {"bump":"major|minor|patch","rationale":string[],"breaking_items":string[],"additive_items":string[],"risk_level":"low|med|high"} and NOTHING else.
+
+            Context:
+            - Latest semver tag: compute from git tags v*.*.*; compare to HEAD.
+            - Deterministic precheck evidence (floor=${{ steps.precheck.outputs.floor }}):
+            ${{ steps.precheck.outputs.evidence }}
+
+            Analyze the full diff in this repo to ensure correctness.
+
+      - name: Validate Codex output and finalize bump
+        id: finalize
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          if [ ! -f codex_release.json ]; then
+            echo "Codex JSON missing; falling back to precheck floor" >&2
+            echo "bump=${{ steps.precheck.outputs.floor }}" >> $GITHUB_OUTPUT
+          else
+            bump=$(jq -r .bump codex_release.json || echo '')
+            case "$bump" in major|minor|patch) ;; *) bump="${{ steps.precheck.outputs.floor }}";; esac
+            # enforce floor
+            floor="${{ steps.precheck.outputs.floor }}"
+            ord() { case "$1" in patch) echo 1;; minor) echo 2;; major) echo 3;; esac; }
+            [ $(ord "$bump") -lt $(ord "$floor") ] && bump="$floor"
+            echo "bump=$bump" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Compute next version
+        id: version
+        uses: actions/github-script@v7
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          script: |
+            const bump = `${{ steps.finalize.outputs.bump }}`;
+            const semver = /^v?(\d+)\.(\d+)\.(\d+)$/;
+            const { data: tags } = await github.repos.listTags({ owner: context.repo.owner, repo: context.repo.repo, per_page: 100 });
+            let latest = 'v1.0.0';
+            for (const t of tags) { if (semver.test(t.name)) { latest = t.name.startsWith('v') ? t.name : `v${t.name}`; break; } }
+            const m = latest.match(semver);
+            let M=1,mn=0,p=0; if (m) { M=+m[1]; mn=+m[2]; p=+m[3]; }
+            if (bump === 'major') { M+=1; mn=0; p=0; }
+            else if (bump === 'minor') { mn+=1; p=0; }
+            else { p+=1; }
+            const next = `v${M}.${mn}.${p}`;
+            core.setOutput('latest', latest);
+            core.setOutput('next_version', next);
+
+      - name: Prepare release branch and commit version bump
+        id: bump
+        env:
+          NEXT_VERSION: ${{ steps.version.outputs.next_version }}
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BRANCH="release/bump-${NEXT_VERSION}"
+          git checkout -b "$BRANCH"
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));p.version=process.env.NEXT_VERSION.replace(/^v/,'');fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n');"
+          git add package.json
+          git commit -m "chore(release): ${NEXT_VERSION}"
+          git push -u origin "$BRANCH"
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Open Release PR
+        uses: peter-evans/create-pull-request@v6
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.bump.outputs.branch }}
+          base: main
+          title: "chore(release): ${{ steps.version.outputs.next_version }}"
+          body: |
+            This PR was generated automatically by the Auto Release workflow.
+
+            - Proposed version: `${{ steps.version.outputs.next_version }}`
+            - SemVer floor: `${{ steps.precheck.outputs.floor }}`
+            - Codex rationale attached as artifact and summarized below:
+
+            _Codex rationale included in workflow artifacts._
+          labels: |
+            release

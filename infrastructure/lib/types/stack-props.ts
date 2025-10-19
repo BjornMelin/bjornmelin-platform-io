@@ -22,11 +22,16 @@ export interface DeploymentStackProps extends BaseStackProps {
 export interface MonitoringStackProps extends BaseStackProps {
   bucket: s3.IBucket;
   distribution: cloudfront.IDistribution;
+  alertEmailAddresses: string[];
 }
 
 export interface EmailStackProps extends BaseStackProps {
   hostedZone: route53.IHostedZone;
   senderEmail: string;
-  recipientEmail: string;
   allowedOrigins?: string[];
+  /**
+   * Optional SSM Parameter path that contains the contact-form recipient email.
+   * If omitted, defaults to `/portfolio/<environment>/CONTACT_EMAIL`.
+   */
+  ssmRecipientEmailParam?: string;
 }

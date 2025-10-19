@@ -17,10 +17,6 @@ concurrency:
   group: e2e-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  NODE_VERSION: '20'
-  PNPM_VERSION: '9'
-
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest
@@ -28,34 +24,12 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          install: "true"
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -94,7 +68,7 @@ jobs:
         with:
           name: playwright-report-${{ github.sha }}
           path: playwright-report/
-          retention-days: 30
+          retention-days: 7
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -107,6 +81,8 @@ jobs:
       - name: Comment PR with results
         uses: actions/github-script@v8
         if: github.event_name == 'pull_request' && always()
+        env:
+          JOB_STATUS: ${{ job.status }}
         with:
           script: |
             const fs = require('fs');
@@ -115,8 +91,9 @@ jobs:
             // Read test results if available
             let testResults = '✅ All E2E tests passed!';
             let details = '';
+            const jobStatus = process.env.JOB_STATUS;
             
-            if (context.job.status === 'failure') {
+            if (jobStatus === 'failure') {
               testResults = '❌ E2E tests failed';
               details = '\n\nPlease check the [test artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.';
             }
@@ -143,34 +120,12 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: '20'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          install: "true"
 
       - name: Run unit tests with coverage
         run: pnpm test:coverage
@@ -181,7 +136,7 @@ jobs:
         with:
           name: coverage-report-${{ github.sha }}
           path: coverage/
-          retention-days: 30
+          retention-days: 7
 
       - name: Coverage summary
         if: github.event_name == 'pull_request'
