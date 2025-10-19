@@ -26,7 +26,13 @@ runs:
           exit 1
         fi
         echo "Activating $PM via Corepack"
-        corepack use "$PM"
+        if corepack prepare "$PM" --activate; then
+          echo "Corepack prepared $PM"
+        else
+          echo "Corepack prepare failed, falling back to npm global install" >&2
+          npm install -g "${PM%@*}"
+        fi
+        pnpm --version
 
     - name: Install dependencies
       if: ${{ inputs.install == 'true' }}
