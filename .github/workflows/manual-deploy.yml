@@ -121,9 +121,9 @@ jobs:
         id: deployment-url
         run: |
           if [[ "${{ inputs.environment }}" == "production" ]]; then
-            echo "url=https://bjornmelin.io" >> $GITHUB_OUTPUT
+            echo "url=https://bjornmelin.io" >> "$GITHUB_OUTPUT"
           else
-            echo "url=https://${{ inputs.environment }}.bjornmelin.io" >> $GITHUB_OUTPUT
+            echo "url=https://${{ inputs.environment }}.bjornmelin.io" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create deployment record

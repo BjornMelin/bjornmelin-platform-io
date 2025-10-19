@@ -96,15 +96,15 @@ jobs:
       - name: Build and analyze bundle
         run: |
           pnpm build
-          
-          # Calculate bundle sizes
-          echo "## Bundle Size Report" > bundle-report.md
-          echo "" >> bundle-report.md
-          echo "| File | Size | Gzipped |" >> bundle-report.md
-          echo "|------|------|---------|" >> bundle-report.md
-          
+          {
+            echo "## Bundle Size Report"
+            echo ""
+            echo "| File | Size | Gzipped |"
+            echo "|------|------|---------|"
+          } > bundle-report.md
+
           # Find and measure JS bundles
-          find .next/static/chunks -name "*.js" -type f | while read file; do
+          find .next/static/chunks -name "*.js" -type f | while read -r file; do
             size=$(du -h "$file" | cut -f1)
             gzipped=$(gzip -c "$file" | wc -c | numfmt --to=iec)
             filename=$(basename "$file")
