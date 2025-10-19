@@ -33,6 +33,9 @@ jobs:
         run: pnpm build
         env:
           NEXT_PUBLIC_BASE_URL: http://localhost:3000
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          AWS_REGION: us-east-1
+          CONTACT_EMAIL: test@example.com
           NODE_ENV: production
 
       - name: Run Lighthouse CI
@@ -43,7 +46,7 @@ jobs:
           configPath: ./.github/lighthouse/lighthouserc.json
 
       - name: Comment PR with results
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && always() && github.event.pull_request.head.repo.fork == false
         uses: actions/github-script@v8
         with:
           script: |
@@ -68,13 +71,16 @@ jobs:
             } else {
               comment = `## 🚦 Lighthouse Performance Report\n\n⚠️ Lighthouse results not found. The performance check may have failed.`;
             }
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+            try {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (err) {
+              core.warning(`Skipping Lighthouse PR comment: ${err?.message ?? err}`);
+            }
 
   bundle-size:
     needs: lighthouse
@@ -96,6 +102,11 @@ jobs:
       - name: Build and analyze bundle
         run: |
           pnpm build
+        env:
+          NEXT_PUBLIC_BASE_URL: http://localhost:3000
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          AWS_REGION: us-east-1
+          CONTACT_EMAIL: test@example.com
           {
             echo "## Bundle Size Report"
             echo ""
