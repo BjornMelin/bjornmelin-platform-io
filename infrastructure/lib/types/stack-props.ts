@@ -17,10 +17,6 @@ export interface StorageStackProps extends BaseStackProps {
 export interface DeploymentStackProps extends BaseStackProps {
   bucket: s3.IBucket;
   distribution: cloudfront.IDistribution;
-  legacyIamUser?: {
-    enabled: boolean;
-    secretName?: string;
-  };
 }
 
 export interface MonitoringStackProps extends BaseStackProps {

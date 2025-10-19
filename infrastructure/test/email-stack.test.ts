@@ -26,28 +26,37 @@ vi.mock("aws-cdk-lib/aws-lambda-nodejs", async () => {
   return { NodejsFunction };
 });
 
+/**
+ * Synthesizes the email stack for assertions using a shared configuration.
+ *
+ * @returns CloudFormation template for the Email stack fixture.
+ */
+const buildEmailStackTemplate = (): Template => {
+  const app = new cdk.App();
+  const dummy = new cdk.Stack(app, "Dummy", {
+    env: { account: "111111111111", region: "us-east-1" },
+  });
+  const importedZone = route53.HostedZone.fromHostedZoneAttributes(dummy, "HostedZone", {
+    hostedZoneId: "Z123456EXAMPLE",
+    zoneName: "example.com",
+  });
+  const stack = new EmailStack(app, "Email", {
+    env: { account: "111111111111", region: "us-east-1" },
+    domainName: "example.com",
+    environment: "prod",
+    hostedZone: importedZone,
+    senderEmail: "no-reply@example.com",
+    allowedOrigins: ["https://example.com"],
+    ssmRecipientEmailParam: "/portfolio/prod/CONTACT_EMAIL",
+    tags: { Project: "Test" },
+  });
+
+  return Template.fromStack(stack);
+};
+
 describe("EmailStack", () => {
   it("sets SSM param env and grants ssm:GetParameter", () => {
-    const app = new cdk.App();
-    const dummy = new cdk.Stack(app, "Dummy", {
-      env: { account: "111111111111", region: "us-east-1" },
-    });
-    const importedZone = route53.HostedZone.fromHostedZoneAttributes(dummy, "HostedZone", {
-      hostedZoneId: "Z123456EXAMPLE",
-      zoneName: "example.com",
-    });
-    const stack = new EmailStack(app, "Email", {
-      env: { account: "111111111111", region: "us-east-1" },
-      domainName: "example.com",
-      environment: "prod",
-      hostedZone: importedZone,
-      senderEmail: "no-reply@example.com",
-      allowedOrigins: ["https://example.com"],
-      ssmRecipientEmailParam: "/portfolio/prod/CONTACT_EMAIL",
-      tags: { Project: "Test" },
-    });
-
-    const template = Template.fromStack(stack);
+    const template = buildEmailStackTemplate();
 
     // Lambda env contains SSM_RECIPIENT_EMAIL_PARAM and does NOT contain RECIPIENT_EMAIL
     template.hasResourceProperties("AWS::Lambda::Function", {
@@ -78,5 +87,13 @@ describe("EmailStack", () => {
         ]),
       },
     });
+  });
+
+  it("creates SES DNS records without duplicate domain suffixes", () => {
+    const template = buildEmailStackTemplate();
+    const recordSets = template.findResources("AWS::Route53::RecordSet");
+    const serialized = JSON.stringify(recordSets);
+    expect(serialized).not.toContain("._domainkey.example.com._domainkey");
+    expect(serialized).not.toContain("_amazonses.example.com._amazonses");
   });
 });

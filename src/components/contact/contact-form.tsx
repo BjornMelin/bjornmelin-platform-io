@@ -106,13 +106,17 @@ export function ContactForm() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Failed to Send Message</AlertTitle>
           <AlertDescription>
-            Please try again. If the problem persists, you can email me directly at{" "}
+            Please try again. If the problem persists, reach out via the contact form later or send
+            a message through{" "}
             <a
-              href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`}
+              href="https://www.linkedin.com/in/bjornmelin/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="underline hover:text-red-400"
             >
-              {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
+              LinkedIn
             </a>
+            .
           </AlertDescription>
         </Alert>
       )}

@@ -16,7 +16,6 @@ echo "SSM Parameter namespace: ${PARAM_PATH} (${AWS_REGION})"
 
 # Add any back-end secrets here (examples commented):
 # aws ssm put-parameter --region "$AWS_REGION" --name "$PARAM_PATH/RESEND_API_KEY" --type SecureString --value "$RESEND_API_KEY" --overwrite
-# aws ssm put-parameter --region "$AWS_REGION" --name "$PARAM_PATH/CONTACT_EMAIL" --type String --value "$CONTACT_EMAIL" --overwrite
+# aws ssm put-parameter --region "$AWS_REGION" --name "$PARAM_PATH/CONTACT_EMAIL" --type SecureString --value "$CONTACT_EMAIL" --overwrite
 
 echo "No parameters written (script is a scaffold). Export vars and uncomment commands above to apply."
-

@@ -12,6 +12,10 @@ import * as ses from "aws-cdk-lib/aws-ses";
 import type { Construct } from "constructs";
 import type { EmailStackProps } from "../types/stack-props";
 
+/**
+ * EmailStack provisions the contact form delivery pipeline including SES, API Gateway, and Lambda.
+ * The stack keeps recipient email addresses out of the synthesized template by resolving them from SSM at runtime.
+ */
 export class EmailStack extends cdk.Stack {
   public readonly emailFunction: lambda.NodejsFunction;
   public readonly api: apigateway.RestApi;
@@ -34,37 +38,8 @@ export class EmailStack extends cdk.Stack {
     );
 
     // Create SES Domain Identity
-    const domainIdentity = new ses.EmailIdentity(this, "DomainIdentity", {
-      identity: ses.Identity.domain(domain),
-    });
-
-    // Get verification record attributes
-    const verificationRecord = {
-      recordName: `_amazonses.${domain}`,
-      recordValue: domainIdentity.emailIdentityArn,
-    };
-
-    // Create DNS TXT record for domain verification
-    new route53.TxtRecord(this, "SESVerificationRecord", {
-      zone: hostedZone,
-      recordName: verificationRecord.recordName,
-      values: [verificationRecord.recordValue],
-      ttl: cdk.Duration.minutes(60),
-    });
-
-    // Create DKIM CNAME records
-    const dkimTokens = [
-      domainIdentity.dkimDnsTokenName1,
-      domainIdentity.dkimDnsTokenName2,
-      domainIdentity.dkimDnsTokenName3,
-    ];
-
-    dkimTokens.forEach((dkimToken, index) => {
-      new route53.CnameRecord(this, `DKIMCNAMERecord${index}`, {
-        zone: hostedZone,
-        recordName: `${dkimToken}._domainkey.${domain}`,
-        domainName: `${dkimToken}.dkim.amazonses.com`,
-      });
+    new ses.EmailIdentity(this, "DomainIdentity", {
+      identity: ses.Identity.publicHostedZone(hostedZone),
     });
 
     // Create MX record for receiving email

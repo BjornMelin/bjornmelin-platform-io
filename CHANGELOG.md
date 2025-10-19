@@ -66,8 +66,8 @@ All notable changes to this project are documented in this file.
   and caching across workflows.
 - Implement `pnpm audit` severity gating with a JSON report evaluator and job
   summary output.
-- Add CDK assertion tests for `DeploymentStack` (legacy IAM toggle) and
-  `MonitoringStack` (alert recipients).
+- Add CDK assertion tests for `DeploymentStack` tag propagation and
+  `MonitoringStack` alert recipients.
 - Create markdownlint automation and normalize documentation formatting across
   `/docs`.
 - Provision the `prod-portfolio-deploy` GitHub OIDC IAM role and attach
@@ -98,8 +98,8 @@ All notable changes to this project are documented in this file.
 
 ### Removed
 
-- Eliminate the deprecated legacy IAM user outputs; any temporary access keys
-  now reside in AWS Secrets Manager when explicitly enabled.
+- Remove deprecated legacy IAM user outputs and supporting IAM/Secrets
+  resources in favor of GitHub OIDC-only deployments.
 - Removed `npm audit` from the security workflow, relying exclusively on pnpm
   for dependency scanning.
 - Delete `codeartifact-backup.yml`, `workflow-status.yml`, and

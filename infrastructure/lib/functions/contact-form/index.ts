@@ -2,6 +2,13 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { getParameter } from "../../utils/ssm";
 
+/**
+ * Retrieves a required environment variable or throws when missing.
+ *
+ * @param name Environment variable key to read.
+ * @returns Non-empty environment variable value.
+ * @throws {Error} When the environment variable is not defined.
+ */
 const requireEnv = (name: string): string => {
   const value = process.env[name];
   if (!value) {
@@ -14,14 +21,15 @@ const region = requireEnv("REGION");
 const senderEmail = requireEnv("SENDER_EMAIL");
 let cachedRecipientEmail: string | null = null;
 /**
- * Resolve the contact recipient email strictly from AWS SSM Parameter Store.
- * Reads the parameter name from `SSM_RECIPIENT_EMAIL_PARAM` and caches the result
- * in-process to avoid repeated API calls during warm invocations.
+ * Resolves the contact recipient email strictly from AWS SSM Parameter Store.
+ *
+ * @returns Recipient email address retrieved and decrypted from SSM.
+ * @throws {Error} When the SSM parameter name is absent or the value is empty.
  */
 export async function resolveRecipientEmail(): Promise<string> {
   if (cachedRecipientEmail) return cachedRecipientEmail;
-  const paramName = process.env.SSM_RECIPIENT_EMAIL_PARAM || "/portfolio/prod/CONTACT_EMAIL";
-  const value = await getParameter(paramName, false);
+  const paramName = requireEnv("SSM_RECIPIENT_EMAIL_PARAM");
+  const value = await getParameter(paramName, true);
   if (!value) throw new Error(`Recipient email missing from SSM parameter: ${paramName}`);
   cachedRecipientEmail = value;
   return value;

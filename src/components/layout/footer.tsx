@@ -80,9 +80,9 @@ export function Footer() {
                 <BookOpenCheck size={20} />
               </a>
               <a
-                href="mailto:bjornmelin16@gmail.com"
+                href="/contact"
                 className="text-foreground/60 hover:text-foreground"
-                aria-label="Email"
+                aria-label="Contact form"
               >
                 <Mail size={20} />
               </a>

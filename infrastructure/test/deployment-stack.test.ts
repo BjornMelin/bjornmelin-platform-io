@@ -28,35 +28,13 @@ const createTestProps = (scope: cdk.App) => {
 };
 
 describe("DeploymentStack", () => {
-  it("omits legacy IAM user resources when disabled", () => {
+  it("applies only tagging metadata with no IAM or secret resources", () => {
     const app = new cdk.App();
     const props = createTestProps(app);
-    const stack = new DeploymentStack(app, "DeploymentWithoutLegacyUser", {
-      ...props,
-      legacyIamUser: { enabled: false },
-    });
+    const stack = new DeploymentStack(app, "DeploymentStack", props);
     const template = Template.fromStack(stack);
     template.resourceCountIs("AWS::IAM::User", 0);
     template.resourceCountIs("AWS::SecretsManager::Secret", 0);
-  });
-
-  it("creates legacy IAM user credentials when enabled", () => {
-    const app = new cdk.App();
-    const props = createTestProps(app);
-    const stack = new DeploymentStack(app, "DeploymentWithLegacyUser", {
-      ...props,
-      legacyIamUser: {
-        enabled: true,
-        secretName: "/prod/example/legacy-user",
-      },
-    });
-
-    const template = Template.fromStack(stack);
-    template.resourceCountIs("AWS::IAM::User", 1);
-    template.hasResourceProperties("AWS::SecretsManager::Secret", {
-      Name: "/prod/example/legacy-user",
-    });
-    template.hasOutput("LegacyDeploymentUserArn", {});
-    template.hasOutput("LegacyDeploymentCredentialsSecretArn", {});
+    template.resourceCountIs("AWS::IAM::Policy", 0);
   });
 });

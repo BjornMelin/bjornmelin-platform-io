@@ -47,7 +47,6 @@ const deploymentStack = new DeploymentStack(app, getStackName("deployment", "pro
   environment: CONFIG.prod.environment,
   bucket: storageStack.bucket,
   distribution: storageStack.distribution,
-  legacyIamUser: CONFIG.prod.legacyDeploymentUser,
   tags: CONFIG.tags,
 });
 
@@ -77,7 +76,8 @@ const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   environment: CONFIG.prod.environment,
   hostedZone: dnsStack.hostedZone,
   senderEmail: emailConfig.sender,
-  allowedOrigins: emailConfig.allowedOrigins,
+  // Convert readonly config array to mutable array to satisfy EmailStackProps.
+  allowedOrigins: [...emailConfig.allowedOrigins],
   // SSM parameter path for the recipient email; defaults to /portfolio/prod/CONTACT_EMAIL if omitted
   // ssmRecipientEmailParam: "/portfolio/prod/CONTACT_EMAIL",
   tags: CONFIG.tags,
