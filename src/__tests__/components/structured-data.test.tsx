@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for structured data helpers/component.
  */
 
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import StructuredData, {
   generatePersonSchema,
