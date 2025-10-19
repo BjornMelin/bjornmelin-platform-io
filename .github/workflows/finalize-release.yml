@@ -23,10 +23,10 @@ jobs:
           msg=$(git log -1 --pretty=%B)
           echo "Last commit: $msg"
           if [[ "$msg" =~ chore\(release\):\ v([0-9]+\.[0-9]+\.[0-9]+) ]]; then
-            echo "next=v${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "next=v${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
           else
             echo "No release commit found; skipping." >> $GITHUB_STEP_SUMMARY
-            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Stop if not a release commit
@@ -36,7 +36,7 @@ jobs:
       - name: Compute current SHA
         id: headsha
         if: steps.ver.outputs.skip != 'true'
-        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Create tag (idempotent)
         if: steps.ver.outputs.skip != 'true'
@@ -68,4 +68,3 @@ jobs:
               prerelease: false,
               generate_release_notes: true,
             });
-
