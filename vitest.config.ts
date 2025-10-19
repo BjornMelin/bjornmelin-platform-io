@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Vitest configuration for unit and integration tests.
+ * - Uses jsdom for app tests; IaC tests have their own config under infrastructure/.
+ * - Enables v8 coverage with reporters: text, html, lcov, json-summary.
+ * - Threads pool tuned for CI.
+ */
 import path from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
@@ -8,8 +14,8 @@ const isCi = Boolean(process.env.CI);
 const DEFAULT_COVERAGE_THRESHOLD = 80;
 const COVERAGE_METRICS = ["lines", "functions", "branches", "statements"] as const;
 const coverageReporters: string[] = isCi
-  ? ["text", "json", "html", "lcov"]
-  : ["text", "json", "html"];
+  ? ["text", "html", "lcov", "json", "json-summary"]
+  : ["text", "html", "json", "json-summary"];
 
 type CoverageMetric = (typeof COVERAGE_METRICS)[number];
 
@@ -49,6 +55,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
+    pool: "threads",
+    maxWorkers: isCi ? 4 : undefined,
+    minWorkers: isCi ? 2 : undefined,
+    reporters: ["default"],
     setupFiles: "./src/test/setup.ts",
     exclude: [
       "**/node_modules/**",
@@ -63,7 +73,7 @@ export default defineConfig({
         "src/lib/**/*.{ts,tsx}",
         "src/hooks/**/*.ts",
         "src/components/structured-data.tsx",
-        "infrastructure/**/*.ts"
+        "infrastructure/**/*.ts",
       ],
       exclude: [
         "node_modules/",

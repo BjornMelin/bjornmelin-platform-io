@@ -1,14 +1,18 @@
 /* @vitest-environment node */
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 describe("POST /api/contact (integration)", () => {
   it("returns 200 on valid payload when EmailService succeeds", async () => {
     vi.resetModules();
     const sendSpy = vi.fn().mockResolvedValue(undefined);
     vi.doMock("@/lib/services/email", () => ({
-      EmailService: class {
-        static getInstance() { return new this(); }
-        async sendContactFormEmail() { return sendSpy(); }
+      EmailService: class EmailServiceMock {
+        static getInstance(): EmailServiceMock {
+          return new EmailServiceMock();
+        }
+        async sendContactFormEmail(): Promise<void> {
+          return sendSpy();
+        }
       },
     }));
 
@@ -23,4 +27,3 @@ describe("POST /api/contact (integration)", () => {
     expect(sendSpy).toHaveBeenCalledOnce();
   });
 });
-

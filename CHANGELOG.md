@@ -7,6 +7,7 @@ All notable changes to this project are documented in this file.
 ### Removed
 
 - Removed npm release workflow and semantic-release tooling; this site is not published to npm.
+ - CI: Removed the forward-compat (Node 25) job from `ci.yml` to simplify the pipeline and avoid flaky pnpm/cache interactions.
 
 ### Added
 
@@ -15,6 +16,7 @@ All notable changes to this project are documented in this file.
 - Finalize-release workflow that, upon merging the Release PR to `main`, tags the merge commit and publishes a GitHub
   Release with auto-generated notes.
 - Release notes configuration via `.github/release.yml` and documentation under `docs/development/releasing.md`.
+ - CI: Explicit pnpm installation via `pnpm/action-setup@v4` in all workflows using pnpm to guarantee availability on PATH before caching/usage.
 
 ### CI/Automation
 
@@ -22,6 +24,9 @@ All notable changes to this project are documented in this file.
 - Auto-release now uses the shared composite action for Node/pnpm setup and caching.
 - Added actionlint to CI to validate workflow expressions and contexts.
 - Fixed deploy workflow summary and notification steps to avoid invalid `||` expressions.
+ - Standardized pnpm setup across all workflows: install pnpm via `pnpm/action-setup@v4` before any pnpm command or `cache: pnpm` usage; rely on `package.json:packageManager` for the version.
+ - Shellcheck cleanup in workflows: quote `$GITHUB_OUTPUT`, prefer grouped redirects, and use `read -r` in loops.
+ - Ensured composite action `.github/actions/setup-node-pnpm` remains for Node setup and caching; now strictly preceded by pnpm installation.
 
 ### Changed
 
