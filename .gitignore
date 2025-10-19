@@ -109,4 +109,5 @@ node_modules/
 playwright-report/
 test-results/
 
-# OS specific
+# Agent Logs
+agent-logs/
