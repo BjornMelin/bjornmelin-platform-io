@@ -27,8 +27,7 @@ export class EmailStack extends cdk.Stack {
     if (!senderEmail) {
       throw new Error("EmailStack requires a non-empty senderEmail");
     }
-    // Recipient email will be resolved at runtime from SSM in the Lambda.
-    // Decision Framework: prefer SSM to avoid leaking prod config via env (Leverage=0.35, Value=0.30, Maint=0.25, Adapt=0.10 -> 9.6/10).
+    // Resolve recipient email from SSM at runtime to avoid exposing it via environment variables.
 
     const domain = props.domainName;
     const subdomain = `api.${domain}`;

@@ -12,7 +12,7 @@ const isCi = Boolean(process.env.CI);
 // Enforce 90% coverage by default in all environments.
 // Override via COVERAGE_THRESHOLD_DEFAULT or COVERAGE_THRESHOLD_<METRIC>; set to "0" to disable enforcement (coverage collection still runs).
 const DEFAULT_COVERAGE_THRESHOLD = 80;
-const DEFAULT_FUNCTIONS_THRESHOLD = 65; // Decision (§2.1): functions often undercount; start at 65 and raise as suites grow.
+const DEFAULT_FUNCTIONS_THRESHOLD = 65; // Functions often undercount; start at 65 and raise as suites grow.
 const COVERAGE_METRICS = ["lines", "functions", "branches", "statements"] as const;
 const coverageReporters: string[] = isCi
   ? ["text", "html", "lcov", "json", "json-summary"]

@@ -100,13 +100,27 @@ jobs:
           install: "true"
 
       - name: Build and analyze bundle
-        run: |
-          pnpm build
         env:
           NEXT_PUBLIC_BASE_URL: http://localhost:3000
           NEXT_PUBLIC_APP_URL: http://localhost:3000
           AWS_REGION: us-east-1
           CONTACT_EMAIL: test@example.com
+        run: |
+          pnpm build
+          {
+            echo "## Bundle Size Report"
+            echo ""
+            echo "| File | Size | Gzipped |"
+            echo "|------|------|---------|"
+          } > bundle-report.md
+
+          # Find and measure JS bundles
+          find .next/static/chunks -name "*.js" -type f | while read -r file; do
+            size=$(du -h "$file" | cut -f1)
+            gzipped=$(gzip -c "$file" | wc -c | numfmt --to=iec)
+            filename=$(basename "$file")
+            echo "| $filename | $size | $gzipped |" >> bundle-report.md
+          done
           {
             echo "## Bundle Size Report"
             echo ""
