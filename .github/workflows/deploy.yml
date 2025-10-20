@@ -92,6 +92,8 @@ jobs:
           NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
           NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          # Server-only configuration required at build-time by src/env.mjs
+          CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
           AWS_REGION: ${{ env.AWS_REGION }}
         run: pnpm build
 
