@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "npx serve@latest out",
     "lint": "biome check . --write --error-on-warnings",
     "format": "biome format --write .",
     "format:check": "biome format .",
