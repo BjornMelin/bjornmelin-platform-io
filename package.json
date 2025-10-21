@@ -75,7 +75,7 @@
     "constructs": "^10.4.0",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.2.33",
-    "happy-dom": "^20.0.5",
+    "happy-dom": "^20.0.7",
     "husky": "^9.1.7",
     "jsdom": "^27.0.1",
     "markdownlint-cli": "^0.45.0",
