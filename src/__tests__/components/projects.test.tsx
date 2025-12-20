@@ -4,11 +4,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("next/image", () => ({
+vi.mock("next-export-optimize-images/image", () => ({
   __esModule: true,
   default: (props: Record<string, unknown>) => {
     // Minimal shim that renders a plain img for tests
-    // biome-ignore lint/performance/noImgElement: test shim replaces next/image
+    // biome-ignore lint/performance/noImgElement: test shim replaces next-export-optimize-images/image
     return <img alt={(props.alt as string) ?? ""} {...props} />;
   },
 }));
