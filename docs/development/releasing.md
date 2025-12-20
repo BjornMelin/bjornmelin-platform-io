@@ -58,7 +58,7 @@ If you need to adjust the next version, do it via commit history (Conventional C
 
 ### Manually re-running release-please
 
-The Release Please workflow supports `workflow_dispatch`, so you can re-run it without creating
+The release-please workflow supports `workflow_dispatch`, so you can re-run it without creating
 any new commits on `main`:
 
 - GitHub UI: Actions -> Release Please -> Run workflow
