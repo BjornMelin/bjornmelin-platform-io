@@ -49,7 +49,7 @@ Release-As: 2.0.0"
 
 ### Do not create GitHub Releases or tags manually
 
-Release-please uses existing Git tags/releases as the boundary for “what’s already released”.
+release-please uses existing Git tags/releases as the boundary for “what’s already released”.
 If you create a GitHub Release (or tag) manually, you can accidentally change that boundary and
 cause the open Release PR to be rewritten with a different version and different notes.
 
@@ -68,7 +68,7 @@ any new commits on `main`:
 
 | File | Purpose |
 |------|---------|
-| `release-please-config.json` | Release-please configuration (release type, changelog sections) |
+| `release-please-config.json` | release-please configuration (release type, changelog sections) |
 | `.release-please-manifest.json` | Tracks current version (updated automatically) |
 | `.github/workflows/release-please.yml` | GitHub Actions workflow |
 
