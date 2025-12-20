@@ -19,7 +19,8 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 3. **deploy.yml** - Production deployment workflow
    - Runs on: Push to main (excludes `infrastructure/**` and `**.md`)
    - Calls: _reusable-ci.yml for testing
-   - Features: AWS OIDC authentication, S3 sync, CloudFront invalidation, smoke check, job summary
+   - Features: AWS OIDC authentication, preflight config validation, S3 sync, CloudFront invalidation, smoke check, job summary
+   - workflow_dispatch inputs: `dry_run` (skip upload/invalidation) and `skip_smoke_check`
 
 4. **release-please.yml** - Automated semantic versioning and releases
    - Runs on: Push to main
@@ -28,7 +29,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 5. **manual-deploy.yml** - Manual deployment workflow
    - Runs on: Workflow dispatch
-   - Features: Environment selection, test skipping option, deployment tracking, concurrency control
+   - Features: Environment selection, test skipping option, stack-output based S3/CloudFront deploy, deployment tracking, concurrency control
 
 ### Security & Quality
 
@@ -117,13 +118,12 @@ These workflows use GitHub OIDC for keyless AWS authentication, eliminating long
    ```bash
    aws iam create-open-id-connect-provider \
      --url https://token.actions.githubusercontent.com \
-     --client-id-list sts.amazonaws.com \
-     --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
+     --client-id-list sts.amazonaws.com
    ```
 
 2. **Create IAM Role** with OIDC trust policy (see [infrastructure/README.md](../../infrastructure/README.md))
 
-3. **Add Role ARN to GitHub Secrets** as `AWS_DEPLOY_ROLE_ARN`
+3. **Add Role ARN to GitHub Environment `production` secret** as `AWS_DEPLOY_ROLE_ARN`
 
 ### Workflow Credentials Reference
 
@@ -139,7 +139,7 @@ Required secrets:
 
 - `GITHUB_TOKEN` - Automatically provided by GitHub
 - `CODECOV_TOKEN` - For code coverage reporting (optional)
-- `AWS_DEPLOY_ROLE_ARN` - IAM role ARN for OIDC authentication (required for deployment)
+- `AWS_DEPLOY_ROLE_ARN` - IAM role ARN for OIDC authentication (recommended as an **Environment secret** on `production`)
 
 Required variables (set in GitHub Environment):
 

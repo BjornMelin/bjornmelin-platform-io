@@ -80,16 +80,16 @@ See [AWS CDK Bootstrap Permissions](https://docs.aws.amazon.com/cdk/v2/guide/boo
 
 ### Step 3: Configure GitHub Repository
 
-Navigate to your repository Settings → Secrets and variables → Actions.
+Navigate to your repository Settings → Environments → **production**.
 
-**Secrets** (required):
+**Environment secrets** (required):
 
 | Secret | Value |
 |--------|-------|
 | `AWS_DEPLOY_ROLE_ARN` | `arn:aws:iam::YOUR_ACCOUNT_ID:role/prod-portfolio-deploy` |
 | `OPENAI_API_KEY` | OpenAI key for auto-release (optional) |
 
-**Variables** (required):
+**Environment variables** (required):
 
 | Variable | Value |
 |----------|-------|

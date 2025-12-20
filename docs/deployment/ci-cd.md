@@ -130,6 +130,7 @@ Production uses GitHub Environment "production" variables and secrets:
 | Type | Variables | Purpose |
 |------|-----------|---------|
 | Variables | `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_APP_URL` | Public client config |
+| Secrets | `AWS_DEPLOY_ROLE_ARN` | OIDC role ARN used by `aws-actions/configure-aws-credentials` |
 | AWS | OIDC via `aws-actions/configure-aws-credentials` | No static keys |
 
 At runtime (Lambda), use AWS SSM Parameter Store / Secrets Manager rather than `.env` files.

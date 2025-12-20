@@ -46,7 +46,7 @@ AWS_REGION=us-east-1
 
 | Secret | Purpose | Example |
 |--------|---------|---------|
-| `AWS_DEPLOY_ROLE_ARN` | IAM role for OIDC deployment | `arn:aws:iam::123456789:role/prod-portfolio-deploy` |
+| `AWS_DEPLOY_ROLE_ARN` | IAM role for OIDC deployment (recommended: **Environment secret** in GitHub Environment `production`) | `arn:aws:iam::123456789:role/prod-portfolio-deploy` |
 | `OPENAI_API_KEY` | Auto-release version detection | `sk-proj-...` |
 
 ### GitHub Variables (CI/CD)
