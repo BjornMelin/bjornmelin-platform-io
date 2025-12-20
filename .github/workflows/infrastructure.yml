@@ -11,6 +11,7 @@ on:
 jobs:
   deploy-infrastructure:
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       id-token: write
@@ -19,6 +20,22 @@ jobs:
       AWS_REGION: us-east-1
 
     steps:
+      - name: Validate AWS_DEPLOY_ROLE_ARN format
+        shell: bash
+        env:
+          AWS_DEPLOY_ROLE_ARN: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${AWS_DEPLOY_ROLE_ARN}" ]]; then
+            echo "Missing required secret: AWS_DEPLOY_ROLE_ARN" >&2
+            exit 1
+          fi
+          if [[ ! "${AWS_DEPLOY_ROLE_ARN}" =~ ^arn:aws:iam::[0-9]{12}:role/.+ ]]; then
+            echo "AWS_DEPLOY_ROLE_ARN must be a full IAM Role ARN (got a non-ARN value)." >&2
+            echo "Expected format: arn:aws:iam::123456789012:role/prod-portfolio-deploy" >&2
+            exit 1
+          fi
+
       - name: Checkout Repository
         uses: actions/checkout@v6
 
@@ -33,6 +50,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           role-session-name: github-actions-infra
           aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: true
 
       - name: Install CDK Dependencies
         working-directory: infrastructure

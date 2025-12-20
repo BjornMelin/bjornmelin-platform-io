@@ -180,7 +180,7 @@ export class StorageStack extends cdk.Stack {
           contentSecurityPolicy: [
             "default-src 'self'",
             "img-src 'self' data: https:",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+            "script-src 'self' 'unsafe-inline'",
             "style-src 'self' 'unsafe-inline'",
             "font-src 'self' data:",
             `connect-src 'self' https://api.${this.props.domainName}`,

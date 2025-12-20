@@ -71,7 +71,9 @@ export class EmailStack extends cdk.Stack {
     });
 
     // Create CloudWatch Log Group for API Gateway
-    const apiLogGroup = new logs.LogGroup(this, "ApiGatewayLogs");
+    const apiLogGroup = new logs.LogGroup(this, "ApiGatewayLogs", {
+      retention: logs.RetentionDays.ONE_MONTH,
+    });
 
     // Set up API Gateway Account settings
     new apigateway.CfnAccount(this, "ApiGatewayAccount", {
@@ -88,10 +90,13 @@ export class EmailStack extends cdk.Stack {
       deployOptions: {
         stageName: "prod",
         loggingLevel: apigateway.MethodLoggingLevel.INFO,
-        dataTraceEnabled: true,
+        // Never log request/response bodies (PII) in API Gateway execution logs.
+        // Keep traces + access logs enabled for observability.
+        dataTraceEnabled: false,
         tracingEnabled: true,
         metricsEnabled: true,
         accessLogDestination: new apigateway.LogGroupLogDestination(apiLogGroup),
+        accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields(),
       },
     });
 

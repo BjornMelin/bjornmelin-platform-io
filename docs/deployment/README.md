@@ -7,8 +7,8 @@ Before deploying, ensure you have completed:
 - [ ] AWS account with OIDC provider configured (see [infrastructure/README.md](../../infrastructure/README.md))
 - [ ] IAM role `prod-portfolio-deploy` created with GitHub OIDC trust policy
 - [ ] Domain in Route 53 (or DNS delegated to Route 53)
-- [ ] GitHub secrets configured:
-  - [ ] `AWS_DEPLOY_ROLE_ARN` - IAM role ARN for OIDC authentication
+- [ ] GitHub Environment **production** secrets configured:
+  - [ ] `AWS_DEPLOY_ROLE_ARN` - IAM role ARN for OIDC authentication (e.g., `arn:aws:iam::123456789012:role/prod-portfolio-deploy`)
 - [ ] GitHub variables configured:
   - [ ] `NEXT_PUBLIC_BASE_URL` - Production domain URL
   - [ ] `NEXT_PUBLIC_API_URL` - API endpoint URL
@@ -43,8 +43,9 @@ the `prod-portfolio-deploy` IAM role. The complete rollout includes:
 - CloudFront cache invalidation
 - Monitoring configuration
 
-GitHub Actions uses an `AWS_DEPLOY_ROLE_ARN` repository secret to assume the
-deployment IAM role through OIDC, eliminating long-lived AWS credentials.
+GitHub Actions uses an `AWS_DEPLOY_ROLE_ARN` secret (recommended: GitHub Environment
+**production** secret) to assume the deployment IAM role through OIDC, eliminating
+long-lived AWS credentials.
 
 ### Development Deployment
 

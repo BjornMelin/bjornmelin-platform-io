@@ -6,11 +6,10 @@ on:
       environment:
         description: 'Environment to deploy to'
         required: true
-        default: 'staging'
+        default: 'dev'
         type: choice
         options:
-          - development
-          - staging
+          - dev
           - production
       skip_tests:
         description: 'Skip running tests'
@@ -66,6 +65,34 @@ jobs:
             exit 1
           fi
 
+      - name: Validate required secrets/variables
+        shell: bash
+        env:
+          AWS_DEPLOY_ROLE_ARN: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${AWS_DEPLOY_ROLE_ARN}" ]]; then
+            echo "Missing required secret: AWS_DEPLOY_ROLE_ARN" >&2
+            exit 1
+          fi
+          if [[ ! "${AWS_DEPLOY_ROLE_ARN}" =~ ^arn:aws:iam::[0-9]{12}:role/.+ ]]; then
+            echo "AWS_DEPLOY_ROLE_ARN must be a full IAM Role ARN (got a non-ARN value)." >&2
+            echo "Expected format: arn:aws:iam::123456789012:role/prod-portfolio-deploy" >&2
+            exit 1
+          fi
+
+          if [[ -z "${CONTACT_EMAIL}" || ! "${CONTACT_EMAIL}" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]]; then
+            echo "CONTACT_EMAIL must be set to a valid email address for this environment." >&2
+            exit 1
+          fi
+          if [[ -z "${NEXT_PUBLIC_APP_URL}" || ! "${NEXT_PUBLIC_APP_URL}" =~ ^https?:// ]]; then
+            echo "NEXT_PUBLIC_APP_URL must be set and start with http:// or https:// for this environment." >&2
+            exit 1
+          fi
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -110,6 +137,11 @@ jobs:
         env:
           NODE_ENV: production
           NEXT_PUBLIC_ENVIRONMENT: ${{ inputs.environment }}
+          NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
+          AWS_REGION: ${{ env.AWS_REGION }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -117,15 +149,49 @@ jobs:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           role-session-name: github-actions-manual-deploy
           aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: true
 
       - name: Deploy to environment
         env:
           DEPLOY_ENV: ${{ inputs.environment }}
         run: |
-          echo "Deploying to $DEPLOY_ENV..."
-          # Add actual deployment commands here
-          # Example: aws s3 sync out/ s3://${{ vars.S3_BUCKET }}-$DEPLOY_ENV/
-          # Example: aws cloudfront create-invalidation --distribution-id ${{ vars.CF_DISTRIBUTION_ID }}
+          set -euo pipefail
+
+          # Map GitHub environment name -> stack env prefix used by CDK stacks.
+          # Current convention: dev => dev-portfolio-*, production => prod-portfolio-*.
+          if [[ "$DEPLOY_ENV" == "production" ]]; then
+            STACK_ENV="prod"
+          else
+            STACK_ENV="$DEPLOY_ENV"
+          fi
+
+          STACK_NAME="${STACK_ENV}-portfolio-storage"
+          echo "Deploying static export using stack: ${STACK_NAME}"
+
+          # shellcheck disable=SC2016 # Backticks are JMESPath syntax, not command substitution
+          BUCKET_NAME=$(aws cloudformation describe-stacks \
+            --stack-name "${STACK_NAME}" \
+            --query 'Stacks[0].Outputs[?OutputKey==`WebsiteBucketName`].OutputValue' \
+            --output text --region "${AWS_REGION}")
+
+          # shellcheck disable=SC2016
+          DIST_ID=$(aws cloudformation describe-stacks \
+            --stack-name "${STACK_NAME}" \
+            --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' \
+            --output text --region "${AWS_REGION}")
+
+          if [[ -z "$BUCKET_NAME" || -z "$DIST_ID" ]]; then
+            echo "Failed to resolve required outputs from ${STACK_NAME}. Ensure the stack exists and has WebsiteBucketName + DistributionId outputs." >&2
+            exit 1
+          fi
+
+          echo "Uploading to s3://${BUCKET_NAME}"
+          aws s3 sync out/ "s3://${BUCKET_NAME}" --delete
+
+          echo "Invalidating CloudFront distribution ${DIST_ID}"
+          aws cloudfront create-invalidation \
+            --distribution-id "${DIST_ID}" \
+            --paths "/*"
 
       - name: Set deployment URL
         id: deployment-url

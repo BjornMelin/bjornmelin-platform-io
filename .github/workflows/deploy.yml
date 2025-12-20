@@ -8,6 +8,17 @@ on:
       - "infrastructure/**"
       - "**.md"
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Validate build + AWS auth/outputs only (no S3 upload / no CloudFront invalidation)"
+        required: false
+        type: boolean
+        default: false
+      skip_smoke_check:
+        description: "Skip post-deploy smoke check (workflow_dispatch only)"
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: deploy
@@ -17,9 +28,54 @@ env:
   AWS_REGION: us-east-1
 
 jobs:
+  preflight:
+    name: Preflight (Production Config)
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - name: Validate required secrets/variables
+        shell: bash
+        env:
+          AWS_DEPLOY_ROLE_ARN: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${AWS_DEPLOY_ROLE_ARN}" ]]; then
+            echo "Missing required secret: AWS_DEPLOY_ROLE_ARN" >&2
+            exit 1
+          fi
+          if [[ ! "${AWS_DEPLOY_ROLE_ARN}" =~ ^arn:aws:iam::[0-9]{12}:role/.+ ]]; then
+            echo "AWS_DEPLOY_ROLE_ARN must be a full IAM Role ARN (got a non-ARN value)." >&2
+            echo "Expected format: arn:aws:iam::123456789012:role/prod-portfolio-deploy" >&2
+            exit 1
+          fi
+
+          if [[ -z "${CONTACT_EMAIL}" ]]; then
+            echo "Missing required variable: CONTACT_EMAIL (GitHub Environment: production)" >&2
+            exit 1
+          fi
+          if [[ ! "${CONTACT_EMAIL}" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]]; then
+            echo "CONTACT_EMAIL must be a valid email address (GitHub Environment: production)." >&2
+            exit 1
+          fi
+
+          if [[ -z "${NEXT_PUBLIC_APP_URL}" ]]; then
+            echo "Missing required variable: NEXT_PUBLIC_APP_URL (GitHub Environment: production)" >&2
+            exit 1
+          fi
+          if [[ ! "${NEXT_PUBLIC_APP_URL}" =~ ^https?:// ]]; then
+            echo "NEXT_PUBLIC_APP_URL must start with http:// or https:// (GitHub Environment: production)." >&2
+            exit 1
+          fi
+
   ci:
     name: CI Pipeline
     uses: ./.github/workflows/_reusable-ci.yml
+    needs: preflight
     with:
       run-e2e: true
       run-unit-tests: true
@@ -48,6 +104,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           role-session-name: github-actions-deploy
           aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: true
 
       - name: Build Next.js App (Static Export)
         env:
@@ -61,7 +118,9 @@ jobs:
       - name: Get Stack Outputs
         id: stack-outputs
         continue-on-error: true
+        shell: bash
         run: |
+          set -euo pipefail
           # shellcheck disable=SC2016 # Backticks are JMESPath syntax, not command substitution
           BUCKET_NAME=$(aws cloudformation describe-stacks \
             --stack-name prod-portfolio-storage \
@@ -84,12 +143,26 @@ jobs:
           exit 1
 
       - name: Upload to S3
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
+        shell: bash
         run: |
+          set -euo pipefail
           echo "Uploading static files to s3://${{ steps.stack-outputs.outputs.bucket }}"
           aws s3 sync out/ s3://${{ steps.stack-outputs.outputs.bucket }} --delete
 
-      - name: Invalidate CloudFront
+      - name: Upload to S3 (dry-run)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
+        shell: bash
         run: |
+          set -euo pipefail
+          echo "DRY RUN: validating S3 sync permissions for s3://${{ steps.stack-outputs.outputs.bucket }}"
+          aws s3 sync out/ s3://${{ steps.stack-outputs.outputs.bucket }} --delete --dryrun
+
+      - name: Invalidate CloudFront
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
+        shell: bash
+        run: |
+          set -euo pipefail
           aws cloudfront create-invalidation \
             --distribution-id ${{ steps.stack-outputs.outputs.distribution }} \
             --paths "/*"
@@ -98,7 +171,12 @@ jobs:
     name: Post-Deploy Smoke Check
     runs-on: ubuntu-latest
     needs: deploy
-    if: needs.deploy.result == 'success'
+    if: |
+      needs.deploy.result == 'success' &&
+      !(
+        github.event_name == 'workflow_dispatch' &&
+        (inputs.dry_run == true || inputs.skip_smoke_check == true)
+      )
 
     steps:
       - name: Run smoke check

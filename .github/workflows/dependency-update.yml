@@ -31,9 +31,13 @@ jobs:
         run: |
           echo "Checking for outdated dependencies..."
           OUTDATED=$(pnpm outdated --format json || echo '[]')
-          echo "outdated=$OUTDATED" >> "$GITHUB_OUTPUT"
+          {
+            echo 'outdated<<__OUTDATED_JSON__'
+            echo "$OUTDATED"
+            echo '__OUTDATED_JSON__'
+          } >> "$GITHUB_OUTPUT"
           
-          if [ "$OUTDATED" != "[]" ]; then
+          if [ "$(echo "$OUTDATED" | tr -d '[:space:]')" != "[]" ]; then
             echo "has_updates=true" >> "$GITHUB_OUTPUT"
             echo "Found outdated dependencies"
           else

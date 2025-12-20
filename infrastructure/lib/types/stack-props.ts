@@ -27,7 +27,7 @@ export interface MonitoringStackProps extends BaseStackProps {
 
 export interface EmailStackProps extends BaseStackProps {
   hostedZone: route53.IHostedZone;
-  allowedOrigins?: string[];
+  allowedOrigins?: readonly string[];
   /**
    * Optional SSM Parameter path that contains the contact-form recipient email.
    * If omitted, defaults to `/portfolio/<environment>/CONTACT_EMAIL`.
