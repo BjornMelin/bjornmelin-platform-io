@@ -17,7 +17,7 @@ Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires 
 [![React](https://img.shields.io/badge/React-18.3.1-blue?logo=react)](https://react.dev)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2.33-black?logo=next.js)](https://nextjs.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-BjornMelin-181717?logo=github)](https://github.com/BjornMelin)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin)
 [![Coursera](https://img.shields.io/badge/Coursera-2A73CC?logo=coursera&logoColor=white)](https://www.coursera.org/learner/bjorn-melin)
 [![Medium](https://img.shields.io/badge/Medium-000000?logo=medium&logoColor=white)](https://medium.com/@bjornmelin)
 
@@ -405,7 +405,7 @@ Learning Engineer with expertise in cloud architecture and modern development
 practices. Connect with me on:
 
 - [GitHub](https://github.com/BjornMelin)
-- [LinkedIn](https://www.linkedin.com/in/bjorn-melin/)
+- [LinkedIn](https://www.linkedin.com/in/bjorn-melin)
 - [Coursera](https://www.coursera.org/learner/bjorn-melin)
 - [Medium](https://medium.com/@bjornmelin)
 
