@@ -1,24 +1,258 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const getParameterMock = vi.fn(async () => "recipient@example.com");
+// Mock the SSM module
+const getParameterMock = vi.fn();
 
-describe("contact-form resolveRecipientEmail", () => {
-  it("reads from SSM and caches result", async () => {
-    // Set required env seen at module load
-    process.env.REGION = "us-east-1";
-    process.env.SENDER_EMAIL = "no-reply@example.com";
+vi.mock("../lib/utils/ssm", () => ({
+  getParameter: getParameterMock,
+}));
+
+// Mock Resend with controlled send function
+const mockSend = vi.fn();
+vi.mock("resend", () => ({
+  Resend: class MockResend {
+    emails = {
+      send: mockSend,
+    };
+  },
+}));
+
+describe("contact-form Lambda handler", () => {
+  beforeEach(async () => {
+    // Reset modules to clear cached state
+    vi.resetModules();
+
+    // Set required env vars
+    process.env.DOMAIN_NAME = "example.com";
     process.env.SSM_RECIPIENT_EMAIL_PARAM = "/portfolio/prod/CONTACT_EMAIL";
-    getParameterMock.mockClear();
+    process.env.SSM_RESEND_API_KEY_PARAM = "/portfolio/prod/resend/api-key";
+    process.env.ALLOWED_ORIGINS = "https://example.com";
 
-    vi.mock("../lib/utils/ssm", () => ({
-      getParameter: getParameterMock,
-    }));
+    // Reset mocks
+    getParameterMock.mockReset();
+    mockSend.mockReset();
+
+    getParameterMock.mockImplementation(async (param: string) => {
+      if (param.includes("CONTACT_EMAIL")) return "recipient@example.com";
+      if (param.includes("api-key")) return "re_test_123";
+      return "";
+    });
+
+    mockSend.mockResolvedValue({ error: null });
+  });
+
+  it("retrieves SSM parameters for recipient email and API key", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify({
+        name: "Test User",
+        email: "user@example.com",
+        message: "This is a test message for the contact form.",
+      }),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    await mod.handler(event);
+
+    // Verify SSM parameters were retrieved
+    expect(getParameterMock).toHaveBeenCalledWith("/portfolio/prod/CONTACT_EMAIL", true);
+    expect(getParameterMock).toHaveBeenCalledWith("/portfolio/prod/resend/api-key", true);
+  });
+
+  it("returns 403 for disallowed origins", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://malicious-site.com" },
+      body: JSON.stringify({
+        name: "Test",
+        email: "test@test.com",
+        message: "Test message here",
+      }),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(403);
+  });
+
+  it("handles OPTIONS preflight requests", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "OPTIONS",
+      headers: { origin: "https://example.com" },
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(200);
+    expect(result.headers?.["Access-Control-Allow-Origin"]).toBe("https://example.com");
+  });
+
+  it("validates input and returns 400 for invalid data", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify({
+        name: "A", // Too short
+        email: "invalid-email",
+        message: "Short", // Too short
+      }),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(400);
+  });
+
+  it("returns 500 for missing request body", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: null,
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(500);
+    const body = JSON.parse(result.body);
+    expect(body.message).toContain("Missing request body");
+  });
+
+  it("returns 400 for invalid JSON body", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: "not-valid-json",
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(400);
+    const body = JSON.parse(result.body);
+    expect(body.error).toBe("Invalid request format");
+  });
+
+  it("sends email with correct structure", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify({
+        name: "John Doe",
+        email: "john@example.com",
+        message: "Hello, this is my message!",
+      }),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    await mod.handler(event);
+
+    expect(mockSend).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: "Contact Form <contact@example.com>",
+        to: "recipient@example.com",
+        replyTo: "john@example.com",
+        subject: "Contact Form: John Doe",
+      }),
+    );
+
+    // Verify HTML and text content are included
+    const callArgs = mockSend.mock.calls[0]?.[0] as Record<string, unknown> | undefined;
+    expect(callArgs?.html).toContain("John Doe");
+    expect(callArgs?.html).toContain("john@example.com");
+    expect(callArgs?.text).toContain("John Doe");
+    expect(callArgs?.text).toContain("john@example.com");
+  });
+
+  it("returns 500 on Resend API error", async () => {
+    mockSend.mockResolvedValue({
+      error: { message: "API key invalid", name: "validation_error" },
+    });
 
     const mod = await import("../lib/functions/contact-form/index");
-    const first = await mod.resolveRecipientEmail();
-    const second = await mod.resolveRecipientEmail();
-    expect(first).toBe("recipient@example.com");
-    expect(second).toBe("recipient@example.com");
-    expect(getParameterMock).toHaveBeenCalledWith("/portfolio/prod/CONTACT_EMAIL", true);
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify({
+        name: "Test User",
+        email: "test@example.com",
+        message: "Testing Resend error handling",
+      }),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(500);
+
+    const body = JSON.parse(result.body);
+    expect(body.error).toBe("Failed to send email");
+    expect(body.message).toContain("API key invalid");
+  });
+
+  it("returns 500 when SSM parameter is missing", async () => {
+    getParameterMock.mockImplementation(async (param: string) => {
+      if (param.includes("CONTACT_EMAIL")) return null;
+      if (param.includes("api-key")) return "re_test_123";
+      return "";
+    });
+
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify({
+        name: "Test User",
+        email: "test@example.com",
+        message: "Testing missing SSM parameter",
+      }),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(500);
+
+    const body = JSON.parse(result.body);
+    expect(body.message).toContain("Recipient email missing");
+  });
+
+  it("escapes HTML in email content to prevent XSS", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify({
+        name: "Evil<script>alert('xss')</script>User",
+        email: "evil@example.com",
+        message: "Message with <b>HTML</b> & special chars",
+      }),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    await mod.handler(event);
+
+    const callArgs = mockSend.mock.calls[0]?.[0] as Record<string, unknown> | undefined;
+    const html = callArgs?.html as string;
+
+    // Verify HTML is escaped
+    expect(html).toContain("&lt;script&gt;");
+    expect(html).toContain("&lt;b&gt;");
+    expect(html).toContain("&amp;");
+    expect(html).not.toContain("<script>");
   });
 });
