@@ -145,6 +145,18 @@ aws ssm put-parameter \
 
 Or use the helper script: `bash scripts/ops/setup-aws-ssm.sh your-email@gmail.com`
 
+### Step 4b: Create/Rotate Resend API Key in SSM
+
+The contact form Lambda reads the Resend API key from SSM at runtime (default path: `/portfolio/prod/resend/api-key`).
+
+Create a **Sending Access** key in the Resend dashboard, then store it in SSM using the helper (prompts securely):
+
+```bash
+bash scripts/ops/rotate-resend-sending-key.sh
+```
+
+> Tip: The SSM value is a JSON blob (SecureString) containing `{"apiKey":"re_xxx", "version":N, "rotatedAt":"..."}`. The Lambda parses this JSON and extracts the `apiKey` field. For backwards compatibility, plain API key strings are also accepted.
+
 ### Step 5: Deploy Infrastructure
 
 ```bash
