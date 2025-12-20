@@ -13,18 +13,30 @@
 
 ```mermaid
 graph TB
-    subgraph "Frontend Layer"
-        NEXT[Next.js App]
+    subgraph "Build Time"
+        NEXT[Next.js Build]
+        IMAGES[Image Optimization]
+        NEXT --> IMAGES
+        IMAGES --> OUT[Static Output]
     end
 
-    subgraph "AWS Services"
-        SES[AWS SES]
+    subgraph "AWS Infrastructure"
         S3[S3 Bucket]
-        CDK[AWS CDK]
+        CF[CloudFront CDN]
+        LAMBDA[Contact Lambda]
+        SES[AWS SES]
+        OUT --> S3
+        CF --> S3
+        CF --> LAMBDA
+        LAMBDA --> SES
     end
 
-    NEXT --> SES
-    NEXT --> S3
+    subgraph "DNS & SSL"
+        R53[Route 53]
+        ACM[ACM Certificate]
+        R53 --> CF
+        ACM --> CF
+    end
 ```
 
 ### Infrastructure Architecture
@@ -47,113 +59,114 @@ graph LR
 
 ## Core Components
 
-### Frontend (Next.js 14+)
+### Frontend (Next.js 14)
 
-- **Technology**: React with Next.js 14+ App Router
+- **Output**: Static export (`output: 'export'`)
 - **Features**:
-  - Server Components
+  - React Server Components (build-time)
   - App Router
   - Static Site Generation
-  - API Routes
+  - LazyMotion for optimized animations
+  - WebP image optimization
 
-### API Layer
-
-- **Design**: Next.js API Routes
-- **Implementation**: Serverless Functions
-- **Features**:
-  - Type-safe APIs
-  - Request Validation
-  - Error Handling
-  - Contact Form Endpoint
+Note: API routes in `src/app/api/` are available during local development only.
+In production, the contact form is handled by an AWS Lambda function.
 
 ### Email Service
 
-- **Provider**: AWS SES
+- **Provider**: AWS Lambda + SES
+- **Deployment**: AWS CDK infrastructure
 - **Features**:
-  - Contact Form Processing
-  - Email Templates
-  - Error Handling
-  - Delivery Monitoring
+  - Contact form processing
+  - Email validation
+  - Error handling
 
 ### Static Assets
 
-- **Storage**: S3
-- **Features**:
-  - Project Images
-  - Public Assets
-  - Certifications
-  - Profile Images
+- **Storage**: S3 bucket via CloudFront
+- **Optimization**:
+  - WebP image conversion
+  - Responsive image variants
+  - CDN caching
 
 ## AWS Services
 
-### Email Service (SES)
+### Content Delivery
 
 ```yaml
-SES:
-  Use Cases:
-    - Contact Form Emails
+CloudFront:
+  Purpose: Global CDN distribution
   Features:
-    - Email Templates
-    - Delivery Monitoring
-    - Error Handling
+    - Custom domain (bjornmelin.io)
+    - SSL/TLS termination
+    - Cache optimization
+    - Lambda@Edge integration
 ```
 
-### Storage Service (S3)
+### Storage
 
 ```yaml
 S3:
-  Use Cases:
-    - Static Assets
-    - Public Files
-  Features:
-    - Versioning
-    - Lifecycle Policies
+  Purpose: Static asset hosting
+  Contents:
+    - HTML pages
+    - JavaScript bundles
+    - Optimized images (WebP)
+    - Fonts and static assets
 ```
 
-### Infrastructure (CDK)
+### Email
+
+```yaml
+SES:
+  Purpose: Contact form email delivery
+  Integration: Lambda function
+```
+
+### Infrastructure
 
 ```yaml
 CDK Stacks:
-  - DNS Stack
-  - Email Stack
-  - Monitoring Stack
-  - Storage Stack
-  - Deployment Stack
+  - DNS Stack (Route 53)
+  - Email Stack (SES + Lambda)
+  - Monitoring Stack (CloudWatch)
+  - Storage Stack (S3)
+  - Deployment Stack (CloudFront)
 ```
 
 ## Design Decisions
 
-### Next.js App Router
+### Static Export
 
-- **Why**: Modern React features and improved performance
-- **Implementation**: Server Components and App Directory
-- **Benefits**:
-  - Improved performance
-  - Better SEO
-  - Type safety
-  - Server-side rendering
+- **Rationale**: Reduced infrastructure complexity, lower costs, fast global delivery
+- **Implementation**: `output: 'export'` in next.config.mjs
+- **Trade-offs**: No server-side runtime; API routes are dev-only
 
-### Serverless Architecture
+### LazyMotion for Animations
 
-- **Why**: Simplicity and cost efficiency
-- **Implementation**: Next.js API Routes + AWS Services
-- **Benefits**:
-  - Low maintenance
-  - Cost effective
-  - Easy scaling
-  - Simple deployment
+- **Rationale**: Reduce JavaScript bundle by 27KB
+- **Implementation**: Lazy-load domAnimation feature set
+- **Usage**: `m.*` components instead of `motion.*`
+
+### Image Optimization at Build Time
+
+- **Rationale**: Static export cannot use Next.js runtime image optimization
+- **Implementation**: next-export-optimize-images
+- **Output**: WebP images with responsive variants
+
+### Serverless API
+
+- **Rationale**: Contact form requires server-side processing
+- **Implementation**: AWS Lambda deployed via CDK
+- **Integration**: CloudFront routes `/api/*` to Lambda
 
 ### Infrastructure as Code
 
-- **Why**: Reproducible and version-controlled infrastructure
-- **Implementation**: AWS CDK
-- **Benefits**:
-  - Version control
-  - Type safety
-  - Easy updates
-  - Documentation
+- **Rationale**: Reproducible, version-controlled infrastructure
+- **Implementation**: AWS CDK with TypeScript
+- **Location**: `/infrastructure` directory
 
-For more detailed information about specific components, please refer to:
+For detailed information about specific components:
 
 - [Frontend Architecture](./frontend.md)
 - [Backend Architecture](./backend.md)
