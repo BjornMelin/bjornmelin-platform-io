@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next-export-optimize-images",
     "start": "npx serve@latest out",
     "lint": "biome check . --write --error-on-warnings",
     "format": "biome format --write .",
@@ -23,7 +23,8 @@
     "test:e2e:docker": "./scripts/run-e2e-tests.sh",
     "test:e2e:setup": "./scripts/setup-e2e.sh",
     "serve": "pnpm dlx serve out",
-    "prepare": "husky"
+    "prepare": "husky",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch": "^3.956.0",
@@ -41,12 +42,12 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-toast": "^1.2.15",
     "@t3-oss/env-nextjs": "^0.13.10",
-    "@tanstack/react-query": "^5.90.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
     "lucide-react": "0.562.0",
     "next": "14.2.35",
+    "next-export-optimize-images": "^4.6.0",
     "next-themes": "^0.4.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -59,6 +60,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.10",
+    "@next/bundle-analyzer": "^14.2.35",
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
     "@playwright/test": "^1.57.0",
@@ -91,5 +93,9 @@
     "overrides": {
       "glob@>=10.2.0 <10.5.0": "^10.5.0"
     }
-  }
+  },
+  "browserslist": [
+    "defaults and fully supports es6-module",
+    "not dead"
+  ]
 }
