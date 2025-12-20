@@ -127,10 +127,11 @@ jobs:
         if: always()
         env:
           APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          SMOKE_STATUS: ${{ steps.smoke.outputs.status }}
+          SMOKE_HTTP_CODE: ${{ steps.smoke.outputs.http_code }}
         run: |
-          status="${{ steps.smoke.outputs.status }}"
-          http_code="${{ steps.smoke.outputs.http_code }}"
-          [ -z "$http_code" ] && http_code="n/a"
+          status="${SMOKE_STATUS:-unknown}"
+          http_code="${SMOKE_HTTP_CODE:-n/a}"
           app_url="${APP_URL:-https://bjornmelin.io}"
           {
             echo "## Deployment Summary"
