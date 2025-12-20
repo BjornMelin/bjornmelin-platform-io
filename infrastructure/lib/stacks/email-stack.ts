@@ -163,11 +163,15 @@ export class EmailStack extends cdk.Stack {
       }),
     );
 
-    // SecureString parameters encrypted with a customer-managed KMS key require explicit decrypt permission.
-    // The production account currently uses `alias/portfolio-email-service` for these parameters.
-    kms.Alias.fromAliasName(this, "PortfolioEmailServiceParameterKey", "alias/portfolio-email-service").grantDecrypt(
-      this.emailFunction,
-    );
+    if (props.environment === "prod") {
+      // SecureString parameters encrypted with a customer-managed KMS key require explicit decrypt permission.
+      // The production account uses `alias/portfolio-email-service` for these parameters.
+      kms.Alias.fromAliasName(
+        this,
+        "PortfolioEmailServiceParameterKey",
+        "alias/portfolio-email-service",
+      ).grantDecrypt(this.emailFunction);
+    }
 
     // Add tags
     cdk.Tags.of(this).add("Stack", "Email");

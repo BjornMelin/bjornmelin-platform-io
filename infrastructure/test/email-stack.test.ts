@@ -34,7 +34,11 @@ vi.mock("aws-cdk-lib/aws-lambda-nodejs", async () => {
  * @returns CloudFormation template for the Email stack fixture.
  */
 const buildEmailStackTemplate = (): Template => {
-  const app = new cdk.App();
+  const app = new cdk.App({
+    context: {
+      "@aws-cdk/aws-kms:applyImportedAliasPermissionsToPrincipal": true,
+    },
+  });
   const dummy = new cdk.Stack(app, "Dummy", {
     env: { account: "111111111111", region: "us-east-1" },
   });
@@ -90,6 +94,27 @@ describe("EmailStack", () => {
                 "arn:aws:ssm:us-east-1:111111111111:parameter/portfolio/prod/resend/api-key",
               ),
             ]),
+          }),
+        ]),
+      },
+    });
+  });
+
+  it("grants kms:Decrypt for the production email service key", () => {
+    const template = buildEmailStackTemplate();
+
+    template.hasResourceProperties("AWS::IAM::Policy", {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Action: "kms:Decrypt",
+            Effect: "Allow",
+            Condition: Match.objectLike({
+              "ForAnyValue:StringEquals": {
+                "kms:ResourceAliases": "alias/portfolio-email-service",
+              },
+            }),
+            Resource: Match.anyValue(),
           }),
         ]),
       },
