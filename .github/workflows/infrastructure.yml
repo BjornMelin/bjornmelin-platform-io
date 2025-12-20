@@ -52,6 +52,36 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           mask-aws-account-id: true
 
+      - name: Preflight - verify CDK bootstrap access
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+          BOOTSTRAP_PARAM="/cdk-bootstrap/hnb659fds/version"
+
+          echo "AWS account: ${ACCOUNT_ID}"
+          echo "Checking bootstrap SSM parameter: ${BOOTSTRAP_PARAM}"
+
+          if ! BOOTSTRAP_VERSION="$(aws ssm get-parameter --name "${BOOTSTRAP_PARAM}" --region "${AWS_REGION}" --query 'Parameter.Value' --output text 2>&1)"; then
+            echo "ERROR: Unable to read ${BOOTSTRAP_PARAM} (required by CDK modern bootstrap)." >&2
+            echo "${BOOTSTRAP_VERSION}" >&2
+            echo "" >&2
+            echo "Fix (IAM): allow ssm:GetParameter on arn:aws:ssm:${AWS_REGION}:${ACCOUNT_ID}:parameter${BOOTSTRAP_PARAM}" >&2
+            echo "Fix (Bootstrap): ensure environment is bootstrapped: cdk bootstrap aws://${ACCOUNT_ID}/${AWS_REGION}" >&2
+            exit 1
+          fi
+
+          echo "Bootstrap template version: ${BOOTSTRAP_VERSION}"
+
+          DEPLOY_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/cdk-hnb659fds-deploy-role-${ACCOUNT_ID}-${AWS_REGION}"
+          echo "Checking ability to assume ${DEPLOY_ROLE_ARN} (recommended)..."
+          if aws sts assume-role --role-arn "${DEPLOY_ROLE_ARN}" --role-session-name cdk-bootstrap-preflight --duration-seconds 900 >/dev/null 2>&1; then
+            echo "OK: can assume ${DEPLOY_ROLE_ARN}"
+          else
+            echo "WARN: cannot assume ${DEPLOY_ROLE_ARN}; CDK will use current credentials instead." >&2
+            echo "      Recommended: allow sts:AssumeRole on CDK bootstrap roles for least-privilege deployments." >&2
+          fi
+
       - name: Install CDK Dependencies
         working-directory: infrastructure
         run: pnpm install --frozen-lockfile

@@ -69,6 +69,13 @@ export class StorageStack extends cdk.Stack {
       signing: cloudfront.Signing.SIGV4_NO_OVERRIDE,
     });
 
+    // Preserve the original logical ID so existing stacks don't try to replace
+    // the OAC (CloudFront requires OriginAccessControl names to be unique).
+    const oacChild = oac.node.defaultChild;
+    if (oacChild instanceof cloudfront.CfnOriginAccessControl) {
+      oacChild.overrideLogicalId("WebsiteOAC");
+    }
+
     // CloudFront distribution
     this.distribution = new cloudfront.Distribution(this, "Distribution", {
       defaultBehavior: {

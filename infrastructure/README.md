@@ -68,17 +68,47 @@ Create a role named `prod-portfolio-deploy` with the following trust policy:
 <details>
 <summary>Example least-privilege policy for CDK deployments</summary>
 
-The role needs permissions for:
-- CloudFormation (create/update/delete stacks)
-- S3 (create buckets, manage objects)
-- CloudFront (create/update distributions)
-- Route 53 (manage DNS records)
-- ACM (request/validate certificates)
-- IAM (create roles for Lambda)
-- Lambda (deploy functions)
-- SSM (read parameters)
+In addition to your stack-specific permissions (CloudFormation, S3, Route 53, ACM, etc.), the GitHub Actions role must be able to validate the CDK bootstrap template version during `cdk deploy`.
 
-See [AWS CDK Bootstrap Permissions](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) for guidance on minimal permissions.
+Minimum additions for **CDK v2 modern bootstrap** (default qualifier `hnb659fds`):
+
+- Read bootstrap version: `ssm:GetParameter` on `arn:aws:ssm:REGION:ACCOUNT_ID:parameter/cdk-bootstrap/hnb659fds/version`
+- Assume bootstrap roles (recommended): `sts:AssumeRole` on:
+  - `cdk-hnb659fds-deploy-role-ACCOUNT_ID-REGION`
+  - `cdk-hnb659fds-file-publishing-role-ACCOUNT_ID-REGION`
+  - `cdk-hnb659fds-image-publishing-role-ACCOUNT_ID-REGION`
+  - `cdk-hnb659fds-lookup-role-ACCOUNT_ID-REGION`
+
+Example inline policy (replace placeholders):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CdkBootstrapVersionRead",
+      "Effect": "Allow",
+      "Action": ["ssm:GetParameter", "ssm:GetParameters"],
+      "Resource": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/cdk-bootstrap/hnb659fds/version"
+    },
+    {
+      "Sid": "CdkAssumeBootstrapRoles",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": [
+        "arn:aws:iam::ACCOUNT_ID:role/cdk-hnb659fds-deploy-role-ACCOUNT_ID-REGION",
+        "arn:aws:iam::ACCOUNT_ID:role/cdk-hnb659fds-file-publishing-role-ACCOUNT_ID-REGION",
+        "arn:aws:iam::ACCOUNT_ID:role/cdk-hnb659fds-image-publishing-role-ACCOUNT_ID-REGION",
+        "arn:aws:iam::ACCOUNT_ID:role/cdk-hnb659fds-lookup-role-ACCOUNT_ID-REGION"
+      ]
+    }
+  ]
+}
+```
+
+Helper script (requires AWS CLI auth): `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name prod-portfolio-deploy`
+
+See [AWS CDK bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping-env.html) for background and template versioning.
 </details>
 
 ### Step 3: Configure GitHub Repository
@@ -113,7 +143,7 @@ aws ssm put-parameter \
   --region us-east-1
 ```
 
-Or use the helper script: `./scripts/ops/setup-aws-ssm.sh your-email@gmail.com`
+Or use the helper script: `bash scripts/ops/setup-aws-ssm.sh your-email@gmail.com`
 
 ### Step 5: Deploy Infrastructure
 

@@ -29,7 +29,8 @@ runs:
           npm install -g "${PM%@*}"
         fi
         pnpm --version
-        EXPECTED_VERSION="${PM#*@}"
+        EXPECTED_VERSION_RAW="${PM#*@}"
+        EXPECTED_VERSION="${EXPECTED_VERSION_RAW%%+*}"
         ACTUAL_VERSION=$(pnpm --version)
         if [[ "$ACTUAL_VERSION" != "$EXPECTED_VERSION" ]]; then
           echo "::warning::pnpm version mismatch: expected $EXPECTED_VERSION, got $ACTUAL_VERSION"
