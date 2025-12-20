@@ -1,48 +1,61 @@
-# Releasing (LLM-assisted)
+# Releasing
 
-This repository uses a Codex-assisted workflow to create GitHub Releases automatically.
+This repository uses [release-please](https://github.com/googleapis/release-please)
+for automated semantic versioning and releases.
 
-## How it works
+## How It Works
 
-1. The workflow `.github/workflows/auto-release.yml` runs on push to `main` or manual dispatch.
-   It computes a SemVer floor and uses Codex to determine the final bump from the full diff.
-2. It bumps `package.json` on a new branch `release/bump-vX.Y.Z` and opens a Release PR.
-3. When the Release PR is merged to `main` (branch protection satisfied),
-   `.github/workflows/finalize-release.yml` tags that merge commit and publishes the GitHub Release.
+1. **Conventional Commits**: Write commits following the [Conventional Commits](https://www.conventionalcommits.org/) specification
+2. **Release PR**: When you push to `main`, release-please automatically opens/updates a Release PR
+3. **Merge to Release**: When the Release PR is merged, release-please creates a git tag and GitHub Release
 
-## Setup
+## Commit Message Format
 
-1. Add your OpenAI API key as a GitHub Actions secret:
-   - Go to your GitHub repository Settings > Secrets and variables > Actions.
-   - Click "New repository secret".
-   - Name: `OPENAI_API_KEY`
-   - Value: your OpenAI API key.
-   - Save.
-2. Ensure branch protection is enabled for `main` (status checks, reviews, etc.).
-   The release flow opens a PR and relies on your protection rules.
-3. Optionally adjust categories for auto-generated notes in `.github/release.yml`.
+| Commit Type | Version Bump | Example |
+|-------------|--------------|---------|
+| `fix:` | PATCH (1.0.x) | `fix: resolve navigation bug` |
+| `feat:` | MINOR (1.x.0) | `feat: add dark mode toggle` |
+| `feat!:` or `BREAKING CHANGE` footer | MAJOR (x.0.0) | `feat!: redesign API endpoints` |
 
-## Controls and overrides
+### Examples
 
-| Label | Effect |
-|-------|--------|
-| `release:skip` | Skip creating a release for a PR |
-| `semver:override-major` | Force major version bump |
-| `semver:override-minor` | Force minor version bump |
-| `semver:override-patch` | Force patch version bump |
-| `release` | Applied to Release PRs automatically |
+```bash
+# Patch release (bug fix)
+git commit -m "fix: correct typo in homepage"
 
-## Manual release
+# Minor release (new feature)
+git commit -m "feat: add contact form validation"
 
-Use the workflow dispatch on "Auto Release (PR)" to generate a new Release PR on demand.
+# Major release (breaking change)
+git commit -m "feat!: remove deprecated API endpoints"
 
-## Notes
+# Or with footer
+git commit -m "feat: migrate to new auth system
 
-- The finalize workflow publishes releases (not drafts).
-- Artifacts include the deterministic precheck and Codex decision JSON for audit.
-- `.github/release.yml` controls the categories in auto-generated release notes.
+BREAKING CHANGE: OAuth tokens from v1 are no longer valid"
+```
 
-## Safety and audit
+## Manual Version Override
 
-- Codex runs under reduced privileges; release creation uses `GITHUB_TOKEN`.
-- The workflow uploads the precheck result and Codex JSON as artifacts for audit.
+To force a specific version, use the `Release-As` footer:
+
+```bash
+git commit --allow-empty -m "chore: release 2.0.0
+
+Release-As: 2.0.0"
+```
+
+## Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `release-please-config.json` | Release-please configuration (release type, changelog sections) |
+| `.release-please-manifest.json` | Tracks current version (updated automatically) |
+| `.github/workflows/release-please.yml` | GitHub Actions workflow |
+
+## What Gets Updated on Release
+
+- `package.json` version field
+- `CHANGELOG.md` (created/updated with release notes)
+- Git tag (e.g., `v1.1.0`)
+- GitHub Release with changelog

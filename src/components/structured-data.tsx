@@ -113,9 +113,13 @@ export default function StructuredData({ type }: StructuredDataProps): JSX.Eleme
       {schemas.map((schema) => {
         const record = schema as Record<string, unknown>;
         return (
-          <script key={createSchemaKey(record)} type="application/ld+json">
-            {JSON.stringify(schema)}
-          </script>
+          <script
+            key={createSchemaKey(record)}
+            type="application/ld+json"
+            suppressHydrationWarning
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload is static and controlled.
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          />
         );
       })}
     </>

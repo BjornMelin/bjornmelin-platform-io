@@ -8,12 +8,8 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Setup Node.js from .nvmrc
-      uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-      with:
-        node-version-file: .nvmrc
-        cache: pnpm
-
+    # IMPORTANT: Corepack must enable pnpm BEFORE actions/setup-node runs with cache: pnpm
+    # because setup-node needs to run `pnpm store path` to determine the cache directory
     - name: Enable Corepack and activate pinned pnpm
       shell: bash
       run: |
@@ -33,6 +29,17 @@ runs:
           npm install -g "${PM%@*}"
         fi
         pnpm --version
+        EXPECTED_VERSION="${PM#*@}"
+        ACTUAL_VERSION=$(pnpm --version)
+        if [[ "$ACTUAL_VERSION" != "$EXPECTED_VERSION" ]]; then
+          echo "::warning::pnpm version mismatch: expected $EXPECTED_VERSION, got $ACTUAL_VERSION"
+        fi
+
+    - name: Setup Node.js from .nvmrc (with pnpm cache)
+      uses: actions/setup-node@v6
+      with:
+        node-version-file: .nvmrc
+        cache: pnpm
 
     - name: Install dependencies
       if: ${{ inputs.install == 'true' }}

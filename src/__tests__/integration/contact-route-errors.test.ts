@@ -2,7 +2,18 @@
  * @fileoverview Integration tests for /api/contact route error paths.
  */
 /* @vitest-environment node */
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+let consoleErrorSpy: ReturnType<typeof vi.spyOn> | null = null;
+
+beforeEach(() => {
+  consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  consoleErrorSpy?.mockRestore();
+  consoleErrorSpy = null;
+});
 
 describe("/api/contact POST (errors)", () => {
   it("returns 400 for invalid JSON body", async () => {

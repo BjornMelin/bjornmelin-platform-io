@@ -8,8 +8,19 @@ vi.mock("next-export-optimize-images/image", () => ({
   __esModule: true,
   default: (props: Record<string, unknown>) => {
     // Minimal shim that renders a plain img for tests
+    const {
+      alt,
+      fill: _fill,
+      priority: _priority,
+      placeholder: _placeholder,
+      blurDataURL: _blurDataURL,
+      unoptimized: _unoptimized,
+      loader: _loader,
+      quality: _quality,
+      ...imgProps
+    } = props as Record<string, unknown>;
     // biome-ignore lint/performance/noImgElement: test shim replaces next-export-optimize-images/image
-    return <img alt={(props.alt as string) ?? ""} {...props} />;
+    return <img alt={(alt as string) ?? ""} {...imgProps} />;
   },
 }));
 

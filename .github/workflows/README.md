@@ -6,63 +6,98 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 ### Core CI/CD
 
-1. **ci.yml** - Main continuous integration workflow
-   - Runs on: Push to main/develop, PRs
+1. **_reusable-ci.yml** - Reusable CI workflow (internal)
+   - Called by: ci.yml, deploy.yml
    - Jobs: Lint, type check, unit tests, E2E tests, build
-   - Features: pnpm caching, parallel jobs, artifact uploads
+   - Features: pnpm caching via composite action, parallel jobs, artifact uploads
 
-2. **auto-release.yml** - Codex-assisted release PR creator
-   - Runs on: Push to main, manual dispatch
-   - Features: Precheck SemVer floor; Codex full-diff SemVer decision; opens Release PR with package.json version bump
-   - Requires: `OPENAI_API_KEY` (Actions secret)
+2. **ci.yml** - Main continuous integration workflow
+   - Runs on: Push to main/develop, PRs
+   - Calls: _reusable-ci.yml
+   - Jobs: CI pipeline, actionlint validation
 
-3. **finalize-release.yml** - Publish tag and GitHub Release after PR merge
+3. **deploy.yml** - Production deployment workflow
+   - Runs on: Push to main (excludes `infrastructure/**` and `**.md`)
+   - Calls: _reusable-ci.yml for testing
+   - Features: AWS OIDC authentication, S3 sync, CloudFront invalidation, smoke check
+
+4. **release-please.yml** - Automated semantic versioning and releases
    - Runs on: Push to main
-   - Features: Creates `vX.Y.Z` tag on the merged release commit; publishes GitHub Release with auto-generated notes
+   - Features: Opens/updates Release PR based on conventional commits; creates git tags and GitHub Releases on merge
+   - Uses: [googleapis/release-please-action@v4](https://github.com/googleapis/release-please-action)
 
-4. **manual-deploy.yml** - Manual deployment workflow
+5. **manual-deploy.yml** - Manual deployment workflow
    - Runs on: Workflow dispatch
-   - Features: Environment selection, test skipping option, deployment tracking
+   - Features: Environment selection, test skipping option, deployment tracking, concurrency control
 
 ### Security & Quality
 
-5. **codeql.yml** - GitHub CodeQL security analysis (pinned to v3 actions)
-   - Runs on: Push, PRs, monthly schedule
+6. **codeql.yml** - GitHub CodeQL security analysis
+   - Runs on: Push, PRs, monthly schedule (15th at 06:00 UTC)
    - Scans: JavaScript/TypeScript code for vulnerabilities
 
-6. **security-audit.yml** - Dependency security audit
-   - Runs on: Push, PRs, monthly schedule
+7. **security-audit.yml** - Dependency security audit
+   - Runs on: Push, PRs, monthly schedule (22nd at 08:00 UTC)
    - Features: pnpm audit, dependency review
 
-7. **dependency-update.yml** - Automated dependency updates
-   - Runs on: Monthly schedule
+8. **dependency-update.yml** - Automated dependency updates
+   - Runs on: Monthly schedule (1st at 09:00 UTC)
    - Features: Non-major updates, automated PR creation
 
 ### Maintenance
 
-8. **branch-protection.yml** - PR validation and protection
-   - Runs on: Pull requests to main
-   - Features: Conventional commit check, merge conflict detection, auto-labeling
+9. **branch-protection.yml** - PR validation and protection
+    - Runs on: Pull requests to main
+    - Features: Conventional commit check, merge conflict detection, auto-labeling
 
-9. **pr-labeler.yml** - Automatic PR labeling
-   - Runs on: PR opened/edited
-   - Features: Path-based labels, conventional commit labels
+10. **pr-labeler.yml** - Automatic PR labeling
+    - Runs on: PR opened/edited
+    - Features: Path-based labels, conventional commit labels
 
-10. **stale.yml** - Manage stale issues and PRs
+11. **stale.yml** - Manage stale issues and PRs
+    - Runs on: Monthly schedule (1st of each month at 00:00 UTC)
+    - Features: Auto-close inactive items, configurable timelines
 
-- Runs on: Daily schedule
-- Features: Auto-close inactive items, configurable timelines
-
-11. **link-check.yml** - Check for broken links
-    - Runs on: Push, PRs, monthly schedule
+12. **link-check.yml** - Check for broken links
+    - Runs on: Push, PRs, monthly schedule (8th at 04:00 UTC)
     - Features: Markdown link validation, issue creation on failure
 
 ### Performance
 
-11. **performance-check.yml** - Performance monitoring
+13. **performance-check.yml** - Performance monitoring
     - Runs on: Push to main, PRs
     - Features: Lighthouse CI, bundle size analysis
     - Metrics: Performance, accessibility, SEO, best practices
+
+### Infrastructure
+
+14. **infrastructure.yml** - AWS CDK infrastructure deployment
+    - Runs on: Push to main (infrastructure/** changes), workflow dispatch
+    - Features: CDK deploy for DNS, storage, email, monitoring stacks
+
+## Reusable Workflow Architecture
+
+```text
+ci.yml ─────────────────┐
+                        ├──► _reusable-ci.yml ──► lint, test, build
+deploy.yml ─────────────┘
+```
+
+The `_reusable-ci.yml` workflow consolidates common CI logic:
+
+- Lint and type checking
+- Unit tests with coverage
+- E2E tests with Playwright
+- Production build verification
+
+This eliminates duplicate test runs and ensures consistent CI behavior.
+
+## Composite Actions
+
+- **setup-node-pnpm** - Sets up Node.js (from .nvmrc) and pnpm via Corepack
+  - Automatically caches pnpm store
+  - Activates exact pnpm version from package.json
+  - Optionally installs dependencies
 
 ## Configuration Files
 
@@ -77,9 +112,14 @@ Required secrets:
 
 - `GITHUB_TOKEN` - Automatically provided by GitHub
 - `CODECOV_TOKEN` - For code coverage reporting (optional)
-  
-- `AWS_DEPLOY_ROLE_ARN` - For AWS deployments (if using)
-- `AWS_REGION` - Deployment region (default: `us-east-1`)
+
+Required variables (set in GitHub Environment):
+
+- `NEXT_PUBLIC_BASE_URL` - Base URL for the application
+- `NEXT_PUBLIC_API_URL` - API endpoint URL
+- `NEXT_PUBLIC_APP_URL` - Public app URL
+- `CONTACT_EMAIL` - Contact form recipient email
+- `AWS_DEPLOY_ROLE_ARN` - AWS IAM role for OIDC-based deployments
 
 ## Branch Protection Settings
 
@@ -91,6 +131,7 @@ Recommended branch protection for `main`:
   - CI / All CI Checks Passed
   - CodeQL / Analyze
   - Security Audit / Security Audit
+  - Security Audit / Dependency Review
 - Require branches to be up to date
 - Include administrators
 - Restrict who can push to matching branches
@@ -107,23 +148,43 @@ Add these badges to your README:
 
 ## Best Practices
 
-1. **Caching**: All workflows use pnpm caching for faster builds
-2. **Concurrency**: Workflows use concurrency groups to cancel redundant runs
-3. **Artifacts**: Test results and build artifacts are uploaded for debugging
-4. **Reusable Setup**: Workflows rely on `./.github/actions/setup-node-pnpm` for consistent Node/pnpm installation and caching
-5. **Workflow Linting**: CI runs actionlint to validate workflow expressions and contexts
-5. **Security**: CodeQL, dependency audits, and automated updates; AWS access uses GitHub OIDC with short-lived credentials
-6. **Automation**: Auto-labeling, auto-assignment, and stale management
+1. **Reusable Workflows**: Common CI logic consolidated in `_reusable-ci.yml`
+2. **Composite Actions**: Node.js/pnpm setup via `.github/actions/setup-node-pnpm`
+3. **Caching**: pnpm store cached automatically by composite action
+4. **Concurrency**: Workflows use concurrency groups to cancel redundant runs
+5. **Artifacts**: Test results and build artifacts uploaded for debugging
+6. **Workflow Linting**: CI runs actionlint to validate workflow expressions
+7. **Security**: CodeQL, dependency audits, OIDC-based AWS access
+8. **Job Summaries**: Use `GITHUB_STEP_SUMMARY` for routine reporting instead of PR comments
+9. **Schedule Spreading**: Monthly workflows spread across the month to avoid bottlenecks
+
+## PR Comment Policy
+
+- **Primary source of truth**: job summaries on the workflow run page (`GITHUB_STEP_SUMMARY`).
+- **Performance (Lighthouse)**: sticky PR comment only on failure or meaningful score deltas; summary is always written.
+- **Dependency Review**: PR comments only on failure; ensure the check is required in branch protection.
+- **Stale PRs**: one minimal warning comment; no close comment.
+- **Deployments**: no commit comments; deployment details live in the run summary and deployment status.
+
+## Scheduled Workflow Calendar
+
+| Day | Workflow | Time (UTC) |
+| --- | -------- | ---------- |
+| 1st | stale.yml | 00:00 |
+| 1st | dependency-update.yml | 09:00 |
+| 8th | link-check.yml | 04:00 |
+| 15th | codeql.yml | 06:00 |
+| 22nd | security-audit.yml | 08:00 |
 
 ## Troubleshooting
 
 If workflows fail:
 
 1. Check the workflow logs in the Actions tab
-2. Verify all required secrets are set
+2. Verify all required secrets and variables are set
 3. Ensure branch protection rules aren't blocking required checks
 4. Check for pnpm lockfile issues with `pnpm install --frozen-lockfile`
-5. Verify Node.js version compatibility
+5. Verify Node.js version compatibility (requires 24.x LTS)
 
 ## Local Testing
 

@@ -1,0 +1,157 @@
+name: Reusable CI
+
+on:
+  workflow_call:
+    inputs:
+      run-e2e:
+        type: boolean
+        default: true
+        description: Run E2E tests
+      run-unit-tests:
+        type: boolean
+        default: true
+        description: Run unit tests
+    outputs:
+      build-success:
+        description: Whether the build succeeded
+        value: ${{ jobs.build.outputs.success }}
+
+env:
+  SKIP_ENV_VALIDATION: 'true'
+  NEXT_PUBLIC_APP_URL: 'https://bjornmelin.io'
+
+jobs:
+  lint-and-type-check:
+    name: Lint and Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install: 'true'
+
+      - name: Run Biome linting
+        run: pnpm lint
+
+      - name: Run type checking
+        run: pnpm type-check
+
+  unit-tests:
+    name: Unit Tests
+    if: ${{ inputs.run-unit-tests }}
+    needs: lint-and-type-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install: 'true'
+
+      - name: Run unit tests with coverage
+        run: pnpm test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        if: always()
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: unit-coverage
+          fail_ci_if_error: false
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: coverage-report-${{ github.run_id }}
+          path: coverage/
+          retention-days: 7
+
+  e2e-tests:
+    name: E2E Tests
+    if: ${{ inputs.run-e2e }}
+    needs: lint-and-type-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install: 'true'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Detect E2E tests presence
+        id: detect
+        run: |
+          set -euo pipefail
+          if [ -n "${{ hashFiles('e2e/**','tests/e2e/**','playwright/tests/**') }}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build application
+        if: steps.detect.outputs.present == 'true'
+        run: pnpm build
+
+      - name: Run E2E tests
+        if: steps.detect.outputs.present == 'true'
+        run: pnpm test:e2e
+        env:
+          NODE_ENV: test
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v6
+        if: always() && steps.detect.outputs.present == 'true'
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 7
+
+  build:
+    name: Build Check
+    needs: [lint-and-type-check, unit-tests, e2e-tests]
+    if: |
+      always() &&
+      needs.lint-and-type-check.result == 'success' &&
+      (needs.unit-tests.result == 'success' || needs.unit-tests.result == 'skipped') &&
+      (needs.e2e-tests.result == 'success' || needs.e2e-tests.result == 'skipped')
+    runs-on: ubuntu-latest
+    outputs:
+      success: ${{ steps.build.outcome == 'success' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install: 'true'
+
+      - name: Build production bundle
+        id: build
+        run: pnpm build
+
+      - name: Check bundle size
+        run: |
+          echo "Build Output:"
+          du -sh out/
+          find out -type f -name "*.js" -o -name "*.css" | head -20

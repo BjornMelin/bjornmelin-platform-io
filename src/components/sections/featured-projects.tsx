@@ -1,6 +1,3 @@
-"use client";
-
-import { m } from "framer-motion";
 import Link from "next/link";
 import { projectsData } from "@/data/projects";
 import { ProjectCard } from "../projects/project-card";
@@ -18,17 +15,10 @@ export function FeaturedProjects() {
         />
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-          {featuredProjects.map((project, index) => (
-            <m.div
-              key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="h-full"
-            >
+          {featuredProjects.map((project) => (
+            <div key={project.id} className="h-full">
               <ProjectCard project={project} className="h-full flex flex-col" />
-            </m.div>
+            </div>
           ))}
         </div>
 

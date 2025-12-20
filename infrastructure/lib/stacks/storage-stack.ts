@@ -63,20 +63,18 @@ export class StorageStack extends cdk.Stack {
     );
 
     // Origin Access Control for CloudFront
-    const oac = new cloudfront.CfnOriginAccessControl(this, "WebsiteOAC", {
-      originAccessControlConfig: {
-        name: `${props.domainName}-website-oac`,
-        originAccessControlOriginType: "s3",
-        signingBehavior: "no-override",
-        signingProtocol: "sigv4",
-        description: "Origin Access Control for Website Bucket",
-      },
+    const oac = new cloudfront.S3OriginAccessControl(this, "WebsiteOAC", {
+      originAccessControlName: `${props.domainName}-website-oac`,
+      description: "Origin Access Control for Website Bucket",
+      signing: cloudfront.Signing.SIGV4_NO_OVERRIDE,
     });
 
     // CloudFront distribution
     this.distribution = new cloudfront.Distribution(this, "Distribution", {
       defaultBehavior: {
-        origin: new origins.S3Origin(this.bucket),
+        origin: origins.S3BucketOrigin.withOriginAccessControl(this.bucket, {
+          originAccessControl: oac,
+        }),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
@@ -106,18 +104,6 @@ export class StorageStack extends cdk.Stack {
       logBucket: logsBucket,
       logFilePrefix: "cdn-logs/",
     });
-
-    // Apply OAC to the distribution
-    const cfnDistribution = this.distribution.node.defaultChild as cloudfront.CfnDistribution;
-    cfnDistribution.addPropertyOverride(
-      "DistributionConfig.Origins.0.S3OriginConfig.OriginAccessIdentity",
-      "",
-    );
-
-    cfnDistribution.addPropertyOverride(
-      "DistributionConfig.Origins.0.OriginAccessControlId",
-      oac.getAtt("Id"),
-    );
 
     // DNS records
     new route53.ARecord(this, "AliasRecord", {
