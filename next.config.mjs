@@ -33,4 +33,10 @@ const nextConfig = {
   },
 };
 
-export default withBundleAnalyzer(withExportImages(nextConfig));
+// withExportImages is async, so we must use an async config function
+const config = async () => {
+  const exportConfig = await withExportImages(nextConfig);
+  return withBundleAnalyzer(exportConfig);
+};
+
+export default config;

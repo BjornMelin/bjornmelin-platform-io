@@ -3,12 +3,7 @@
     "collect": {
       "staticDistDir": "./out",
       "numberOfRuns": 3,
-      "url": [
-        "/index.html",
-        "/about/index.html",
-        "/projects/index.html",
-        "/contact/index.html"
-      ],
+      "url": ["/index.html", "/about/index.html", "/projects/index.html", "/contact/index.html"],
       "settings": {
         "preset": "desktop",
         "chromeFlags": "--no-sandbox --disable-gpu --disable-dev-shm-usage",

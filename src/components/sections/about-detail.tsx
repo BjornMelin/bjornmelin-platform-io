@@ -2,7 +2,7 @@
 
 import { m } from "framer-motion";
 import { Award, Brain, Building2, Cloud, Code, GraduationCap, Sparkles } from "lucide-react";
-import Image from "next/image";
+import Image from "next-export-optimize-images/image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { certifications } from "@/data/certifications";

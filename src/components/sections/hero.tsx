@@ -1,8 +1,8 @@
 "use client";
 
 import { m } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next-export-optimize-images/image";
 
 export function Hero() {
   return (
