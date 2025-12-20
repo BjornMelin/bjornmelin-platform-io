@@ -104,20 +104,23 @@ docker run --rm -p 8080:80 platform-io:node24
 
 Open <http://localhost:8080> to verify assets and routes.
 
-## Automated Releases (Codex-assisted)
+## Automated Releases (release-please)
 
-- **Trigger**: Push to `main` or manual dispatch "Auto Release".
+Releases are managed by [release-please](https://github.com/googleapis/release-please), Google's automated release tool.
+
+- **Trigger**: Push to `main` with conventional commits
 - **Flow**:
-  - Prechecks compute a safe SemVer floor from actual code changes.
-  - Codex analyzes the full diff and returns a structured JSON decision (bump + rationale).
-  - Floor enforcement prevents lowering; high-risk outputs default to the floor.
-  - The workflow creates a Release PR with version bump.
-  - When merged, the finalize workflow tags and publishes the GitHub Release.
-  - `.github/release.yml` controls categories; PRs labeled `release:skip` are excluded.
-- **Overrides**:
-  - Labels `semver:override-*` and `release:skip` adjust behavior.
-- **Safety**:
-  - Codex runs under reduced privileges; release creation uses `GITHUB_TOKEN` with `contents: write`.
+  1. Push commits following [Conventional Commits](https://www.conventionalcommits.org/) format
+  2. Release-please opens/updates a Release PR automatically
+  3. The Release PR accumulates changes and updates `CHANGELOG.md`
+  4. Merge the Release PR to create a git tag and GitHub Release
+- **Version Bumps**:
+  - `fix:` commits trigger PATCH bump (1.0.x)
+  - `feat:` commits trigger MINOR bump (1.x.0)
+  - `feat!:` or `BREAKING CHANGE` footer triggers MAJOR bump (x.0.0)
+- **Manual Override**: Use `Release-As: X.Y.Z` footer to force a specific version
+
+See [docs/development/releasing.md](../development/releasing.md) for full details.
 
 ### Environment Variables (production via GitHub Environment)
 
@@ -127,7 +130,6 @@ Production uses GitHub Environment "production" variables and secrets:
 | Type | Variables | Purpose |
 |------|-----------|---------|
 | Variables | `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_APP_URL` | Public client config |
-| Secrets | `OPENAI_API_KEY` | Codex-assisted releases |
 | AWS | OIDC via `aws-actions/configure-aws-credentials` | No static keys |
 
 At runtime (Lambda), use AWS SSM Parameter Store / Secrets Manager rather than `.env` files.
@@ -153,8 +155,7 @@ At runtime (Lambda), use AWS SSM Parameter Store / Secrets Manager rather than `
 | `ci.yml` | Push/PR | Lint, type-check, test, build |
 | `performance-check.yml` | Push/PR to main | Lighthouse CI, bundle analysis |
 | `security-audit.yml` | Daily/Push | pnpm audit, dependency scanning |
-| `auto-release.yml` | Push to main | Create Release PR |
-| `finalize-release.yml` | Release PR merge | Tag and publish release |
+| `release-please.yml` | Push to main | Open/update Release PR, create releases |
 | `deploy.yml` | Push to main | Deploy to production |
 
 ## Monitoring
