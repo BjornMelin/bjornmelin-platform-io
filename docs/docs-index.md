@@ -1,16 +1,15 @@
 # Documentation
 
-Welcome to the bjornmelin-platform-io documentation. This documentation is
-organized into several main sections:
+Documentation for bjornmelin-platform-io. Organized into the following sections:
 
-## 📚 Contents
+## Contents
 
 - [`/architecture`](./architecture/README.md) - System design and AWS infrastructure
 - [`/development`](./development/README.md) - Development guides and practices
 - [`/deployment`](./deployment/README.md) - Deployment and CI/CD processes
 - [`/api`](./api/README.md) - API documentation and usage guides
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```text
 docs/
@@ -40,15 +39,15 @@ docs/
 └── README.md                 # This documentation index
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
-For new developers, we recommend following these documentation sections in order:
+For new developers, follow these documentation sections in order:
 
 1. [Development Getting Started](./development/getting-started.md)
 2. [Architecture Overview](./architecture/README.md)
 3. [API Documentation](./api/README.md)
 
-## 📖 Documentation Updates
+## Documentation Updates
 
 This documentation is maintained alongside the codebase. When making changes:
 
@@ -57,7 +56,7 @@ This documentation is maintained alongside the codebase. When making changes:
 3. Include diagrams where helpful
 4. Update the table of contents when adding new sections
 
-## 🔍 Quick References
+## Quick References
 
 - [AWS Services Overview](./architecture/aws-services.md)
 - [Development Environment Setup](./development/getting-started.md)

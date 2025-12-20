@@ -1,5 +1,3 @@
-"use client";
-
 import { GitHubLogoIcon, LinkedInLogoIcon } from "@radix-ui/react-icons";
 import { BookOpenCheck, BookText, Mail } from "lucide-react";
 import Link from "next/link";
@@ -16,7 +14,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand and Copyright */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Portfolio</h3>
+            <h2 className="text-lg font-semibold">Portfolio</h2>
             <p className="text-sm text-foreground/60">
               © {new Date().getFullYear()} Bjorn Melin. All rights reserved.
             </p>
@@ -24,7 +22,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Quick Links</h3>
+            <h2 className="text-lg font-semibold">Quick Links</h2>
             <nav className="flex flex-col space-y-2">
               <Link href="/about" className="text-sm text-foreground/60 hover:text-foreground">
                 About
@@ -46,7 +44,7 @@ export function Footer() {
 
           {/* Social Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Connect</h3>
+            <h2 className="text-lg font-semibold">Connect</h2>
             <div className="flex space-x-4">
               <a
                 href="https://github.com/bjornmelin"

@@ -2,22 +2,20 @@
 
 ## Introduction
 
-This section provides comprehensive documentation for developers working on the
-bjornmelin-platform-io project. Our development process emphasizes code
-quality, performance, and maintainable architecture.
+Development documentation for the bjornmelin-platform-io project.
 
 ## Documentation Structure
 
 - [Getting Started](./getting-started.md) - Setup and initial development guide
-- [Coding Standards](./coding-standards.md) - Code style and best practices
+- [Coding Standards](./coding-standards.md) - Code style and practices
 - [Testing Strategies](./testing.md) - Testing methodologies and tools
- - [Releasing](../development/releasing.md) - Codex-assisted release automation
+- [Releasing](./releasing.md) - Codex-assisted release automation
 
 ## Development Environment
 
 ### Prerequisites
 
-- Node.js (24.x LTS; pinned via `.nvmrc` and enforced by the `engines` field)
+- Node.js 24.x LTS (pinned via `.nvmrc` and enforced by the `engines` field)
 - pnpm package manager (enable via `corepack enable pnpm`)
 - AWS CLI configured with appropriate credentials
 - Git
@@ -26,11 +24,18 @@ quality, performance, and maintainable architecture.
 
 #### Frontend
 
-- Next.js 14+ (App Router)
-- React 18
-- TypeScript
+- Next.js 14.2.35 (App Router, static export)
+- React 18.3.1
+- TypeScript 5.8
 - Tailwind CSS
 - shadcn/ui components
+- Framer Motion (LazyMotion)
+
+#### Build Optimization
+
+- next-export-optimize-images (WebP conversion)
+- @next/bundle-analyzer
+- Browserslist (ES6 module targets)
 
 #### Infrastructure
 
@@ -42,7 +47,8 @@ quality, performance, and maintainable architecture.
 
 - Biome (linting and formatting)
 - Zod for validation
-- React Testing Library
+- Vitest (unit tests)
+- Playwright (E2E tests)
 
 ## Development Workflow
 
@@ -64,59 +70,52 @@ graph LR
 
 ### 3. Testing Requirements
 
-- Component testing
-- API route testing
-- Integration testing
-- Type checking
+- Component testing with Vitest
+- E2E testing with Playwright
+- Type checking with `pnpm type-check`
 
-## Best Practices
-
-### Code Organization
+## Code Organization
 
 ```text
 src/
-├── app/          # Next.js 13+ pages and API routes
+├── app/          # Next.js 14 App Router pages
 ├── components/   # React components
 ├── lib/          # Utilities and services
 ├── types/        # TypeScript types
 └── data/         # Static data
 ```
 
-### Performance
+## Performance
 
-- Server Components when possible
-- Static generation for applicable pages
-- Image optimization
-- Code splitting
-- Bundle size monitoring
+- Server Components where applicable
+- Static generation (`output: 'export'`)
+- Image optimization (WebP via next-export-optimize-images)
+- Animation optimization (LazyMotion reduces bundle by 27KB)
+- Bundle size monitoring (`pnpm analyze`)
 
-### Type Safety
+## Type Safety
 
 - Strict TypeScript configuration
 - Zod for runtime validation
-- Type-safe API routes
-- Proper error handling
+- Type-safe environment variables (`src/env.mjs`)
 
-### Component Development
+## Component Development
 
-- Functional components
-- React Server Components
-- Custom hooks
-- Shared utilities
-- Proper error boundaries
+- Functional components with React Server Components
+- Custom hooks in `/hooks`
+- Shared utilities in `/lib`
+- Error boundaries for graceful degradation
 
-### State Management
+## State Management
 
-- React Server Components
-- Local component state
-- Form state management
-- Server state handling
+- React Server Components for server state
+- Local component state with `useState`
+- Form state with react-hook-form
 
-### Security
+## Security
 
-- Input validation
-- API route protection
-- Environment variable management
+- Input validation with Zod
+- Environment variable validation (`@t3-oss/env-nextjs`)
 - Secure data handling
 
 ## Development Commands
@@ -125,7 +124,7 @@ src/
 # Start development server
 pnpm dev
 
-# Build for production
+# Build for production (includes image optimization)
 pnpm build
 
 # Run type checking
@@ -134,36 +133,37 @@ pnpm type-check
 # Run linting
 pnpm lint
 
+# Run unit tests
+pnpm test
+
+# Run E2E tests
+pnpm test:e2e
+
+# Analyze bundle size
+pnpm analyze
+```
+
 ## Release Process
 
-Releases are created automatically by the Codex-assisted workflows:
+Releases are created automatically by Codex-assisted workflows:
 
-- Auto Release PR creator: analyzes the full diff, enforces a SemVer floor, proposes version bump.
-- Finalize Release: tags the merged release commit and publishes a GitHub Release (no drafts).
+- Auto Release PR: analyzes the full diff, enforces a SemVer floor, proposes version bump.
+- Finalize Release: tags the merged release commit and publishes a GitHub Release.
 
-See the full guide at [Releasing](../development/releasing.md).
-```
+See the full guide at [Releasing](./releasing.md).
 
 ## Infrastructure Development
 
-- AWS CDK for infrastructure
-- Local testing of AWS services
-- Infrastructure as Code practices
-- Environment-based configurations
+- AWS CDK for infrastructure provisioning
+- Infrastructure code in `/infrastructure`
+- CDK tests with Vitest
 
 ## Continuous Integration
 
-- Code quality checks
+- Code quality checks (Biome)
 - Type checking
-- Test execution
+- Unit and E2E test execution
 - Build verification
+- Lighthouse performance checks
 
-## Documentation
-
-- Inline code documentation
-- Component documentation
-- API documentation
-- Infrastructure documentation
-
-For more detailed information, refer to the specific guides in each section of
-the development documentation.
+For detailed information, refer to the specific guides in each section.

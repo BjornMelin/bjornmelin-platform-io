@@ -1,136 +1,78 @@
-# 🏗️ bjornmelin-platform-io
+# bjornmelin-platform-io
 
-Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS
-solutions architecture through serverless APIs and infrastructure as code.
-Built with React 18, Next.js 14, AWS CDK, and modern DevOps practices. Requires Node.js 24.x LTS.
+Cloud-native portfolio platform powering bjornmelin.io. Static site built with React 18, Next.js 14,
+and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js 24.x LTS.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![CI](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml)
 [![Security Audit](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml)
 [![CodeQL](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml)
-[![AWS SAA](https://img.shields.io/badge/AWS-Solutions%20Architect%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-solutions-architect-associate)
-[![AWS DVA](https://img.shields.io/badge/AWS-Developer%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-developer-associate)
-[![AWS SysOps](https://img.shields.io/badge/AWS-SysOps%20Administrator%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-sysops-administrator-associate)
-[![AWS ML](https://img.shields.io/badge/AWS-Machine%20Learning%20Engineer%20Associate-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-machine-learning-engineer-associate)
-[![AWS AIF](https://img.shields.io/badge/AWS-AI%20Practitioner-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-ai-practitioner)
-[![AWS CCP](https://img.shields.io/badge/AWS-Cloud%20Practitioner-FF9900?logo=amazon-aws)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-cloud-practitioner)
 [![React](https://img.shields.io/badge/React-18.3.1-blue?logo=react)](https://react.dev)
-[![Next.js](https://img.shields.io/badge/Next.js-14.2.33-black?logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2.35-black?logo=next.js)](https://nextjs.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-BjornMelin-181717?logo=github)](https://github.com/BjornMelin)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin/)
-[![Coursera](https://img.shields.io/badge/Coursera-2A73CC?logo=coursera&logoColor=white)](https://www.coursera.org/learner/bjorn-melin)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin)
 [![Medium](https://img.shields.io/badge/Medium-000000?logo=medium&logoColor=white)](https://medium.com/@bjornmelin)
 
-## 🌟 Features
+## Table of Contents
 
-### Core Platform Features
+- [Features](#features)
+- [Documentation](#documentation)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Tech Stack](#tech-stack)
+- [AWS Services](#aws-services)
+- [Development Scripts](#development-scripts)
+- [Docker](#docker)
+- [Releasing](#releasing)
+- [Infrastructure Tests](#infrastructure-tests)
+- [Author](#author)
+- [License](#license)
 
-- **Cloud Native Architecture**: Production-grade AWS infrastructure with CDK
-- **Enterprise Security**: Zero-trust architecture with AWS Cognito
-- **CI/CD Pipeline**: GitHub Actions assumes short-lived AWS roles via OIDC
-- **Observability**: Comprehensive monitoring and logging
-- **Multi-Environment**: Development, staging, and production
-- **Infrastructure as Code**: Complete AWS CDK implementation
-- **Modern Frontend**: Next.js with Tailwind CSS
-- **Global Delivery**: CloudFront CDN integration
+## Features
 
-### ⚡ Modern Tech Features
+### Platform
 
-- **React 18 RC Integration**
+- **AWS Infrastructure**: S3, CloudFront, Route 53, ACM, Lambda, SES via AWS CDK
+- **CI/CD**: GitHub Actions with OIDC-based AWS role assumption
+- **Multi-Environment**: Development, staging, and production configurations
+- **Static Export**: Pre-rendered HTML with optimized assets
 
-  - Document Metadata API
-  - Asset Loading API
-  - Progressive Loading
-  - Optimization Compiler
+### Frontend
 
-- **Next.js 14 App Router**
+- **Next.js 14 App Router**: Server Components, static export (`output: 'export'`)
+- **React 18**: Concurrent features, Suspense boundaries
+- **TypeScript**: Strict mode with Zod runtime validation
+- **Tailwind CSS**: Utility-first styling with shadcn/ui components
 
-  - Server Components
-  - Partial Prerendering
-  - Parallel Routes
-  - Edge Runtime
+### Performance Optimization
 
-- **Full-Stack Type Safety**
+- **LazyMotion**: Framer Motion lazy-loaded feature set (32KB to 5KB reduction)
+- **Image Optimization**: WebP conversion via next-export-optimize-images
+- **Bundle Analysis**: @next/bundle-analyzer for size monitoring
+- **Modern Targets**: Browserslist configured for ES6 module support
 
-  - End-to-end typesafe APIs with tRPC
-  - Runtime validation
-  - Strict TypeScript
-  - Comprehensive error handling
+## Documentation
 
-- Performance First
+### Development
 
-  - Edge deployment
-  - Streaming SSR
-  - Smart bundling
-  - Optimal caching
+- [Getting Started](docs/development/getting-started.md)
+- [Development Overview](docs/development/README.md)
+- [Testing Strategies](docs/development/testing.md)
+- [Releasing](docs/development/releasing.md)
 
-## 📚 Quick Links
+### Deployment
 
-- [🏗️ bjornmelin-platform-io](#️-bjornmelin-platform-io)
-  - [🌟 Features](#-features)
-    - [Core Platform Features](#core-platform-features)
-    - [⚡ Modern Tech Features](#-modern-tech-features)
-  - [📚 Quick Links](#-quick-links)
-  - [📖 Docs](#-docs)
-  - [🏛️ Architecture](#️-architecture)
-    - [System Architecture](#system-architecture)
-    - [Contact Form Flow](#contact-form-flow)
-    - [DNS \& CDN Setup](#dns--cdn-setup)
-  - [📁 Project Structure](#-project-structure)
-    - [Core Components](#core-components)
-  - [🚀 Getting Started](#-getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Initial Setup](#initial-setup)
-    - [Infrastructure Deployment](#infrastructure-deployment)
-    - [Local Development](#local-development)
-  - [🛠️ Tech Stack](#️-tech-stack)
-  - [🏗️ AWS Services Integration](#️-aws-services-integration)
-    - [Core Services](#core-services)
-    - [Compute \& Messaging Services](#compute--messaging-services)
-    - [Development \& Deployment](#development--deployment)
-    - [Security Services](#security-services)
-  - [💻 Development Scripts](#-development-scripts)
-  - [🐳 Run with Docker](#-run-with-docker)
-  - [Releasing](#releasing)
-  - [Infra Tests (CDK)](#infra-tests-cdk)
-  - [👨‍💻 Author](#-author)
-    - [Bjorn Melin](#bjorn-melin)
-  - [📜 License](#-license)
-  - [Star History](#star-history)
-  - [How to Reference](#how-to-reference)
-  - [Acknowledgments](#acknowledgments)
+- [Overview](docs/deployment/README.md)
+- [CI/CD Pipeline](docs/deployment/ci-cd.md)
+- [Environments](docs/deployment/environments.md)
 
-## 📖 Docs
+### Architecture
 
-- Development
-  - Getting Started: docs/development/getting-started.md
-  - Development Overview: docs/development/README.md
-  - Testing Strategies: docs/development/testing.md
-  - Releasing: docs/development/releasing.md
-- Deployment
-  - Overview: docs/deployment/README.md
-  - CI/CD Pipeline: docs/deployment/ci-cd.md
-  - Environments: docs/deployment/environments.md
-- Architecture
-  - Overview: docs/architecture/README.md
-  - Frontend: docs/architecture/frontend.md
-  - [Releasing](#releasing)
-  - [Tech Stack](#️-tech-stack)
-  - [AWS Services Integration](#️-aws-services-integration)
-    - [Core Services](#core-services)
-    - [Compute \& Messaging Services](#compute--messaging-services)
-    - [Development \& Deployment](#development--deployment)
-    - [Security Services](#security-services)
-  - [Development Scripts](#-development-scripts)
-  - [Run with Docker](#-run-with-docker)
-  - [Author](#-author)
-    - [Bjorn Melin](#bjorn-melin)
-  - [License](#-license)
-  - [Star History](#star-history)
-  - [How to Reference](#how-to-reference)
-  - [Acknowledgments](#acknowledgments)
+- [Overview](docs/architecture/README.md)
+- [Frontend](docs/architecture/frontend.md)
 
-## 🏛️ Architecture
+## Architecture
 
 ### System Architecture
 
@@ -178,7 +120,7 @@ sequenceDiagram
     Frontend-->>User: Show Success Message
 ```
 
-### DNS & CDN Setup
+### DNS and CDN Setup
 
 ```mermaid
 graph LR
@@ -198,47 +140,48 @@ graph LR
     ACM --> CF
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```bash
 bjornmelin-platform-io/
 ├── .github/                # GitHub Actions workflows
-├── docs/                  # Project documentation
-│   ├── api/              # API documentation
-│   ├── architecture/     # Architecture docs
-│   ├── deployment/       # Deployment guides
-│   ├── development/      # Development guides
-│   └── security/         # Security docs
-├── infrastructure/        # CDK infrastructure code
-│   ├── bin/              # CDK app entry
-│   └── lib/              # Infrastructure code
-│       ├── functions/    # Lambda functions
-│       ├── stacks/       # CDK stacks
-│       └── types/        # Stack types
-├── public/               # Static assets
-│   ├── certifications/   # AWS certifications
-│   ├── headshot/        # Profile images
-│   └── projects/        # Project images
-├── src/                  # Application source
-│   ├── app/             # Next.js 14 App Router
-│   │   ├── api/         # API routes
-│   │   └── fonts/       # Custom fonts
-│   ├── components/      # React components
-│   ├── data/           # Static data
-│   ├── hooks/          # Custom hooks
-│   ├── lib/            # Utilities
-│   └── types/          # TypeScript types
+├── docs/                   # Project documentation
+│   ├── api/               # API documentation
+│   ├── architecture/      # Architecture docs
+│   ├── deployment/        # Deployment guides
+│   └── development/       # Development guides
+├── infrastructure/         # CDK infrastructure code
+│   ├── bin/               # CDK app entry
+│   └── lib/               # Infrastructure code
+│       ├── functions/     # Lambda functions
+│       ├── stacks/        # CDK stacks
+│       └── types/         # Stack types
+├── public/                # Static assets
+│   ├── certifications/    # AWS certifications
+│   ├── headshot/          # Profile images
+│   └── projects/          # Project images
+├── src/                   # Application source
+│   ├── app/               # Next.js 14 App Router
+│   │   ├── api/           # API routes (dev only)
+│   │   └── fonts/         # Custom fonts
+│   ├── components/        # React components
+│   ├── data/              # Static data
+│   ├── hooks/             # Custom hooks
+│   ├── lib/               # Utilities
+│   └── types/             # TypeScript types
+├── export-images.config.js # Image optimization config
+└── next.config.mjs        # Next.js configuration
 ```
 
 ### Core Components
 
-- **Frontend**: Next.js 14 application with App Router
-- **Infrastructure**: AWS CDK for cloud resource management
+- **Frontend**: Next.js 14 static export with App Router
+- **Infrastructure**: AWS CDK for resource provisioning
 - **CI/CD**: GitHub Actions for automated deployments
 - **CDN**: CloudFront with Route 53 DNS
-- **API**: Serverless Lambda functions with SES integration
+- **API**: Lambda function with SES for contact form (infrastructure-deployed)
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -289,24 +232,29 @@ pnpm -C infrastructure cdk deploy
 pnpm dev
 ```
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ```yaml
 Frontend:
   Core:
-    - React 18
-    - Next.js 14
-    - TypeScript
+    - React 18.3.1
+    - Next.js 14.2.35
+    - TypeScript 5.8
 
   UI:
     - Tailwind CSS
     - shadcn/ui
-    - Framer Motion
+    - Framer Motion (LazyMotion)
     - GeistVF Font
 
+  Build:
+    - next-export-optimize-images (WebP conversion)
+    - @next/bundle-analyzer
+    - Browserslist (ES6 module targets)
+
 Infrastructure:
-  Core:
-    - AWS CDK
+  AWS:
+    - CDK
     - CloudFront
     - S3
     - Route 53
@@ -316,52 +264,57 @@ Infrastructure:
 
 Development:
   Tools:
-    - pnpm 10 (Corepack)
+    - pnpm 10.18.3 (Corepack)
     - Biome (lint + format)
-    - TypeScript
-    - PostCSS
+    - Vitest (unit tests)
+    - Playwright (E2E tests)
 ```
 
-## 🏗️ AWS Services Integration
+## AWS Services
 
-### Core Services
+### Content Delivery
 
-- **CloudFront**: Global content delivery network
-- **Route53**: DNS management and domain routing
+- **CloudFront**: CDN distribution with custom domain
+- **Route 53**: DNS management and domain routing
 - **ACM**: SSL/TLS certificate management
-- **S3**: Static website hosting and assets
+- **S3**: Static asset hosting
 
-### Compute & Messaging Services
+### Compute and Messaging
 
-- **Lambda**: Serverless contact form handling
-- **SES**: Email delivery for contact form
+- **Lambda**: Contact form handler
+- **SES**: Email delivery
 
-### Development & Deployment
+### Operations
 
 - **CDK**: Infrastructure as code
-- **GitHub Actions**: CI/CD automation
-- **CloudWatch**: Basic monitoring and logging
-
-### Security Services
-
+- **CloudWatch**: Logging and monitoring
 - **IAM**: Role-based access control
-- **WAF**: Basic security rules (optional)
 
-## 💻 Development Scripts
+## Development Scripts
 
 ```bash
 # Development
 pnpm dev          # Start development server
-pnpm build        # Build production application
-pnpm start        # Start production server
-pnpm lint         # Run Biome lint/format checks
-pnpm serve        # Serve static export locally
+pnpm build        # Build and optimize images
+pnpm start        # Serve static export
+pnpm serve        # Serve static export (alternative)
 
-# Infrastructure (package scripts under /infrastructure)
+# Quality
+pnpm lint         # Run Biome lint/format checks
+pnpm type-check   # TypeScript type checking
+
+# Testing
+pnpm test         # Run unit tests
+pnpm test:e2e     # Run E2E tests
+
+# Analysis
+pnpm analyze      # Build with bundle analyzer
+
+# Infrastructure
 pnpm -C infrastructure cdk deploy   # Deploy AWS infrastructure
 ```
 
-## 🐳 Run with Docker
+## Docker
 
 Build the production image (requires Docker Desktop/daemon running):
 
@@ -377,19 +330,17 @@ docker run --rm -p 8080:80 platform-io:node24
 
 Open <http://localhost:8080> in your browser. Use Ctrl+C to stop the container.
 
-If you see a docker-credential-desktop error, ensure Docker Desktop (or your Docker daemon)
-is running and you’re logged in.
-
 ## Releasing
 
-See docs/development/releasing.md for the Codex-assisted auto-release process, controls, and setup.
+See [docs/development/releasing.md](docs/development/releasing.md) for the Codex-assisted
+auto-release process, controls, and setup.
 
-## Infra Tests (CDK)
+## Infrastructure Tests
 
-Fast, local CDK assertions are available under `infrastructure/test/` using Vitest.
+CDK assertions are available under `infrastructure/test/` using Vitest.
 See [infrastructure/README.md#tests](infrastructure/README.md#tests) for commands.
 
-## 👨‍💻 Author
+## Author
 
 ### Bjorn Melin
 
@@ -401,15 +352,14 @@ See [infrastructure/README.md#tests](infrastructure/README.md#tests) for command
 [![AWS Certified Cloud Practitioner](https://images.credly.com/size/110x110/images/00634f82-b07f-4bbd-a6bb-53de397fc3a6/image.png)](https://www.credly.com/org/amazon-web-services/badge/aws-certified-cloud-practitioner)
 
 AWS-certified Solutions Architect, Developer, SysOps Administrator, and Machine
-Learning Engineer with expertise in cloud architecture and modern development
-practices. Connect with me on:
+Learning Engineer. Connect on:
 
 - [GitHub](https://github.com/BjornMelin)
-- [LinkedIn](https://www.linkedin.com/in/bjorn-melin/)
+- [LinkedIn](https://www.linkedin.com/in/bjorn-melin)
 - [Coursera](https://www.coursera.org/learner/bjorn-melin)
 - [Medium](https://medium.com/@bjornmelin)
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file
 for details.
@@ -418,15 +368,15 @@ for details.
 
 [![Star History Chart](https://api.star-history.com/svg?repos=bjornmelin/bjornmelin-platform-io&type=Date)](https://star-history.com/#bjornmelin/bjornmelin-platform-io&Date)
 
-## How to Reference
+## Citation
 
-If you use this project in your research or work, please cite it as:
+If you use this project in your research or work:
 
 ```bibtex
-@misc{melin2024portfolio,
+@misc{melin2026portfolio,
   author = {Melin, Bjorn},
-  title = {bjornmelin-platform-io: Cloud-Native Portfolio Platform},
-  year = {2024},
+  title = {bjornmelin-platform-io: Portfolio Platform},
+  year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{https://github.com/bjornmelin/bjornmelin-platform-io}},
@@ -434,21 +384,12 @@ If you use this project in your research or work, please cite it as:
 }
 ```
 
-Standard Citation:
-
-```text
-Melin, B. (2024). bjornmelin-platform-io: Cloud-Native Portfolio Platform
-[Computer software]. GitHub.
-https://github.com/bjornmelin/bjornmelin-platform-io
-```
-
 ## Acknowledgments
 
-- AWS Documentation and Best Practices
+- AWS Documentation
 - AWS CDK Patterns Community
 - Next.js Documentation
 
 ---
 
-Built with React 18 + Next.js 14 by
-[Bjorn Melin](https://bjornmelin.io).
+Built with React 18 + Next.js 14 by [Bjorn Melin](https://bjornmelin.io).

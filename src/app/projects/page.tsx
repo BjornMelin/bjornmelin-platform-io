@@ -19,6 +19,7 @@ export default function ProjectsPage() {
         </p>
       </div>
       <div className="mt-16">
+        <h2 className="sr-only">Project List</h2>
         <ProjectGrid projects={projectsData} />
       </div>
     </div>
