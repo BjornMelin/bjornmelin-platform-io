@@ -14,7 +14,12 @@ This section guides you through setting up AWS infrastructure from scratch for a
 
 ### Step 1: Create GitHub OIDC Provider in AWS
 
-> **Note:** This is a one-time prerequisite that must be completed before CDK deployment. The CDK stacks assume the OIDC provider already exists.
+> **Note:** Steps 1-3 are **manual prerequisites** that must be completed before running CDK. The CDK stacks do not provision these resources because:
+> - The OIDC provider is account-wide (one per AWS account, not per project)
+> - The IAM role is needed to run CDK itself (chicken-and-egg problem)
+> - GitHub secrets must be configured in the repository settings
+>
+> After completing these prerequisites, CDK handles all other infrastructure (DNS, storage, email, monitoring).
 
 Run once per AWS account to enable keyless GitHub Actions authentication:
 
