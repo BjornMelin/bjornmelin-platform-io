@@ -84,7 +84,7 @@ jobs:
             exit 1
           fi
 
-          if [[ -z "${CONTACT_EMAIL}" || ! "${CONTACT_EMAIL}" =~ ^[^@[:space:]]+@[^@[:space:]]+\\.[^@[:space:]]+$ ]]; then
+          if [[ -z "${CONTACT_EMAIL}" || ! "${CONTACT_EMAIL}" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]]; then
             echo "CONTACT_EMAIL must be set to a valid email address for this environment." >&2
             exit 1
           fi

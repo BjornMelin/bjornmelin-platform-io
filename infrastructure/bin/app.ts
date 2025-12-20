@@ -73,7 +73,7 @@ const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   domainName: CONFIG.prod.domainName,
   environment: CONFIG.prod.environment,
   hostedZone: dnsStack.hostedZone,
-  allowedOrigins: [...CONFIG.prod.email.allowedOrigins],
+  allowedOrigins: CONFIG.prod.email.allowedOrigins,
   // SSM parameter paths for recipient email and Resend API key
   // Defaults: /portfolio/prod/CONTACT_EMAIL and /portfolio/prod/resend/api-key
   tags: CONFIG.tags,

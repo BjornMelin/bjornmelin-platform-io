@@ -58,7 +58,7 @@ jobs:
             echo "Missing required variable: CONTACT_EMAIL (GitHub Environment: production)" >&2
             exit 1
           fi
-          if [[ ! "${CONTACT_EMAIL}" =~ ^[^@[:space:]]+@[^@[:space:]]+\\.[^@[:space:]]+$ ]]; then
+          if [[ ! "${CONTACT_EMAIL}" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]]; then
             echo "CONTACT_EMAIL must be a valid email address (GitHub Environment: production)." >&2
             exit 1
           fi

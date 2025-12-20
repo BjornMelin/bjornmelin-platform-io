@@ -118,7 +118,8 @@ These workflows use GitHub OIDC for keyless AWS authentication, eliminating long
    ```bash
    aws iam create-open-id-connect-provider \
      --url https://token.actions.githubusercontent.com \
-     --client-id-list sts.amazonaws.com
+     --client-id-list sts.amazonaws.com \
+     --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
    ```
 
 2. **Create IAM Role** with OIDC trust policy (see [infrastructure/README.md](../../infrastructure/README.md))

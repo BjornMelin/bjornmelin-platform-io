@@ -26,10 +26,13 @@ Run once per AWS account to enable keyless GitHub Actions authentication:
 ```bash
 aws iam create-open-id-connect-provider \
   --url https://token.actions.githubusercontent.com \
-  --client-id-list sts.amazonaws.com
+  --client-id-list sts.amazonaws.com \
+  --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
 ```
 
-> **Note:** The `--thumbprint-list` parameter is no longer required. Since July 2023, AWS automatically retrieves and trusts GitHub's root certificate authorities.
+> **Note:** The `--thumbprint-list` parameter is required by the IAM API. Use the
+> intermediate/root CA thumbprint for `token.actions.githubusercontent.com`. The value above
+> is the commonly documented GitHub Actions OIDC thumbprint; update it if AWS/GitHub changes it.
 
 ### Step 2: Create IAM Role for GitHub Actions
 
