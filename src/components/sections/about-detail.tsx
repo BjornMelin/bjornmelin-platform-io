@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Award, Brain, Building2, Cloud, Code, GraduationCap, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ export function AboutDetail() {
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
       <div className="container mx-auto px-4 py-24">
         {/* Profile Section - First thing recruiters see */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -57,10 +57,10 @@ export function AboutDetail() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Professional Summary - Quick overview of value proposition */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -99,10 +99,10 @@ export function AboutDetail() {
               </p>
             </div>
           </Card>
-        </motion.div>
+        </m.div>
 
         {/* Skills Section */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -132,10 +132,10 @@ export function AboutDetail() {
               </Card>
             ))}
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Work Experience - Most important for recruiters */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -205,10 +205,10 @@ export function AboutDetail() {
               </div>
             </Card>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Certifications - Shows current skills and continuous learning */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
@@ -220,7 +220,7 @@ export function AboutDetail() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {certifications.map((cert) => (
-              <motion.div key={cert.name} whileHover={{ scale: 1.02 }} className="relative">
+              <m.div key={cert.name} whileHover={{ scale: 1.02 }} className="relative">
                 <Card className="p-6 backdrop-blur-xl bg-card/50 border-primary/10 hover:border-primary/30 transition-colors">
                   <div className="flex flex-col gap-4">
                     <a
@@ -272,13 +272,13 @@ export function AboutDetail() {
                     )}
                   </div>
                 </Card>
-              </motion.div>
+              </m.div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Education - Supporting qualifications */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
@@ -325,10 +325,10 @@ export function AboutDetail() {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </m.div>
 
         {/* Hobbies & Interests - Personal side */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
@@ -361,7 +361,7 @@ export function AboutDetail() {
               ))}
             </div>
           </Card>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

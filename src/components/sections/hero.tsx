@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -9,7 +9,7 @@ export function Hero() {
     <section className="relative min-h-[90vh] flex items-center">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto flex flex-col items-center text-center gap-8">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
@@ -25,9 +25,9 @@ export function Hero() {
                 className="object-cover"
               />
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -54,7 +54,7 @@ export function Hero() {
                 View Projects
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>
