@@ -138,7 +138,7 @@ jobs:
             done
 
       - name: Upload bundle analysis
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: bundle-analysis
           path: bundle-report.md
