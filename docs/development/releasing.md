@@ -45,6 +45,25 @@ git commit --allow-empty -m "chore: release 2.0.0
 Release-As: 2.0.0"
 ```
 
+## Guardrails (Important)
+
+### Do not create GitHub Releases or tags manually
+
+Release-please uses existing Git tags/releases as the boundary for “what’s already released”.
+If you create a GitHub Release (or tag) manually, you can accidentally change that boundary and
+cause the open Release PR to be rewritten with a different version and different notes.
+
+If you need to adjust the next version, do it via commit history (Conventional Commits) or the
+`Release-As:` footer, and let release-please own tags/releases.
+
+### Manually re-running release-please
+
+The Release Please workflow supports `workflow_dispatch`, so you can re-run it without creating
+any new commits on `main`:
+
+- GitHub UI: Actions -> Release Please -> Run workflow
+- CLI: `gh workflow run release-please.yml`
+
 ## Configuration Files
 
 | File | Purpose |
