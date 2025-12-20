@@ -121,16 +121,21 @@ jobs:
             const threshold = Number(process.env.LH_DELTA_THRESHOLD || '5');
             let previous = null;
 
-            const { data: comments } = await github.rest.issues.listComments({
+            const comments = await github.paginate(github.rest.issues.listComments, {
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 100,
             });
 
-            const previousComment = comments.find((comment) =>
-              comment.body && comment.body.includes('<!-- lighthouse-report-json:')
-            );
+            let previousComment = null;
+            for (let i = comments.length - 1; i >= 0; i -= 1) {
+              const comment = comments[i];
+              if (comment.body && comment.body.includes('<!-- lighthouse-report-json:')) {
+                previousComment = comment;
+                break;
+              }
+            }
 
             if (previousComment) {
               const match = previousComment.body.match(
