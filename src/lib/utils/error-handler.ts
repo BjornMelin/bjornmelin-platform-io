@@ -13,7 +13,12 @@ export class APIError extends Error {
 }
 
 export function handleAPIError(error: unknown) {
-  console.error("API Error:", error);
+  // Use defensive logging to avoid serialization issues with ZodError in certain environments
+  try {
+    console.error("API Error:", error);
+  } catch {
+    console.error("API Error occurred (details could not be serialized)");
+  }
 
   if (error instanceof ZodError) {
     return NextResponse.json(
