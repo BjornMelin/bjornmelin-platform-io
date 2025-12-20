@@ -151,6 +151,7 @@ ${data.message}
 
 ---
 Submitted at: ${new Date().toISOString()}
+This email was sent from the contact form on ${domain}
 `.trim();
 }
 

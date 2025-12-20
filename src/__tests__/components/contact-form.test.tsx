@@ -177,7 +177,7 @@ describe("ContactForm", () => {
       expect(screen.getByText(/sending/i)).toBeInTheDocument();
     });
 
-    // Note: MSW handles cleanup automatically via server.resetHandlers() in afterEach
+    // Note: MSW cleanup is handled globally in src/test/setup.ts
   });
 
   it("shows success message on 200 response", async () => {

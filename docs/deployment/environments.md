@@ -64,6 +64,7 @@ AWS_REGION=us-east-1
 |-----------|------|---------|
 | `/portfolio/prod/CONTACT_EMAIL` | SecureString | Contact form recipient email |
 | `/portfolio/prod/resend/api-key` | SecureString | Resend API key for email delivery |
+| `/portfolio/prod/EMAIL_FROM` | SecureString | Sender email address (optional) |
 
 ### Local Development (.env.local)
 

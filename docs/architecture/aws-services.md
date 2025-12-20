@@ -54,8 +54,9 @@ Environment-specific configurations are managed through:
 For Lambda/back-end code, prefer fetching configuration at startup from SSM:
 
 ```ts
-// Usage example (in Lambda functions that import from infrastructure/lib/utils/ssm.ts)
-import { getParameter } from "@infrastructure/lib/utils/ssm";
+// Usage example in Lambda functions (infrastructure/lib/functions/contact-form/index.ts)
+// Uses relative import from the Lambda handler location:
+import { getParameter } from "../../utils/ssm";
 
 // Fetch decrypted secrets at runtime:
 const contactEmail = await getParameter("/portfolio/prod/CONTACT_EMAIL", true);
