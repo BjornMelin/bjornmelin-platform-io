@@ -18,12 +18,10 @@ ENV_NAME="production"
 # Inputs (export before running or pass inline):
 #   NEXT_PUBLIC_BASE_URL
 #   NEXT_PUBLIC_API_URL
-#   OPENAI_API_KEY
 
 require() { if [[ -z "${!1-}" ]]; then echo "Missing required env: $1" >&2; exit 1; fi; }
 require NEXT_PUBLIC_BASE_URL
 require NEXT_PUBLIC_API_URL
-require OPENAI_API_KEY
 
 echo "Creating/ensuring environment: ${ENV_NAME} in ${REPO_SLUG}"
 gh api \
@@ -35,9 +33,6 @@ gh api \
 echo "Setting environment variables"
 gh variable set NEXT_PUBLIC_BASE_URL --env "${ENV_NAME}" --body "${NEXT_PUBLIC_BASE_URL}"
 gh variable set NEXT_PUBLIC_API_URL --env "${ENV_NAME}" --body "${NEXT_PUBLIC_API_URL}"
-
-echo "Setting environment secrets"
-printf '%s' "${OPENAI_API_KEY}" | gh secret set OPENAI_API_KEY --env "${ENV_NAME}" --body -
 
 echo "Done: production environment configured"
 
