@@ -1,13 +1,9 @@
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { Resend } from "resend";
 import { getParameter } from "../../utils/ssm";
 
 /**
  * Retrieves a required environment variable or throws when missing.
- *
- * @param name Environment variable key to read.
- * @returns Non-empty environment variable value.
- * @throws {Error} When the environment variable is not defined.
  */
 const requireEnv = (name: string): string => {
   const value = process.env[name];
@@ -17,16 +13,14 @@ const requireEnv = (name: string): string => {
   return value;
 };
 
-const region = requireEnv("REGION");
-const senderEmail = requireEnv("SENDER_EMAIL");
+const domain = requireEnv("DOMAIN_NAME");
 let cachedRecipientEmail: string | null = null;
+let resend: Resend | null = null;
+
 /**
- * Resolves the contact recipient email strictly from AWS SSM Parameter Store.
- *
- * @returns Recipient email address retrieved and decrypted from SSM.
- * @throws {Error} When the SSM parameter name is absent or the value is empty.
+ * Resolves the contact recipient email from AWS SSM Parameter Store.
  */
-export async function resolveRecipientEmail(): Promise<string> {
+async function resolveRecipientEmail(): Promise<string> {
   if (cachedRecipientEmail) return cachedRecipientEmail;
   const paramName = requireEnv("SSM_RECIPIENT_EMAIL_PARAM");
   const value = await getParameter(paramName, true);
@@ -35,7 +29,17 @@ export async function resolveRecipientEmail(): Promise<string> {
   return value;
 }
 
-const ses = new SESClient({ region });
+/**
+ * Gets or creates a Resend client with API key from SSM.
+ */
+async function getResendClient(): Promise<Resend> {
+  if (resend) return resend;
+  const paramName = requireEnv("SSM_RESEND_API_KEY_PARAM");
+  const apiKey = await getParameter(paramName, true);
+  if (!apiKey) throw new Error(`Resend API key missing from SSM parameter: ${paramName}`);
+  resend = new Resend(apiKey);
+  return resend;
+}
 
 const parseAllowedOrigins = (): string[] => {
   const origins = new Set<string>();
@@ -66,7 +70,6 @@ const parseAllowedOrigins = (): string[] => {
 
 const allowedOrigins = parseAllowedOrigins();
 
-// Types
 interface ContactFormData {
   name: string;
   email: string;
@@ -86,10 +89,74 @@ function validateInput(data: ContactFormData): string | null {
   return null;
 }
 
+/**
+ * Escapes HTML special characters to prevent XSS.
+ */
+function escapeHtml(text: string): string {
+  const htmlEscapes: Record<string, string> = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+  return text.replace(/[&<>"']/g, (char) => htmlEscapes[char] ?? char);
+}
+
+/**
+ * Creates HTML email content for contact form submission.
+ */
+function createHtmlContent(data: ContactFormData): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+    .header h2 { color: #fff; margin: 0; }
+    .field { margin-bottom: 16px; }
+    .field-label { font-weight: 600; color: #555; font-size: 14px; text-transform: uppercase; }
+    .field-value { margin-top: 4px; }
+    .message-box { background: #f9fafb; padding: 16px; border-radius: 6px; border-left: 4px solid #667eea; margin-top: 8px; }
+    .footer { font-size: 12px; color: #888; border-top: 1px solid #eee; padding-top: 16px; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header"><h2>New Contact Form Submission</h2></div>
+    <div class="field"><div class="field-label">Name</div><div class="field-value">${escapeHtml(data.name)}</div></div>
+    <div class="field"><div class="field-label">Email</div><div class="field-value"><a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></div></div>
+    <div class="field"><div class="field-label">Message</div><div class="message-box">${escapeHtml(data.message).replace(/\n/g, "<br>")}</div></div>
+    <div class="footer"><p>Submitted at: ${new Date().toISOString()}</p><p>This email was sent from the contact form on ${domain}</p></div>
+  </div>
+</body>
+</html>`.trim();
+}
+
+/**
+ * Creates plain text email content for contact form submission.
+ */
+function createTextContent(data: ContactFormData): string {
+  return `
+New Contact Form Submission
+
+Name: ${data.name}
+Email: ${data.email}
+
+Message:
+${data.message}
+
+---
+Submitted at: ${new Date().toISOString()}
+`.trim();
+}
+
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const origin = event.headers.origin || event.headers.Origin;
 
-  // CORS headers
   const corsHeaders: {
     "Access-Control-Allow-Headers": string;
     "Access-Control-Allow-Methods": string;
@@ -99,12 +166,10 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     "Access-Control-Allow-Methods": "POST, OPTIONS",
   };
 
-  // Validate the origin
   if (origin) {
     if (allowedOrigins.includes(origin)) {
       corsHeaders["Access-Control-Allow-Origin"] = origin;
     } else {
-      // Optionally, you can return an error response for disallowed origins
       return {
         statusCode: 403,
         headers: corsHeaders,
@@ -113,7 +178,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
   }
 
-  // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -123,7 +187,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   }
 
   try {
-    // Parse and validate input
     if (!event.body) {
       throw new Error("Missing request body");
     }
@@ -139,50 +202,24 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       };
     }
 
-    // Send email
+    // Get email recipient and Resend client
     const recipientEmail = await resolveRecipientEmail();
-    await ses.send(
-      new SendEmailCommand({
-        Source: senderEmail,
-        Destination: {
-          ToAddresses: [recipientEmail],
-        },
-        Message: {
-          Subject: {
-            Data: `New Contact Form Submission from ${data.name}`,
-            Charset: "UTF-8",
-          },
-          Body: {
-            Text: {
-              Data: `
-Name: ${data.name}
-Email: ${data.email}
-Message: ${data.message}
-Time: ${new Date().toISOString()}
-              `,
-              Charset: "UTF-8",
-            },
-            Html: {
-              Data: `
-<!DOCTYPE html>
-<html>
-<body>
-  <h2>New Contact Form Submission</h2>
-  <p><strong>Name:</strong> ${data.name}</p>
-  <p><strong>Email:</strong> ${data.email}</p>
-  <p><strong>Message:</strong></p>
-  <p>${data.message}</p>
-  <hr>
-  <p><small>Time: ${new Date().toISOString()}</small></p>
-</body>
-</html>
-              `,
-              Charset: "UTF-8",
-            },
-          },
-        },
-      }),
-    );
+    const resendClient = await getResendClient();
+
+    // Send email via Resend
+    const { error } = await resendClient.emails.send({
+      from: `Contact Form <contact@${domain}>`,
+      to: recipientEmail,
+      replyTo: data.email,
+      subject: `Contact Form: ${data.name}`,
+      html: createHtmlContent(data),
+      text: createTextContent(data),
+    });
+
+    if (error) {
+      console.error("Resend error:", error);
+      throw new Error(`Failed to send email: ${error.message}`);
+    }
 
     return {
       statusCode: 200,
