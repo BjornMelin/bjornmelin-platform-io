@@ -1,4 +1,4 @@
-import { http, HttpResponse, delay } from "msw";
+import { delay, HttpResponse, http } from "msw";
 
 /**
  * Default success handler for contact form API
@@ -37,7 +37,7 @@ export const contactRateLimitHandler = http.post("*/api/contact", () => {
 export const contactValidationErrorHandler = http.post("*/api/contact", () => {
   return HttpResponse.json(
     { code: "VALIDATION_ERROR", error: "Invalid submission" },
-    { status: 400 }
+    { status: 400 },
   );
 });
 

@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { http, HttpResponse, delay } from "msw";
+import { delay, HttpResponse, http } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ContactForm } from "@/components/contact/contact-form";
 import { server } from "@/mocks/node";
@@ -103,7 +103,7 @@ describe("ContactForm", () => {
           headers: request.headers,
         };
         return HttpResponse.json({ success: true });
-      })
+      }),
     );
 
     render(<ContactForm />);
@@ -132,7 +132,7 @@ describe("ContactForm", () => {
       http.post("*/api/contact", async ({ request }) => {
         capturedBody = (await request.json()) as Record<string, unknown>;
         return HttpResponse.json({ success: true });
-      })
+      }),
     );
 
     render(<ContactForm />);
@@ -160,7 +160,7 @@ describe("ContactForm", () => {
       http.post("*/api/contact", async () => {
         await delay("infinite");
         return HttpResponse.json({ success: true });
-      })
+      }),
     );
 
     render(<ContactForm />);
@@ -205,7 +205,7 @@ describe("ContactForm", () => {
     server.use(
       http.post("*/api/contact", () => {
         return HttpResponse.json({ error: "Server error" }, { status: 500 });
-      })
+      }),
     );
 
     render(<ContactForm />);
