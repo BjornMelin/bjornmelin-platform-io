@@ -91,7 +91,10 @@
   "pnpm": {
     "overrides": {
       "glob@>=10.2.0 <10.5.0": "^10.5.0"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   },
   "browserslist": [
     "defaults and fully supports es6-module",
