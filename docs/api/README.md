@@ -1,10 +1,12 @@
 # API Documentation
 
-This section covers the API endpoints available in bjornmelin-platform-io.
+API endpoints available in bjornmelin-platform-io.
+
+Note: With `output: 'export'` in next.config.mjs, API routes are only available
+during local development. In production, the contact form is handled by an
+AWS Lambda function deployed via CDK infrastructure.
 
 ## Available Endpoints
-
-Currently, the platform provides the following API endpoint:
 
 - [Contact Form](./contact.md) - Endpoint for handling contact form submissions
 
@@ -26,27 +28,30 @@ All API endpoints accept JSON-formatted request bodies.
 
 ### Response Format
 
-All API endpoints return JSON responses with the following structure:
+Success response:
 
-```typescript
-// Success response
+```json
 {
-  "success": true,
-  "data": any       // Response data if applicable
-}
-
-// Error response
-{
-  "success": false,
-  "error": string   // Error message
+  "success": true
 }
 ```
 
-### Error Handling
+Error response:
 
-- Input validation errors
-- Service availability errors
-- Rate limiting errors
+```json
+{
+  "error": "Error message here",
+  "code": "ERROR_CODE"
+}
+```
+
+### Error Codes
+
+| Code | Description |
+|------|-------------|
+| `INVALID_JSON` | Request body is not valid JSON |
+| `VALIDATION_ERROR` | Request body failed schema validation |
+| `EMAIL_SEND_ERROR` | Failed to send email via SES |
 
 ## Development
 
@@ -68,18 +73,16 @@ API endpoints will be available at `http://localhost:3000/api/`
 
 ## Security
 
-- Input validation using Zod
-- Rate limiting
-- CORS configuration
-- Request size limits
+- Input validation using Zod schema
+- Request size limits (Next.js defaults)
 
 ## Service Dependencies
 
 The API relies on:
 
 - AWS SES for email sending
-- Environment variables for configuration
-- Type-safe request/response handling
+- Environment variables for configuration (see [schemas.md](./schemas.md))
+- Zod for request validation
 
 For detailed information about specific endpoints, refer to the individual
 documentation pages linked above.

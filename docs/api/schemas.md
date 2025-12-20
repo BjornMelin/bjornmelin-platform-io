@@ -1,6 +1,6 @@
 # Data Schemas
 
-This document outlines the data schemas used throughout the application.
+Data schemas used throughout the application.
 
 ## API Schemas
 
@@ -9,13 +9,20 @@ This document outlines the data schemas used throughout the application.
 Located in `src/lib/schemas/contact.ts`:
 
 ```typescript
-// Contact form request validation schema
-{
-  name: string; // Required, sender's name
-  email: string; // Required, valid email format
-  message: string; // Required, message content
-}
+import { z } from "zod";
+
+export const contactFormSchema = z.object({
+  name: z.string().min(2).max(50),
+  email: z.string().email(),
+  message: z.string().min(10).max(1000),
+});
 ```
+
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `name` | string | 2-50 characters |
+| `email` | string | Valid email format |
+| `message` | string | 10-1000 characters |
 
 ## Data Models
 
@@ -84,30 +91,45 @@ interface Skill {
 }
 ```
 
-## Validation
+## Environment Variables
 
-All schemas use Zod for runtime type checking and validation. Example:
+Type-safe environment variables are defined in `src/env.mjs` using `@t3-oss/env-nextjs`:
 
 ```typescript
+import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
-export const contactSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+export const env = createEnv({
+  server: {
+    AWS_REGION: z.string().min(1),
+    AWS_ACCESS_KEY_ID: z.string().min(1).optional(),
+    AWS_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+    CONTACT_EMAIL: z.string().email(),
+  },
+  client: {
+    NEXT_PUBLIC_APP_URL: z.string().min(1),
+  },
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
 ```
 
-## Environment Variables
+### Required Variables
 
-Type-safe environment variables are defined in `src/env.mjs`:
+| Variable | Type | Description |
+|----------|------|-------------|
+| `AWS_REGION` | string | AWS region for SES (e.g., `us-east-1`) |
+| `CONTACT_EMAIL` | string | Destination email for contact form |
+| `NEXT_PUBLIC_APP_URL` | string | Public URL of the application |
 
-```typescript
-// Environment variable schema
-{
-  AWS_REGION: string;
-  AWS_ACCESS_KEY_ID: string;
-  AWS_SECRET_ACCESS_KEY: string;
-  // ... other environment variables
-}
-```
+### Optional Variables
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `AWS_ACCESS_KEY_ID` | string | AWS access key (uses instance role if not set) |
+| `AWS_SECRET_ACCESS_KEY` | string | AWS secret key (uses instance role if not set) |
+| `SKIP_ENV_VALIDATION` | boolean | Skip validation during build |
+
+### Build-Time Validation
+
+Set `SKIP_ENV_VALIDATION=true` during static export builds where server-side
+environment variables are not available.
