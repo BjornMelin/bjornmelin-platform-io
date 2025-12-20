@@ -15,6 +15,7 @@ const requireEnv = (name: string): string => {
 
 const domain = requireEnv("DOMAIN_NAME");
 let cachedRecipientEmail: string | null = null;
+let cachedResendApiKey: string | null = null;
 let resend: Resend | null = null;
 
 /**
@@ -33,10 +34,13 @@ async function resolveRecipientEmail(): Promise<string> {
  * Gets or creates a Resend client with API key from SSM.
  */
 async function getResendClient(): Promise<Resend> {
-  if (resend) return resend;
   const paramName = requireEnv("SSM_RESEND_API_KEY_PARAM");
   const apiKey = await getParameter(paramName, true);
   if (!apiKey) throw new Error(`Resend API key missing from SSM parameter: ${paramName}`);
+
+  if (resend && cachedResendApiKey === apiKey) return resend;
+
+  cachedResendApiKey = apiKey;
   resend = new Resend(apiKey);
   return resend;
 }
