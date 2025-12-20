@@ -29,6 +29,11 @@ runs:
           npm install -g "${PM%@*}"
         fi
         pnpm --version
+        EXPECTED_VERSION="${PM#*@}"
+        ACTUAL_VERSION=$(pnpm --version)
+        if [[ "$ACTUAL_VERSION" != "$EXPECTED_VERSION" ]]; then
+          echo "::warning::pnpm version mismatch: expected $EXPECTED_VERSION, got $ACTUAL_VERSION"
+        fi
 
     - name: Setup Node.js from .nvmrc (with pnpm cache)
       uses: actions/setup-node@v6

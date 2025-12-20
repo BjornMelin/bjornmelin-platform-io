@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [develop]  # main is handled by deploy.yml
+    branches: [main, develop]
   pull_request:
     branches: [main, develop]
     types: [opened, synchronize, reopened]

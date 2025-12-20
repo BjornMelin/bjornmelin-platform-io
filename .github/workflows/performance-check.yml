@@ -139,7 +139,10 @@ jobs:
               if (match) {
                 try {
                   previous = JSON.parse(match[1]);
-                } catch {
+                } catch (e) {
+                  core.debug(
+                    `Failed to parse previous Lighthouse metrics: ${e?.message ?? e}`
+                  );
                   previous = null;
                 }
               }

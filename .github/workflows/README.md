@@ -17,7 +17,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
    - Jobs: CI pipeline, actionlint validation
 
 3. **deploy.yml** - Production deployment workflow
-   - Runs on: Push to main (excludes infrastructure/**and**.md)
+   - Runs on: Push to main (excludes `infrastructure/**` and `**.md`)
    - Calls: _reusable-ci.yml for testing
    - Features: AWS OIDC authentication, S3 sync, CloudFront invalidation, smoke check
 
@@ -55,7 +55,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
     - Features: Path-based labels, conventional commit labels
 
 11. **stale.yml** - Manage stale issues and PRs
-    - Runs on: Daily schedule
+    - Runs on: Monthly schedule (1st of each month at 00:00 UTC)
     - Features: Auto-close inactive items, configurable timelines
 
 12. **link-check.yml** - Check for broken links
@@ -77,7 +77,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 ## Reusable Workflow Architecture
 
-```
+```text
 ci.yml ─────────────────┐
                         ├──► _reusable-ci.yml ──► lint, test, build
 deploy.yml ─────────────┘
@@ -112,7 +112,6 @@ Required secrets:
 
 - `GITHUB_TOKEN` - Automatically provided by GitHub
 - `CODECOV_TOKEN` - For code coverage reporting (optional)
-- `AWS_DEPLOY_ROLE_ARN` - For AWS deployments (OIDC)
 
 Required variables (set in GitHub Environment):
 
@@ -170,7 +169,7 @@ Add these badges to your README:
 ## Scheduled Workflow Calendar
 
 | Day | Workflow | Time (UTC) |
-|-----|----------|------------|
+| --- | -------- | ---------- |
 | 1st | stale.yml | 00:00 |
 | 1st | dependency-update.yml | 09:00 |
 | 8th | link-check.yml | 04:00 |
