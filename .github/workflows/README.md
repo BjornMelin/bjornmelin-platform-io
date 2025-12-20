@@ -19,7 +19,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 3. **deploy.yml** - Production deployment workflow
    - Runs on: Push to main (excludes `infrastructure/**` and `**.md`)
    - Calls: _reusable-ci.yml for testing
-   - Features: AWS OIDC authentication, S3 sync, CloudFront invalidation, smoke check
+   - Features: AWS OIDC authentication, S3 sync, CloudFront invalidation, smoke check, job summary
 
 4. **release-please.yml** - Automated semantic versioning and releases
    - Runs on: Push to main
@@ -47,8 +47,8 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 ### Maintenance
 
 9. **branch-protection.yml** - PR validation and protection
-    - Runs on: Pull requests to main
-    - Features: Conventional commit check, merge conflict detection, auto-labeling
+   - Runs on: Pull requests to main
+   - Features: Conventional commit check, merge conflict detection, auto-labeling
 
 10. **pr-labeler.yml** - Automatic PR labeling
     - Runs on: PR opened/edited
@@ -106,12 +106,40 @@ This eliminates duplicate test runs and ensures consistent CI behavior.
 - **labeler.yml** - Path-based labeling configuration
 - **lighthouse/lighthouserc.json** - Lighthouse CI configuration
 
+## AWS OIDC Authentication
+
+These workflows use GitHub OIDC for keyless AWS authentication, eliminating long-lived credentials.
+
+### Setup Requirements
+
+1. **Create OIDC Provider** (once per AWS account):
+
+   ```bash
+   aws iam create-open-id-connect-provider \
+     --url https://token.actions.githubusercontent.com \
+     --client-id-list sts.amazonaws.com \
+     --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
+   ```
+
+2. **Create IAM Role** with OIDC trust policy (see [infrastructure/README.md](../../infrastructure/README.md))
+
+3. **Add Role ARN to GitHub Secrets** as `AWS_DEPLOY_ROLE_ARN`
+
+### Workflow Credentials Reference
+
+| Workflow | Secret Used | Purpose |
+| :--- | :--- | :--- |
+| `deploy.yml` | `secrets.AWS_DEPLOY_ROLE_ARN` | Production deployment |
+| `infrastructure.yml` | `secrets.AWS_DEPLOY_ROLE_ARN` | CDK stack deployment |
+| `manual-deploy.yml` | `secrets.AWS_DEPLOY_ROLE_ARN` | Manual deployment |
+
 ## Environment Variables & Secrets
 
 Required secrets:
 
 - `GITHUB_TOKEN` - Automatically provided by GitHub
 - `CODECOV_TOKEN` - For code coverage reporting (optional)
+- `AWS_DEPLOY_ROLE_ARN` - IAM role ARN for OIDC authentication (required for deployment)
 
 Required variables (set in GitHub Environment):
 
@@ -119,7 +147,6 @@ Required variables (set in GitHub Environment):
 - `NEXT_PUBLIC_API_URL` - API endpoint URL
 - `NEXT_PUBLIC_APP_URL` - Public app URL
 - `CONTACT_EMAIL` - Contact form recipient email
-- `AWS_DEPLOY_ROLE_ARN` - AWS IAM role for OIDC-based deployments
 
 ## Branch Protection Settings
 

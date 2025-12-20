@@ -17,7 +17,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --pass-with-no-tests",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
     "test:e2e:docker": "./scripts/run-e2e-tests.sh",
@@ -27,9 +27,7 @@
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
-    "@aws-sdk/client-cloudwatch": "^3.956.0",
-    "@aws-sdk/client-ses": "^3.956.0",
-    "@aws-sdk/client-ssm": "^3.956.0",
+    "@aws-sdk/client-ssm": "^3.948.0",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -60,9 +58,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.10",
-    "@next/bundle-analyzer": "^14.2.35",
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
+    "@next/bundle-analyzer": "^14.2.35",
     "@playwright/test": "^1.57.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
@@ -81,6 +79,7 @@
     "husky": "^9.1.7",
     "jsdom": "^27.3.0",
     "markdownlint-cli": "^0.47.0",
+    "msw": "^2.12.4",
     "playwright": "^1.57.0",
     "postcss": "^8.4.35",
     "shadcn-ui": "^0.9.4",

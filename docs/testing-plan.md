@@ -2,9 +2,9 @@
 
 ## Overview
 
-- Adopt unit tests for the contact workflow (schema, AWS SES client factory,
-  email service, API route, and utility helpers).
-- Ensure deterministic execution by mocking third-party SDKs and isolating
+- Adopt unit tests for the contact workflow (schema, Resend client,
+  email service, API route, security utilities, and utility helpers).
+- Ensure deterministic execution by mocking third-party APIs and isolating
   environment configuration.
 - Keep the suite fast by testing logic-heavy modules directly and excluding
   static UI assets from coverage accounting.
@@ -15,20 +15,21 @@
    - Seed deterministic credentials and app metadata in `src/test/setup.ts` for
      every spec run.
    - Reset mock state after each spec to prevent cross-test leakage.
-1. **AWS client factory**
-   - Verify `createSESClient` constructs a singleton that respects runtime
-     credentials.
-   - Confirm constructor invocations by stubbing `@aws-sdk/client-ses`.
-1. **Email service**
-   - Mock the SES client, capture `SendEmailCommand` payloads, and assert both
+1. **Email service (Resend)**
+   - Mock the Resend client, capture `emails.send` payloads, and assert both
      HTML and text bodies contain submission data and timestamps.
    - Validate the singleton accessor to prevent redundant client creation.
+1. **Security utilities**
+   - Test rate-limiting logic (5 requests per minute per IP).
+   - Verify honeypot detection catches filled hidden fields.
+   - Confirm time-based validation rejects fast submissions (< 3 seconds).
 1. **Schema validation**
    - Exercise happy and unhappy paths for `contactFormSchema` to guarantee
      descriptive validation feedback.
+   - Test `contactFormWithSecuritySchema` with honeypot and formLoadTime fields.
 1. **API route**
-   - Mock `EmailService` to assert successful submission handling, validation
-     failures, and SES failure escalation via `APIError`.
+   - Mock email service to assert successful submission handling, validation
+     failures, rate limiting, and email failure escalation via `APIError`.
 1. **Error handler**
    - Cover `handleAPIError` responses for `ZodError`, `APIError`, and unknown
      failures, ensuring consistent logging and HTTP semantics.

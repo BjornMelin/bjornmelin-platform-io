@@ -1,5 +1,23 @@
 # Deployment Overview
 
+## Prerequisites Checklist
+
+Before deploying, ensure you have completed:
+
+- [ ] AWS account with OIDC provider configured (see [infrastructure/README.md](../../infrastructure/README.md))
+- [ ] IAM role `prod-portfolio-deploy` created with GitHub OIDC trust policy
+- [ ] Domain in Route 53 (or DNS delegated to Route 53)
+- [ ] GitHub secrets configured:
+  - [ ] `AWS_DEPLOY_ROLE_ARN` - IAM role ARN for OIDC authentication
+- [ ] GitHub variables configured:
+  - [ ] `NEXT_PUBLIC_BASE_URL` - Production domain URL
+  - [ ] `NEXT_PUBLIC_API_URL` - API endpoint URL
+  - [ ] `NEXT_PUBLIC_APP_URL` - Application URL
+  - [ ] `CONTACT_EMAIL` - Build-time validation email
+- [ ] SSM parameter `/portfolio/prod/CONTACT_EMAIL` created (SecureString)
+
+For step-by-step setup instructions, see the **First-Time Deployment Setup** section in [infrastructure/README.md](../../infrastructure/README.md).
+
 ## Introduction
 
 Deployment processes and practices for bjornmelin-platform-io.

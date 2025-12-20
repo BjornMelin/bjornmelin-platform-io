@@ -33,9 +33,9 @@ infrastructure/
 
 ### Email Stack
 
-- Configures AWS SES for email services
-- Sets up email sending capabilities
-- Manages email templates
+- Configures email delivery via Resend API
+- Sets up Lambda function for contact form
+- Manages API Gateway and CORS configuration
 
 ### Monitoring Stack
 
@@ -65,9 +65,9 @@ export class EmailStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // SES configuration
-    // Email templates
-    // IAM roles and policies
+    // Lambda function for contact form
+    // API Gateway configuration
+    // SSM parameter access for Resend API key
   }
 }
 ```

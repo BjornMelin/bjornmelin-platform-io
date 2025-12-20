@@ -42,14 +42,42 @@ AWS_REGION=us-east-1
 
 ## Environment Variables
 
-### Required Variables
+### GitHub Secrets (CI/CD)
+
+| Secret | Purpose | Example |
+|--------|---------|---------|
+| `AWS_DEPLOY_ROLE_ARN` | IAM role for OIDC deployment | `arn:aws:iam::123456789:role/prod-portfolio-deploy` |
+| `OPENAI_API_KEY` | Auto-release version detection | `sk-proj-...` |
+
+### GitHub Variables (CI/CD)
+
+| Variable | Purpose | Example |
+|----------|---------|---------|
+| `NEXT_PUBLIC_BASE_URL` | Production domain | `https://bjornmelin.io` |
+| `NEXT_PUBLIC_API_URL` | API endpoint | `https://api.bjornmelin.io` |
+| `NEXT_PUBLIC_APP_URL` | Application URL | `https://bjornmelin.io` |
+| `CONTACT_EMAIL` | Build-time validation | `contact@bjornmelin.io` |
+
+### AWS SSM Parameters
+
+| Parameter | Type | Purpose |
+|-----------|------|---------|
+| `/portfolio/prod/CONTACT_EMAIL` | SecureString | Contact form recipient email |
+| `/portfolio/prod/resend/api-key` | SecureString | Resend API key for email delivery |
+| `/portfolio/prod/EMAIL_FROM` | SecureString | Sender email address (optional) |
+
+### Local Development (.env.local)
 
 ```bash
-# AWS Configuration
-AWS_REGION=
+AWS_REGION=us-east-1
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+CONTACT_EMAIL=test@example.com
 
-# Application Settings
-NEXT_PUBLIC_API_URL=
+# Optional: For testing email functionality locally
+# RESEND_API_KEY=re_xxxxxxxxx
+# EMAIL_FROM=Contact Form <noreply@yourdomain.com>
 ```
 
 ### Optional Variables

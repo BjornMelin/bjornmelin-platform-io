@@ -3,11 +3,12 @@
 /**
  * @fileoverview Contact form component with client-side validation and POST to
  * /api/contact. Displays success/error alerts and toasts.
+ * Includes honeypot and timing-based abuse prevention.
  */
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -38,9 +39,14 @@ export function ContactForm() {
       name: `${idPrefix}-name`,
       email: `${idPrefix}-email`,
       message: `${idPrefix}-message`,
+      honeypot: `${idPrefix}-hp`,
     }),
     [idPrefix],
   );
+  // Track when form was loaded for timing-based abuse prevention
+  const formLoadTime = useRef(Date.now());
+  // Honeypot field value
+  const [honeypot, setHoneypot] = useState("");
 
   const {
     register,
@@ -63,7 +69,11 @@ export function ContactForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          honeypot,
+          formLoadTime: formLoadTime.current,
+        }),
       });
 
       const result = (await response.json()) as APIErrorResponse;
@@ -132,6 +142,22 @@ export function ContactForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+        {/* Honeypot field - hidden from users, catches bots */}
+        <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+          <label htmlFor={fieldIds.honeypot}>
+            Leave this field empty
+            <input
+              type="text"
+              id={fieldIds.honeypot}
+              name="honeypot"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </label>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor={fieldIds.name}>Name</Label>
           <Input

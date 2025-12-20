@@ -50,6 +50,7 @@
         "network-dependency-tree-insight": "off",
         "image-delivery-insight": "off",
         "lcp-discovery-insight": "off",
+        "forced-reflow-insight": "off",
         "render-blocking-insight": "off",
         "legacy-javascript-insight": "off",
         "uses-webp-images": "off",

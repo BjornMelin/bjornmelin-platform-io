@@ -7,14 +7,14 @@ import * as lambdaCore from "aws-cdk-lib/aws-lambda";
 import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as route53 from "aws-cdk-lib/aws-route53";
-import * as targets from "aws-cdk-lib/aws-route53-targets"; // Correct import for targets
-import * as ses from "aws-cdk-lib/aws-ses";
+import * as targets from "aws-cdk-lib/aws-route53-targets";
 import type { Construct } from "constructs";
 import type { EmailStackProps } from "../types/stack-props";
 
 /**
- * EmailStack provisions the contact form delivery pipeline including SES, API Gateway, and Lambda.
- * The stack keeps recipient email addresses out of the synthesized template by resolving them from SSM at runtime.
+ * EmailStack provisions the contact form delivery pipeline using Resend, API Gateway, and Lambda.
+ * The stack keeps sensitive data (API keys, recipient emails) out of the synthesized template
+ * by resolving them from SSM at runtime.
  */
 export class EmailStack extends cdk.Stack {
   public readonly emailFunction: lambda.NodejsFunction;
@@ -23,11 +23,7 @@ export class EmailStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: EmailStackProps) {
     super(scope, id, props);
 
-    const { hostedZone, senderEmail, allowedOrigins = [] } = props;
-    if (!senderEmail) {
-      throw new Error("EmailStack requires a non-empty senderEmail");
-    }
-    // Resolve recipient email from SSM at runtime to avoid exposing it via environment variables.
+    const { hostedZone, allowedOrigins = [] } = props;
 
     const domain = props.domainName;
     const subdomain = `api.${domain}`;
@@ -36,23 +32,11 @@ export class EmailStack extends cdk.Stack {
       new Set([...allowedOrigins, `https://${domain}`, `https://www.${domain}`, apiEndpoint]),
     );
 
-    // Create SES Domain Identity
-    new ses.EmailIdentity(this, "DomainIdentity", {
-      identity: ses.Identity.publicHostedZone(hostedZone),
-    });
-
-    // Create MX record for receiving email
-    new route53.MxRecord(this, "SESMxRecord", {
-      zone: hostedZone,
-      recordName: domain,
-      values: [
-        {
-          hostName: `inbound-smtp.${this.region}.amazonaws.com`,
-          priority: 10,
-        },
-      ],
-      ttl: cdk.Duration.minutes(60),
-    });
+    // SSM parameter paths
+    const recipientEmailParam =
+      props.ssmRecipientEmailParam ?? `/portfolio/${props.environment}/CONTACT_EMAIL`;
+    const resendApiKeyParam =
+      props.ssmResendApiKeyParam ?? `/portfolio/${props.environment}/resend/api-key`;
 
     // Create Lambda function for contact form
     this.emailFunction = new lambda.NodejsFunction(this, "ContactFormFunction", {
@@ -60,19 +44,15 @@ export class EmailStack extends cdk.Stack {
       handler: "handler",
       entry: path.join(__dirname, "../functions/contact-form/index.ts"),
       environment: {
-        SENDER_EMAIL: senderEmail,
-        REGION: this.region,
         DOMAIN_NAME: domain,
         ALLOWED_ORIGIN: normalizedAllowedOrigins[0] ?? apiEndpoint,
         ALLOWED_ORIGINS: normalizedAllowedOrigins.join(","),
-        // Provide the SSM parameter containing the recipient email. Lambda reads this at runtime.
-        SSM_RECIPIENT_EMAIL_PARAM:
-          props.ssmRecipientEmailParam ?? `/portfolio/${props.environment}/CONTACT_EMAIL`,
+        SSM_RECIPIENT_EMAIL_PARAM: recipientEmailParam,
+        SSM_RESEND_API_KEY_PARAM: resendApiKeyParam,
       },
       bundling: {
         minify: true,
         sourceMap: true,
-        externalModules: ["@aws-sdk/client-ses"],
       },
       timeout: cdk.Duration.seconds(10),
       memorySize: 128,
@@ -146,7 +126,7 @@ export class EmailStack extends cdk.Stack {
     // Add API Gateway resource and method
     const contact = this.api.root.addResource("contact");
     contact.addMethod("POST", new apigateway.LambdaIntegration(this.emailFunction), {
-      authorizationType: apigateway.AuthorizationType.NONE, // Allow unauthenticated access
+      authorizationType: apigateway.AuthorizationType.NONE,
       apiKeyRequired: false,
     });
 
@@ -156,30 +136,24 @@ export class EmailStack extends cdk.Stack {
       allowMethods: ["POST", "OPTIONS"],
       allowHeaders: ["Content-Type"],
     };
-
-    // Apply CORS to the contact resource
     contact.addCorsPreflight(corsOptions);
 
-    // Create custom policy for SES permissions
-    const sesPolicy = new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ["ses:SendEmail", "ses:SendRawEmail"],
-      resources: [`arn:aws:ses:${this.region}:${this.account}:identity/${domain}`],
-    });
+    // Grant SSM read permission for recipient email and Resend API key parameters
+    const normalizedRecipientParam = recipientEmailParam.startsWith("/")
+      ? recipientEmailParam
+      : `/${recipientEmailParam}`;
+    const normalizedResendParam = resendApiKeyParam.startsWith("/")
+      ? resendApiKeyParam
+      : `/${resendApiKeyParam}`;
 
-    // Attach SES policy to Lambda function
-    this.emailFunction.addToRolePolicy(sesPolicy);
-
-    // Grant SSM read permission for the recipient email parameter
-    const paramName =
-      props.ssmRecipientEmailParam ?? `/portfolio/${props.environment}/CONTACT_EMAIL`;
-    const normalizedParam = paramName.startsWith("/") ? paramName : `/${paramName}`;
-    const parameterArn = `arn:aws:ssm:${this.region}:${this.account}:parameter${normalizedParam}`;
     this.emailFunction.addToRolePolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ["ssm:GetParameter"],
-        resources: [parameterArn],
+        resources: [
+          `arn:aws:ssm:${this.region}:${this.account}:parameter${normalizedRecipientParam}`,
+          `arn:aws:ssm:${this.region}:${this.account}:parameter${normalizedResendParam}`,
+        ],
       }),
     );
 
@@ -207,12 +181,6 @@ export class EmailStack extends cdk.Stack {
       value: apiEndpoint,
       description: "API Gateway URL",
       exportName: `${props.environment}-api-gateway-url`,
-    });
-
-    new cdk.CfnOutput(this, "SenderEmailAddress", {
-      value: senderEmail,
-      description: "Sender Email Address",
-      exportName: `${props.environment}-sender-email`,
     });
   }
 }

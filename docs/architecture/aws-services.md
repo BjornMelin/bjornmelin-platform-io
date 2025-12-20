@@ -11,16 +11,17 @@ Used for Infrastructure as Code (IaC) to define and provision AWS
 infrastructure. Our CDK stacks live in `infrastructure/lib/stacks/`:
 
 - **DNS Stack** (`dns-stack.ts`): Manages DNS configuration
-- **Email Stack** (`email-stack.ts`): Configures email services
+- **Email Stack** (`email-stack.ts`): Configures email delivery via Resend
 - **Monitoring Stack** (`monitoring-stack.ts`): Sets up monitoring and alerts
 - **Storage Stack** (`storage-stack.ts`): Manages storage resources
 - **Deployment Stack** (`deployment-stack.ts`): Handles deployment configuration
 
-### Simple Email Service (SES)
+### Email Delivery (Resend)
 
 - Used for sending contact form emails
 - Configuration managed through the Email Stack
-- Implementation in `src/lib/aws/ses.ts`
+- API key stored in AWS SSM Parameter Store
+- Implementation in `src/lib/email/`
 
 ## Infrastructure Organization
 
@@ -33,7 +34,7 @@ infrastructure/
 ├── lib/
 │   ├── constants.ts           # Shared constants
 │   ├── functions/             # Lambda functions
-│   │   └── contact-form/      # Contact form handler
+│   │   └── contact-form/      # Contact form handler (uses Resend)
 │   ├── stacks/               # CDK stack definitions
 │   └── types/                # TypeScript types
 └── cdk.json                  # CDK configuration
@@ -53,11 +54,13 @@ Environment-specific configurations are managed through:
 For Lambda/back-end code, prefer fetching configuration at startup from SSM:
 
 ```ts
-// src/lib/aws/ssm.ts
-import { getParameter } from "@/lib/aws/ssm";
+// Usage example in Lambda functions (infrastructure/lib/functions/contact-form/index.ts)
+// Uses relative import from the Lambda handler location:
+import { getParameter } from "../../utils/ssm";
 
-// Example (decrypted secret):
-const contactEmail = await getParameter("/portfolio/prod/CONTACT_EMAIL");
+// Fetch decrypted secrets at runtime:
+const contactEmail = await getParameter("/portfolio/prod/CONTACT_EMAIL", true);
+const resendApiKey = await getParameter("/portfolio/prod/resend/api-key", true);
 ```
 
 ## Monitoring and Logging

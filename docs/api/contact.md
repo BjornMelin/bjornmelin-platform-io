@@ -45,6 +45,14 @@ The contact form API handles submission of contact form messages.
 }
 ```
 
+**Rate Limited (429)**:
+
+```json
+{
+  "error": "Too many requests. Please try again later."
+}
+```
+
 **Email Send Error (500)**:
 
 ```json
@@ -56,11 +64,17 @@ The contact form API handles submission of contact form messages.
 
 ## Implementation Details
 
-The contact form endpoint uses AWS SES (Simple Email Service) to send emails.
+The contact form endpoint uses Resend for email delivery with built-in abuse prevention:
+
+- **Rate Limiting**: 5 requests per minute per IP
+- **Honeypot Field**: Hidden field to catch bots
+- **Time-based Validation**: Rejects submissions faster than 3 seconds
+
 The implementation can be found in:
 
 - `src/app/api/contact/route.ts` - API route handler
-- `src/lib/services/email.ts` - Email service implementation
+- `src/lib/email/` - Email service implementation (Resend)
+- `src/lib/security/` - Rate limiting, honeypot, and time checks
 - `src/lib/schemas/contact.ts` - Request validation schema
 
 ## Example Request

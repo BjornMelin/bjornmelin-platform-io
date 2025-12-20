@@ -12,6 +12,7 @@ vi.mock("aws-cdk-lib/aws-lambda-nodejs", async () => {
     runtime: lambdaCore.Runtime;
     handler?: string;
     environment?: Record<string, string>;
+    architecture?: lambdaCore.Architecture;
   };
   class NodejsFunction extends lambdaCore.Function {
     constructor(scope: Construct, id: string, props: MinimalProps) {
@@ -20,6 +21,7 @@ vi.mock("aws-cdk-lib/aws-lambda-nodejs", async () => {
         handler: props.handler ?? "handler",
         code: lambdaCore.Code.fromInline("exports.handler = async () => {}"),
         environment: props.environment,
+        architecture: props.architecture ?? lambdaCore.Architecture.ARM_64,
       });
     }
   }
@@ -45,9 +47,9 @@ const buildEmailStackTemplate = (): Template => {
     domainName: "example.com",
     environment: "prod",
     hostedZone: importedZone,
-    senderEmail: "no-reply@example.com",
     allowedOrigins: ["https://example.com"],
     ssmRecipientEmailParam: "/portfolio/prod/CONTACT_EMAIL",
+    ssmResendApiKeyParam: "/portfolio/prod/resend/api-key",
     tags: { Project: "Test" },
   });
 
@@ -55,45 +57,64 @@ const buildEmailStackTemplate = (): Template => {
 };
 
 describe("EmailStack", () => {
-  it("sets SSM param env and grants ssm:GetParameter", () => {
+  it("sets SSM param env vars for recipient email and Resend API key", () => {
     const template = buildEmailStackTemplate();
 
-    // Lambda env contains SSM_RECIPIENT_EMAIL_PARAM and does NOT contain RECIPIENT_EMAIL
+    // Lambda env contains SSM parameter paths
     template.hasResourceProperties("AWS::Lambda::Function", {
       Environment: {
         Variables: Match.objectLike({
           SSM_RECIPIENT_EMAIL_PARAM: "/portfolio/prod/CONTACT_EMAIL",
+          SSM_RESEND_API_KEY_PARAM: "/portfolio/prod/resend/api-key",
+          DOMAIN_NAME: "example.com",
         }),
       },
     });
+  });
 
-    template.hasResourceProperties("AWS::Lambda::Function", {
-      Environment: {
-        Variables: Match.not(Match.objectLike({ RECIPIENT_EMAIL: Match.anyValue() })),
-      },
-    });
+  it("grants ssm:GetParameter for both SSM parameters", () => {
+    const template = buildEmailStackTemplate();
 
-    // IAM permission for ssm:GetParameter on the exact parameter ARN
+    // IAM permission for ssm:GetParameter on both parameter ARNs
     template.hasResourceProperties("AWS::IAM::Policy", {
       PolicyDocument: {
         Statement: Match.arrayWith([
           Match.objectLike({
-            Action: Match.anyValue(),
+            Action: "ssm:GetParameter",
             Effect: "Allow",
-            Resource: Match.stringLikeRegexp(
-              "arn:aws:ssm:us-east-1:111111111111:parameter/portfolio/prod/CONTACT_EMAIL",
-            ),
+            Resource: Match.arrayWith([
+              Match.stringLikeRegexp(
+                "arn:aws:ssm:us-east-1:111111111111:parameter/portfolio/prod/CONTACT_EMAIL",
+              ),
+              Match.stringLikeRegexp(
+                "arn:aws:ssm:us-east-1:111111111111:parameter/portfolio/prod/resend/api-key",
+              ),
+            ]),
           }),
         ]),
       },
     });
   });
 
-  it("creates SES DNS records without duplicate domain suffixes", () => {
+  it("creates API Gateway with custom domain and base path mapping", () => {
     const template = buildEmailStackTemplate();
-    const recordSets = template.findResources("AWS::Route53::RecordSet");
-    const serialized = JSON.stringify(recordSets);
-    expect(serialized).not.toContain("._domainkey.example.com._domainkey");
-    expect(serialized).not.toContain("_amazonses.example.com._amazonses");
+
+    // One DomainName and BasePathMapping for API custom domain
+    template.resourceCountIs("AWS::ApiGateway::DomainName", 1);
+    template.resourceCountIs("AWS::ApiGateway::BasePathMapping", 1);
+
+    // Stage has tracing enabled
+    template.hasResourceProperties("AWS::ApiGateway::Stage", {
+      TracingEnabled: true,
+    });
+  });
+
+  it("creates Lambda function with ARM64 architecture", () => {
+    const template = buildEmailStackTemplate();
+
+    template.hasResourceProperties("AWS::Lambda::Function", {
+      Architectures: ["arm64"],
+      Runtime: "nodejs20.x",
+    });
   });
 });

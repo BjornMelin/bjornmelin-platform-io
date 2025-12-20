@@ -8,7 +8,7 @@ describe("constants", () => {
 
   it("has prod domain and email settings present", () => {
     expect(CONFIG.prod.domainName).toContain("bjornmelin.io");
-    expect(CONFIG.prod.email.sender).toMatch(/@bjornmelin\.io$/);
+    expect(CONFIG.prod.email.allowedOrigins).toContain("https://bjornmelin.io");
     expect(CONFIG.prod.alerts.emails.length).toBeGreaterThan(0);
   });
 });

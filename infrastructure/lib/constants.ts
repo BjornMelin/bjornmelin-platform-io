@@ -34,7 +34,6 @@ export const CONFIG = {
       emails: devAlertEmails,
     },
     email: {
-      sender: `no-reply@${DEV_DOMAIN}`,
       allowedOrigins: [
         `https://${DEV_DOMAIN}`,
         `https://www.${DEV_DOMAIN}`,
@@ -49,7 +48,6 @@ export const CONFIG = {
       emails: prodAlertEmails,
     },
     email: {
-      sender: `no-reply@${PROD_DOMAIN}`,
       allowedOrigins: [
         `https://${PROD_DOMAIN}`,
         `https://www.${PROD_DOMAIN}`,

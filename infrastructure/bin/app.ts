@@ -68,18 +68,14 @@ const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "pro
 monitoringStack.addDependency(storageStack);
 
 // Email Stack
-const emailConfig = CONFIG.prod.email;
-
 const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   env,
   domainName: CONFIG.prod.domainName,
   environment: CONFIG.prod.environment,
   hostedZone: dnsStack.hostedZone,
-  senderEmail: emailConfig.sender,
-  // Convert readonly config array to mutable array to satisfy EmailStackProps.
-  allowedOrigins: [...emailConfig.allowedOrigins],
-  // SSM parameter path for the recipient email; defaults to /portfolio/prod/CONTACT_EMAIL if omitted
-  // ssmRecipientEmailParam: "/portfolio/prod/CONTACT_EMAIL",
+  allowedOrigins: CONFIG.prod.email.allowedOrigins,
+  // SSM parameter paths for recipient email and Resend API key
+  // Defaults: /portfolio/prod/CONTACT_EMAIL and /portfolio/prod/resend/api-key
   tags: CONFIG.tags,
 });
 
