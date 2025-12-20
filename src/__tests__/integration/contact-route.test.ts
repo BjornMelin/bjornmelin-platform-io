@@ -177,6 +177,8 @@ describe("POST /api/contact (integration)", () => {
   it("throws at module load when CONTACT_EMAIL not configured", async () => {
     // CONTACT_EMAIL is now validated at module load time via env.mjs
     // Empty string fails the email validation
+    // Ensure validation is enforced even in CI where SKIP_ENV_VALIDATION is set.
+    vi.stubEnv("SKIP_ENV_VALIDATION", "");
     vi.stubEnv("CONTACT_EMAIL", "");
 
     await expect(import("@/app/api/contact/route")).rejects.toThrow(
