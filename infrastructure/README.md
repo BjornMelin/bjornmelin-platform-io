@@ -155,7 +155,7 @@ Create a **Sending Access** key in the Resend dashboard, then store it in SSM us
 bash scripts/ops/rotate-resend-sending-key.sh
 ```
 
-> Tip: The SSM value is a JSON blob (SecureString) so we can track rotation metadata (`version`, `rotatedAt`) alongside the key.
+> Tip: The SSM value is a JSON blob (SecureString) containing `{"apiKey":"re_xxx", "version":N, "rotatedAt":"..."}`. The Lambda parses this JSON and extracts the `apiKey` field. For backwards compatibility, plain API key strings are also accepted.
 
 ### Step 5: Deploy Infrastructure
 

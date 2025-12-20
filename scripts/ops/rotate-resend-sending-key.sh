@@ -29,10 +29,18 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --region)
       AWS_REGION="${2:-}"
+      if [[ -z "${AWS_REGION}" || "${AWS_REGION}" == --* ]]; then
+        echo "Error: --region requires a value" >&2
+        exit 1
+      fi
       shift 2
       ;;
     --param)
       PARAM_NAME="${2:-}"
+      if [[ -z "${PARAM_NAME}" || "${PARAM_NAME}" == --* ]]; then
+        echo "Error: --param requires a value" >&2
+        exit 1
+      fi
       shift 2
       ;;
     -h|--help)
@@ -55,7 +63,8 @@ if [[ -z "${NEW_API_KEY}" ]]; then
   exit 1
 fi
 
-CURRENT_JSON="$(aws ssm get-parameter --name "${PARAM_NAME}" --with-decryption --region "${AWS_REGION}" --query 'Parameter.Value' --output text)"
+# Handle first-time creation: if parameter doesn't exist, use empty JSON
+CURRENT_JSON="$(aws ssm get-parameter --name "${PARAM_NAME}" --with-decryption --region "${AWS_REGION}" --query 'Parameter.Value' --output text 2>/dev/null || echo '{}')"
 CURRENT_VERSION="$(jq -r '.version // 0' <<<"${CURRENT_JSON}")"
 CURRENT_DOMAIN="$(jq -r '.domain // ""' <<<"${CURRENT_JSON}")"
 CURRENT_FROM_EMAIL="$(jq -r '.fromEmail // ""' <<<"${CURRENT_JSON}")"

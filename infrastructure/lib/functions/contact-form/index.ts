@@ -31,12 +31,32 @@ async function resolveRecipientEmail(): Promise<string> {
 }
 
 /**
+ * Extracts the Resend API key from SSM parameter value.
+ * Supports both JSON format `{"apiKey":"re_xxx",...}` and plain string.
+ */
+function extractApiKey(rawValue: string): string {
+  try {
+    const parsed = JSON.parse(rawValue) as { apiKey?: unknown };
+    if (typeof parsed.apiKey === "string" && parsed.apiKey) {
+      return parsed.apiKey;
+    }
+  } catch {
+    // Not JSON - fall through to return raw value
+  }
+  return rawValue;
+}
+
+/**
  * Gets or creates a Resend client with API key from SSM.
  */
 async function getResendClient(): Promise<Resend> {
   const paramName = requireEnv("SSM_RESEND_API_KEY_PARAM");
-  const apiKey = await getParameter(paramName, true);
-  if (!apiKey) throw new Error(`Resend API key missing from SSM parameter: ${paramName}`);
+  const rawValue = await getParameter(paramName, true);
+  if (!rawValue) throw new Error(`Resend API key missing from SSM parameter: ${paramName}`);
+
+  const apiKey = extractApiKey(rawValue);
+  if (!apiKey)
+    throw new Error(`Resend API key missing 'apiKey' field in SSM parameter: ${paramName}`);
 
   if (resend && cachedResendApiKey === apiKey) return resend;
 
