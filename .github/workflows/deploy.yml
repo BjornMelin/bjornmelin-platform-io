@@ -62,11 +62,13 @@ jobs:
         id: stack-outputs
         continue-on-error: true
         run: |
+          # shellcheck disable=SC2016 # Backticks are JMESPath syntax, not command substitution
           BUCKET_NAME=$(aws cloudformation describe-stacks \
             --stack-name prod-portfolio-storage \
             --query 'Stacks[0].Outputs[?OutputKey==`WebsiteBucketName`].OutputValue' \
             --output text --region ${{ env.AWS_REGION }})
 
+          # shellcheck disable=SC2016
           DIST_ID=$(aws cloudformation describe-stacks \
             --stack-name prod-portfolio-storage \
             --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' \
