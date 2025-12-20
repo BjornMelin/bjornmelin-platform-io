@@ -1,31 +1,45 @@
 {
   "ci": {
     "collect": {
+      "staticDistDir": "./out",
       "numberOfRuns": 3,
       "url": [
-        "http://localhost:3000/",
-        "http://localhost:3000/about",
-        "http://localhost:3000/portfolio",
-        "http://localhost:3000/contact"
+        "/index.html",
+        "/about/index.html",
+        "/projects/index.html",
+        "/contact/index.html"
       ],
       "settings": {
         "preset": "desktop",
+        "chromeFlags": "--no-sandbox --disable-gpu --disable-dev-shm-usage",
         "throttling": {
           "cpuSlowdownMultiplier": 1
-        }
+        },
+        "maxWaitForLoad": 45000
       }
     },
     "assert": {
-      "preset": "lighthouse:no-pwa",
+      "preset": "lighthouse:recommended",
       "assertions": {
         "categories:performance": ["warn", { "minScore": 0.8 }],
         "categories:accessibility": ["error", { "minScore": 0.9 }],
         "categories:best-practices": ["warn", { "minScore": 0.8 }],
         "categories:seo": ["warn", { "minScore": 0.9 }],
         "first-contentful-paint": ["warn", { "maxNumericValue": 2000 }],
-        "largest-contentful-paint": ["warn", { "maxNumericValue": 3000 }],
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 2500 }],
         "cumulative-layout-shift": ["warn", { "maxNumericValue": 0.1 }],
-        "total-blocking-time": ["warn", { "maxNumericValue": 300 }]
+        "total-blocking-time": ["warn", { "maxNumericValue": 300 }],
+        "speed-index": ["warn", { "maxNumericValue": 3400 }],
+        "interactive": ["warn", { "maxNumericValue": 3800 }],
+        "resource-summary:script:size": ["warn", { "maxNumericValue": 500000 }],
+        "resource-summary:document:size": ["warn", { "maxNumericValue": 100000 }],
+        "resource-summary:font:size": ["warn", { "maxNumericValue": 100000 }],
+        "resource-summary:image:size": ["warn", { "maxNumericValue": 500000 }],
+        "resource-summary:third-party:count": ["warn", { "maxNumericValue": 10 }],
+        "dom-size": ["warn", { "maxNumericValue": 1500 }],
+        "offscreen-images": "off",
+        "uses-webp-images": "off",
+        "bf-cache": "off"
       }
     },
     "upload": {
