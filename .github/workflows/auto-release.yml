@@ -138,7 +138,7 @@ jobs:
           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
 
       - name: Open Release PR
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         if: steps.guard.outputs.skip != 'true'
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
