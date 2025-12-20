@@ -8,12 +8,8 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Setup Node.js from .nvmrc
-      uses: actions/setup-node@v6
-      with:
-        node-version-file: .nvmrc
-        cache: pnpm
-
+    # IMPORTANT: Corepack must enable pnpm BEFORE actions/setup-node runs with cache: pnpm
+    # because setup-node needs to run `pnpm store path` to determine the cache directory
     - name: Enable Corepack and activate pinned pnpm
       shell: bash
       run: |
@@ -33,6 +29,12 @@ runs:
           npm install -g "${PM%@*}"
         fi
         pnpm --version
+
+    - name: Setup Node.js from .nvmrc (with pnpm cache)
+      uses: actions/setup-node@v6
+      with:
+        node-version-file: .nvmrc
+        cache: pnpm
 
     - name: Install dependencies
       if: ${{ inputs.install == 'true' }}
