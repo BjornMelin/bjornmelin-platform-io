@@ -97,15 +97,29 @@ describe("utils/ssm getParameter", () => {
 
     await getParameter("/path1", false, { cacheTtlMs: 100 });
     await getParameter("/path2", false, { cacheTtlMs: 200 });
+    expect(mockSend).toHaveBeenCalledTimes(2);
 
-    // After 150ms, path1 should be expired
+    // After 150ms, path1 should be expired but path2 still valid
     vi.setSystemTime(now + 150);
 
-    // Calling getParameter triggers pruneExpiredEntries
+    // Calling getParameter triggers pruneExpiredEntries which removes /path1
     await getParameter("/path3", false, { cacheTtlMs: 1000 });
+    expect(mockSend).toHaveBeenCalledTimes(3);
 
-    // path1 should have been fetched again if requested (since it was pruned)
-    _resetForTesting();
+    // Clear call count to verify /path1 was pruned
+    mockSend.mockClear();
+
+    // /path1 should require a fresh fetch since it was pruned
+    await getParameter("/path1", false, { cacheTtlMs: 100 });
+    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend).toHaveBeenCalledWith(
+      expect.objectContaining({ _input: { Name: "/path1", WithDecryption: false } }),
+    );
+
+    // /path2 should still be cached (not expired yet at 150ms with 200ms TTL)
+    mockSend.mockClear();
+    await getParameter("/path2", false, { cacheTtlMs: 200 });
+    expect(mockSend).not.toHaveBeenCalled();
   });
 
   it("returns empty string when parameter is missing", async () => {
