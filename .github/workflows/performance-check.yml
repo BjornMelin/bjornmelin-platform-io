@@ -12,6 +12,13 @@ permissions:
   pull-requests: write
   issues: write
 
+env:
+  SKIP_ENV_VALIDATION: 'true'
+
+concurrency:
+  group: performance-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   lighthouse:
     name: Lighthouse CI
@@ -19,7 +26,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install pnpm (action)
         uses: pnpm/action-setup@v4
@@ -32,14 +39,11 @@ jobs:
       - name: Build application
         run: pnpm build
         env:
-          NEXT_PUBLIC_BASE_URL: http://localhost:3000
-          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_BASE_URL: https://bjornmelin.io
+          NEXT_PUBLIC_APP_URL: https://bjornmelin.io
           AWS_REGION: us-east-1
           CONTACT_EMAIL: test@example.com
           NODE_ENV: production
-
-      - name: Serve static site
-        run: npx serve@latest out &
 
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v12
@@ -86,13 +90,12 @@ jobs:
             }
 
   bundle-size:
-    needs: lighthouse
     name: Bundle Size Check
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install pnpm (action)
         uses: pnpm/action-setup@v4
@@ -104,46 +107,39 @@ jobs:
 
       - name: Build and analyze bundle
         env:
-          NEXT_PUBLIC_BASE_URL: http://localhost:3000
-          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_BASE_URL: https://bjornmelin.io
+          NEXT_PUBLIC_APP_URL: https://bjornmelin.io
           AWS_REGION: us-east-1
           CONTACT_EMAIL: test@example.com
         run: |
           pnpm build
+
+          # Generate bundle report
           {
             echo "## Bundle Size Report"
             echo ""
+            echo "### Static Output"
+            echo "\`\`\`"
+            du -sh out/
+            echo "\`\`\`"
+            echo ""
+            echo "### JavaScript Bundles (Top 20 by size)"
             echo "| File | Size | Gzipped |"
             echo "|------|------|---------|"
           } > bundle-report.md
 
-          # Find and measure JS bundles
-          find .next/static/chunks -name "*.js" -type f | while read -r file; do
-            size=$(du -h "$file" | cut -f1)
-            gzipped=$(gzip -c "$file" | wc -c | numfmt --to=iec)
-            filename=$(basename "$file")
-            echo "| $filename | $size | $gzipped |" >> bundle-report.md
-          done
-          {
-            echo "## Bundle Size Report"
-            echo ""
-            echo "| File | Size | Gzipped |"
-            echo "|------|------|---------|"
-          } > bundle-report.md
-
-          # Find and measure JS bundles
-          find .next/static/chunks -name "*.js" -type f | while read -r file; do
-            size=$(du -h "$file" | cut -f1)
-            gzipped=$(gzip -c "$file" | wc -c | numfmt --to=iec)
-            filename=$(basename "$file")
-            echo "| $filename | $size | $gzipped |" >> bundle-report.md
-          done
+          # Find and measure JS bundles (sorted by size, top 20)
+          find out/_next/static -name "*.js" -type f -exec du -b {} \; 2>/dev/null | \
+            sort -rn | head -20 | while read -r bytes file; do
+              size=$(numfmt --to=iec "$bytes")
+              gzipped=$(gzip -c "$file" | wc -c | numfmt --to=iec)
+              filename=$(basename "$file")
+              echo "| \`$filename\` | $size | $gzipped |" >> bundle-report.md
+            done
 
       - name: Upload bundle analysis
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: bundle-analysis
-          path: |
-            bundle-report.md
-            .next/analyze/
+          path: bundle-report.md
           retention-days: 7

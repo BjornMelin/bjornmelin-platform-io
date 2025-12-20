@@ -149,13 +149,15 @@ pnpm destroy:all
 2. **Monthly:**
    - Review access logs
    - Verify backup retention
-- Check cost optimization
+   - Check cost optimization
 
 ## Tests
 
 - Runner: Vitest (Node environment). No AWS account or credentials are required.
 - Location: `infrastructure/test/*.test.ts`
-- Why it’s fast: tests mock `route53.HostedZone.fromLookup` and stub `aws-cdk-lib/aws-lambda-nodejs.NodejsFunction` to avoid AWS lookups and esbuild bundling.
+- Why it’s fast:
+  - Tests mock `route53.HostedZone.fromLookup` and stub `aws-cdk-lib/aws-lambda-nodejs.NodejsFunction`
+    to avoid AWS lookups and esbuild bundling.
 
 Commands
 
