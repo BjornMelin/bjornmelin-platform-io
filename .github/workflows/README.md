@@ -71,15 +71,40 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 - **labeler.yml** - Path-based labeling configuration
 - **lighthouse/lighthouserc.json** - Lighthouse CI configuration
 
+## AWS OIDC Authentication
+
+These workflows use GitHub OIDC for keyless AWS authentication, eliminating long-lived credentials.
+
+### Setup Requirements
+
+1. **Create OIDC Provider** (once per AWS account):
+   ```bash
+   aws iam create-open-id-connect-provider \
+     --url https://token.actions.githubusercontent.com \
+     --client-id-list sts.amazonaws.com \
+     --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
+   ```
+
+2. **Create IAM Role** with OIDC trust policy (see [infrastructure/README.md](../../infrastructure/README.md))
+
+3. **Add Role ARN to GitHub Secrets** as `AWS_DEPLOY_ROLE_ARN`
+
+### Workflow Credentials Reference
+
+| Workflow | Secret Used | Purpose |
+|----------|-------------|---------|
+| `deploy.yml` | `secrets.AWS_DEPLOY_ROLE_ARN` | Production deployment |
+| `infrastructure.yml` | `secrets.AWS_DEPLOY_ROLE_ARN` | CDK stack deployment |
+| `manual-deploy.yml` | `secrets.AWS_DEPLOY_ROLE_ARN` | Manual deployment |
+
 ## Environment Variables & Secrets
 
 Required secrets:
 
 - `GITHUB_TOKEN` - Automatically provided by GitHub
 - `CODECOV_TOKEN` - For code coverage reporting (optional)
-  
-- `AWS_DEPLOY_ROLE_ARN` - For AWS deployments (if using)
-- `AWS_REGION` - Deployment region (default: `us-east-1`)
+- `AWS_DEPLOY_ROLE_ARN` - IAM role ARN for OIDC authentication (required for deployment)
+- `OPENAI_API_KEY` - For auto-release workflow (optional)
 
 ## Branch Protection Settings
 

@@ -1,5 +1,110 @@
 # Infrastructure Documentation
 
+## First-Time Deployment Setup
+
+This section guides you through setting up AWS infrastructure from scratch for a fresh clone or fork of this repository.
+
+### Prerequisites
+
+- AWS account with admin access
+- Domain registered in Route 53 (or DNS delegated to Route 53)
+- AWS CLI installed and configured (`aws configure`)
+- Node.js 20+ and pnpm installed
+- GitHub repository with this code
+
+### Step 1: Create GitHub OIDC Provider in AWS
+
+Run once per AWS account to enable keyless GitHub Actions authentication:
+
+```bash
+aws iam create-open-id-connect-provider \
+  --url https://token.actions.githubusercontent.com \
+  --client-id-list sts.amazonaws.com \
+  --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
+```
+
+### Step 2: Create IAM Role for GitHub Actions
+
+Create a role named `prod-portfolio-deploy` with the following trust policy (replace `YOUR_ACCOUNT_ID` and `YOUR_ORG/YOUR_REPO`):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {
+      "Federated": "arn:aws:iam::YOUR_ACCOUNT_ID:oidc-provider/token.actions.githubusercontent.com"
+    },
+    "Action": "sts:AssumeRoleWithWebIdentity",
+    "Condition": {
+      "StringEquals": {
+        "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+      },
+      "StringLike": {
+        "token.actions.githubusercontent.com:sub": "repo:YOUR_ORG/YOUR_REPO:*"
+      }
+    }
+  }]
+}
+```
+
+Attach policy: `AdministratorAccess` (or scoped CDK/S3/CloudFront permissions for least privilege).
+
+### Step 3: Configure GitHub Repository
+
+Navigate to your repository Settings → Secrets and variables → Actions.
+
+**Secrets** (required):
+
+| Secret | Value |
+|--------|-------|
+| `AWS_DEPLOY_ROLE_ARN` | `arn:aws:iam::YOUR_ACCOUNT_ID:role/prod-portfolio-deploy` |
+| `OPENAI_API_KEY` | OpenAI key for auto-release (optional) |
+
+**Variables** (required):
+
+| Variable | Value |
+|----------|-------|
+| `NEXT_PUBLIC_BASE_URL` | `https://your-domain.com` |
+| `NEXT_PUBLIC_API_URL` | `https://api.your-domain.com` |
+| `NEXT_PUBLIC_APP_URL` | `https://your-domain.com` |
+| `CONTACT_EMAIL` | `contact@your-domain.com` (build-time validation) |
+
+### Step 4: Create AWS SSM Parameter for Contact Email
+
+The contact form Lambda reads the recipient email from SSM at runtime:
+
+```bash
+aws ssm put-parameter \
+  --name "/portfolio/prod/CONTACT_EMAIL" \
+  --value "your-email@gmail.com" \
+  --type "SecureString" \
+  --region us-east-1
+```
+
+Or use the helper script: `./scripts/ops/setup-aws-ssm.sh your-email@gmail.com`
+
+### Step 5: Deploy Infrastructure
+
+```bash
+cd infrastructure
+pnpm install
+pnpm cdk deploy prod-portfolio-dns --require-approval never
+pnpm cdk deploy prod-portfolio-storage --require-approval never
+pnpm cdk deploy prod-portfolio-email --require-approval never
+pnpm cdk deploy prod-portfolio-monitoring --require-approval never
+```
+
+### Step 6: Deploy Application
+
+Push to `main` branch or run manually:
+
+```bash
+gh workflow run deploy.yml
+```
+
+---
+
 ## Stack Architecture
 
 ### Overview

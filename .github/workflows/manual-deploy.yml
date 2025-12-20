@@ -27,6 +27,9 @@ permissions:
   deployments: write
   id-token: write
 
+env:
+  AWS_REGION: us-east-1
+
 jobs:
   validate:
     name: Validate Deployment
@@ -108,7 +111,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           role-session-name: github-actions-manual-deploy
-          aws-region: us-east-1
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy to environment
         run: |
