@@ -1,7 +1,8 @@
 import "@testing-library/jest-dom/vitest";
 
 import { cleanup } from "@testing-library/react";
-import { afterEach, beforeEach, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
+import { server } from "@/mocks/node";
 
 const defaultEnv: Record<string, string> = {
   AWS_REGION: "us-east-1",
@@ -33,6 +34,14 @@ if (typeof window !== "undefined" && !("matchMedia" in window)) {
   });
 }
 
+/**
+ * Start MSW server before all tests
+ * Use 'error' to catch any missing handlers
+ */
+beforeAll(() => {
+  server.listen({ onUnhandledRequest: "error" });
+});
+
 beforeEach(() => {
   Object.entries(defaultEnv).forEach(([key, value]) => {
     process.env[key] = value;
@@ -40,10 +49,18 @@ beforeEach(() => {
 });
 
 /**
- * Ensure isolation by clearing mocks and DOM state between specs.
+ * Ensure isolation by clearing mocks, MSW handlers, and DOM state between specs.
  */
 afterEach(() => {
   cleanup();
+  server.resetHandlers();
   vi.clearAllMocks();
   vi.resetAllMocks();
+});
+
+/**
+ * Clean up MSW server after all tests
+ */
+afterAll(() => {
+  server.close();
 });
