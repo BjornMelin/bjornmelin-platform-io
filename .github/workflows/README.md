@@ -49,9 +49,8 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
    - Features: Path-based labels, conventional commit labels
 
 10. **stale.yml** - Manage stale issues and PRs
-
-- Runs on: Daily schedule
-- Features: Auto-close inactive items, configurable timelines
+    - Runs on: Daily schedule
+    - Features: Auto-close inactive items, configurable timelines
 
 11. **link-check.yml** - Check for broken links
     - Runs on: Push, PRs, monthly schedule
@@ -59,7 +58,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 ### Performance
 
-11. **performance-check.yml** - Performance monitoring
+12. **performance-check.yml** - Performance monitoring
     - Runs on: Push to main, PRs
     - Features: Lighthouse CI, bundle size analysis
     - Metrics: Performance, accessibility, SEO, best practices
@@ -78,6 +77,7 @@ These workflows use GitHub OIDC for keyless AWS authentication, eliminating long
 ### Setup Requirements
 
 1. **Create OIDC Provider** (once per AWS account):
+
    ```bash
    aws iam create-open-id-connect-provider \
      --url https://token.actions.githubusercontent.com \
@@ -92,7 +92,7 @@ These workflows use GitHub OIDC for keyless AWS authentication, eliminating long
 ### Workflow Credentials Reference
 
 | Workflow | Secret Used | Purpose |
-|----------|-------------|---------|
+| :--- | :--- | :--- |
 | `deploy.yml` | `secrets.AWS_DEPLOY_ROLE_ARN` | Production deployment |
 | `infrastructure.yml` | `secrets.AWS_DEPLOY_ROLE_ARN` | CDK stack deployment |
 | `manual-deploy.yml` | `secrets.AWS_DEPLOY_ROLE_ARN` | Manual deployment |

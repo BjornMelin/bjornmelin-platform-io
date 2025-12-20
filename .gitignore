@@ -111,3 +111,4 @@ test-results/
 
 # Agent Logs
 agent-logs/
+.archive/

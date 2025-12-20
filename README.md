@@ -33,7 +33,7 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 
 ### Platform
 
-- **AWS Infrastructure**: S3, CloudFront, Route 53, ACM, Lambda, SES via AWS CDK
+- **AWS Infrastructure**: S3, CloudFront, Route 53, ACM, Lambda via AWS CDK
 - **CI/CD**: GitHub Actions with OIDC-based AWS role assumption
 - **Multi-Environment**: Development, staging, and production configurations
 - **Static Export**: Pre-rendered HTML with optimized assets
@@ -89,7 +89,7 @@ graph TB
 
     subgraph "API Layer"
         LAMBDA[Contact Form Lambda]
-        SES[Amazon SES]
+        RESEND[Resend API]
     end
 
     subgraph "DNS & SSL"
@@ -98,7 +98,7 @@ graph TB
     end
 
     CF --> LAMBDA
-    LAMBDA --> SES
+    LAMBDA --> RESEND
     R53 --> CF
     ACM --> CF
 ```
@@ -110,12 +110,12 @@ sequenceDiagram
     participant User
     participant Frontend
     participant Lambda
-    participant SES
+    participant Resend
 
     User->>Frontend: Submit Contact Form
     Frontend->>Lambda: POST /api/contact
-    Lambda->>SES: Send Email
-    SES-->>Lambda: Email Sent
+    Lambda->>Resend: Send Email
+    Resend-->>Lambda: Email Sent
     Lambda-->>Frontend: Success Response
     Frontend-->>User: Show Success Message
 ```
@@ -179,7 +179,7 @@ bjornmelin-platform-io/
 - **Infrastructure**: AWS CDK for resource provisioning
 - **CI/CD**: GitHub Actions for automated deployments
 - **CDN**: CloudFront with Route 53 DNS
-- **API**: Lambda function with SES for contact form (infrastructure-deployed)
+- **API**: Lambda function with Resend for contact form (infrastructure-deployed)
 
 ## Getting Started
 
@@ -260,7 +260,8 @@ Infrastructure:
     - Route 53
     - ACM
     - Lambda
-    - SES
+  Email:
+    - Resend
 
 Development:
   Tools:
@@ -279,10 +280,10 @@ Development:
 - **ACM**: SSL/TLS certificate management
 - **S3**: Static asset hosting
 
-### Compute and Messaging
+### Compute and Email
 
 - **Lambda**: Contact form handler
-- **SES**: Email delivery
+- **Resend**: Email delivery (via API)
 
 ### Operations
 
