@@ -3,6 +3,7 @@ import * as cdk from "aws-cdk-lib";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as iam from "aws-cdk-lib/aws-iam";
+import * as kms from "aws-cdk-lib/aws-kms";
 import * as lambdaCore from "aws-cdk-lib/aws-lambda";
 import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
@@ -161,6 +162,16 @@ export class EmailStack extends cdk.Stack {
         ],
       }),
     );
+
+    if (props.environment === "prod") {
+      // SecureString parameters encrypted with a customer-managed KMS key require explicit decrypt permission.
+      // The production account uses `alias/portfolio-email-service` for these parameters.
+      kms.Alias.fromAliasName(
+        this,
+        "PortfolioEmailServiceParameterKey",
+        "alias/portfolio-email-service",
+      ).grantDecrypt(this.emailFunction);
+    }
 
     // Add tags
     cdk.Tags.of(this).add("Stack", "Email");
