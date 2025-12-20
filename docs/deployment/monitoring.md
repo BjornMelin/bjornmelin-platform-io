@@ -29,7 +29,7 @@ export class MonitoringStack extends Stack {
 
 ### Infrastructure Metrics
 
-- AWS SES email delivery
+- Email delivery (via Resend API)
 - S3 bucket operations
 - CDK stack events
 - Resource utilization
@@ -67,12 +67,12 @@ const logLevels = {
 ### Email Delivery Alerts
 
 ```typescript
-// SES bounce rate alarm
-new cloudwatch.Alarm(this, "SESBounceRateAlarm", {
-  metric: sesMetrics.bounceRate,
+// Email delivery alarm (Resend metrics via custom CloudWatch)
+new cloudwatch.Alarm(this, "EmailDeliveryAlarm", {
+  metric: emailMetrics.failureRate,
   threshold: 5,
   evaluationPeriods: 1,
-  alarmDescription: "Email bounce rate exceeded threshold",
+  alarmDescription: "Email delivery failure rate exceeded threshold",
 });
 ```
 
@@ -163,7 +163,7 @@ new cloudwatch.Alarm(this, "HealthCheckAlarm", {
 ### Resource Health
 
 - S3 bucket availability
-- SES service status
+- Resend API status
 - API endpoint status
 - CDK stack status
 

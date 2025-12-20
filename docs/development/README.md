@@ -40,8 +40,8 @@ Development documentation for the bjornmelin-platform-io project.
 #### Infrastructure
 
 - AWS CDK
-- AWS SES
 - AWS S3
+- Resend (email delivery)
 
 #### Development Tools
 

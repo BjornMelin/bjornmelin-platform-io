@@ -17,9 +17,15 @@ api/
 
 ### Email Service
 
-- Implementation: `src/lib/services/email.ts`
-- Uses AWS SES for email delivery
+- Implementation: `src/lib/email/`
+- Uses Resend for email delivery
 - Handles contact form submissions
+
+### Security Services
+
+- Rate limiting: `src/lib/security/rate-limiter.ts`
+- Honeypot detection: `src/lib/security/honeypot.ts`
+- Time-based validation: `src/lib/security/time-check.ts`
 
 ### Error Handling
 
@@ -41,15 +47,17 @@ contact.ts:
 - name validation
 - email format validation
 - message length requirements
+- honeypot field (optional, must be empty)
+- formLoadTime (optional, for timing validation)
 ```
 
-## AWS Integration
+## Email Integration
 
-### SES Configuration
+### Resend Configuration
 
-- Email sending capabilities
-- Managed through AWS CDK
-- Environment-specific settings
+- Email sending capabilities via Resend API
+- API key stored in AWS SSM Parameter Store
+- Lambda function reads API key at runtime
 
 ### Infrastructure
 
@@ -62,7 +70,9 @@ contact.ts:
 ### Request Validation
 
 - Input sanitization
-- Rate limiting
+- Rate limiting (5 requests/minute per IP)
+- Honeypot fields for bot detection
+- Time-based validation (3 second minimum)
 - CORS configuration
 
 ### Environment Variables
@@ -90,7 +100,7 @@ contact.ts:
 ### Local Development
 
 - Environment setup instructions in `development/getting-started.md`
-- Local AWS credential configuration
+- Local Resend API key configuration
 - Environment variable management
 
 ### Testing

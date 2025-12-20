@@ -63,7 +63,7 @@ AWS_REGION=us-east-1
 | Parameter | Type | Purpose |
 |-----------|------|---------|
 | `/portfolio/prod/CONTACT_EMAIL` | SecureString | Contact form recipient email |
-| `/portfolio/prod/resend/api-key` | SecureString | Resend API key (optional) |
+| `/portfolio/prod/resend/api-key` | SecureString | Resend API key for email delivery |
 
 ### Local Development (.env.local)
 
