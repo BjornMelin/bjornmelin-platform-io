@@ -51,6 +51,7 @@
         "image-delivery-insight": "off",
         "lcp-discovery-insight": "off",
         "render-blocking-insight": "off",
+        "legacy-javascript-insight": "off",
         "uses-webp-images": "off",
         "lcp-lazy-loaded": "off",
         "bf-cache": "off",
