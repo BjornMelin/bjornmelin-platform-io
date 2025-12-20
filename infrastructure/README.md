@@ -14,18 +14,25 @@ This section guides you through setting up AWS infrastructure from scratch for a
 
 ### Step 1: Create GitHub OIDC Provider in AWS
 
+> **Note:** This is a one-time prerequisite that must be completed before CDK deployment. The CDK stacks assume the OIDC provider already exists.
+
 Run once per AWS account to enable keyless GitHub Actions authentication:
 
 ```bash
 aws iam create-open-id-connect-provider \
   --url https://token.actions.githubusercontent.com \
-  --client-id-list sts.amazonaws.com \
-  --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
+  --client-id-list sts.amazonaws.com
 ```
+
+> **Note:** The `--thumbprint-list` parameter is no longer required. Since July 2023, AWS automatically retrieves and trusts GitHub's root certificate authorities.
 
 ### Step 2: Create IAM Role for GitHub Actions
 
-Create a role named `prod-portfolio-deploy` with the following trust policy (replace `YOUR_ACCOUNT_ID` and `YOUR_ORG/YOUR_REPO`):
+Create a role named `prod-portfolio-deploy` with the following trust policy:
+
+> **Placeholders to replace:**
+> - `YOUR_ACCOUNT_ID`: Your 12-digit AWS account ID
+> - `YOUR_ORG/YOUR_REPO`: Your GitHub username or organization name, followed by the repository name (e.g., `BjornMelin/bjornmelin-platform-io`)
 
 ```json
 {
@@ -48,7 +55,23 @@ Create a role named `prod-portfolio-deploy` with the following trust policy (rep
 }
 ```
 
-Attach policy: `AdministratorAccess` (or scoped CDK/S3/CloudFront permissions for least privilege).
+**Attach IAM policy:** Use scoped CDK/S3/CloudFront permissions (recommended for production). For initial setup/testing only, `AdministratorAccess` may be used temporarily but should be replaced with least-privilege permissions before production use.
+
+<details>
+<summary>Example least-privilege policy for CDK deployments</summary>
+
+The role needs permissions for:
+- CloudFormation (create/update/delete stacks)
+- S3 (create buckets, manage objects)
+- CloudFront (create/update distributions)
+- Route 53 (manage DNS records)
+- ACM (request/validate certificates)
+- IAM (create roles for Lambda)
+- Lambda (deploy functions)
+- SSM (read parameters)
+
+See [AWS CDK Bootstrap Permissions](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) for guidance on minimal permissions.
+</details>
 
 ### Step 3: Configure GitHub Repository
 
@@ -94,6 +117,8 @@ pnpm cdk deploy prod-portfolio-storage --require-approval never
 pnpm cdk deploy prod-portfolio-email --require-approval never
 pnpm cdk deploy prod-portfolio-monitoring --require-approval never
 ```
+
+> **Tip:** The `--require-approval never` flag bypasses CDK's change review prompts. For first-time deployments, consider running `pnpm cdk diff <stack-name>` first to review changes, or omit the flag to get interactive approval prompts. Keep `--require-approval never` primarily for automated CI/CD pipelines.
 
 ### Step 6: Deploy Application
 

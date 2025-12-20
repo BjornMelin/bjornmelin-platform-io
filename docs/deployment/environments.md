@@ -73,6 +73,10 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 NEXT_PUBLIC_API_URL=http://localhost:3000/api
 CONTACT_EMAIL=test@example.com
+
+# Optional: For testing email functionality locally
+# RESEND_API_KEY=re_xxxxxxxxx
+# EMAIL_FROM=Contact Form <noreply@yourdomain.com>
 ```
 
 ### Optional Variables

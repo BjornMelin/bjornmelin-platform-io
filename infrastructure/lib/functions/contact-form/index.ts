@@ -186,11 +186,19 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
   }
 
-  try {
-    if (!event.body) {
-      throw new Error("Missing request body");
-    }
+  // Check for missing body before try block (client error, not server error)
+  if (!event.body) {
+    return {
+      statusCode: 400,
+      headers: corsHeaders,
+      body: JSON.stringify({
+        error: "Invalid request",
+        message: "Missing request body",
+      }),
+    };
+  }
 
+  try {
     const data: ContactFormData = JSON.parse(event.body);
     const validationError = validateInput(data);
 

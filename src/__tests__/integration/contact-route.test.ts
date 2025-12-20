@@ -89,7 +89,7 @@ describe("POST /api/contact (integration)", () => {
     expect(data.error).toContain("Too many requests");
   });
 
-  it("returns 400 when honeypot field is filled (bot detected)", async () => {
+  it("returns 400 when honeypot field is filled (schema validation rejects non-empty)", async () => {
     const sendSpy = vi.fn().mockResolvedValue(undefined);
     vi.doMock("@/lib/email", () => ({
       sendContactEmail: sendSpy,

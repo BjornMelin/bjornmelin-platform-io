@@ -69,6 +69,8 @@ describe("checkRateLimit", () => {
     for (let i = 0; i < 5; i++) {
       expect(checkRateLimit("test-ip")).toBe(true);
     }
+    // Verify 6th request is blocked again
+    expect(checkRateLimit("test-ip")).toBe(false);
   });
 });
 

@@ -63,7 +63,9 @@ export async function POST(request: Request) {
           email: validatedData.email,
           message: validatedData.message,
         },
-        from: env.EMAIL_FROM ?? "Contact Form <noreply@bjornmelin.io>",
+        from:
+          env.EMAIL_FROM ??
+          `Contact Form <noreply@${env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, "") ?? "bjornmelin.io"}>`,
         to: CONTACT_EMAIL,
       });
     } catch (error) {

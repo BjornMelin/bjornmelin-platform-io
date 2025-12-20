@@ -13,6 +13,7 @@ vi.mock("@/lib/email/resend-client", () => ({
 describe("sendContactEmail", () => {
   beforeEach(() => {
     mockSend.mockReset();
+    vi.resetModules();
   });
 
   it("calls Resend with correct parameters", async () => {
@@ -83,5 +84,7 @@ describe("sendContactEmail", () => {
         to: "recipient@example.com",
       }),
     ).resolves.toBeUndefined();
+
+    expect(mockSend).toHaveBeenCalledOnce();
   });
 });

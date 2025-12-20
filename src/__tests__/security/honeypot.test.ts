@@ -21,10 +21,11 @@ describe("isHoneypotTriggered", () => {
     expect(isHoneypotTriggered("spam@example.com")).toBe(true);
   });
 
-  it("returns true for whitespace-only string", () => {
-    // Whitespace is still a non-empty string, so it triggers
-    expect(isHoneypotTriggered(" ")).toBe(true);
-    expect(isHoneypotTriggered("   ")).toBe(true);
-    expect(isHoneypotTriggered("\t")).toBe(true);
+  it("returns false for whitespace-only string", () => {
+    // Whitespace-only strings are treated as empty to avoid false positives
+    // from accidental spaces in legitimate form submissions
+    expect(isHoneypotTriggered(" ")).toBe(false);
+    expect(isHoneypotTriggered("   ")).toBe(false);
+    expect(isHoneypotTriggered("\t")).toBe(false);
   });
 });

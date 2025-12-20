@@ -40,7 +40,7 @@
     "@aws-sdk/client-ssm": "3.913.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "^10.4.0",
-    "resend": "^4.0.0",
+    "resend": "^4.1.0",
     "source-map-support": "^0.5.21"
   }
 }

@@ -20,7 +20,8 @@ function getDomain(domain?: string): string {
  * @returns Plain text email content.
  */
 export function createContactEmailText(options: EmailTemplateOptions): string {
-  const { data, submittedAt = new Date() } = options;
+  const { data, submittedAt = new Date(), domain } = options;
+  const siteDomain = getDomain(domain);
   return `
 New Contact Form Submission
 
@@ -32,6 +33,7 @@ ${data.message}
 
 ---
 Submitted at: ${submittedAt.toISOString()}
+Sent from: ${siteDomain}
   `.trim();
 }
 

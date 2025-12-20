@@ -112,7 +112,7 @@ describe("contact-form Lambda handler", () => {
     expect(result.statusCode).toBe(400);
   });
 
-  it("returns 500 for missing request body", async () => {
+  it("returns 400 for missing request body", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 
     const event = {
@@ -123,7 +123,7 @@ describe("contact-form Lambda handler", () => {
 
     // @ts-expect-error - simplified event for testing
     const result = await mod.handler(event);
-    expect(result.statusCode).toBe(500);
+    expect(result.statusCode).toBe(400);
     const body = JSON.parse(result.body);
     expect(body.message).toContain("Missing request body");
   });

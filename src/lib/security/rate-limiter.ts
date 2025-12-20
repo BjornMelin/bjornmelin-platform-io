@@ -27,7 +27,7 @@ let cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
  */
 function cleanupExpiredEntries(): void {
   const now = Date.now();
-  for (const [ip, entry] of Array.from(rateLimitMap.entries())) {
+  for (const [ip, entry] of rateLimitMap) {
     if (now > entry.resetTime) {
       rateLimitMap.delete(ip);
     }

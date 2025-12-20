@@ -14,5 +14,5 @@
  */
 export function isHoneypotTriggered(honeypot?: string | null): boolean {
   // If honeypot has any value, it was filled by a bot
-  return typeof honeypot === "string" && honeypot.length > 0;
+  return typeof honeypot === "string" && honeypot.trim().length > 0;
 }

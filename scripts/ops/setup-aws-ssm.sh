@@ -45,9 +45,20 @@ AWS_REGION="${AWS_REGION:-us-east-1}"
 PARAM_NAME="${PARAM_PATH}/CONTACT_EMAIL"
 
 # Validate email format (basic check)
-if [[ ! "$EMAIL" =~ ^[^@]+@[^@]+\.[^@]+$ ]]; then
+if [[ ! "$EMAIL" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
   echo "Error: Invalid email format: $EMAIL" >&2
   exit 1
+fi
+
+# Check if parameter already exists and warn
+if aws ssm get-parameter --name "$PARAM_NAME" --region "$AWS_REGION" &>/dev/null; then
+  echo "Warning: Parameter $PARAM_NAME already exists and will be overwritten." >&2
+  read -p "Continue? (y/N): " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Aborted." >&2
+    exit 1
+  fi
 fi
 
 echo "Creating SSM parameter..."
