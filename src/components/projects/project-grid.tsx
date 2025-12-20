@@ -68,7 +68,7 @@ export function ProjectGrid({ projects, className }: ProjectGridProps) {
               setFilters((prev) => ({ ...prev, sortBy: value }))
             }
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px]" aria-label="Sort projects by">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>

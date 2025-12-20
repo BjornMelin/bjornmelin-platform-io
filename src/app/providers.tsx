@@ -1,15 +1,18 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LazyMotion } from "framer-motion";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
+/**
+ * Lazy-loaded framer-motion features for reduced bundle size (~32KB → ~5KB).
+ * Uses domAnimation which includes opacity, transform, and layout animations.
+ */
+const loadFeatures = () => import("@/lib/framer-features").then((mod) => mod.domAnimation());
 
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <LazyMotion features={loadFeatures} strict>
       <NextThemesProvider
         attribute="class"
         defaultTheme="system"
@@ -19,6 +22,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
         {children}
         <Toaster />
       </NextThemesProvider>
-    </QueryClientProvider>
+    </LazyMotion>
   );
 }
