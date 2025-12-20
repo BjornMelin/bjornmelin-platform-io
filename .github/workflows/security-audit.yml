@@ -6,12 +6,10 @@ on:
   pull_request:
     branches: [main, develop]
   schedule:
-    - cron: '0 8 1 * *' # Monthly on the 1st at 08:00 UTC
+    - cron: '0 8 22 * *' # Monthly on the 22nd at 08:00 UTC
 
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
 
 jobs:
   audit:
@@ -21,9 +19,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -45,6 +40,9 @@ jobs:
     name: Dependency Review
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
     
     steps:
       - name: Checkout code
@@ -55,4 +53,4 @@ jobs:
         with:
           fail-on-severity: moderate
           deny-licenses: GPL-3.0, AGPL-3.0, LGPL-3.0
-          comment-summary-in-pr: always
+          comment-summary-in-pr: on-failure

@@ -34,13 +34,8 @@ jobs:
           exempt-issue-labels: 'pinned,security,bug,feature,documentation'
           
           # PR settings
-          stale-pr-message: |
-            This pull request has been automatically marked as stale because it has not had recent activity. 
-            It will be closed if no further activity occurs within 14 days. 
-            If you're still working on this, please add a comment or push new commits.
-          close-pr-message: |
-            This pull request has been automatically closed due to inactivity. 
-            If you'd like to continue working on this, please reopen the PR and rebase on the latest main branch.
+          stale-pr-message: "Marking this PR as stale due to inactivity. Comment or push new commits to keep it open."
+          close-pr-message: ''
           days-before-pr-stale: 14
           days-before-pr-close: 14
           stale-pr-label: 'stale'

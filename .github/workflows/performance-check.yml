@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
-  issues: write
 
 env:
   SKIP_ENV_VALIDATION: 'true'
@@ -23,13 +21,14 @@ jobs:
   lighthouse:
     name: Lighthouse CI
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -46,48 +45,140 @@ jobs:
           NODE_ENV: production
 
       - name: Run Lighthouse CI
+        id: lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
           uploadArtifacts: true
           temporaryPublicStorage: true
           configPath: ./.github/lighthouse/lighthouserc.json
 
-      - name: Comment PR with results
-        if: github.event_name == 'pull_request' && always() && github.event.pull_request.head.repo.fork == false
+      - name: Write Lighthouse summary
+        if: always()
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const summary = process.env.GITHUB_STEP_SUMMARY;
+          const resultPath = './lighthouse-results.json';
+          const lines = [];
+          lines.push('## Lighthouse Performance Report');
+          lines.push('');
+          if (fs.existsSync(resultPath)) {
+            try {
+              const results = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
+              lines.push('| Metric | Score |');
+              lines.push('|--------|-------|');
+              lines.push(`| Performance | ${results.performance}% |`);
+              lines.push(`| Accessibility | ${results.accessibility}% |`);
+              lines.push(`| Best Practices | ${results.bestPractices}% |`);
+              lines.push(`| SEO | ${results.seo}% |`);
+            } catch (err) {
+              lines.push(`⚠️ Error parsing Lighthouse results: ${err.message}`);
+            }
+          } else {
+            lines.push('⚠️ Lighthouse results not found. The performance check may have failed.');
+          }
+          lines.push('');
+          fs.appendFileSync(summary, lines.join('\n'));
+          NODE
+
+      - name: Evaluate Lighthouse comment criteria
+        id: lighthouse-comment
+        if: always()
         uses: actions/github-script@v8
+        env:
+          LIGHTHOUSE_OUTCOME: ${{ steps.lighthouse.outcome }}
+          LH_DELTA_THRESHOLD: '5'
         with:
           script: |
             const fs = require('fs');
-            let comment = '';
-            
-            if (fs.existsSync('./lighthouse-results.json')) {
+            const isPullRequest = context.eventName === 'pull_request';
+            const isFork = context.payload.pull_request?.head?.repo?.fork === true;
+            if (!isPullRequest || isFork) {
+              core.setOutput('should_comment', 'false');
+              return;
+            }
+
+            const resultPath = './lighthouse-results.json';
+            let metrics = null;
+            let errorMessage = null;
+            if (fs.existsSync(resultPath)) {
               try {
-                const results = require('./lighthouse-results.json');
-                comment = `## 🚦 Lighthouse Performance Report
-                
-                | Metric | Score |
-                |--------|-------|
-                | Performance | ${results.performance}% |
-                | Accessibility | ${results.accessibility}% |
-                | Best Practices | ${results.bestPractices}% |
-                | SEO | ${results.seo}% |
-                `;
+                const results = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
+                metrics = {
+                  performance: results.performance,
+                  accessibility: results.accessibility,
+                  bestPractices: results.bestPractices,
+                  seo: results.seo,
+                };
               } catch (error) {
-                comment = `## 🚦 Lighthouse Performance Report\n\n❌ Error parsing Lighthouse results: ${error.message}`;
+                errorMessage = `Error parsing Lighthouse results: ${error.message}`;
               }
             } else {
-              comment = `## 🚦 Lighthouse Performance Report\n\n⚠️ Lighthouse results not found. The performance check may have failed.`;
+              errorMessage = 'Lighthouse results not found. The performance check may have failed.';
             }
-            try {
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: comment
-              });
-            } catch (err) {
-              core.warning(`Skipping Lighthouse PR comment: ${err?.message ?? err}`);
+
+            const failed = process.env.LIGHTHOUSE_OUTCOME !== 'success';
+            const threshold = Number(process.env.LH_DELTA_THRESHOLD || '5');
+            let previous = null;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+            });
+
+            const previousComment = comments.find((comment) =>
+              comment.body && comment.body.includes('<!-- lighthouse-report-json:')
+            );
+
+            if (previousComment) {
+              const match = previousComment.body.match(
+                /<!-- lighthouse-report-json:\s*(\{[\s\S]*?\})\s*-->/
+              );
+              if (match) {
+                try {
+                  previous = JSON.parse(match[1]);
+                } catch {
+                  previous = null;
+                }
+              }
             }
+
+            let delta = null;
+            if (metrics && previous) {
+              const diffs = ['performance', 'accessibility', 'bestPractices', 'seo'].map((key) =>
+                Math.abs((metrics[key] ?? 0) - (previous[key] ?? 0))
+              );
+              delta = Math.max(...diffs);
+            }
+
+            const shouldComment =
+              failed || !previous || Boolean(errorMessage) || (delta !== null && delta >= threshold);
+
+            const title = '## 🚦 Lighthouse Performance Report';
+            let body = `${title}\n\n`;
+            if (metrics) {
+              body += `| Metric | Score |\n|--------|-------|\n`;
+              body += `| Performance | ${metrics.performance}% |\n`;
+              body += `| Accessibility | ${metrics.accessibility}% |\n`;
+              body += `| Best Practices | ${metrics.bestPractices}% |\n`;
+              body += `| SEO | ${metrics.seo}% |\n`;
+            } else {
+              body += `⚠️ ${errorMessage}\n`;
+            }
+            const json = metrics ?? previous ?? {};
+            body += `\n<!-- lighthouse-report-json: ${JSON.stringify(json)} -->\n`;
+
+            core.setOutput('should_comment', shouldComment ? 'true' : 'false');
+            core.setOutput('comment_body', body);
+
+      - name: Post Lighthouse sticky comment
+        if: steps.lighthouse-comment.outputs.should_comment == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: lighthouse-report
+          message: ${{ steps.lighthouse-comment.outputs.comment_body }}
 
   bundle-size:
     name: Bundle Size Check
@@ -96,9 +187,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
