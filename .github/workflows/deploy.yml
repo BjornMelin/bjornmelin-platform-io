@@ -8,57 +8,25 @@ on:
       - "infrastructure/**"
       - "**.md"
   workflow_dispatch:
-  workflow_run:
-    workflows: ["E2E Tests"]
-    types:
-      - completed
-    branches:
-      - main
 
 concurrency:
-  group: "deploy"
-  cancel-in-progress: true
+  group: deploy
+  cancel-in-progress: false
 
 env:
   AWS_REGION: us-east-1
 
 jobs:
-  # Run tests before deployment
-  test:
-    runs-on: ubuntu-latest
-    outputs:
-      tests-passed: ${{ steps.test-result.outputs.passed }}
-    
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
-        with:
-          install: "true"
-
-      - name: Run unit tests
-        id: run-tests
-        run: pnpm test
-        continue-on-error: true
-
-      - name: Set test result
-        id: test-result
-        run: |
-          if [ "${{ steps.run-tests.outcome }}" == "success" ]; then
-            echo "passed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "passed=false" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
+  ci:
+    name: CI Pipeline
+    uses: ./.github/workflows/_reusable-ci.yml
+    with:
+      run-e2e: true
+      run-unit-tests: true
 
   deploy:
-    needs: test
-    if: needs.test.outputs.tests-passed == 'true'
+    name: Deploy to Production
+    needs: ci
     runs-on: ubuntu-latest
     environment: production
     permissions:
@@ -69,13 +37,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
-          install: "true"
+          install: 'true'
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -84,27 +49,26 @@ jobs:
           role-session-name: github-actions-deploy
           aws-region: ${{ env.AWS_REGION }}
 
-      # Build the Next.js app & export static files
       - name: Build Next.js App (Static Export)
         env:
           NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
           NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
-          # Server-only configuration required at build-time by src/env.mjs
           CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
           AWS_REGION: ${{ env.AWS_REGION }}
         run: pnpm build
 
-      # Retrieve the S3 bucket name and CloudFront distribution from your CF stack
       - name: Get Stack Outputs
         id: stack-outputs
         continue-on-error: true
         run: |
+          # shellcheck disable=SC2016 # Backticks are JMESPath syntax, not command substitution
           BUCKET_NAME=$(aws cloudformation describe-stacks \
             --stack-name prod-portfolio-storage \
             --query 'Stacks[0].Outputs[?OutputKey==`WebsiteBucketName`].OutputValue' \
             --output text --region ${{ env.AWS_REGION }})
 
+          # shellcheck disable=SC2016
           DIST_ID=$(aws cloudformation describe-stacks \
             --stack-name prod-portfolio-storage \
             --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' \
@@ -119,13 +83,11 @@ jobs:
           echo "Failed to retrieve stack outputs. Check your user permissions and make sure 'prod-portfolio-storage' stack exists."
           exit 1
 
-      # Upload the exported static files to your S3 bucket
       - name: Upload to S3
         run: |
           echo "Uploading static files to s3://${{ steps.stack-outputs.outputs.bucket }}"
           aws s3 sync out/ s3://${{ steps.stack-outputs.outputs.bucket }} --delete
 
-      # Invalidate CloudFront cache so your changes go live
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
@@ -141,9 +103,11 @@ jobs:
     steps:
       - name: Run smoke check
         id: smoke
+        env:
+          SMOKE_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
         run: |
           set +e
-          url="https://bjornmelin.io"
+          url="${SMOKE_URL:-https://bjornmelin.io}"
           http_code=$(curl --retry 3 --retry-delay 5 --max-time 15 -s -o /tmp/response "$url" -w "%{http_code}")
           exit_code=$?
 
@@ -155,47 +119,32 @@ jobs:
           else
             echo "status=failure" >> "$GITHUB_OUTPUT"
             echo "Smoke check failed for $url (exit: $exit_code, status: $http_code)."
-            echo "----- Response Body (truncated) -----"
-            head -c 2048 /tmp/response || true
+            if [ "${SMOKE_DEBUG:-false}" = "true" ]; then
+              echo "----- Response Body (truncated) -----"
+              head -c 2048 /tmp/response || true
+            fi
           fi
 
       - name: Deployment summary
         if: always()
+        env:
+          APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          SMOKE_STATUS: ${{ steps.smoke.outputs.status }}
+          SMOKE_HTTP_CODE: ${{ steps.smoke.outputs.http_code }}
         run: |
-          status="${{ steps.smoke.outputs.status }}"
-          http_code="${{ steps.smoke.outputs.http_code }}"
-          [ -z "$http_code" ] && http_code="n/a"
+          status="${SMOKE_STATUS:-unknown}"
+          http_code="${SMOKE_HTTP_CODE:-n/a}"
+          app_url="${APP_URL:-https://bjornmelin.io}"
           {
             echo "## Deployment Summary"
             echo ""
             echo "- Commit: \`$GITHUB_SHA\`"
             echo "- Workflow Run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- App URL: ${app_url}"
             echo "- Smoke Check Status: ${status:-unknown}"
             echo "- HTTP Status Code: ${http_code}"
             echo "- Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Notify on commit
-        if: always()
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const statusRaw = '${{ steps.smoke.outputs.status }}';
-            const httpRaw = '${{ steps.smoke.outputs.http_code }}';
-            const status = statusRaw || 'unknown';
-            const httpCode = httpRaw || 'n/a';
-            const url = 'https://bjornmelin.io';
-            const lines = [
-              `Deployment smoke check ${status === 'success' ? 'succeeded' : 'failed'} for ${url}.`,
-              `HTTP status: ${httpCode}.`,
-              `Workflow run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
-            ];
-            await github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-              body: lines.join('\n')
-            });
 
       - name: Fail when smoke check failed
         if: ${{ steps.smoke.outputs.status == 'failure' }}

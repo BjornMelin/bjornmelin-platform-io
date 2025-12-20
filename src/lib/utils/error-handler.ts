@@ -13,9 +13,13 @@ export class APIError extends Error {
 }
 
 export function handleAPIError(error: unknown) {
-  // Log error safely - avoid issues with complex error object serialization
+  // Log defensively to avoid serialization issues in some environments.
   const errorMessage = error instanceof Error ? error.message : String(error);
-  console.error("API Error:", errorMessage);
+  try {
+    console.error("API Error:", error);
+  } catch {
+    console.error("API Error:", errorMessage);
+  }
 
   if (error instanceof ZodError) {
     return NextResponse.json(

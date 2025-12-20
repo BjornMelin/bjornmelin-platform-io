@@ -333,8 +333,11 @@ Open <http://localhost:8080> in your browser. Use Ctrl+C to stop the container.
 
 ## Releasing
 
-See [docs/development/releasing.md](docs/development/releasing.md) for the Codex-assisted
-auto-release process, controls, and setup.
+Releases are automated using [release-please](https://github.com/googleapis/release-please).
+Push commits with [Conventional Commits](https://www.conventionalcommits.org/) format to `main`,
+and release-please will open a Release PR. Merge it to create a tagged GitHub Release.
+
+See [docs/development/releasing.md](docs/development/releasing.md) for full details.
 
 ## Infrastructure Tests
 

@@ -1,5 +1,16 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const defaultBaseURL = "http://localhost:3000";
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? defaultBaseURL;
+const baseUrlPort = (() => {
+  try {
+    return new URL(baseURL).port || "3000";
+  } catch {
+    return "3000";
+  }
+})();
+const webServerPort = process.env.PLAYWRIGHT_PORT ?? baseUrlPort;
+
 export default defineConfig({
   // Test directory
   testDir: "./e2e",
@@ -22,7 +33,7 @@ export default defineConfig({
   // Shared settings for all the projects below
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: "http://localhost:3000",
+    baseURL,
 
     // Collect trace when retrying the failed test
     trace: "on-first-retry",
@@ -59,9 +70,14 @@ export default defineConfig({
   // Run your local dev server before starting the tests
   webServer: {
     command: "pnpm dev",
-    url: "http://localhost:3000",
+    url: baseURL,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
+    env: {
+      PORT: webServerPort,
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? baseURL,
+      CONTACT_EMAIL: process.env.CONTACT_EMAIL ?? "test@example.com",
+    },
   },
 
   // Timeout settings

@@ -9,7 +9,7 @@ Development documentation for the bjornmelin-platform-io project.
 - [Getting Started](./getting-started.md) - Setup and initial development guide
 - [Coding Standards](./coding-standards.md) - Code style and practices
 - [Testing Strategies](./testing.md) - Testing methodologies and tools
-- [Releasing](./releasing.md) - Codex-assisted release automation
+- [Releasing](./releasing.md) - Automated releases with release-please
 
 ## Development Environment
 
@@ -145,10 +145,11 @@ pnpm analyze
 
 ## Release Process
 
-Releases are created automatically by Codex-assisted workflows:
+Releases are automated using [release-please](https://github.com/googleapis/release-please):
 
-- Auto Release PR: analyzes the full diff, enforces a SemVer floor, proposes version bump.
-- Finalize Release: tags the merged release commit and publishes a GitHub Release.
+1. Write commits using [Conventional Commits](https://www.conventionalcommits.org/) format
+2. Release-please opens/updates a Release PR automatically
+3. Merge the Release PR to create a git tag and GitHub Release
 
 See the full guide at [Releasing](./releasing.md).
 

@@ -22,6 +22,10 @@ on:
         required: true
         type: string
 
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
   deployments: write
@@ -41,16 +45,23 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Log deployment reason
+        env:
+          DEPLOY_ENV: ${{ inputs.environment }}
+          DEPLOY_REASON: ${{ inputs.reason }}
+          DEPLOY_SKIP_TESTS: ${{ inputs.skip_tests }}
         run: |
           echo "🚀 Manual deployment initiated"
-          echo "Environment: ${{ inputs.environment }}"
+          echo "Environment: $DEPLOY_ENV"
           echo "Initiated by: ${{ github.actor }}"
-          echo "Reason: ${{ inputs.reason }}"
-          echo "Skip tests: ${{ inputs.skip_tests }}"
+          echo "Reason: $DEPLOY_REASON"
+          echo "Skip tests: $DEPLOY_SKIP_TESTS"
 
       - name: Validate environment
+        env:
+          DEPLOY_ENV: ${{ inputs.environment }}
+          GIT_REF: ${{ github.ref }}
         run: |
-          if [[ "${{ inputs.environment }}" == "production" && "${{ github.ref }}" != "refs/heads/main" ]]; then
+          if [[ "$DEPLOY_ENV" == "production" && "$GIT_REF" != "refs/heads/main" ]]; then
             echo "❌ Production deployments are only allowed from the main branch"
             exit 1
           fi
@@ -64,9 +75,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -92,9 +100,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
@@ -114,40 +119,50 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy to environment
+        env:
+          DEPLOY_ENV: ${{ inputs.environment }}
         run: |
-          echo "Deploying to ${{ inputs.environment }}..."
+          echo "Deploying to $DEPLOY_ENV..."
           # Add actual deployment commands here
-          # Example: aws s3 sync out/ s3://${{ secrets.S3_BUCKET_NAME }}-${{ inputs.environment }}/
-          # Example: aws cloudfront create-invalidation --distribution-id ${{ secrets.CF_DISTRIBUTION_ID }}
+          # Example: aws s3 sync out/ s3://${{ vars.S3_BUCKET }}-$DEPLOY_ENV/
+          # Example: aws cloudfront create-invalidation --distribution-id ${{ vars.CF_DISTRIBUTION_ID }}
 
       - name: Set deployment URL
         id: deployment-url
+        env:
+          DEPLOY_ENV: ${{ inputs.environment }}
         run: |
-          if [[ "${{ inputs.environment }}" == "production" ]]; then
+          if [[ "$DEPLOY_ENV" == "production" ]]; then
             echo "url=https://bjornmelin.io" >> "$GITHUB_OUTPUT"
           else
-            echo "url=https://${{ inputs.environment }}.bjornmelin.io" >> "$GITHUB_OUTPUT"
+            echo "url=https://$DEPLOY_ENV.bjornmelin.io" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create deployment record
         uses: actions/github-script@v8
+        env:
+          DEPLOY_ENV: ${{ inputs.environment }}
+          DEPLOY_REASON: ${{ inputs.reason }}
         with:
           script: |
             await github.rest.repos.createDeployment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: context.sha,
-              environment: '${{ inputs.environment }}',
-              description: 'Manual deployment: ${{ inputs.reason }}',
+              environment: process.env.DEPLOY_ENV,
+              description: `Manual deployment: ${process.env.DEPLOY_REASON}`,
               auto_merge: false,
               required_contexts: []
             });
 
       - name: Send deployment notification
         if: always()
+        env:
+          DEPLOY_ENV: ${{ inputs.environment }}
+          JOB_STATUS: ${{ job.status }}
         run: |
-          if [[ "${{ job.status }}" == "success" ]]; then
-            echo "✅ Deployment to ${{ inputs.environment }} completed successfully"
+          if [[ "$JOB_STATUS" == "success" ]]; then
+            echo "✅ Deployment to $DEPLOY_ENV completed successfully"
           else
-            echo "❌ Deployment to ${{ inputs.environment }} failed"
+            echo "❌ Deployment to $DEPLOY_ENV failed"
           fi

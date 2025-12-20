@@ -105,8 +105,6 @@ Production configuration is sourced at deploy/build time from:
 
 - **GitHub Environment "production" variables** (public client config):
   - `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_APP_URL`, etc.
-- **GitHub Actions secrets** (build-only):
-  - `OPENAI_API_KEY` for Codex-assisted releases.
 - **AWS SSM Parameter Store / Secrets Manager** (server-side runtime):
   - `/portfolio/prod/CONTACT_EMAIL` (consumed by the Email Lambda)
 

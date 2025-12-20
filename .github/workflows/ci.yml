@@ -8,181 +8,23 @@ on:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
-env:
-  SKIP_ENV_VALIDATION: 'true'
-  NEXT_PUBLIC_APP_URL: 'http://localhost:3000'
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  lint-and-type-check:
-    name: Lint and Type Check
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+  ci:
+    name: CI Pipeline
+    uses: ./.github/workflows/_reusable-ci.yml
+    with:
+      run-e2e: true
+      run-unit-tests: true
 
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
-        with:
-          install: "true"
-
-      - name: Run Biome linting
-        run: pnpm lint
-
-      - name: Run type checking
-        run: pnpm type-check
-
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    needs: lint-and-type-check
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
-        with:
-          install: "true"
-
-      - name: Run unit tests with coverage
-        run: pnpm test:coverage
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        if: always()
-        with:
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: unit-coverage
-          fail_ci_if_error: false
-
-      - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v6
-        if: always()
-        with:
-          name: coverage-report
-          path: coverage/
-          retention-days: 7
-
-  e2e-tests:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    needs: lint-and-type-check
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
-
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
-        with:
-          install: "true"
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Detect E2E tests presence
-        id: detect
-        run: |
-          set -euo pipefail
-          if [ -n "${{ hashFiles('e2e/**','tests/e2e/**','playwright/tests/**') }}" ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Build application
-        if: steps.detect.outputs.present == 'true'
-        run: pnpm build
-        env:
-          NEXT_PUBLIC_BASE_URL: http://localhost:3000
-          NEXT_PUBLIC_API_URL: http://localhost:3000/api
-          NEXT_PUBLIC_APP_URL: http://localhost:3000
-
-      - name: Run E2E tests
-        if: steps.detect.outputs.present == 'true'
-        run: pnpm test:e2e
-        env:
-          NODE_ENV: test
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v6
-        if: always() && steps.detect.outputs.present == 'true'
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-
-  build:
-    name: Build Check
-    runs-on: ubuntu-latest
-    needs: [unit-tests, e2e-tests]
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Install pnpm (action)
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
-        with:
-          install: "true"
-
-      # Dependencies are installed in the composite action (install: true)
-
-      - name: Build production bundle
-        run: pnpm build
-        env:
-          NEXT_PUBLIC_BASE_URL: https://bjornmelin.io
-          NEXT_PUBLIC_API_URL: https://api.bjornmelin.io
-          NEXT_PUBLIC_APP_URL: https://bjornmelin.io
-
-      - name: Check bundle size
-        run: |
-          echo "Build Output:"
-          du -sh out/
-          find out -type f -name "*.js" -o -name "*.css" | head -20
-
-  all-checks-passed:
-    name: All CI Checks Passed
-    runs-on: ubuntu-latest
-    needs: [lint-and-type-check, unit-tests, e2e-tests, build, actionlint]
-    if: always()
-    
-    steps:
-      - name: Check all job statuses
-        run: |
-          good() { case "$1" in success|skipped) return 0;; *) return 1;; esac; }
-          if ! good "${{ needs.lint-and-type-check.result }}"; then echo "Lint/Type failed"; exit 1; fi
-          if ! good "${{ needs.unit-tests.result }}"; then echo "Unit tests failed"; exit 1; fi
-          if ! good "${{ needs.e2e-tests.result }}"; then echo "E2E tests failed"; exit 1; fi
-          if ! good "${{ needs.build.result }}"; then echo "Build failed"; exit 1; fi
-          echo "All CI checks passed successfully!"
   actionlint:
     name: Actionlint
     runs-on: ubuntu-latest
@@ -190,7 +32,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Run actionlint
-        uses: reviewdog/action-actionlint@v1
+        uses: reviewdog/action-actionlint@83e4ed25b168066ad8f62f5afbb29ebd8641d982 # v1.69.1
         with:
           reporter: github-check
           level: error
+
+  all-checks-passed:
+    name: All CI Checks Passed
+    runs-on: ubuntu-latest
+    needs: [ci, actionlint]
+    if: always()
+    steps:
+      - name: Check all job statuses
+        run: |
+          good() { case "$1" in success|skipped) return 0;; *) return 1;; esac; }
+          if ! good "${{ needs.ci.result }}"; then echo "CI failed"; exit 1; fi
+          if ! good "${{ needs.actionlint.result }}"; then echo "Actionlint failed"; exit 1; fi
+          echo "All CI checks passed successfully!"
