@@ -19,7 +19,7 @@ This section guides you through setting up AWS infrastructure from scratch for a
 > - The IAM role is needed to run CDK itself (chicken-and-egg problem)
 > - GitHub secrets must be configured in the repository settings
 >
-> After completing these prerequisites, CDK handles all other infrastructure (DNS, storage, email, monitoring).
+> After completing these prerequisites, CDK handles all other infrastructure (DNS, storage, email, monitoring). The CDK code in `lib/` is configured to only manage DNS, storage, email, and monitoring stacks—it explicitly does not attempt to create the OIDC provider or GitHub Actions IAM role. See the [Stack Architecture section](#stack-architecture) below for details on what each CDK stack provisions.
 
 Run once per AWS account to enable keyless GitHub Actions authentication:
 
