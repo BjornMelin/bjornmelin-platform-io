@@ -2,7 +2,7 @@
  * @fileoverview Tests for ErrorBoundary fallback and recovery behavior.
  */
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 
@@ -12,13 +12,18 @@ const Boom = () => {
 
 describe("ErrorBoundary", () => {
   it("renders fallback UI when a child throws", () => {
-    render(
-      <ErrorBoundary>
-        <Boom />
-      </ErrorBoundary>,
-    );
-    expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /refresh page/i })).toBeInTheDocument();
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      render(
+        <ErrorBoundary>
+          <Boom />
+        </ErrorBoundary>,
+      );
+      expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /refresh page/i })).toBeInTheDocument();
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   // Clicking the refresh button triggers a page reload in browsers; asserting
