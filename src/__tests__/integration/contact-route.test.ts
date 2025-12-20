@@ -18,6 +18,8 @@ describe("POST /api/contact (integration)", () => {
     vi.unstubAllEnvs();
     resetRateLimit(testIp);
     resetRateLimit("unknown");
+    resetRateLimit("192.168.1.100");
+    resetRateLimit("192.168.1.200");
   });
 
   it("returns 200 on valid payload when email sends successfully", async () => {
@@ -137,9 +139,10 @@ describe("POST /api/contact (integration)", () => {
         honeypot: "spam content",
       }),
     });
-    await POST(req);
+    const res = await POST(req);
 
     // Email should NOT be sent - validation fails before email sending
+    expect(res.status).toBe(400);
     expect(sendSpy).not.toHaveBeenCalled();
   });
 
@@ -272,8 +275,5 @@ describe("POST /api/contact (integration)", () => {
     const res2 = await POST(req2);
     expect(res2.status).toBe(200);
 
-    // Clean up
-    resetRateLimit("192.168.1.100");
-    resetRateLimit("192.168.1.200");
   });
 });

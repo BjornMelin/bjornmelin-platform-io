@@ -11,6 +11,9 @@ importers:
 
   .:
     dependencies:
+      '@aws-sdk/client-ssm':
+        specifier: ^3.948.0
+        version: 3.948.0
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.69.0(react@18.3.1))
@@ -93,9 +96,6 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
-      '@aws-sdk/client-ssm':
-        specifier: 3.948.0
-        version: 3.948.0
       '@biomejs/biome':
         specifier: ^2.3.10
         version: 2.3.10
