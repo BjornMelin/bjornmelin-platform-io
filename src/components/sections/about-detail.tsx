@@ -1,6 +1,3 @@
-"use client";
-
-import { m } from "framer-motion";
 import { Award, Brain, Building2, Cloud, Code, GraduationCap, Sparkles } from "lucide-react";
 import Image from "next-export-optimize-images/image";
 import { Badge } from "@/components/ui/badge";
@@ -16,12 +13,7 @@ export function AboutDetail() {
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
       <div className="container mx-auto px-4 py-24">
         {/* Profile Section - First thing recruiters see */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-20"
-        >
+        <div className="mb-20">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-primary/10">
               <Image
@@ -57,15 +49,10 @@ export function AboutDetail() {
               </div>
             </div>
           </div>
-        </m.div>
+        </div>
 
         {/* Professional Summary - Quick overview of value proposition */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mb-20"
-        >
+        <div className="mb-20">
           <Card className="p-8 backdrop-blur-xl bg-card/50 border-primary/10">
             <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
               <Building2 className="w-6 h-6 text-primary" />
@@ -99,15 +86,10 @@ export function AboutDetail() {
               </p>
             </div>
           </Card>
-        </m.div>
+        </div>
 
         {/* Skills Section */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mb-20"
-        >
+        <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
             <Code className="w-8 h-8 text-primary" />
             Skills & Expertise
@@ -132,15 +114,10 @@ export function AboutDetail() {
               </Card>
             ))}
           </div>
-        </m.div>
+        </div>
 
         {/* Work Experience - Most important for recruiters */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mb-20"
-        >
+        <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
             <Building2 className="w-8 h-8 text-primary" />
             Work Experience
@@ -205,22 +182,20 @@ export function AboutDetail() {
               </div>
             </Card>
           </div>
-        </m.div>
+        </div>
 
         {/* Certifications - Shows current skills and continuous learning */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mb-20"
-        >
+        <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
             <Award className="w-8 h-8 text-primary" />
             AWS Certifications
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {certifications.map((cert) => (
-              <m.div key={cert.name} whileHover={{ scale: 1.02 }} className="relative">
+              <div
+                key={cert.name}
+                className="relative transition-transform duration-200 ease-out hover:scale-[1.02]"
+              >
                 <Card className="p-6 backdrop-blur-xl bg-card/50 border-primary/10 hover:border-primary/30 transition-colors">
                   <div className="flex flex-col gap-4">
                     <a
@@ -272,18 +247,13 @@ export function AboutDetail() {
                     )}
                   </div>
                 </Card>
-              </m.div>
+              </div>
             ))}
           </div>
-        </m.div>
+        </div>
 
         {/* Education - Supporting qualifications */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="mb-20"
-        >
+        <div className="mb-20">
           <Card className="p-8 backdrop-blur-xl bg-card/50 border-primary/10">
             <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
               <GraduationCap className="w-6 h-6 text-primary" />
@@ -325,14 +295,10 @@ export function AboutDetail() {
               </div>
             </div>
           </Card>
-        </m.div>
+        </div>
 
         {/* Hobbies & Interests - Personal side */}
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
+        <div>
           <Card className="p-8 backdrop-blur-xl bg-card/50 border-primary/10">
             <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
               <svg
@@ -361,7 +327,7 @@ export function AboutDetail() {
               ))}
             </div>
           </Card>
-        </m.div>
+        </div>
       </div>
     </div>
   );

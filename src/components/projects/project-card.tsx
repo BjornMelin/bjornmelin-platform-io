@@ -25,7 +25,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
           src={project.image}
           alt={project.title}
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 30vw"
           className="object-cover transition-transform hover:scale-105 duration-300"
         />
       </div>

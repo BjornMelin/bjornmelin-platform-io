@@ -1,6 +1,3 @@
-"use client";
-
-import { m } from "framer-motion";
 import Link from "next/link";
 import Image from "next-export-optimize-images/image";
 
@@ -9,12 +6,7 @@ export function Hero() {
     <section className="relative min-h-[90vh] flex items-center">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto flex flex-col items-center text-center gap-8">
-          <m.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="flex-shrink-0"
-          >
+          <div className="flex-shrink-0">
             <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-primary/10">
               <Image
                 src="/headshot/headshot-2024.jpg"
@@ -25,14 +17,9 @@ export function Hero() {
                 className="object-cover"
               />
             </div>
-          </m.div>
+          </div>
 
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-col items-center"
-          >
+          <div className="flex flex-col items-center">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
               Hi, I&apos;m Bjorn Melin
             </h1>
@@ -54,7 +41,7 @@ export function Hero() {
                 View Projects
               </Link>
             </div>
-          </m.div>
+          </div>
         </div>
       </div>
     </section>
