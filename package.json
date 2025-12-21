@@ -24,7 +24,11 @@
     "test:e2e:setup": "./scripts/setup-e2e.sh",
     "serve": "pnpm dlx serve out",
     "prepare": "husky",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "resend:status": "tsx scripts/ops/resend-domain-manager.ts status",
+    "resend:records": "tsx scripts/ops/resend-domain-manager.ts records",
+    "resend:verify": "tsx scripts/ops/resend-domain-manager.ts verify",
+    "resend:sync-dns": "tsx scripts/ops/resend-domain-manager.ts sync-dns"
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.948.0",
@@ -57,6 +61,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@aws-sdk/client-route-53": "^3.948.0",
     "@biomejs/biome": "^2.3.10",
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
@@ -72,6 +77,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "aws-cdk-lib": "^2.233.0",
+    "commander": "^12.1.0",
     "constructs": "^10.4.4",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.2.33",
@@ -84,6 +90,7 @@
     "postcss": "^8.4.35",
     "shadcn-ui": "^0.9.4",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.19.0",
     "typescript": "~5.8.3",
     "vite": "~6.4.1",
     "vitest": "^3.2.4"

@@ -129,6 +129,35 @@ export class EmailStack extends cdk.Stack {
       target: route53.RecordTarget.fromAlias(new targets.ApiGatewayDomain(customDomain)),
     });
 
+    // Email DNS records for Resend bounce handling
+    // The send subdomain is used by Resend for SPF alignment and bounce processing
+    const sendSubdomain = `send.${domain}`;
+
+    // MX record for send subdomain - bounce/complaint handling for sending
+    // Per Resend docs: https://resend.com/docs/knowledge-base/route53
+    // Note: Only required if "Receiving" is enabled in Resend dashboard
+    new route53.MxRecord(this, "SendSubdomainMxRecord", {
+      zone: hostedZone,
+      recordName: sendSubdomain,
+      values: [
+        {
+          priority: 10,
+          hostName: "feedback-smtp.us-east-1.amazonses.com",
+        },
+      ],
+      ttl: cdk.Duration.hours(1),
+      comment: "Resend bounce handling MX record",
+    });
+
+    // SPF record for send subdomain - authorizes Amazon SES to send on behalf of this subdomain
+    new route53.TxtRecord(this, "SendSubdomainSpfRecord", {
+      zone: hostedZone,
+      recordName: sendSubdomain,
+      values: ["v=spf1 include:amazonses.com ~all"],
+      ttl: cdk.Duration.hours(1),
+      comment: "SPF for Resend send subdomain",
+    });
+
     // Add API Gateway resource and method
     const contact = this.api.root.addResource("contact");
     contact.addMethod("POST", new apigateway.LambdaIntegration(this.emailFunction), {

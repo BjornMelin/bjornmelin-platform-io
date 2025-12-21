@@ -274,6 +274,5 @@ describe("POST /api/contact (integration)", () => {
     });
     const res2 = await POST(req2);
     expect(res2.status).toBe(200);
-
   });
 });
