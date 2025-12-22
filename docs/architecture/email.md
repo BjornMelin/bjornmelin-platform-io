@@ -124,8 +124,10 @@ This module is imported by both:
 ### DNS verification failing
 
 1. Get required records: `pnpm resend:records --json`
-2. Compare with Route53: `aws route53 list-resource-record-sets --hosted-zone-id Z02255141PMII3TMYOWT0`
+2. Compare with Route53: `aws route53 list-resource-record-sets --hosted-zone-id <HOSTED_ZONE_ID>`
 3. Wait up to 72 hours for propagation (usually faster)
+
+Tip: You can find the hosted zone ID via `aws route53 list-hosted-zones-by-name --dns-name bjornmelin.io`.
 
 ### Bounce issues
 
