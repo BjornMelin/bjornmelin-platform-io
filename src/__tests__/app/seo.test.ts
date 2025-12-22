@@ -1,8 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 
 describe("sitemap", () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
   // Note: sitemap uses process.env.NEXT_PUBLIC_APP_URL at module load time
   // We test the structure and logic, not the specific URL which depends on env
 
@@ -10,28 +19,24 @@ describe("sitemap", () => {
     const result = sitemap();
 
     expect(result).toHaveLength(4);
-    // Verify routes are present by checking URL endings
     const routes = ["/", "/about", "/projects", "/contact"];
+
     routes.forEach((route, index) => {
-      if (route === "/") {
-        expect(result[index].url.endsWith("/")).toBe(true);
-      } else {
-        expect(result[index].url.endsWith(route)).toBe(true);
-      }
+      expect(new URL(result[index].url).pathname).toBe(route);
     });
   });
 
   it("sets home page priority to 1", () => {
     const result = sitemap();
 
-    const homeEntry = result.find((entry) => entry.url.endsWith("/"));
+    const homeEntry = result.find((entry) => new URL(entry.url).pathname === "/");
     expect(homeEntry?.priority).toBe(1);
   });
 
   it("sets other pages priority to 0.8", () => {
     const result = sitemap();
 
-    const otherEntries = result.filter((entry) => !entry.url.endsWith("/"));
+    const otherEntries = result.filter((entry) => new URL(entry.url).pathname !== "/");
     otherEntries.forEach((entry) => {
       expect(entry.priority).toBe(0.8);
     });
@@ -50,8 +55,9 @@ describe("sitemap", () => {
 
     result.forEach((entry) => {
       expect(entry.lastModified).toBeDefined();
-      // Verify it's a valid ISO date string
-      expect(() => new Date(entry.lastModified as string)).not.toThrow();
+      const parsed = new Date(entry.lastModified as string);
+      expect(Number.isNaN(parsed.getTime())).toBe(false);
+      expect(entry.lastModified).toBe("2025-01-01T00:00:00.000Z");
     });
   });
 
@@ -59,7 +65,7 @@ describe("sitemap", () => {
     const result = sitemap();
 
     // All URLs should have the same base
-    const baseUrls = result.map((entry) => entry.url.replace(/\/[^/]*$/, ""));
+    const baseUrls = result.map((entry) => new URL(entry.url).origin);
     const uniqueBases = Array.from(new Set(baseUrls));
     expect(uniqueBases.length).toBe(1);
   });
