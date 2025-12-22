@@ -254,7 +254,7 @@ export function validateContactForm(data: {
     return { valid: false, error: "Invalid email address", field: "email" };
   }
 
-  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizedEmail)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
     return { valid: false, error: "Invalid email address", field: "email" };
   }
 

@@ -40,7 +40,7 @@ describe("DnsStack", () => {
     const app = new cdk.App();
     spy = mockHostedZoneLookup();
 
-    const stack = new DnsStack(app, "Dns", createBaseProps());
+    const stack = new DnsStack(app, "Dns", createBaseProps({ environment: "prod" }));
     const template = Template.fromStack(stack);
 
     template.hasOutput("CertificateArn", {
@@ -53,7 +53,7 @@ describe("DnsStack", () => {
     const app = new cdk.App();
     spy = mockHostedZoneLookup();
 
-    const stack = new DnsStack(app, "Dns", createBaseProps());
+    const stack = new DnsStack(app, "Dns", createBaseProps({ environment: "prod" }));
     const template = Template.fromStack(stack);
 
     template.hasOutput("HostedZoneId", {
@@ -74,7 +74,7 @@ describe("DnsStack", () => {
     const stack = new DnsStack(
       app,
       "Dns",
-      createBaseProps({ tags: { Project: "Portfolio", Owner: "Test" } }),
+      createBaseProps({ environment: "prod", tags: { Project: "Portfolio", Owner: "Test" } }),
     );
     const template = Template.fromStack(stack);
     const tags = template.findResources("AWS::CertificateManager::Certificate");
