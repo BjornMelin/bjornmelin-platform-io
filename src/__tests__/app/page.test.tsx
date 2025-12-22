@@ -87,14 +87,12 @@ describe("Home page metadata", () => {
 
   it("exports metadata with openGraph configuration", () => {
     expect(metadata.openGraph).toBeDefined();
-    const og = metadata.openGraph as Record<string, unknown>;
-    expect(og.type).toBe("website");
-    expect(og.images).toBeDefined();
+    expect(metadata.openGraph).toEqual(expect.objectContaining({ type: "website" }));
+    expect(metadata.openGraph).toHaveProperty("images");
   });
 
   it("exports metadata with twitter card configuration", () => {
     expect(metadata.twitter).toBeDefined();
-    const twitter = metadata.twitter as Record<string, unknown>;
-    expect(twitter.card).toBe("summary_large_image");
+    expect(metadata.twitter).toHaveProperty("card", "summary_large_image");
   });
 });
