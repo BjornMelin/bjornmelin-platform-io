@@ -20,11 +20,7 @@ export const CONTACT_FORM_LIMITS = {
 /**
  * Contact form data structure.
  */
-export interface ContactFormData {
-  name: string;
-  email: string;
-  message: string;
-}
+export type ContactFormData = import("../../schemas/contact").ContactFormData;
 
 /**
  * Options for email template generation.
@@ -221,14 +217,23 @@ export function validateContactForm(data: {
   const { name, email, message } = data;
   const { name: nameLimits, message: msgLimits } = CONTACT_FORM_LIMITS;
 
-  if (!name || typeof name !== "string" || name.length < nameLimits.min) {
+  if (!name || typeof name !== "string") {
     return {
       valid: false,
       error: `Name must be at least ${nameLimits.min} characters`,
       field: "name",
     };
   }
-  if (name.length > nameLimits.max) {
+
+  const normalizedName = name.trim();
+  if (normalizedName.length < nameLimits.min) {
+    return {
+      valid: false,
+      error: `Name must be at least ${nameLimits.min} characters`,
+      field: "name",
+    };
+  }
+  if (normalizedName.length > nameLimits.max) {
     return {
       valid: false,
       error: `Name must be less than ${nameLimits.max} characters`,
@@ -236,18 +241,40 @@ export function validateContactForm(data: {
     };
   }
 
-  if (!email || typeof email !== "string" || !email.includes("@")) {
+  if (/[\r\n]/.test(normalizedName)) {
+    return { valid: false, error: "Invalid name", field: "name" };
+  }
+
+  if (!email || typeof email !== "string") {
     return { valid: false, error: "Invalid email address", field: "email" };
   }
 
-  if (!message || typeof message !== "string" || message.length < msgLimits.min) {
+  const normalizedEmail = email.trim();
+  if (/[\r\n]/.test(normalizedEmail)) {
+    return { valid: false, error: "Invalid email address", field: "email" };
+  }
+
+  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizedEmail)) {
+    return { valid: false, error: "Invalid email address", field: "email" };
+  }
+
+  if (!message || typeof message !== "string") {
     return {
       valid: false,
       error: `Message must be at least ${msgLimits.min} characters`,
       field: "message",
     };
   }
-  if (message.length > msgLimits.max) {
+
+  const normalizedMessage = message.trim();
+  if (normalizedMessage.length < msgLimits.min) {
+    return {
+      valid: false,
+      error: `Message must be at least ${msgLimits.min} characters`,
+      field: "message",
+    };
+  }
+  if (normalizedMessage.length > msgLimits.max) {
     return {
       valid: false,
       error: `Message must be less than ${msgLimits.max} characters`,
