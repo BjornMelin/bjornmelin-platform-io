@@ -20,19 +20,15 @@ const requireEnv = (name: string): string => {
 };
 
 const domain = requireEnv("DOMAIN_NAME");
-let cachedRecipientEmail: string | null = null;
-let cachedResendApiKey: string | null = null;
-let resend: Resend | null = null;
 
 /**
  * Resolves the contact recipient email from AWS SSM Parameter Store.
+ * Uses getParameter's internal 5-minute cache to handle secret rotation.
  */
 async function resolveRecipientEmail(): Promise<string> {
-  if (cachedRecipientEmail) return cachedRecipientEmail;
   const paramName = requireEnv("SSM_RECIPIENT_EMAIL_PARAM");
   const value = await getParameter(paramName, true);
-  if (!value) throw new Error(`Recipient email missing from SSM parameter: ${paramName}`);
-  cachedRecipientEmail = value;
+  if (!value) throw new Error("Contact recipient configuration error");
   return value;
 }
 
@@ -53,26 +49,45 @@ function extractApiKey(rawValue: string): string {
 }
 
 /**
- * Gets or creates a Resend client with API key from SSM.
+ * Gets a Resend client with API key from SSM.
+ * Creates a new client on each call to ensure key rotation is respected.
  */
 async function getResendClient(): Promise<Resend> {
   const paramName = requireEnv("SSM_RESEND_API_KEY_PARAM");
   const rawValue = await getParameter(paramName, true);
-  if (!rawValue) throw new Error(`Resend API key missing from SSM parameter: ${paramName}`);
+  if (!rawValue) throw new Error("Email service configuration error");
 
   const apiKey = extractApiKey(rawValue);
-  if (!apiKey)
-    throw new Error(`Resend API key missing 'apiKey' field in SSM parameter: ${paramName}`);
+  if (!apiKey) throw new Error("Email service configuration error");
 
-  if (resend && cachedResendApiKey === apiKey) return resend;
-
-  cachedResendApiKey = apiKey;
-  resend = new Resend(apiKey);
-  return resend;
+  return new Resend(apiKey);
 }
 
-const parseAllowedOrigins = (): string[] => {
+/**
+ * Validates and sanitizes an email address to prevent header injection.
+ * Returns null if the email is invalid or contains injection characters.
+ */
+function sanitizeEmail(email: string): string | null {
+  // Check for header injection characters (CR, LF, null bytes)
+  if (/[\r\n\0]/.test(email)) {
+    return null;
+  }
+  // Basic email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return null;
+  }
+  return email.trim();
+}
+
+/**
+ * Parses allowed origins from environment variables.
+ * Uses the already-validated domain constant instead of re-reading process.env.
+ */
+const parseAllowedOrigins = (domainName: string): string[] => {
   const origins = new Set<string>();
+
+  // Parse CSV origins from ALLOWED_ORIGINS
   const csvOrigins = process.env.ALLOWED_ORIGINS;
   if (csvOrigins) {
     for (const origin of csvOrigins.split(",")) {
@@ -83,22 +98,21 @@ const parseAllowedOrigins = (): string[] => {
     }
   }
 
+  // Add single origin fallback
   const singleOrigin = process.env.ALLOWED_ORIGIN;
   if (singleOrigin) {
     origins.add(singleOrigin);
   }
 
-  const domainName = process.env.DOMAIN_NAME;
-  if (domainName) {
-    origins.add(`https://${domainName}`);
-    origins.add(`https://www.${domainName}`);
-    origins.add(`https://api.${domainName}`);
-  }
+  // Always include domain-based origins
+  origins.add(`https://${domainName}`);
+  origins.add(`https://www.${domainName}`);
+  origins.add(`https://api.${domainName}`);
 
   return Array.from(origins);
 };
 
-const allowedOrigins = parseAllowedOrigins();
+const allowedOrigins = parseAllowedOrigins(domain);
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const origin = event.headers.origin || event.headers.Origin;
@@ -156,6 +170,16 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       };
     }
 
+    // Validate and sanitize email to prevent header injection
+    const sanitizedEmail = sanitizeEmail(data.email);
+    if (!sanitizedEmail) {
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify({ error: "Invalid email address format" }),
+      };
+    }
+
     // Get email recipient and Resend client
     const recipientEmail = await resolveRecipientEmail();
     const resendClient = await getResendClient();
@@ -164,7 +188,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const { error } = await resendClient.emails.send({
       from: `Contact Form <contact@${domain}>`,
       to: recipientEmail,
-      replyTo: data.email,
+      replyTo: sanitizedEmail,
       subject: `Contact Form: ${data.name}`,
       html: createContactEmailHtml({ data, domain }),
       text: createContactEmailText({ data, domain }),
@@ -172,7 +196,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     if (error) {
       console.error("Resend error:", error);
-      throw new Error(`Failed to send email: ${error.message}`);
+      throw new Error("Email delivery failed");
     }
 
     return {
@@ -181,6 +205,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       body: JSON.stringify({ success: true }),
     };
   } catch (error) {
+    // Log full error details for debugging but don't expose to client
     console.error("Error processing contact form:", error);
 
     if (error instanceof SyntaxError) {
@@ -194,12 +219,13 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       };
     }
 
+    // Return generic error message to avoid leaking internal details
     return {
       statusCode: 500,
       headers: corsHeaders,
       body: JSON.stringify({
-        error: "Failed to send email",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: "Failed to send message",
+        message: "An unexpected error occurred. Please try again later.",
       }),
     };
   }

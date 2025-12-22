@@ -198,9 +198,10 @@ describe("contact-form Lambda handler", () => {
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(500);
 
+    // Error messages are sanitized to not leak internal details
     const body = JSON.parse(result.body);
-    expect(body.error).toBe("Failed to send email");
-    expect(body.message).toContain("API key invalid");
+    expect(body.error).toBe("Failed to send message");
+    expect(body.message).toBe("An unexpected error occurred. Please try again later.");
   });
 
   it("returns 500 when SSM parameter is missing", async () => {
@@ -226,8 +227,10 @@ describe("contact-form Lambda handler", () => {
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(500);
 
+    // Error messages are sanitized to not leak internal configuration details
     const body = JSON.parse(result.body);
-    expect(body.message).toContain("Recipient email missing");
+    expect(body.error).toBe("Failed to send message");
+    expect(body.message).toBe("An unexpected error occurred. Please try again later.");
   });
 
   it("escapes HTML in email content to prevent XSS", async () => {

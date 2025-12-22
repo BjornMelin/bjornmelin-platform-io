@@ -1,11 +1,14 @@
 import * as cdk from "aws-cdk-lib";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
+import * as iam from "aws-cdk-lib/aws-iam";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import type { Construct } from "constructs";
+import { CACHE_DURATIONS } from "../constants/durations";
 import type { StorageStackProps } from "../types/stack-props";
+import { applyStandardTags } from "../utils/tagging";
 
 export class StorageStack extends cdk.Stack {
   public readonly bucket: s3.IBucket;
@@ -27,8 +30,8 @@ export class StorageStack extends cdk.Stack {
       lifecycleRules: [
         {
           enabled: true,
-          noncurrentVersionExpiration: cdk.Duration.days(30),
-          abortIncompleteMultipartUploadAfter: cdk.Duration.days(7),
+          noncurrentVersionExpiration: CACHE_DURATIONS.S3_VERSION_EXPIRATION,
+          abortIncompleteMultipartUploadAfter: CACHE_DURATIONS.MULTIPART_UPLOAD_ABORT,
         },
       ],
     });
@@ -42,16 +45,16 @@ export class StorageStack extends cdk.Stack {
       enforceSSL: true,
       lifecycleRules: [
         {
-          expiration: cdk.Duration.days(30),
+          expiration: CACHE_DURATIONS.LOG_RETENTION_DAYS,
         },
       ],
     });
 
     // Grant CloudFront access to the log bucket
     logsBucket.addToResourcePolicy(
-      new cdk.aws_iam.PolicyStatement({
-        effect: cdk.aws_iam.Effect.ALLOW,
-        principals: [new cdk.aws_iam.ServicePrincipal("logging.s3.amazonaws.com")],
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        principals: [new iam.ServicePrincipal("logging.s3.amazonaws.com")],
         actions: ["s3:PutObject"],
         resources: [`${logsBucket.bucketArn}/*`],
         conditions: {
@@ -97,13 +100,13 @@ export class StorageStack extends cdk.Stack {
           httpStatus: 403,
           responseHttpStatus: 200,
           responsePagePath: "/index.html",
-          ttl: cdk.Duration.minutes(5),
+          ttl: CACHE_DURATIONS.ERROR_RESPONSE_TTL,
         },
         {
           httpStatus: 404,
           responseHttpStatus: 200,
           responsePagePath: "/index.html",
-          ttl: cdk.Duration.minutes(5),
+          ttl: CACHE_DURATIONS.ERROR_RESPONSE_TTL,
         },
       ],
       minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
@@ -139,11 +142,11 @@ export class StorageStack extends cdk.Stack {
     });
 
     // Tags
-    cdk.Tags.of(this).add("Stack", "Storage");
-    cdk.Tags.of(this).add("Environment", props.environment);
-    for (const [key, value] of Object.entries(props.tags || {})) {
-      cdk.Tags.of(this).add(key, value);
-    }
+    applyStandardTags(this, {
+      environment: props.environment,
+      stackName: "Storage",
+      additionalTags: props.tags,
+    });
 
     // Outputs
     new cdk.CfnOutput(this, "WebsiteBucketName", {
@@ -170,9 +173,9 @@ export class StorageStack extends cdk.Stack {
       queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
       headerBehavior: cloudfront.CacheHeaderBehavior.none(),
       cookieBehavior: cloudfront.CacheCookieBehavior.none(),
-      defaultTtl: cdk.Duration.days(1),
-      maxTtl: cdk.Duration.days(365),
-      minTtl: cdk.Duration.hours(1),
+      defaultTtl: CACHE_DURATIONS.CLOUDFRONT_DEFAULT_TTL,
+      maxTtl: CACHE_DURATIONS.CLOUDFRONT_MAX_TTL,
+      minTtl: CACHE_DURATIONS.CLOUDFRONT_MIN_TTL,
       enableAcceptEncodingBrotli: true,
       enableAcceptEncodingGzip: true,
     });
@@ -186,19 +189,20 @@ export class StorageStack extends cdk.Stack {
           override: true,
           contentSecurityPolicy: [
             "default-src 'self'",
-            "img-src 'self' data: https:",
-            "script-src 'self' 'unsafe-inline'",
-            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: blob:",
+            "script-src 'self'", // Removed 'unsafe-inline' - XSS protection
+            "style-src 'self' 'unsafe-inline'", // Keep for CSS-in-JS (lower risk than script)
             "font-src 'self' data:",
             `connect-src 'self' https://api.${this.props.domainName}`,
             "frame-ancestors 'none'",
             "base-uri 'self'",
             "form-action 'self'",
+            "upgrade-insecure-requests",
           ].join("; "),
         },
         strictTransportSecurity: {
           override: true,
-          accessControlMaxAge: cdk.Duration.days(730),
+          accessControlMaxAge: CACHE_DURATIONS.HSTS_MAX_AGE,
           includeSubdomains: true,
           preload: true,
         },

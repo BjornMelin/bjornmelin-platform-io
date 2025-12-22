@@ -30,6 +30,6 @@
     "test",
     "**/*.test.ts",
     "**/*.spec.ts",
-    "vitest.config.ts"
+    "vitest.config.mts"
   ]
 }

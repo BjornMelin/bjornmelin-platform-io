@@ -71,25 +71,38 @@ export default defineConfig({
       "**/dist/**",
       "**/e2e/**",
       "**/.{idea,git,cache,output,temp}/**",
+      // Infrastructure tests have their own vitest config
+      "infrastructure/**",
     ],
     coverage: {
       provider: "v8",
       reporter: coverageReporters,
       include: [
+        // Core application logic
         "src/lib/**/*.{ts,tsx}",
         "src/hooks/**/*.ts",
+        "src/env.mjs",
+        // Components (excluding UI library)
         "src/components/structured-data.tsx",
         "src/components/projects/**/*.{ts,tsx}",
-        "src/components/shared/error-boundary.tsx",
+        "src/components/shared/**/*.{ts,tsx}",
+        "src/components/sections/**/*.{ts,tsx}",
+        "src/components/contact/**/*.{ts,tsx}",
+        "src/components/layout/**/*.{ts,tsx}",
         "src/components/theme/theme-toggle.tsx",
-        "src/components/layout/navbar.tsx",
-        "src/components/layout/footer.tsx",
-        "infrastructure/**/*.ts",
+        // App routes and pages
+        "src/app/**/page.tsx",
+        "src/app/**/layout.tsx",
+        "src/app/**/route.ts",
+        "src/app/providers.tsx",
+        "src/app/sitemap.ts",
+        "src/app/robots.ts",
+        "src/app/loading.tsx",
       ],
       exclude: [
         "node_modules/",
         "src/test/",
-        "src/app/**",
+        "src/mocks/",
         "src/data/**",
         "src/types/**",
         "public/**",
@@ -98,9 +111,9 @@ export default defineConfig({
         "**/*.type.ts",
         ".next/**",
         "infrastructure/**",
+        // UI library components (shadcn/radix - vendor code)
         "src/components/ui/**",
-        "src/components/sections/**",
-        "src/components/contact/**",
+        // Thin wrappers around third-party libraries
         "src/components/theme/theme-provider.tsx",
       ],
       thresholds: coverageThresholds,
