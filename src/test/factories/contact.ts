@@ -1,5 +1,8 @@
 import type { ContactFormData, ContactFormWithSecurityData } from "@/lib/schemas/contact";
 
+const VALID_FORM_FILL_TIME_MS = 5_000; // Must be > MIN_SUBMISSION_TIME (3s) in src/lib/security/time-check.ts
+const TOO_FAST_FORM_FILL_TIME_MS = 100;
+
 /**
  * Build valid contact form data for tests.
  * Provides sensible defaults that pass validation.
@@ -23,7 +26,7 @@ export function buildContactFormWithSecurity(
   return {
     ...buildContactFormData(),
     honeypot: "", // Empty honeypot (valid)
-    formLoadTime: Date.now() - 5000, // 5 seconds ago (valid timing)
+    formLoadTime: Date.now() - VALID_FORM_FILL_TIME_MS,
     ...overrides,
   };
 }
@@ -36,5 +39,6 @@ export const invalidContactData = {
   invalidEmail: () => buildContactFormData({ email: "not-an-email" }),
   messageTooShort: () => buildContactFormData({ message: "Hi" }),
   honeypotFilled: () => buildContactFormWithSecurity({ honeypot: "bot-filled" }),
-  tooFast: () => buildContactFormWithSecurity({ formLoadTime: Date.now() - 100 }), // 100ms (too fast)
+  tooFast: () =>
+    buildContactFormWithSecurity({ formLoadTime: Date.now() - TOO_FAST_FORM_FILL_TIME_MS }),
 };
