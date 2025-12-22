@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import type { UserEvent } from "@testing-library/user-event";
 
 /**
@@ -81,8 +81,6 @@ export function getContactFormValues(): { name: string; email: string; message: 
 export async function waitForFormValid(
   buttonPattern: RegExp | string = /send message/i,
 ): Promise<HTMLElement> {
-  const { waitFor } = await import("@testing-library/react");
-
   return waitFor(() => {
     const button = screen.getByRole("button", { name: buttonPattern });
     if (button.hasAttribute("disabled")) {
