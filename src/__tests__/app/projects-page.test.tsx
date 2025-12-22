@@ -1,10 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { Project } from "@/types/project";
 
 // Mock ProjectGrid component
 const mockProjectGrid = vi.fn();
 vi.mock("@/components/projects/project-grid", () => ({
-  ProjectGrid: (props: { projects: unknown[] }) => {
+  ProjectGrid: (props: { projects: Project[] }) => {
     mockProjectGrid(props);
     return <div data-testid="project-grid">{props.projects.length} projects</div>;
   },
@@ -13,9 +14,34 @@ vi.mock("@/components/projects/project-grid", () => ({
 // Mock projects data with inline data (vi.mock is hoisted, can't use external variables)
 vi.mock("@/data/projects", () => ({
   projectsData: [
-    { id: "1", title: "Project 1", technologies: ["TypeScript"] },
-    { id: "2", title: "Project 2", technologies: ["React"] },
-    { id: "3", title: "Project 3", technologies: ["Node.js"] },
+    {
+      id: "1",
+      title: "Project 1",
+      description: "Test project 1 description",
+      technologies: ["TypeScript"],
+      category: "test",
+      image: "/test/project-1.png",
+      links: { github: "https://example.com/project-1" },
+      featured: true,
+    },
+    {
+      id: "2",
+      title: "Project 2",
+      description: "Test project 2 description",
+      technologies: ["React"],
+      category: "test",
+      image: "/test/project-2.png",
+      links: { github: "https://example.com/project-2" },
+    },
+    {
+      id: "3",
+      title: "Project 3",
+      description: "Test project 3 description",
+      technologies: ["Node.js"],
+      category: "test",
+      image: "/test/project-3.png",
+      links: { github: "https://example.com/project-3" },
+    },
   ],
 }));
 
@@ -51,7 +77,11 @@ describe("ProjectsPage", () => {
 
     expect(mockProjectGrid).toHaveBeenCalledWith(
       expect.objectContaining({
-        projects: expect.any(Array),
+        projects: expect.arrayContaining([
+          expect.objectContaining({ id: "1", title: "Project 1" }),
+          expect.objectContaining({ id: "2", title: "Project 2" }),
+          expect.objectContaining({ id: "3", title: "Project 3" }),
+        ]),
       }),
     );
   });
