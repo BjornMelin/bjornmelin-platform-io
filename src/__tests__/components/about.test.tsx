@@ -100,8 +100,8 @@ describe("About", () => {
   });
 
   it("has section landmark", () => {
-    const { container } = render(<About />);
+    render(<About />);
 
-    expect(container.querySelector("section")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: /crafting ai solutions/i })).toBeInTheDocument();
   });
 });
