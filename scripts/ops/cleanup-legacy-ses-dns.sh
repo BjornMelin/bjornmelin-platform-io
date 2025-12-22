@@ -55,7 +55,12 @@ INCLUDE_AMAZONSES=false
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --hosted-zone-id)
-      HOSTED_ZONE_ID="${2:-}"
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then
+        echo -e "${RED}Error: --hosted-zone-id requires a value${NC}" >&2
+        show_help >&2
+        exit 1
+      fi
+      HOSTED_ZONE_ID="$2"
       shift 2
       ;;
     --dry-run)
@@ -83,11 +88,15 @@ if [[ -z "${HOSTED_ZONE_ID}" ]]; then
   exit 1
 fi
 
+if [[ ! "${HOSTED_ZONE_ID}" =~ ^Z[A-Z0-9]+$ ]]; then
+  echo -e "${RED}Error: Invalid hosted zone ID format (should start with 'Z')${NC}" >&2
+  exit 1
+fi
+
 echo -e "${YELLOW}Scanning Route53 zone ${HOSTED_ZONE_ID} for legacy SES records...${NC}"
 echo ""
 
 # Get all records from the hosted zone
-ALL_RECORDS=
 ALL_RECORDS=$(aws route53 list-resource-record-sets \
   --hosted-zone-id "${HOSTED_ZONE_ID}" \
   --output json)
@@ -95,7 +104,6 @@ ALL_RECORDS=$(aws route53 list-resource-record-sets \
 # Find malformed DKIM CNAME records (duplicate domain in path)
 # Pattern: xxx._domainkey.domain.io._domainkey.domain.io. -> *.dkim.amazonses.com
 # The key pattern is having _domainkey appear twice in the record name
-MALFORMED_DKIM=
 MALFORMED_DKIM=$(echo "${ALL_RECORDS}" | jq -c '
   [.ResourceRecordSets[] |
     select(.Type == "CNAME") |
@@ -103,25 +111,21 @@ MALFORMED_DKIM=$(echo "${ALL_RECORDS}" | jq -c '
     select(.ResourceRecords[]?.Value | test("dkim\\.amazonses\\.com"))
   ]')
 
-MALFORMED_COUNT=
 MALFORMED_COUNT=$(echo "${MALFORMED_DKIM}" | jq 'length')
 
 # Find orphaned _amazonses TXT records
 AMAZONSES_RECORDS="[]"
 AMAZONSES_COUNT=0
 if [[ "${INCLUDE_AMAZONSES}" == "true" ]]; then
-  AMAZONSES_RECORDS=
   AMAZONSES_RECORDS=$(echo "${ALL_RECORDS}" | jq -c '
     [.ResourceRecordSets[] |
       select(.Type == "TXT") |
       select(.Name | startswith("_amazonses."))
     ]')
-  AMAZONSES_COUNT=
   AMAZONSES_COUNT=$(echo "${AMAZONSES_RECORDS}" | jq 'length')
 fi
 
 # Combine all records to delete
-TOTAL_COUNT=
 TOTAL_COUNT=$((MALFORMED_COUNT + AMAZONSES_COUNT))
 
 if [[ "${TOTAL_COUNT}" -eq 0 ]]; then
@@ -155,7 +159,7 @@ fi
 
 # Confirmation prompt
 echo -e "${RED}This will permanently delete the above ${TOTAL_COUNT} record(s).${NC}"
-read -p "Continue? (y/N): " -n 1 -r REPLY
+read -p "Continue? (y/N): " -r REPLY
 echo
 if [[ ! "${REPLY}" =~ ^[Yy]$ ]]; then
   echo "Aborted."
@@ -163,14 +167,12 @@ if [[ ! "${REPLY}" =~ ^[Yy]$ ]]; then
 fi
 
 # Build combined records array
-RECORDS_TO_DELETE=
 RECORDS_TO_DELETE=$(jq -n \
   --argjson dkim "${MALFORMED_DKIM}" \
   --argjson ses "${AMAZONSES_RECORDS}" \
   '$dkim + $ses')
 
 # Build change batch for deletion
-CHANGE_BATCH=
 CHANGE_BATCH=$(echo "${RECORDS_TO_DELETE}" | jq '{
   Changes: [.[] | {
     Action: "DELETE",
@@ -187,9 +189,12 @@ CHANGE_BATCH=$(echo "${RECORDS_TO_DELETE}" | jq '{
 echo ""
 echo "Deleting records..."
 
-aws route53 change-resource-record-sets \
+CHANGE_RESULT=$(aws route53 change-resource-record-sets \
   --hosted-zone-id "${HOSTED_ZONE_ID}" \
   --change-batch "${CHANGE_BATCH}" \
-  --output json > /dev/null
+  --output json)
 
 echo -e "${GREEN}Successfully deleted ${TOTAL_COUNT} legacy SES record(s).${NC}"
+CHANGE_ID=$(echo "${CHANGE_RESULT}" | jq -r '.ChangeInfo.Id')
+echo -e "Change ID: ${CHANGE_ID}"
+echo -e "Check status: aws route53 get-change --id ${CHANGE_ID}"
