@@ -18,7 +18,7 @@ export const CACHE_DURATIONS = {
   /** HSTS max age (2 years) */
   HSTS_MAX_AGE: Duration.days(730),
   /** CloudWatch log retention */
-  LOG_RETENTION_DAYS: Duration.days(30),
+  LOG_RETENTION: Duration.days(30),
   /** SQS DLQ retention (max 14 days) */
   SQS_DLQ_RETENTION: Duration.days(14),
 } as const;

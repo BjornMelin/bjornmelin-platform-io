@@ -6,7 +6,7 @@ Contact form emails are delivered via [Resend](https://resend.com), a developer-
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     PRODUCTION PATH                              │
 ├─────────────────────────────────────────────────────────────────┤

@@ -49,7 +49,8 @@ function resolveDomain(domain?: string): string {
  * @returns Plain text email content.
  */
 export function createContactEmailText(options: EmailTemplateOptions): string {
-  const { data, submittedAt = new Date(), domain } = options;
+  const { data, submittedAt: rawSubmittedAt, domain } = options;
+  const submittedAt = rawSubmittedAt instanceof Date ? rawSubmittedAt : new Date();
   const siteDomain = resolveDomain(domain);
   return `
 New Contact Form Submission
@@ -73,7 +74,8 @@ Sent from: ${siteDomain}
  * @returns HTML email content.
  */
 export function createContactEmailHtml(options: EmailTemplateOptions): string {
-  const { data, submittedAt = new Date(), domain } = options;
+  const { data, submittedAt: rawSubmittedAt, domain } = options;
+  const submittedAt = rawSubmittedAt instanceof Date ? rawSubmittedAt : new Date();
   const siteDomain = resolveDomain(domain);
   return `
 <!DOCTYPE html>
@@ -192,7 +194,7 @@ export function escapeHtml(text: string): string {
     '"': "&quot;",
     "'": "&#39;",
   };
-  return text.replace(/[&<>"']/g, (char) => htmlEscapes[char] ?? char);
+  return text.replace(/[&<>"']/g, (char) => htmlEscapes[char] || char);
 }
 
 /**

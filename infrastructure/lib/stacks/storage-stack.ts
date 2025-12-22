@@ -45,7 +45,7 @@ export class StorageStack extends cdk.Stack {
       enforceSSL: true,
       lifecycleRules: [
         {
-          expiration: CACHE_DURATIONS.LOG_RETENTION_DAYS,
+          expiration: CACHE_DURATIONS.LOG_RETENTION,
         },
       ],
     });

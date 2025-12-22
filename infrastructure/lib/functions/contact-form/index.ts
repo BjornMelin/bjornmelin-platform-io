@@ -50,7 +50,8 @@ function extractApiKey(rawValue: string): string {
 
 /**
  * Gets a Resend client with API key from SSM.
- * Creates a new client on each call to ensure key rotation is respected.
+ * Creates a new client on each call. Note: SSM values are cached for 5 minutes,
+ * so key rotation takes effect within that window.
  */
 async function getResendClient(): Promise<Resend> {
   const paramName = requireEnv("SSM_RESEND_API_KEY_PARAM");
@@ -159,8 +160,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   }
 
   try {
-    const data: ContactFormData = JSON.parse(event.body);
-    const validationResult = validateContactForm(data);
+    const parsed: unknown = JSON.parse(event.body);
+    const validationResult = validateContactForm(parsed as Record<string, unknown>);
 
     if (!validationResult.valid) {
       return {
@@ -169,6 +170,9 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         body: JSON.stringify({ error: validationResult.error }),
       };
     }
+
+    // At this point, validation passed, so we can safely cast
+    const data = parsed as ContactFormData;
 
     // Validate and sanitize email to prevent header injection
     const sanitizedEmail = sanitizeEmail(data.email);
@@ -196,6 +200,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     if (error) {
       console.error("Resend error:", error);
+      // Error is logged above for debugging; throw generic message to avoid leaking details
       throw new Error("Email delivery failed");
     }
 

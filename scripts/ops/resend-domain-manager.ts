@@ -141,7 +141,7 @@ async function findDomain(domainName: string): Promise<ResendDomain | null> {
   }
 
   const domains = (data as { data?: ResendDomain[] })?.data ?? [];
-  return domains.find((d) => d.name === domainName) ?? null;
+  return domains.find((d) => d.name === domainName) || null;
 }
 
 /**
@@ -301,7 +301,7 @@ async function statusCommand(options: { domain: string; region: string }): Promi
     console.log("");
   }
 
-  const allVerified = details.records?.every((r) => r.status === "verified");
+  const allVerified = details.records?.every((r) => r.status === "verified") ?? false;
   console.log("═".repeat(80));
   if (allVerified && details.status === "verified") {
     console.log("✓ Domain is fully verified and ready for sending");
