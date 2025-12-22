@@ -38,7 +38,7 @@ export function createBaseProps(
   return {
     env: createTestEnv(),
     domainName: "test.example.com",
-    environment: "prod" as Environment,
+    environment: "dev" as Environment,
     tags: { Project: "Test" },
     ...overrides,
   };

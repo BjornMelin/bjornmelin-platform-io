@@ -1,24 +1,12 @@
 import * as cdk from "aws-cdk-lib";
 import { Match, Template } from "aws-cdk-lib/assertions";
-import * as route53 from "aws-cdk-lib/aws-route53";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { DnsStack } from "../lib/stacks/dns-stack";
 import { EmailStack } from "../lib/stacks/email-stack";
 import { StorageStack } from "../lib/stacks/storage-stack";
+import { mockHostedZoneLookup } from "./helpers";
 
 describe("Cross-stack references", () => {
-  // Mock HostedZone.fromLookup to avoid context provider calls
-  function mockHostedZoneLookup() {
-    return vi
-      .spyOn(route53.HostedZone, "fromLookup")
-      .mockImplementation((scope, id: string, opts: { domainName: string }) => {
-        return route53.HostedZone.fromHostedZoneAttributes(scope as cdk.Stack, id, {
-          hostedZoneId: "ZMOCK",
-          zoneName: opts.domainName,
-        });
-      });
-  }
-
   it("exports certificate ARN from DnsStack", () => {
     const app = new cdk.App();
     const spy = mockHostedZoneLookup();
