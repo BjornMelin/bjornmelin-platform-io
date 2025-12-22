@@ -28,7 +28,7 @@ export function buildProject(overrides: Partial<Project> = {}): Project {
  * Build a featured project.
  */
 export function buildFeaturedProject(overrides: Partial<Project> = {}): Project {
-  return buildProject({ featured: true, ...overrides });
+  return buildProject({ ...overrides, featured: true });
 }
 
 /**
@@ -45,7 +45,7 @@ export function buildProjectFilterState(
   overrides: Partial<ProjectFilterState> = {},
 ): ProjectFilterState {
   return {
-    category: "all",
+    category: "All",
     sortBy: "featured",
     ...overrides,
   };
