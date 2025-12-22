@@ -74,6 +74,37 @@ interface DnsChange {
   priority?: number;
 }
 
+function normalizeDnsName(name: string): string {
+  return name.replace(/\.$/, "");
+}
+
+function normalizeDnsValue(value: string): string {
+  return value.replace(/^"|"$/g, "").trim();
+}
+
+function isResendDomain(value: unknown): value is ResendDomain {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const maybe = value as { id?: unknown; name?: unknown; status?: unknown };
+  return (
+    typeof maybe.id === "string" &&
+    typeof maybe.name === "string" &&
+    (typeof maybe.status === "string" || typeof maybe.status === "undefined")
+  );
+}
+
+function extractResendDomains(data: unknown): ResendDomain[] {
+  if (!data || typeof data !== "object") {
+    return [];
+  }
+  const maybe = data as { data?: unknown };
+  if (!Array.isArray(maybe.data)) {
+    return [];
+  }
+  return maybe.data.filter(isResendDomain);
+}
+
 // Clients
 let ssmClient: SSMClient;
 let route53Client: Route53Client;
@@ -140,7 +171,7 @@ async function findDomain(domainName: string): Promise<ResendDomain | null> {
     throw new Error(`Failed to list domains: ${error.message}`);
   }
 
-  const domains = (data as { data?: ResendDomain[] })?.data ?? [];
+  const domains = extractResendDomains(data);
   return domains.find((d) => d.name === domainName) || null;
 }
 
@@ -184,6 +215,7 @@ async function getExistingRecords(
   recordNames: string[],
 ): Promise<Map<string, ResourceRecordSet>> {
   const records = new Map<string, ResourceRecordSet>();
+  const normalizedNames = new Set(recordNames.map(normalizeDnsName));
 
   const command = new ListResourceRecordSetsCommand({
     HostedZoneId: hostedZoneId,
@@ -192,8 +224,8 @@ async function getExistingRecords(
   const result = await route53Client.send(command);
 
   for (const record of result.ResourceRecordSets ?? []) {
-    const normalizedName = record.Name?.replace(/\.$/, "") ?? "";
-    if (recordNames.some((name) => normalizedName === name || normalizedName === `${name}`)) {
+    const normalizedName = normalizeDnsName(record.Name ?? "");
+    if (normalizedNames.has(normalizedName)) {
       records.set(`${record.Type}:${normalizedName}`, record);
     }
   }
@@ -255,8 +287,13 @@ async function applyDnsChanges(
     ChangeBatch: { Changes: changeBatch },
   });
 
-  await route53Client.send(command);
-  console.log(`\nApplied ${changes.length} DNS change(s) successfully.`);
+  try {
+    await route53Client.send(command);
+    console.log(`\nApplied ${changes.length} DNS change(s) successfully.`);
+  } catch (error) {
+    const err = error as Error;
+    throw new Error(`Failed to apply DNS changes: ${err.message}`, { cause: err });
+  }
 }
 
 // Command: status
@@ -273,7 +310,7 @@ async function statusCommand(options: { domain: string; region: string }): Promi
     console.error(`Domain '${domain}' not found in Resend account.`);
 
     const { data } = await resendClient.domains.list();
-    const domains = (data as { data?: ResendDomain[] })?.data ?? [];
+    const domains = extractResendDomains(data);
     if (domains.length > 0) {
       console.log("\nAvailable domains:");
       for (const d of domains) {
@@ -456,9 +493,15 @@ async function syncDnsCommand(options: {
     } else {
       // Check if value matches
       const existingValue = existing.ResourceRecords?.[0]?.Value ?? "";
-      const normalizedExisting = existingValue.replace(/^"|"$/g, "");
+      let normalizedExisting = normalizeDnsValue(existingValue);
+      const normalizedValue = normalizeDnsValue(record.value);
 
-      if (normalizedExisting !== record.value) {
+      // For MX records, strip the priority prefix for comparison
+      if (record.type === "MX" && record.priority !== undefined) {
+        normalizedExisting = normalizedExisting.replace(/^\d+\s+/, "");
+      }
+
+      if (normalizeDnsName(normalizedExisting) !== normalizeDnsName(normalizedValue)) {
         changes.push({
           action: "UPSERT",
           name: record.name,
