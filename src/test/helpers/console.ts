@@ -57,11 +57,13 @@ export function spyOnConsoleError(): ConsoleSpy {
  */
 export function withSuppressedConsole<T>(fn: () => T | Promise<T>): () => Promise<T> {
   return async () => {
-    const restore = suppressConsoleError();
+    const restoreError = suppressConsoleError();
+    const restoreWarn = suppressConsoleWarn();
     try {
       return await fn();
     } finally {
-      restore();
+      restoreWarn();
+      restoreError();
     }
   };
 }
