@@ -2,6 +2,7 @@ import * as path from "node:path";
 import * as cdk from "aws-cdk-lib";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as lambdaCore from "aws-cdk-lib/aws-lambda";
@@ -47,6 +48,18 @@ export class EmailStack extends cdk.Stack {
       queueName: `${props.environment}-contact-form-dlq`,
       retentionPeriod: CACHE_DURATIONS.SQS_DLQ_RETENTION, // 14 days (SQS max)
       encryption: sqs.QueueEncryption.SQS_MANAGED,
+    });
+
+    new cloudwatch.Alarm(this, "ContactFormDlqAlarm", {
+      alarmDescription: "Contact form DLQ has messages pending (failed deliveries)",
+      metric: dlq.metricApproximateNumberOfMessagesVisible({
+        period: cdk.Duration.minutes(5),
+        statistic: "Sum",
+      }),
+      threshold: 0,
+      evaluationPeriods: 1,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
     });
 
     // Create Lambda function for contact form
