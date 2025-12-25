@@ -161,7 +161,7 @@ fi
 echo -e "${RED}This will permanently delete the above ${TOTAL_COUNT} record(s).${NC}"
 read -p "Continue? (y/N): " -r REPLY
 echo
-if [[ ! "${REPLY}" =~ ^[Yy]$ ]]; then
+if [[ ! "${REPLY,,}" =~ ^(y|yes)$ ]]; then
   echo "Aborted."
   exit 0
 fi
