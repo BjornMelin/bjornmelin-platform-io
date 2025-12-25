@@ -72,7 +72,7 @@ describe("sitemap", () => {
 });
 
 describe("robots", () => {
-  // Note: robots uses process.env.NEXT_PUBLIC_BASE_URL at module load time
+  // Note: robots uses process.env.NEXT_PUBLIC_APP_URL at module load time
   // We test the structure and logic
 
   it("allows all user agents", () => {
