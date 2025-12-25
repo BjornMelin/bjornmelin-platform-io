@@ -201,9 +201,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     if (error) {
       console.error("Resend error:", error);
       // Error is logged above for debugging; throw generic message to avoid leaking details
-      const deliveryError = new Error("Email delivery failed");
-      (deliveryError as { cause?: unknown }).cause = error;
-      throw deliveryError;
+      throw new Error("Email delivery failed", { cause: error });
     }
 
     return {
