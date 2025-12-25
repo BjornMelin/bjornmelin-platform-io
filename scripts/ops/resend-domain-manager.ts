@@ -94,6 +94,23 @@ function isResendDomain(value: unknown): value is ResendDomain {
   );
 }
 
+function isResendDomainDetails(value: unknown): value is ResendDomain {
+  if (!isResendDomain(value)) {
+    return false;
+  }
+
+  const maybe = value as { created_at?: unknown; region?: unknown; records?: unknown };
+  if (typeof maybe.created_at !== "string" || typeof maybe.region !== "string") {
+    return false;
+  }
+
+  if (typeof maybe.records !== "undefined" && !Array.isArray(maybe.records)) {
+    return false;
+  }
+
+  return true;
+}
+
 function extractResendDomains(data: unknown): ResendDomain[] {
   if (!data || typeof data !== "object") {
     return [];
@@ -185,7 +202,11 @@ async function getDomainDetails(domainId: string): Promise<ResendDomain> {
     throw new Error(`Failed to get domain details: ${error.message}`);
   }
 
-  return data as ResendDomain;
+  if (!isResendDomainDetails(data)) {
+    throw new Error("Unexpected domain response structure");
+  }
+
+  return data;
 }
 
 /**
