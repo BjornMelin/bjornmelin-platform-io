@@ -29,7 +29,9 @@
   "pnpm": {
     "overrides": {
       "glob": "^11.0.0",
-      "test-exclude": "^7.0.0"
+      "test-exclude": "^7.0.0",
+      "vite": "^5.4.21",
+      "esbuild": "^0.25.0"
     },
     "onlyBuiltDependencies": [
       "unrs-resolver",
