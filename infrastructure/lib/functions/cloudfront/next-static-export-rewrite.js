@@ -16,6 +16,7 @@ function handler(event) {
   // values (e.g. "text/html, text/x-component").
   var headers = request.headers || {};
   var hasRscHeader = headers.rsc && headers.rsc.value === "1";
+  // biome-ignore lint/complexity/useOptionalChain: CloudFront Functions runtime avoids optional chaining.
   var acceptValue = headers.accept && headers.accept.value;
   var wantsRsc = typeof acceptValue === "string" && acceptValue.indexOf("text/x-component") !== -1;
   var isRsc = hasRscHeader || wantsRsc;
@@ -26,11 +27,11 @@ function handler(event) {
   // still special-case "/" to avoid accidental double-slash paths and to support
   // rewriting RSC navigations to "/index.txt".
   if (uri === "/") {
-    request.uri = "/" + indexFile;
+    request.uri = `/${indexFile}`;
     return request;
   }
 
   var endsWithSlash = uri.charAt(uri.length - 1) === "/";
-  request.uri = endsWithSlash ? uri + indexFile : uri + "/" + indexFile;
+  request.uri = endsWithSlash ? `${uri}${indexFile}` : `${uri}/${indexFile}`;
   return request;
 }
