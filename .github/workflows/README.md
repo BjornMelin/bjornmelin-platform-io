@@ -62,6 +62,11 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 12. **link-check.yml** - Check for broken links
     - Runs on: Push, PRs, monthly schedule (8th at 04:00 UTC)
     - Features: Markdown link validation, issue creation on failure
+    - Exclusions:
+      - `https://bjornmelin.io` and `https://www.bjornmelin.io` are intentionally excluded because this workflow is for documentation/external link hygiene and should not fail PRs/scheduled runs when the production site returns transient 5xx (e.g., CloudFront edge/runtime errors during deploys).
+      - Production availability is validated separately by `deploy.yml` via the post-deploy smoke check.
+      - Approved by: Bjorn Melin
+      - Follow-up: keep excluded; if homepage availability should be continuously validated, add a dedicated uptime/smoke check (or a stable `/healthz` endpoint) rather than gating docs link checks on prod status.
 
 ### Performance
 

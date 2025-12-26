@@ -1,10 +1,10 @@
 // biome-ignore lint/correctness/noUnusedVariables: CloudFront Functions entrypoint.
 function handler(event) {
-  const request = event.request;
-  const uri = request.uri;
+  var request = event.request;
+  var uri = request.uri;
 
   // Don't rewrite assets or explicit files.
-  const lastSegment = uri.split("/").pop();
+  var lastSegment = uri.split("/").pop();
   if (lastSegment && /\.[a-zA-Z0-9]+$/.test(lastSegment)) {
     return request;
   }
@@ -14,10 +14,14 @@ function handler(event) {
   // normalized to lowercase, so we read the "RSC" header via `headers.rsc`. The
   // Accept header check intentionally uses a substring match to handle multiple
   // values (e.g. "text/html, text/x-component").
-  const headers = request.headers ?? {};
-  const isRsc = headers.rsc?.value === "1" || headers.accept?.value?.includes("text/x-component");
+  var headers = request.headers || {};
+  var hasRscHeader = headers.rsc && headers.rsc.value === "1";
+  // biome-ignore lint/complexity/useOptionalChain: CloudFront Functions runtime avoids optional chaining.
+  var acceptValue = headers.accept && headers.accept.value;
+  var wantsRsc = typeof acceptValue === "string" && acceptValue.indexOf("text/x-component") !== -1;
+  var isRsc = hasRscHeader || wantsRsc;
 
-  const indexFile = isRsc ? "index.txt" : "index.html";
+  var indexFile = isRsc ? "index.txt" : "index.html";
 
   // The distribution is configured with defaultRootObject: "index.html", but we
   // still special-case "/" to avoid accidental double-slash paths and to support
@@ -27,6 +31,7 @@ function handler(event) {
     return request;
   }
 
-  request.uri = uri.endsWith("/") ? `${uri}${indexFile}` : `${uri}/${indexFile}`;
+  var endsWithSlash = uri.charAt(uri.length - 1) === "/";
+  request.uri = endsWithSlash ? `${uri}${indexFile}` : `${uri}/${indexFile}`;
   return request;
 }
