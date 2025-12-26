@@ -1,3 +1,4 @@
+import * as path from "node:path";
 import * as cdk from "aws-cdk-lib";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
@@ -79,6 +80,8 @@ export class StorageStack extends cdk.Stack {
       oacChild.overrideLogicalId("WebsiteOAC");
     }
 
+    const staticSiteRewriteFunction = this.createStaticSiteRewriteFunction();
+
     // CloudFront distribution
     this.distribution = new cloudfront.Distribution(this, "Distribution", {
       defaultBehavior: {
@@ -91,6 +94,12 @@ export class StorageStack extends cdk.Stack {
         compress: true,
         cachePolicy: this.createCachePolicy(),
         responseHeadersPolicy: this.createSecurityHeadersPolicy(),
+        functionAssociations: [
+          {
+            function: staticSiteRewriteFunction,
+            eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+          },
+        ],
       },
       domainNames: [props.domainName, `www.${props.domainName}`],
       certificate: props.certificate,
@@ -98,14 +107,14 @@ export class StorageStack extends cdk.Stack {
       errorResponses: [
         {
           httpStatus: 403,
-          responseHttpStatus: 200,
-          responsePagePath: "/index.html",
+          responseHttpStatus: 404,
+          responsePagePath: "/404.html",
           ttl: CACHE_DURATIONS.ERROR_RESPONSE_TTL,
         },
         {
           httpStatus: 404,
-          responseHttpStatus: 200,
-          responsePagePath: "/index.html",
+          responseHttpStatus: 404,
+          responsePagePath: "/404.html",
           ttl: CACHE_DURATIONS.ERROR_RESPONSE_TTL,
         },
       ],
@@ -165,6 +174,19 @@ export class StorageStack extends cdk.Stack {
       value: this.distribution.distributionDomainName,
       description: "CloudFront domain name",
       exportName: `${props.environment}-distribution-domain`,
+    });
+  }
+
+  private createStaticSiteRewriteFunction(): cloudfront.Function {
+    return new cloudfront.Function(this, "StaticSiteRewriteFunction", {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      comment: [
+        "Rewrite extensionless paths to /index.html for static export.",
+        "Rewrite RSC (Flight) requests to /index.txt for App Router client navigations.",
+      ].join(" "),
+      code: cloudfront.FunctionCode.fromFile({
+        filePath: path.join(__dirname, "../functions/cloudfront/next-static-export-rewrite.js"),
+      }),
     });
   }
 

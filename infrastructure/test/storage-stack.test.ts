@@ -53,6 +53,30 @@ describe("StorageStack", () => {
       }),
     });
 
+    // Static export routing: rewrite viewer requests to index.html/index.txt and return real 404s.
+    template.hasResourceProperties("AWS::CloudFront::Distribution", {
+      DistributionConfig: Match.objectLike({
+        DefaultCacheBehavior: Match.objectLike({
+          FunctionAssociations: Match.arrayWith([
+            Match.objectLike({ EventType: "viewer-request", FunctionARN: Match.anyValue() }),
+          ]),
+        }),
+        CustomErrorResponses: Match.arrayWith([
+          Match.objectLike({
+            ErrorCode: 403,
+            ResponseCode: 404,
+            ResponsePagePath: "/404.html",
+          }),
+          Match.objectLike({
+            ErrorCode: 404,
+            ResponseCode: 404,
+            ResponsePagePath: "/404.html",
+          }),
+        ]),
+      }),
+    });
+    template.resourceCountIs("AWS::CloudFront::Function", 1);
+
     // OAC reference wired to origin
     template.hasResourceProperties("AWS::CloudFront::Distribution", {
       DistributionConfig: Match.objectLike({
