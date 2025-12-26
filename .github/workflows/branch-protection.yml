@@ -52,14 +52,13 @@ jobs:
           HEAD_REF: ${{ github.head_ref }}
         run: |
           BASE_BRANCH="origin/$BASE_REF"
-          HEAD_BRANCH="origin/$HEAD_REF"
           
           git fetch origin "$BASE_REF"
           git fetch origin "$HEAD_REF"
           
-          BEHIND_COUNT=$(git rev-list --count HEAD..$BASE_BRANCH)
+          BEHIND_COUNT="$(git rev-list --count "HEAD..$BASE_BRANCH")"
           
-          if [ $BEHIND_COUNT -gt 0 ]; then
+          if [ "$BEHIND_COUNT" -gt 0 ]; then
             echo "⚠️ This branch is $BEHIND_COUNT commits behind $BASE_REF"
             echo "Please merge or rebase the latest changes from $BASE_REF"
             exit 1
