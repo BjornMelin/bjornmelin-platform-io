@@ -182,8 +182,8 @@ export class StorageStack extends cdk.Stack {
     const functionFileCandidates = [
       // When running CDK from source (ts-node): infrastructure/lib/stacks -> ../functions
       path.join(__dirname, "../functions/cloudfront/next-static-export-rewrite.js"),
-      // When running CDK from compiled JS: infrastructure/dist/lib/stacks -> ../../../../lib/functions
-      path.join(__dirname, "../../../../lib/functions/cloudfront/next-static-export-rewrite.js"),
+      // When running CDK from compiled JS: infrastructure/dist/lib/stacks -> ../../../lib/functions
+      path.join(__dirname, "../../../lib/functions/cloudfront/next-static-export-rewrite.js"),
     ];
 
     const functionFilePath = functionFileCandidates.find((candidate) => fs.existsSync(candidate));

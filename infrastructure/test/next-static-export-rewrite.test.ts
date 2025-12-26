@@ -57,4 +57,9 @@ describe("next-static-export-rewrite CloudFront Function", () => {
       "/index.txt",
     );
   });
+
+  it("handles empty headers object", () => {
+    expect(handler({ request: { uri: "/about", headers: {} } }).uri).toBe("/about/index.html");
+    expect(handler({ request: { uri: "/", headers: {} } }).uri).toBe("/index.html");
+  });
 });
