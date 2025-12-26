@@ -26,6 +26,7 @@ jobs:
         uses: lycheeverse/lychee-action@v2
         with:
           fail: true
+          # Note: prod site domains are excluded from this link-check (see .github/workflows/README.md).
           args: |
             --verbose
             --no-progress
