@@ -1,3 +1,4 @@
+import * as fs from "node:fs";
 import * as path from "node:path";
 import * as cdk from "aws-cdk-lib";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
@@ -178,6 +179,20 @@ export class StorageStack extends cdk.Stack {
   }
 
   private createStaticSiteRewriteFunction(): cloudfront.Function {
+    const functionFileCandidates = [
+      // When running CDK from source (ts-node): infrastructure/lib/stacks -> ../functions
+      path.join(__dirname, "../functions/cloudfront/next-static-export-rewrite.js"),
+      // When running CDK from compiled JS: infrastructure/dist/lib/stacks -> ../../../../lib/functions
+      path.join(__dirname, "../../../../lib/functions/cloudfront/next-static-export-rewrite.js"),
+    ];
+
+    const functionFilePath = functionFileCandidates.find((candidate) => fs.existsSync(candidate));
+    if (!functionFilePath) {
+      throw new Error(
+        `CloudFront Function code not found. Looked for: ${functionFileCandidates.join(", ")}`,
+      );
+    }
+
     return new cloudfront.Function(this, "StaticSiteRewriteFunction", {
       runtime: cloudfront.FunctionRuntime.JS_2_0,
       comment: [
@@ -185,7 +200,7 @@ export class StorageStack extends cdk.Stack {
         "Rewrite RSC (Flight) requests to /index.txt for App Router client navigations.",
       ].join(" "),
       code: cloudfront.FunctionCode.fromFile({
-        filePath: path.join(__dirname, "../functions/cloudfront/next-static-export-rewrite.js"),
+        filePath: functionFilePath,
       }),
     });
   }
@@ -193,7 +208,7 @@ export class StorageStack extends cdk.Stack {
   private createCachePolicy(): cloudfront.CachePolicy {
     return new cloudfront.CachePolicy(this, "CachePolicy", {
       queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
-      headerBehavior: cloudfront.CacheHeaderBehavior.none(),
+      headerBehavior: cloudfront.CacheHeaderBehavior.allowList("rsc", "accept"),
       cookieBehavior: cloudfront.CacheCookieBehavior.none(),
       defaultTtl: CACHE_DURATIONS.CLOUDFRONT_DEFAULT_TTL,
       maxTtl: CACHE_DURATIONS.CLOUDFRONT_MAX_TTL,

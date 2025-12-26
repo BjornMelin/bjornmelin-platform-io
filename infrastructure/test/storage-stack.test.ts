@@ -119,15 +119,19 @@ describe("StorageStack", () => {
 
     // CachePolicy TTLs and encodings
     template.hasResourceProperties("AWS::CloudFront::CachePolicy", {
-      CachePolicyConfig: {
+      CachePolicyConfig: Match.objectLike({
         DefaultTTL: 86400, // 1 day
         MaxTTL: 31536000, // 365 days
         MinTTL: 3600, // 1 hour
-        ParametersInCacheKeyAndForwardedToOrigin: {
+        ParametersInCacheKeyAndForwardedToOrigin: Match.objectLike({
           EnableAcceptEncodingBrotli: true,
           EnableAcceptEncodingGzip: true,
-        },
-      },
+          HeadersConfig: {
+            HeaderBehavior: "whitelist",
+            Headers: ["rsc", "accept"],
+          },
+        }),
+      }),
     });
 
     // Security headers policy with name set
