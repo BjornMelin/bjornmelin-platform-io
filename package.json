@@ -61,7 +61,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@aws-sdk/client-route-53": "^3.948.0",
+    "@aws-sdk/client-route-53": "^3.958.0",
     "@biomejs/biome": "^2.3.10",
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
@@ -91,7 +91,7 @@
     "shadcn-ui": "^0.9.4",
     "tailwindcss": "^3.4.1",
     "tsx": "^4.19.0",
-    "typescript": "~5.8.3",
+    "typescript": "~5.9.3",
     "vite": "~6.4.1",
     "vitest": "^3.2.4"
   },
