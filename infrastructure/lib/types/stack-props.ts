@@ -1,12 +1,17 @@
 import type * as cdk from "aws-cdk-lib";
+import type * as apigateway from "aws-cdk-lib/aws-apigateway";
 import type * as acm from "aws-cdk-lib/aws-certificatemanager";
 import type * as cloudfront from "aws-cdk-lib/aws-cloudfront";
+import type * as lambda from "aws-cdk-lib/aws-lambda";
 import type * as route53 from "aws-cdk-lib/aws-route53";
 import type * as s3 from "aws-cdk-lib/aws-s3";
 
+export type Environment = "prod" | "staging" | "dev";
+
 export interface BaseStackProps extends cdk.StackProps {
   domainName: string;
-  environment: "prod";
+  environment: Environment;
+  tags?: Record<string, string>;
 }
 
 export interface StorageStackProps extends BaseStackProps {
@@ -23,6 +28,10 @@ export interface MonitoringStackProps extends BaseStackProps {
   bucket: s3.IBucket;
   distribution: cloudfront.IDistribution;
   alertEmailAddresses: string[];
+  /** Contact form Lambda function for monitoring. */
+  emailFunction?: lambda.IFunction;
+  /** Contact form API Gateway for monitoring. */
+  contactApi?: apigateway.IRestApi;
 }
 
 export interface EmailStackProps extends BaseStackProps {

@@ -56,7 +56,8 @@ export function ContactForm() {
     formState: { errors, isValid },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
-    mode: "onBlur",
+    mode: "onTouched",
+    reValidateMode: "onChange",
   });
 
   const onSubmit = async (data: ContactFormData) => {

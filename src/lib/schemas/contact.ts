@@ -1,18 +1,22 @@
 import { z } from "zod";
+import { CONTACT_FORM_LIMITS } from "@/lib/email/templates/contact-form";
+
+const { name: nameLimits, message: msgLimits } = CONTACT_FORM_LIMITS;
 
 /**
  * Base contact form fields (name, email, message).
+ * Uses shared validation limits from email templates module.
  */
 const baseContactFields = {
   name: z
     .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(50, "Name must be less than 50 characters"),
+    .min(nameLimits.min, `Name must be at least ${nameLimits.min} characters`)
+    .max(nameLimits.max, `Name must be less than ${nameLimits.max} characters`),
   email: z.string().email("Please enter a valid email address"),
   message: z
     .string()
-    .min(10, "Message must be at least 10 characters")
-    .max(1000, "Message must be less than 1000 characters"),
+    .min(msgLimits.min, `Message must be at least ${msgLimits.min} characters`)
+    .max(msgLimits.max, `Message must be less than ${msgLimits.max} characters`),
 };
 
 /**

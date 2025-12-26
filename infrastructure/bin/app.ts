@@ -53,21 +53,7 @@ const deploymentStack = new DeploymentStack(app, getStackName("deployment", "pro
 // Ensure deployment stack depends on storage stack
 deploymentStack.addDependency(storageStack);
 
-// Monitoring Stack
-const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "prod"), {
-  env,
-  domainName: CONFIG.prod.domainName,
-  environment: CONFIG.prod.environment,
-  bucket: storageStack.bucket,
-  distribution: storageStack.distribution,
-  alertEmailAddresses: CONFIG.prod.alerts.emails,
-  tags: CONFIG.tags,
-});
-
-// Ensure monitoring stack depends on storage stack
-monitoringStack.addDependency(storageStack);
-
-// Email Stack
+// Email Stack (created before Monitoring to provide Lambda function reference)
 const emailStack = new EmailStack(app, getStackName("email", "prod"), {
   env,
   domainName: CONFIG.prod.domainName,
@@ -81,3 +67,20 @@ const emailStack = new EmailStack(app, getStackName("email", "prod"), {
 
 // Ensure email stack depends on DNS stack
 emailStack.addDependency(dnsStack);
+
+// Monitoring Stack
+const monitoringStack = new MonitoringStack(app, getStackName("monitoring", "prod"), {
+  env,
+  domainName: CONFIG.prod.domainName,
+  environment: CONFIG.prod.environment,
+  bucket: storageStack.bucket,
+  distribution: storageStack.distribution,
+  alertEmailAddresses: CONFIG.prod.alerts.emails,
+  emailFunction: emailStack.emailFunction,
+  contactApi: emailStack.api,
+  tags: CONFIG.tags,
+});
+
+// Ensure monitoring stack depends on storage and email stacks
+monitoringStack.addDependency(storageStack);
+monitoringStack.addDependency(emailStack);

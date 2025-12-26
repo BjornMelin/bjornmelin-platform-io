@@ -8,7 +8,10 @@ import { skillCategories } from "@/data/skills";
 
 export function About() {
   return (
-    <section className="py-24 relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-background">
+    <section
+      aria-labelledby="about-heading"
+      className="py-24 relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-background"
+    >
       {/* Background Effects */}
       <div className="absolute inset-0 w-full h-full">
         <div className="absolute right-0 top-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
@@ -22,7 +25,7 @@ export function About() {
             <Sparkles className="w-3 h-3 mr-2 text-primary" />
             About Me
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 id="about-heading" className="text-4xl md:text-5xl font-bold mb-6">
             Crafting AI Solutions & <span className="text-primary">Cloud Architecture</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

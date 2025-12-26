@@ -2,6 +2,7 @@ import * as path from "node:path";
 import * as cdk from "aws-cdk-lib";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as lambdaCore from "aws-cdk-lib/aws-lambda";
@@ -9,8 +10,11 @@ import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
+import * as sqs from "aws-cdk-lib/aws-sqs";
 import type { Construct } from "constructs";
+import { CACHE_DURATIONS } from "../constants/durations";
 import type { EmailStackProps } from "../types/stack-props";
+import { applyStandardTags } from "../utils/tagging";
 
 /**
  * EmailStack provisions the contact form delivery pipeline using Resend, API Gateway, and Lambda.
@@ -39,6 +43,25 @@ export class EmailStack extends cdk.Stack {
     const resendApiKeyParam =
       props.ssmResendApiKeyParam ?? `/portfolio/${props.environment}/resend/api-key`;
 
+    // Dead Letter Queue for failed Lambda invocations
+    const dlq = new sqs.Queue(this, "ContactFormDLQ", {
+      queueName: `${props.environment}-contact-form-dlq`,
+      retentionPeriod: CACHE_DURATIONS.SQS_DLQ_RETENTION, // 14 days (SQS max)
+      encryption: sqs.QueueEncryption.SQS_MANAGED,
+    });
+
+    new cloudwatch.Alarm(this, "ContactFormDlqAlarm", {
+      alarmDescription: "Contact form DLQ has messages pending (failed deliveries)",
+      metric: dlq.metricApproximateNumberOfMessagesVisible({
+        period: cdk.Duration.minutes(5),
+        statistic: "Sum",
+      }),
+      threshold: 0,
+      evaluationPeriods: 1,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+
     // Create Lambda function for contact form
     this.emailFunction = new lambda.NodejsFunction(this, "ContactFormFunction", {
       runtime: lambdaCore.Runtime.NODEJS_20_X,
@@ -59,6 +82,8 @@ export class EmailStack extends cdk.Stack {
       memorySize: 128,
       architecture: lambdaCore.Architecture.ARM_64,
       tracing: lambdaCore.Tracing.ACTIVE,
+      deadLetterQueue: dlq,
+      retryAttempts: 2,
     });
 
     // Create API Gateway Logging Role
@@ -89,7 +114,7 @@ export class EmailStack extends cdk.Stack {
         types: [apigateway.EndpointType.REGIONAL],
       },
       deployOptions: {
-        stageName: "prod",
+        stageName: props.environment,
         loggingLevel: apigateway.MethodLoggingLevel.INFO,
         // Never log request/response bodies (PII) in API Gateway execution logs.
         // Keep traces + access logs enabled for observability.
@@ -127,6 +152,35 @@ export class EmailStack extends cdk.Stack {
       zone: hostedZone,
       recordName: subdomain,
       target: route53.RecordTarget.fromAlias(new targets.ApiGatewayDomain(customDomain)),
+    });
+
+    // Email DNS records for Resend bounce handling
+    // The send subdomain is used by Resend for SPF alignment and bounce processing
+    const sendSubdomain = `send.${domain}`;
+
+    // MX record for send subdomain - bounce/complaint handling for sending
+    // Per Resend docs: https://resend.com/docs/knowledge-base/route53
+    // Note: Only required if "Receiving" is enabled in Resend dashboard
+    new route53.MxRecord(this, "SendSubdomainMxRecord", {
+      zone: hostedZone,
+      recordName: sendSubdomain,
+      values: [
+        {
+          priority: 10,
+          hostName: "feedback-smtp.us-east-1.amazonses.com",
+        },
+      ],
+      ttl: cdk.Duration.hours(1),
+      comment: "Resend bounce handling MX record",
+    });
+
+    // SPF record for send subdomain - authorizes Amazon SES to send on behalf of this subdomain
+    new route53.TxtRecord(this, "SendSubdomainSpfRecord", {
+      zone: hostedZone,
+      recordName: sendSubdomain,
+      values: ["v=spf1 include:amazonses.com ~all"],
+      ttl: cdk.Duration.hours(1),
+      comment: "SPF for Resend send subdomain",
     });
 
     // Add API Gateway resource and method
@@ -174,11 +228,11 @@ export class EmailStack extends cdk.Stack {
     }
 
     // Add tags
-    cdk.Tags.of(this).add("Stack", "Email");
-    cdk.Tags.of(this).add("Environment", props.environment);
-    for (const [key, value] of Object.entries(props.tags || {})) {
-      cdk.Tags.of(this).add(key, value);
-    }
+    applyStandardTags(this, {
+      environment: props.environment,
+      stackName: "Email",
+      additionalTags: props.tags,
+    });
 
     // Outputs
     new cdk.CfnOutput(this, "EmailFunctionArn", {

@@ -142,4 +142,26 @@ describe("EmailStack", () => {
       Runtime: "nodejs20.x",
     });
   });
+
+  it("creates MX record for send subdomain (Resend bounce handling)", () => {
+    const template = buildEmailStackTemplate();
+
+    template.hasResourceProperties("AWS::Route53::RecordSet", {
+      Type: "MX",
+      Name: "send.example.com.",
+      ResourceRecords: ["10 feedback-smtp.us-east-1.amazonses.com"],
+      TTL: "3600",
+    });
+  });
+
+  it("creates SPF TXT record for send subdomain", () => {
+    const template = buildEmailStackTemplate();
+
+    template.hasResourceProperties("AWS::Route53::RecordSet", {
+      Type: "TXT",
+      Name: "send.example.com.",
+      ResourceRecords: ['"v=spf1 include:amazonses.com ~all"'],
+      TTL: "3600",
+    });
+  });
 });

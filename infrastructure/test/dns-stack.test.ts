@@ -1,44 +1,103 @@
 import * as cdk from "aws-cdk-lib";
 import { Match, Template } from "aws-cdk-lib/assertions";
-import * as route53 from "aws-cdk-lib/aws-route53";
-import { describe, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { DnsStack } from "../lib/stacks/dns-stack";
+import { createBaseProps, mockHostedZoneLookup } from "./helpers";
 
 describe("DnsStack", () => {
-  it("creates certificate validated via hosted zone and outputs", () => {
+  let spy: ReturnType<typeof mockHostedZoneLookup>;
+
+  afterEach(() => {
+    spy?.mockRestore();
+  });
+
+  it("creates certificate with correct SANs", () => {
     const app = new cdk.App();
+    spy = mockHostedZoneLookup();
 
-    // Mock fromLookup to avoid context provider calls
-    const spy = vi
-      .spyOn(route53.HostedZone, "fromLookup")
-      .mockImplementation((scope, id: string, opts: { domainName: string }) => {
-        return route53.HostedZone.fromHostedZoneAttributes(scope as cdk.Stack, id, {
-          hostedZoneId: "ZMOCK",
-          zoneName: opts.domainName,
-        });
-      });
-
-    const stack = new DnsStack(app, "Dns", {
-      env: { account: "111111111111", region: "us-east-1" },
-      domainName: "example.com",
-      environment: "prod",
-      tags: { Project: "Test" },
-    });
-
+    const stack = new DnsStack(app, "Dns", createBaseProps({ domainName: "example.com" }));
     const template = Template.fromStack(stack);
 
-    // Certificate exists with SANs for www and api
     template.hasResourceProperties("AWS::CertificateManager::Certificate", {
       DomainName: "example.com",
       SubjectAlternativeNames: Match.arrayWith(["www.example.com", "api.example.com"]),
-      DomainValidationOptions: Match.anyValue(),
+    });
+  });
+
+  it("uses DNS validation for certificate", () => {
+    const app = new cdk.App();
+    spy = mockHostedZoneLookup();
+
+    const stack = new DnsStack(app, "Dns", createBaseProps({ domainName: "example.com" }));
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties("AWS::CertificateManager::Certificate", {
+      ValidationMethod: "DNS",
+    });
+  });
+
+  it("exports certificate ARN", () => {
+    const app = new cdk.App();
+    spy = mockHostedZoneLookup();
+
+    const stack = new DnsStack(app, "Dns", createBaseProps({ environment: "prod" }));
+    const template = Template.fromStack(stack);
+
+    template.hasOutput("CertificateArn", {
+      Description: "SSL Certificate ARN",
+      Export: { Name: "prod-certificate-arn" },
+    });
+  });
+
+  it("exports hosted zone ID and name", () => {
+    const app = new cdk.App();
+    spy = mockHostedZoneLookup();
+
+    const stack = new DnsStack(app, "Dns", createBaseProps({ environment: "prod" }));
+    const template = Template.fromStack(stack);
+
+    template.hasOutput("HostedZoneId", {
+      Description: "Hosted Zone ID",
+      Export: { Name: "prod-hosted-zone-id" },
     });
 
-    // Outputs are present
-    template.hasOutput("CertificateArn", Match.anyValue());
-    template.hasOutput("HostedZoneId", Match.anyValue());
-    template.hasOutput("HostedZoneName", Match.anyValue());
+    template.hasOutput("HostedZoneName", {
+      Description: "Hosted Zone Name",
+      Export: { Name: "prod-hosted-zone-name" },
+    });
+  });
 
-    spy.mockRestore();
+  it("applies standard tags", () => {
+    const app = new cdk.App();
+    spy = mockHostedZoneLookup();
+
+    const stack = new DnsStack(
+      app,
+      "Dns",
+      createBaseProps({ environment: "prod", tags: { Project: "Portfolio", Owner: "Test" } }),
+    );
+    const template = Template.fromStack(stack);
+    const tags = template.findResources("AWS::CertificateManager::Certificate");
+    const certLogicalId = Object.keys(tags)[0];
+
+    expect(tags[certLogicalId].Properties.Tags).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ Key: "Stack", Value: "DNS" }),
+        expect.objectContaining({ Key: "Environment", Value: "prod" }),
+        expect.objectContaining({ Key: "Project", Value: "Portfolio" }),
+        expect.objectContaining({ Key: "Owner", Value: "Test" }),
+      ]),
+    );
+  });
+
+  it("exposes hostedZone and certificate properties", () => {
+    const app = new cdk.App();
+    spy = mockHostedZoneLookup();
+
+    const stack = new DnsStack(app, "Dns", createBaseProps({ domainName: "example.com" }));
+
+    expect(stack.hostedZone).toBeDefined();
+    expect(stack.certificate).toBeDefined();
+    expect(stack.hostedZone.zoneName).toBe("example.com");
   });
 });

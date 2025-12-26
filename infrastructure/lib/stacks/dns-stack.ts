@@ -3,6 +3,7 @@ import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import type { Construct } from "constructs";
 import type { BaseStackProps } from "../types/stack-props";
+import { applyStandardTags } from "../utils/tagging";
 
 export class DnsStack extends cdk.Stack {
   public readonly hostedZone: route53.IHostedZone;
@@ -24,11 +25,11 @@ export class DnsStack extends cdk.Stack {
     });
 
     // Tag all resources
-    cdk.Tags.of(this).add("Stack", "DNS");
-    cdk.Tags.of(this).add("Environment", props.environment);
-    for (const [key, value] of Object.entries(props.tags || {})) {
-      cdk.Tags.of(this).add(key, value);
-    }
+    applyStandardTags(this, {
+      environment: props.environment,
+      stackName: "DNS",
+      additionalTags: props.tags,
+    });
 
     // Outputs
     new cdk.CfnOutput(this, "CertificateArn", {

@@ -1,0 +1,83 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+
+// Mock next/link
+vi.mock("next/link", () => ({
+  default: ({
+    children,
+    href,
+    ...props
+  }: { children: React.ReactNode; href: string } & Record<string, unknown>) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
+// Mock next-export-optimize-images/image
+vi.mock("next-export-optimize-images/image", () => ({
+  default: ({ alt, src, ...props }: { alt: string; src: string } & Record<string, unknown>) => (
+    // biome-ignore lint/performance/noImgElement: Mock for next/image in tests
+    <img alt={alt} src={src} {...props} />
+  ),
+}));
+
+// Import after mocks
+import { Hero } from "@/components/sections/hero";
+
+describe("Hero", () => {
+  it("renders the name heading", () => {
+    render(<Hero />);
+
+    expect(screen.getByRole("heading", { level: 1, name: /bjorn melin/i })).toBeInTheDocument();
+  });
+
+  it("renders the professional title", () => {
+    render(<Hero />);
+
+    expect(screen.getByText(/senior data scientist/i)).toBeInTheDocument();
+    expect(screen.getByText(/cloud solutions architect/i)).toBeInTheDocument();
+    expect(screen.getByText(/6x aws certified/i)).toBeInTheDocument();
+  });
+
+  it("renders the profile image with correct alt text", () => {
+    render(<Hero />);
+
+    const image = screen.getByRole("img", { name: /bjorn melin/i });
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute("src", "/headshot/headshot-2024.jpg");
+  });
+
+  it("renders 'Get in Touch' CTA with correct link", () => {
+    render(<Hero />);
+
+    const contactLink = screen.getByRole("link", { name: /get in touch/i });
+    expect(contactLink).toBeInTheDocument();
+    expect(contactLink).toHaveAttribute("href", "/contact");
+  });
+
+  it("renders 'View Projects' CTA with correct link", () => {
+    render(<Hero />);
+
+    const projectsLink = screen.getByRole("link", { name: /view projects/i });
+    expect(projectsLink).toBeInTheDocument();
+    expect(projectsLink).toHaveAttribute("href", "/projects");
+  });
+
+  it("has section landmark for accessibility", () => {
+    const { container } = render(<Hero />);
+
+    expect(container.querySelector("section")).toBeInTheDocument();
+  });
+
+  it("renders CTA buttons with accessible styling", () => {
+    render(<Hero />);
+
+    const contactLink = screen.getByRole("link", { name: /get in touch/i });
+    const projectsLink = screen.getByRole("link", { name: /view projects/i });
+
+    // Both links should be visible and interactive
+    expect(contactLink).toBeVisible();
+    expect(projectsLink).toBeVisible();
+  });
+});

@@ -2,10 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the SSM module
 const getParameterMock = vi.fn();
-
-vi.mock("../lib/utils/ssm", () => ({
-  getParameter: getParameterMock,
-}));
+let getParameterSpy: ReturnType<typeof vi.spyOn> | undefined;
 
 // Mock Resend with controlled send function
 const mockSend = vi.fn();
@@ -32,6 +29,12 @@ describe("contact-form Lambda handler", () => {
     getParameterMock.mockReset();
     mockSend.mockReset();
 
+    // Spy on the real module export so the handler's ESM import binding sees the mocked impl
+    getParameterSpy?.mockRestore();
+    const ssmModuleId = `/@fs${new URL("../lib/utils/ssm.ts", import.meta.url).pathname}`;
+    const ssm = (await import(ssmModuleId)) as typeof import("../lib/utils/ssm");
+    getParameterSpy = vi.spyOn(ssm, "getParameter").mockImplementation(getParameterMock);
+
     getParameterMock.mockImplementation(async (param: string) => {
       if (param.includes("CONTACT_EMAIL")) return "recipient@example.com";
       if (param.includes("api-key")) return "re_test_123";
@@ -55,7 +58,8 @@ describe("contact-form Lambda handler", () => {
     };
 
     // @ts-expect-error - simplified event for testing
-    await mod.handler(event);
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(200);
 
     // Verify SSM parameters were retrieved
     expect(getParameterMock).toHaveBeenCalledWith("/portfolio/prod/CONTACT_EMAIL", true);
@@ -198,9 +202,10 @@ describe("contact-form Lambda handler", () => {
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(500);
 
+    // Error messages are sanitized to not leak internal details
     const body = JSON.parse(result.body);
-    expect(body.error).toBe("Failed to send email");
-    expect(body.message).toContain("API key invalid");
+    expect(body.error).toBe("Failed to send message");
+    expect(body.message).toBe("An unexpected error occurred. Please try again later.");
   });
 
   it("returns 500 when SSM parameter is missing", async () => {
@@ -226,8 +231,10 @@ describe("contact-form Lambda handler", () => {
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(500);
 
+    // Error messages are sanitized to not leak internal configuration details
     const body = JSON.parse(result.body);
-    expect(body.message).toContain("Recipient email missing");
+    expect(body.error).toBe("Failed to send message");
+    expect(body.message).toBe("An unexpected error occurred. Please try again later.");
   });
 
   it("escapes HTML in email content to prevent XSS", async () => {

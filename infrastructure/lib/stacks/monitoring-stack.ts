@@ -4,7 +4,9 @@ import * as actions from "aws-cdk-lib/aws-cloudwatch-actions";
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
 import type { Construct } from "constructs";
+import { ALARM_PERIODS, ALARM_THRESHOLDS } from "../constants/durations";
 import type { MonitoringStackProps } from "../types/stack-props";
+import { applyStandardTags } from "../utils/tagging";
 
 export class MonitoringStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: MonitoringStackProps) {
@@ -38,7 +40,7 @@ export class MonitoringStack extends cdk.Stack {
         Region: "Global",
       },
       statistic: "Average",
-      period: cdk.Duration.minutes(5),
+      period: ALARM_PERIODS.STANDARD,
     });
 
     // Request count metrics
@@ -50,7 +52,7 @@ export class MonitoringStack extends cdk.Stack {
         Region: "Global",
       },
       statistic: "Sum",
-      period: cdk.Duration.minutes(5),
+      period: ALARM_PERIODS.STANDARD,
     });
 
     // Bytes downloaded metrics
@@ -62,7 +64,7 @@ export class MonitoringStack extends cdk.Stack {
         Region: "Global",
       },
       statistic: "Sum",
-      period: cdk.Duration.minutes(5),
+      period: ALARM_PERIODS.STANDARD,
     });
 
     // S3 bucket metrics
@@ -73,7 +75,7 @@ export class MonitoringStack extends cdk.Stack {
         BucketName: props.bucket.bucketName,
       },
       statistic: "Sum",
-      period: cdk.Duration.minutes(5),
+      period: ALARM_PERIODS.STANDARD,
     });
 
     // Add widgets to dashboard
@@ -103,9 +105,9 @@ export class MonitoringStack extends cdk.Stack {
     // Create alarms
     const errorRateAlarm = new cloudwatch.Alarm(this, "ErrorRateAlarm", {
       metric: errorRate,
-      threshold: 5, // 5% error rate
-      evaluationPeriods: 2,
-      datapointsToAlarm: 2,
+      threshold: ALARM_THRESHOLDS.ERROR_RATE_PERCENT,
+      evaluationPeriods: ALARM_THRESHOLDS.EVALUATION_PERIODS,
+      datapointsToAlarm: ALARM_THRESHOLDS.DATAPOINTS_TO_ALARM,
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
       alarmDescription: "High error rate detected in CloudFront distribution",
       treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
@@ -113,9 +115,9 @@ export class MonitoringStack extends cdk.Stack {
 
     const s3ErrorAlarm = new cloudwatch.Alarm(this, "S3ErrorAlarm", {
       metric: s3Errors,
-      threshold: 10, // 10 errors
-      evaluationPeriods: 2,
-      datapointsToAlarm: 2,
+      threshold: ALARM_THRESHOLDS.S3_ERROR_COUNT,
+      evaluationPeriods: ALARM_THRESHOLDS.EVALUATION_PERIODS,
+      datapointsToAlarm: ALARM_THRESHOLDS.DATAPOINTS_TO_ALARM,
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
       alarmDescription: "High error rate detected in S3 bucket",
       treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
@@ -125,12 +127,130 @@ export class MonitoringStack extends cdk.Stack {
     errorRateAlarm.addAlarmAction(new actions.SnsAction(alertTopic));
     s3ErrorAlarm.addAlarmAction(new actions.SnsAction(alertTopic));
 
-    // Add tags
-    cdk.Tags.of(this).add("Stack", "Monitoring");
-    cdk.Tags.of(this).add("Environment", props.environment);
-    for (const [key, value] of Object.entries(props.tags || {})) {
-      cdk.Tags.of(this).add(key, value);
+    // API Gateway monitoring (only if contactApi is provided)
+    if (props.contactApi) {
+      const apiGateway4xxMetric = new cloudwatch.Metric({
+        namespace: "AWS/ApiGateway",
+        metricName: "4XXError",
+        dimensionsMap: {
+          ApiName: props.contactApi.restApiName,
+        },
+        period: ALARM_PERIODS.STANDARD,
+        statistic: "Sum",
+      });
+
+      const apiGateway4xxAlarm = new cloudwatch.Alarm(this, "ApiGateway4xxAlarm", {
+        metric: apiGateway4xxMetric,
+        threshold: ALARM_THRESHOLDS.API_GATEWAY_4XX_COUNT,
+        evaluationPeriods: ALARM_THRESHOLDS.EVALUATION_PERIODS,
+        datapointsToAlarm: ALARM_THRESHOLDS.DATAPOINTS_TO_ALARM,
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        alarmDescription: "High 4xx error rate on Contact Form API",
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      });
+      apiGateway4xxAlarm.addAlarmAction(new actions.SnsAction(alertTopic));
+
+      const apiGateway5xxMetric = new cloudwatch.Metric({
+        namespace: "AWS/ApiGateway",
+        metricName: "5XXError",
+        dimensionsMap: {
+          ApiName: props.contactApi.restApiName,
+        },
+        period: ALARM_PERIODS.STANDARD,
+        statistic: "Sum",
+      });
+
+      const apiGateway5xxAlarm = new cloudwatch.Alarm(this, "ApiGateway5xxAlarm", {
+        metric: apiGateway5xxMetric,
+        threshold: ALARM_THRESHOLDS.API_GATEWAY_5XX_COUNT,
+        evaluationPeriods: ALARM_THRESHOLDS.EVALUATION_PERIODS,
+        datapointsToAlarm: ALARM_THRESHOLDS.DATAPOINTS_TO_ALARM,
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        alarmDescription: "Server errors on Contact Form API",
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      });
+      apiGateway5xxAlarm.addAlarmAction(new actions.SnsAction(alertTopic));
+
+      // Add API Gateway widgets to dashboard
+      dashboard.addWidgets(
+        new cloudwatch.GraphWidget({
+          title: "API Gateway 4xx Errors",
+          left: [apiGateway4xxMetric],
+          width: 12,
+        }),
+        new cloudwatch.GraphWidget({
+          title: "API Gateway 5xx Errors",
+          left: [apiGateway5xxMetric],
+          width: 12,
+        }),
+      );
     }
+
+    // Lambda monitoring (only if emailFunction is provided)
+    if (props.emailFunction) {
+      const lambdaErrorMetric = new cloudwatch.Metric({
+        namespace: "AWS/Lambda",
+        metricName: "Errors",
+        dimensionsMap: {
+          FunctionName: props.emailFunction.functionName,
+        },
+        period: ALARM_PERIODS.STANDARD,
+        statistic: "Sum",
+      });
+
+      const lambdaErrorAlarm = new cloudwatch.Alarm(this, "LambdaErrorAlarm", {
+        metric: lambdaErrorMetric,
+        threshold: ALARM_THRESHOLDS.LAMBDA_ERROR_COUNT,
+        evaluationPeriods: ALARM_THRESHOLDS.EVALUATION_PERIODS,
+        datapointsToAlarm: ALARM_THRESHOLDS.DATAPOINTS_TO_ALARM,
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        alarmDescription: "Contact form Lambda errors detected",
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      });
+      lambdaErrorAlarm.addAlarmAction(new actions.SnsAction(alertTopic));
+
+      const lambdaThrottleMetric = new cloudwatch.Metric({
+        namespace: "AWS/Lambda",
+        metricName: "Throttles",
+        dimensionsMap: {
+          FunctionName: props.emailFunction.functionName,
+        },
+        period: ALARM_PERIODS.STANDARD,
+        statistic: "Sum",
+      });
+
+      const lambdaThrottleAlarm = new cloudwatch.Alarm(this, "LambdaThrottleAlarm", {
+        metric: lambdaThrottleMetric,
+        threshold: ALARM_THRESHOLDS.LAMBDA_THROTTLE_COUNT,
+        evaluationPeriods: ALARM_THRESHOLDS.EVALUATION_PERIODS,
+        datapointsToAlarm: ALARM_THRESHOLDS.DATAPOINTS_TO_ALARM,
+        comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        alarmDescription: "Contact form Lambda throttling detected",
+        treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+      });
+      lambdaThrottleAlarm.addAlarmAction(new actions.SnsAction(alertTopic));
+
+      // Add Lambda widgets to dashboard
+      dashboard.addWidgets(
+        new cloudwatch.GraphWidget({
+          title: "Lambda Errors",
+          left: [lambdaErrorMetric],
+          width: 12,
+        }),
+        new cloudwatch.GraphWidget({
+          title: "Lambda Throttles",
+          left: [lambdaThrottleMetric],
+          width: 12,
+        }),
+      );
+    }
+
+    // Add tags
+    applyStandardTags(this, {
+      environment: props.environment,
+      stackName: "Monitoring",
+      additionalTags: props.tags,
+    });
 
     // Outputs
     new cdk.CfnOutput(this, "DashboardURL", {

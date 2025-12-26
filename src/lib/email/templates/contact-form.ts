@@ -1,16 +1,41 @@
-import { env } from "@/env.mjs";
-import type { ContactFormData } from "@/lib/schemas/contact";
+/**
+ * Contact form email templates and validation constants.
+ *
+ * This module is shared between:
+ * - Frontend (Next.js API routes)
+ * - Lambda (AWS infrastructure contact form handler)
+ *
+ * Keep this module free of Next.js-specific imports to ensure Lambda compatibility.
+ */
 
-interface EmailTemplateOptions {
+/**
+ * Validation limits for contact form fields.
+ * Used by both Zod schemas (frontend) and Lambda validation.
+ */
+export const CONTACT_FORM_LIMITS = {
+  name: { min: 2, max: 50 },
+  message: { min: 10, max: 1000 },
+} as const;
+
+/**
+ * Contact form data structure.
+ */
+export type ContactFormData = import("../../schemas/contact").ContactFormData;
+
+/**
+ * Options for email template generation.
+ */
+export interface EmailTemplateOptions {
   data: ContactFormData;
   submittedAt?: Date;
+  /** Domain for the email footer. Defaults to bjornmelin.io if not provided. */
   domain?: string;
 }
 
 const DEFAULT_DOMAIN = "bjornmelin.io";
 
-function getDomain(domain?: string): string {
-  return domain ?? env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, "") ?? DEFAULT_DOMAIN;
+function resolveDomain(domain?: string): string {
+  return domain || DEFAULT_DOMAIN;
 }
 
 /**
@@ -20,8 +45,9 @@ function getDomain(domain?: string): string {
  * @returns Plain text email content.
  */
 export function createContactEmailText(options: EmailTemplateOptions): string {
-  const { data, submittedAt = new Date(), domain } = options;
-  const siteDomain = getDomain(domain);
+  const { data, submittedAt: rawSubmittedAt, domain } = options;
+  const submittedAt = rawSubmittedAt instanceof Date ? rawSubmittedAt : new Date();
+  const siteDomain = resolveDomain(domain);
   return `
 New Contact Form Submission
 
@@ -44,8 +70,9 @@ Sent from: ${siteDomain}
  * @returns HTML email content.
  */
 export function createContactEmailHtml(options: EmailTemplateOptions): string {
-  const { data, submittedAt = new Date(), domain } = options;
-  const siteDomain = getDomain(domain);
+  const { data, submittedAt: rawSubmittedAt, domain } = options;
+  const submittedAt = rawSubmittedAt instanceof Date ? rawSubmittedAt : new Date();
+  const siteDomain = resolveDomain(domain);
   return `
 <!DOCTYPE html>
 <html>
@@ -153,8 +180,9 @@ export function createContactEmailHtml(options: EmailTemplateOptions): string {
 
 /**
  * Escapes HTML special characters to prevent XSS.
+ * Exported for use in Lambda and other contexts.
  */
-function escapeHtml(text: string): string {
+export function escapeHtml(text: string): string {
   const htmlEscapes: Record<string, string> = {
     "&": "&amp;",
     "<": "&lt;",
@@ -162,5 +190,97 @@ function escapeHtml(text: string): string {
     '"': "&quot;",
     "'": "&#39;",
   };
-  return text.replace(/[&<>"']/g, (char) => htmlEscapes[char] ?? char);
+  return text.replace(/[&<>"']/g, (char) => htmlEscapes[char]);
+}
+
+/**
+ * Result of contact form validation.
+ */
+export interface ValidationResult {
+  valid: boolean;
+  error?: string;
+  field?: string;
+}
+
+/**
+ * Validates contact form data without Zod dependency.
+ * Used by Lambda where Zod may add unnecessary bundle size.
+ *
+ * @param data Partial contact form data to validate.
+ * @returns Validation result with error details if invalid.
+ */
+export function validateContactForm(data: {
+  name?: unknown;
+  email?: unknown;
+  message?: unknown;
+}): ValidationResult {
+  const { name, email, message } = data;
+  const { name: nameLimits, message: msgLimits } = CONTACT_FORM_LIMITS;
+
+  if (!name || typeof name !== "string") {
+    return {
+      valid: false,
+      error: `Name must be at least ${nameLimits.min} characters`,
+      field: "name",
+    };
+  }
+
+  const normalizedName = name.trim();
+  if (normalizedName.length < nameLimits.min) {
+    return {
+      valid: false,
+      error: `Name must be at least ${nameLimits.min} characters`,
+      field: "name",
+    };
+  }
+  if (normalizedName.length > nameLimits.max) {
+    return {
+      valid: false,
+      error: `Name must be less than ${nameLimits.max} characters`,
+      field: "name",
+    };
+  }
+
+  if (/[\r\n]/.test(normalizedName)) {
+    return { valid: false, error: "Invalid name", field: "name" };
+  }
+
+  if (!email || typeof email !== "string") {
+    return { valid: false, error: "Invalid email address", field: "email" };
+  }
+
+  const normalizedEmail = email.trim();
+  if (/[\r\n]/.test(normalizedEmail)) {
+    return { valid: false, error: "Invalid email address", field: "email" };
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    return { valid: false, error: "Invalid email address", field: "email" };
+  }
+
+  if (!message || typeof message !== "string") {
+    return {
+      valid: false,
+      error: `Message must be at least ${msgLimits.min} characters`,
+      field: "message",
+    };
+  }
+
+  const normalizedMessage = message.trim();
+  if (normalizedMessage.length < msgLimits.min) {
+    return {
+      valid: false,
+      error: `Message must be at least ${msgLimits.min} characters`,
+      field: "message",
+    };
+  }
+  if (normalizedMessage.length > msgLimits.max) {
+    return {
+      valid: false,
+      error: `Message must be less than ${msgLimits.max} characters`,
+      field: "message",
+    };
+  }
+
+  return { valid: true };
 }

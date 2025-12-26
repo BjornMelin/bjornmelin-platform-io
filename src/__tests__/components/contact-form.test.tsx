@@ -13,7 +13,7 @@ vi.mock("@/hooks/use-toast", () => ({
 
 /**
  * Helper to fill the form with valid data and trigger validation.
- * Uses blur events since the form uses mode: "onBlur" validation.
+ * Uses blur events since the form uses mode: "onTouched" validation.
  */
 async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
   const nameInput = screen.getByLabelText(/name/i);

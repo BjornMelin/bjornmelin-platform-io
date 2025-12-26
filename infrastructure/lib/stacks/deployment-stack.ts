@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import type { Construct } from "constructs";
 import type { DeploymentStackProps } from "../types/stack-props";
+import { applyStandardTags } from "../utils/tagging";
 
 /**
  * DeploymentStack currently applies shared tags for downstream stacks.
@@ -11,10 +12,10 @@ export class DeploymentStack extends cdk.Stack {
     super(scope, id, props);
 
     // Add tags
-    cdk.Tags.of(this).add("Stack", "Deployment");
-    cdk.Tags.of(this).add("Environment", props.environment);
-    for (const [key, value] of Object.entries(props.tags || {})) {
-      cdk.Tags.of(this).add(key, value);
-    }
+    applyStandardTags(this, {
+      environment: props.environment,
+      stackName: "Deployment",
+      additionalTags: props.tags,
+    });
   }
 }
