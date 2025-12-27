@@ -24,6 +24,7 @@ export function ThemeScript() {
 
       applyTheme(getTheme());
 
+      // Only react to OS theme changes if user hasn't set an explicit preference
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
         try {
           var stored = localStorage.getItem('theme');
