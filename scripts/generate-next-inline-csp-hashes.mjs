@@ -20,7 +20,7 @@ function* walkHtmlFiles(dir) {
 
 function computeInlineScriptHashes(html) {
   const hashes = new Set();
-  const scriptRe = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+  const scriptRe = /<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi;
 
   let match;
   while ((match = scriptRe.exec(html))) {
@@ -98,4 +98,3 @@ process.stdout.write(
     2,
   ) + "\n",
 );
-
