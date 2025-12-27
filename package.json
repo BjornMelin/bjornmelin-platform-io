@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next-export-optimize-images",
+    "generate:csp-hashes": "node scripts/generate-next-inline-csp-hashes.mjs",
+    "build": "next build && next-export-optimize-images && pnpm generate:csp-hashes",
     "start": "npx serve@latest out",
     "lint": "biome check . --write --error-on-warnings",
     "format": "biome format --write .",
