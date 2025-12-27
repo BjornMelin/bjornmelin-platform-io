@@ -1,13 +1,9 @@
 "use client";
 
 /**
- * @fileoverview Inline script to prevent theme flash on static export.
- * This script runs before React hydration to apply the correct theme class.
- *
- * Note: dangerouslySetInnerHTML is safe here because the script content is a
- * static string defined in source code, not user-provided content.
+ * Inline script to prevent theme flash on static export.
+ * Runs before React hydration to apply the correct theme class.
  */
-
 export function ThemeScript() {
   const themeScript = `
     (function() {
