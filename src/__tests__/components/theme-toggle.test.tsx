@@ -3,15 +3,21 @@
  */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mockSetTheme = vi.fn();
 
 vi.mock("next-themes", () => ({
-  useTheme: () => ({ setTheme: vi.fn() }),
+  useTheme: () => ({ setTheme: mockSetTheme }),
 }));
 
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 describe("ThemeToggle", () => {
+  beforeEach(() => {
+    mockSetTheme.mockClear();
+  });
+
   it("renders the toggle button", () => {
     render(<ThemeToggle />);
     expect(screen.getByRole("button", { name: /toggle theme/i })).toBeInTheDocument();
@@ -46,6 +52,34 @@ describe("ThemeToggle", () => {
     expect(screen.getByRole("menuitem", { name: /light/i })).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: /dark/i })).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: /system/i })).toBeInTheDocument();
+  });
+
+  it("calls setTheme with correct value when menu items are clicked", async () => {
+    const user = userEvent.setup();
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button", { name: /toggle theme/i });
+
+    // Wait for component to finish mounting
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
+
+    // Test clicking "Light"
+    await user.click(button);
+    await user.click(screen.getByRole("menuitem", { name: /light/i }));
+    expect(mockSetTheme).toHaveBeenCalledWith("light");
+    mockSetTheme.mockClear();
+
+    // Test clicking "Dark"
+    await user.click(button);
+    await user.click(screen.getByRole("menuitem", { name: /dark/i }));
+    expect(mockSetTheme).toHaveBeenCalledWith("dark");
+    mockSetTheme.mockClear();
+
+    // Test clicking "System"
+    await user.click(button);
+    await user.click(screen.getByRole("menuitem", { name: /system/i }));
+    expect(mockSetTheme).toHaveBeenCalledWith("system");
   });
 
   // Note: Testing SSR placeholder rendering requires server-side testing
