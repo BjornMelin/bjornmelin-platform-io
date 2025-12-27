@@ -90,6 +90,7 @@ export default defineConfig({
         "src/components/contact/**/*.{ts,tsx}",
         "src/components/layout/**/*.{ts,tsx}",
         "src/components/theme/theme-toggle.tsx",
+        "src/components/theme/theme-script.tsx",
         // App routes and pages
         "src/app/**/page.tsx",
         "src/app/**/layout.tsx",
