@@ -1,6 +1,3 @@
-/**
- * @fileoverview Unit tests for ThemeToggle interactions.
- */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -13,7 +10,7 @@ vi.mock("next-themes", () => ({
 
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
-describe("ThemeToggle", () => {
+describe("<ThemeToggle />", () => {
   beforeEach(() => {
     mockSetTheme.mockClear();
   });
@@ -23,32 +20,28 @@ describe("ThemeToggle", () => {
     expect(screen.getByRole("button", { name: /toggle theme/i })).toBeInTheDocument();
   });
 
-  it("renders interactive button after hydration", async () => {
+  it("enables button after hydration", async () => {
     render(<ThemeToggle />);
     const button = screen.getByRole("button", { name: /toggle theme/i });
 
-    // Wait for useEffect to run and set mounted to true
     await waitFor(() => {
       expect(button).not.toBeDisabled();
     });
 
-    // Button should have dropdown trigger attributes
     expect(button).toHaveAttribute("aria-haspopup", "menu");
   });
 
-  it("opens dropdown menu when clicked after mounting", async () => {
+  it("opens dropdown menu when clicked", async () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
     const button = screen.getByRole("button", { name: /toggle theme/i });
 
-    // Wait for component to finish mounting
     await waitFor(() => {
       expect(button).not.toBeDisabled();
     });
 
     await user.click(button);
 
-    // Dropdown menu items should be visible
     expect(screen.getByRole("menuitem", { name: /light/i })).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: /dark/i })).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: /system/i })).toBeInTheDocument();
@@ -59,29 +52,22 @@ describe("ThemeToggle", () => {
     render(<ThemeToggle />);
     const button = screen.getByRole("button", { name: /toggle theme/i });
 
-    // Wait for component to finish mounting
     await waitFor(() => {
       expect(button).not.toBeDisabled();
     });
 
-    // Test clicking "Light"
     await user.click(button);
     await user.click(screen.getByRole("menuitem", { name: /light/i }));
     expect(mockSetTheme).toHaveBeenCalledWith("light");
     mockSetTheme.mockClear();
 
-    // Test clicking "Dark"
     await user.click(button);
     await user.click(screen.getByRole("menuitem", { name: /dark/i }));
     expect(mockSetTheme).toHaveBeenCalledWith("dark");
     mockSetTheme.mockClear();
 
-    // Test clicking "System"
     await user.click(button);
     await user.click(screen.getByRole("menuitem", { name: /system/i }));
     expect(mockSetTheme).toHaveBeenCalledWith("system");
   });
-
-  // Note: Testing SSR placeholder rendering requires server-side testing
-  // which is covered via integration/e2e tests.
 });

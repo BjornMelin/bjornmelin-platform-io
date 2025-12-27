@@ -4,6 +4,7 @@ import "./globals.css";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import StructuredData from "@/components/structured-data";
+import { ThemeScript } from "@/components/theme";
 import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -99,6 +100,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body className={inter.className}>
         <Providers>
           <div className="relative min-h-screen flex flex-col">

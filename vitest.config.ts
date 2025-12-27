@@ -1,9 +1,3 @@
-/**
- * @fileoverview Vitest configuration for unit and integration tests.
- * - Uses jsdom for app tests; IaC tests have their own config under infrastructure/.
- * - Enables v8 coverage with reporters: text, html, lcov, json-summary.
- * - Threads pool tuned for CI.
- */
 import path from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
@@ -90,6 +84,7 @@ export default defineConfig({
         "src/components/contact/**/*.{ts,tsx}",
         "src/components/layout/**/*.{ts,tsx}",
         "src/components/theme/theme-toggle.tsx",
+        "src/components/theme/theme-script.tsx",
         // App routes and pages
         "src/app/**/page.tsx",
         "src/app/**/layout.tsx",

@@ -1,22 +1,28 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-// Mock next-themes to avoid matchMedia issues
+let capturedThemeProviderProps: Record<string, unknown> = {};
+
 vi.mock("next-themes", () => ({
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="theme-provider">{children}</div>
-  ),
+  ThemeProvider: ({
+    children,
+    ...props
+  }: {
+    children: React.ReactNode;
+    [key: string]: unknown;
+  }) => {
+    capturedThemeProviderProps = props;
+    return <div data-testid="theme-provider">{children}</div>;
+  },
 }));
 
-// Mock Toaster
 vi.mock("@/components/ui/toaster", () => ({
   Toaster: () => <div data-testid="toaster">Toaster</div>,
 }));
 
-// Import after mocks
 import { Providers } from "@/app/providers";
 
-describe("Providers", () => {
+describe("<Providers />", () => {
   it("renders children", () => {
     render(
       <Providers>
@@ -36,7 +42,6 @@ describe("Providers", () => {
     );
 
     expect(screen.getByTestId("theme-provider")).toBeInTheDocument();
-    // Child should be inside the theme provider
     expect(screen.getByTestId("theme-provider")).toContainElement(screen.getByTestId("child"));
   });
 
@@ -50,7 +55,7 @@ describe("Providers", () => {
     expect(screen.getByTestId("toaster")).toBeInTheDocument();
   });
 
-  it("renders multiple children correctly", () => {
+  it("renders multiple children", () => {
     render(
       <Providers>
         <div data-testid="child-1">First</div>
@@ -60,5 +65,57 @@ describe("Providers", () => {
 
     expect(screen.getByTestId("child-1")).toBeInTheDocument();
     expect(screen.getByTestId("child-2")).toBeInTheDocument();
+  });
+});
+
+describe("<Providers /> ThemeProvider config", () => {
+  it("uses storageKey=theme for static export sync", () => {
+    render(
+      <Providers>
+        <div>Content</div>
+      </Providers>,
+    );
+
+    expect(capturedThemeProviderProps.storageKey).toBe("theme");
+  });
+
+  it("uses attribute=class for Tailwind", () => {
+    render(
+      <Providers>
+        <div>Content</div>
+      </Providers>,
+    );
+
+    expect(capturedThemeProviderProps.attribute).toBe("class");
+  });
+
+  it("defaults to system theme", () => {
+    render(
+      <Providers>
+        <div>Content</div>
+      </Providers>,
+    );
+
+    expect(capturedThemeProviderProps.defaultTheme).toBe("system");
+  });
+
+  it("enables system preference detection", () => {
+    render(
+      <Providers>
+        <div>Content</div>
+      </Providers>,
+    );
+
+    expect(capturedThemeProviderProps.enableSystem).toBe(true);
+  });
+
+  it("disables transitions on theme change", () => {
+    render(
+      <Providers>
+        <div>Content</div>
+      </Providers>,
+    );
+
+    expect(capturedThemeProviderProps.disableTransitionOnChange).toBe(true);
   });
 });
