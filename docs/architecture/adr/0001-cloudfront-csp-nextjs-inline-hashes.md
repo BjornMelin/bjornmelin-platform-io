@@ -7,7 +7,7 @@ Accepted (2025-12-27)
 ## Context
 
 `bjornmelin.io` is a Next.js App Router **static export** served from S3 behind CloudFront.
-Next.js static exports emit a small number of **inline bootstrap scripts** (e.g. `self.__next_f.push(...)`)
+Next.js static exports emit **inline bootstrap scripts** (e.g. `self.__next_f.push(...)`)
 that must execute for the page to render.
 
 We want a strict `Content-Security-Policy` that avoids `script-src 'unsafe-inline'` while still allowing
