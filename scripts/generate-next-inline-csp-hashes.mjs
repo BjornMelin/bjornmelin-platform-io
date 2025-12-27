@@ -20,7 +20,9 @@ function* walkHtmlFiles(dir) {
 
 function computeInlineScriptHashes(html) {
   const hashes = new Set();
-  const scriptRe = /<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi;
+  // Match inline scripts defensively (CodeQL: js/bad-tag-filter).
+  // Tolerate malformed closing tags like `</script >` or even `</script\t\n foo>`.
+  const scriptRe = /<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi;
 
   let match;
   while ((match = scriptRe.exec(html))) {
