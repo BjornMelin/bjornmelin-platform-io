@@ -1,20 +1,87 @@
 /**
  * @fileoverview Unit tests for ThemeToggle interactions.
  */
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mockSetTheme = vi.fn();
 
 vi.mock("next-themes", () => ({
-  useTheme: () => ({ setTheme: vi.fn() }),
+  useTheme: () => ({ setTheme: mockSetTheme }),
 }));
 
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 describe("ThemeToggle", () => {
+  beforeEach(() => {
+    mockSetTheme.mockClear();
+  });
+
   it("renders the toggle button", () => {
     render(<ThemeToggle />);
     expect(screen.getByRole("button", { name: /toggle theme/i })).toBeInTheDocument();
   });
 
-  // Interaction with Radix dropdown is covered via integration tests elsewhere.
+  it("renders interactive button after hydration", async () => {
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button", { name: /toggle theme/i });
+
+    // Wait for useEffect to run and set mounted to true
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
+
+    // Button should have dropdown trigger attributes
+    expect(button).toHaveAttribute("aria-haspopup", "menu");
+  });
+
+  it("opens dropdown menu when clicked after mounting", async () => {
+    const user = userEvent.setup();
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button", { name: /toggle theme/i });
+
+    // Wait for component to finish mounting
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
+
+    await user.click(button);
+
+    // Dropdown menu items should be visible
+    expect(screen.getByRole("menuitem", { name: /light/i })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /dark/i })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /system/i })).toBeInTheDocument();
+  });
+
+  it("calls setTheme with correct value when menu items are clicked", async () => {
+    const user = userEvent.setup();
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button", { name: /toggle theme/i });
+
+    // Wait for component to finish mounting
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
+
+    // Test clicking "Light"
+    await user.click(button);
+    await user.click(screen.getByRole("menuitem", { name: /light/i }));
+    expect(mockSetTheme).toHaveBeenCalledWith("light");
+    mockSetTheme.mockClear();
+
+    // Test clicking "Dark"
+    await user.click(button);
+    await user.click(screen.getByRole("menuitem", { name: /dark/i }));
+    expect(mockSetTheme).toHaveBeenCalledWith("dark");
+    mockSetTheme.mockClear();
+
+    // Test clicking "System"
+    await user.click(button);
+    await user.click(screen.getByRole("menuitem", { name: /system/i }));
+    expect(mockSetTheme).toHaveBeenCalledWith("system");
+  });
+
+  // Note: Testing SSR placeholder rendering requires server-side testing
+  // which is covered via integration/e2e tests.
 });
