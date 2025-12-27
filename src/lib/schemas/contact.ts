@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CONTACT_FORM_LIMITS } from "@/lib/email/templates/contact-form";
+import { CONTACT_FORM_LIMITS } from "../email/templates/contact-form";
 
 const { name: nameLimits, message: msgLimits } = CONTACT_FORM_LIMITS;
 

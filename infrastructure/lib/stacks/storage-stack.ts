@@ -227,7 +227,10 @@ export class StorageStack extends cdk.Stack {
           contentSecurityPolicy: [
             "default-src 'self'",
             "img-src 'self' data: blob:",
-            "script-src 'self'", // Removed 'unsafe-inline' - XSS protection
+            // Next.js static export (App Router) relies on inline bootstrap scripts (e.g. __next_f.push)
+            // and our theme init script runs inline to avoid a flash of incorrect theme. Blocking inline
+            // scripts prevents hydration, leaving all client interactivity broken (theme toggle, mobile menu).
+            "script-src 'self' 'unsafe-inline'",
             "style-src 'self' 'unsafe-inline'", // Keep for CSS-in-JS (lower risk than script)
             "font-src 'self' data:",
             `connect-src 'self' https://api.${this.props.domainName}`,
