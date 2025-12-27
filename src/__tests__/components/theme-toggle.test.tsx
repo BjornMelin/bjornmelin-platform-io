@@ -19,13 +19,13 @@ describe("ThemeToggle", () => {
 
   it("renders interactive button after hydration", async () => {
     render(<ThemeToggle />);
+    const button = screen.getByRole("button", { name: /toggle theme/i });
 
     // Wait for useEffect to run and set mounted to true
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /toggle theme/i })).not.toBeDisabled();
+      expect(button).not.toBeDisabled();
     });
 
-    const button = screen.getByRole("button", { name: /toggle theme/i });
     // Button should have dropdown trigger attributes
     expect(button).toHaveAttribute("aria-haspopup", "menu");
   });
@@ -33,13 +33,13 @@ describe("ThemeToggle", () => {
   it("opens dropdown menu when clicked after mounting", async () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
+    const button = screen.getByRole("button", { name: /toggle theme/i });
 
     // Wait for component to finish mounting
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /toggle theme/i })).not.toBeDisabled();
+      expect(button).not.toBeDisabled();
     });
 
-    const button = screen.getByRole("button", { name: /toggle theme/i });
     await user.click(button);
 
     // Dropdown menu items should be visible
