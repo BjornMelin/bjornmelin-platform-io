@@ -37,11 +37,15 @@ hash allow-list did not match the currently deployed static export.
 ## Consequences
 
 Positive:
+
 - Strict CSP without `unsafe-inline` for scripts.
 - CSP remains compatible with Next.js App Router static export requirements.
 
 Negative:
-- Any change that affects inline bootstrap scripts requires regenerating the hash allow-list.
+
+- Any change that affects inline bootstrap scripts will automatically regenerate the hash allow-list during
+  the build (via `pnpm generate:csp-hashes`). Ensure the full build completes successfully before deploying
+  to production.
 - Deploy order matters; mismatched CSP and static export can break rendering.
 
 ## References
