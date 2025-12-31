@@ -11,7 +11,9 @@ export const env = createEnv({
         EMAIL_FROM: z.string().min(1).optional(),
     },
     client: {
+        NEXT_PUBLIC_API_URL: z.string().url(),
         NEXT_PUBLIC_APP_URL: z.string().min(1),
+        NEXT_PUBLIC_BASE_URL: z.string().url(),
     },
     runtimeEnv: {
         AWS_REGION: process.env.AWS_REGION,
@@ -20,7 +22,9 @@ export const env = createEnv({
         CONTACT_EMAIL: process.env.CONTACT_EMAIL,
         RESEND_API_KEY: process.env.RESEND_API_KEY,
         EMAIL_FROM: process.env.EMAIL_FROM,
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
         NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+        NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     },
     skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
