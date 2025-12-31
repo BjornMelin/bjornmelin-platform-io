@@ -9,6 +9,7 @@ import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import type { Construct } from "constructs";
 import { CACHE_DURATIONS } from "../constants/durations";
+import { NEXT_INLINE_SCRIPT_HASHES } from "../generated/next-inline-script-hashes";
 import type { StorageStackProps } from "../types/stack-props";
 import { applyStandardTags } from "../utils/tagging";
 
@@ -227,7 +228,11 @@ export class StorageStack extends cdk.Stack {
           contentSecurityPolicy: [
             "default-src 'self'",
             "img-src 'self' data: blob:",
-            "script-src 'self'", // Removed 'unsafe-inline' - XSS protection
+            // Next.js static export (App Router) requires inline bootstrap scripts (e.g. __next_f.push).
+            // Hash allow-listing keeps CSP strict without needing `unsafe-inline`.
+            //
+            // Regenerate by running `pnpm generate:csp-hashes` after `pnpm build` (so `out/` is fresh).
+            `script-src 'self' ${NEXT_INLINE_SCRIPT_HASHES.map((hash) => `'${hash}'`).join(" ")}`,
             "style-src 'self' 'unsafe-inline'", // Keep for CSS-in-JS (lower risk than script)
             "font-src 'self' data:",
             `connect-src 'self' https://api.${this.props.domainName}`,

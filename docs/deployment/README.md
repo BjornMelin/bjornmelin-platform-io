@@ -88,6 +88,30 @@ pnpm cdk deploy --all
 
 GitHub Actions uploads the `out/` directory to S3 and invalidates CloudFront cache.
 
+#### CSP + static export coupling (important)
+
+The CloudFront distribution applies a strict `Content-Security-Policy` that includes a hash allow-list
+for Next.js inline bootstrap scripts. Those hashes are generated from the static export (`out/**/*.html`).
+If the storage stack is deployed without also uploading the matching `out/` artifacts, the site can render
+a blank page due to CSP violations.
+
+Local/manual production deployment order:
+
+```bash
+# 1) Build the static export and regenerate CSP hashes used by CDK
+CONTACT_EMAIL=contact@bjornmelin.io \
+NEXT_PUBLIC_APP_URL=https://bjornmelin.io \
+NEXT_PUBLIC_BASE_URL=https://bjornmelin.io \
+NEXT_PUBLIC_API_URL=https://api.bjornmelin.io \
+pnpm build
+
+# 2) Deploy the storage stack (updates CloudFront CSP headers)
+pnpm -C infrastructure deploy:storage
+
+# 3) Upload static assets + invalidate CloudFront
+pnpm deploy:static:prod
+```
+
 ### 4. Verify Deployment
 
 - Run health checks
