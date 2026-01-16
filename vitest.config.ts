@@ -57,7 +57,6 @@ export default defineConfig({
     environment: "jsdom",
     pool: "threads",
     maxWorkers: isCi ? 4 : undefined,
-    minWorkers: isCi ? 2 : undefined,
     reporters: ["default"],
     setupFiles: "./src/test/setup.ts",
     exclude: [
@@ -67,6 +66,7 @@ export default defineConfig({
       "**/.{idea,git,cache,output,temp}/**",
       // Infrastructure tests have their own vitest config
       "infrastructure/**",
+      "opensrc/**",
     ],
     coverage: {
       provider: "v8",
