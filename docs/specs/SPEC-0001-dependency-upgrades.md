@@ -21,19 +21,22 @@ constraints following the recent upgrade pass.
 
 - Next.js remains on 16.1.x
 - React remains on 19.2.x
-- Node.js engine remains `>=24 <25`
+- Node.js engine remains `>=24 <25` (Node.js <25 due to Next.js 16.1.x compatibility)
 - Static export (`output: "export"`) remains required
 
-## Version baseline (selected)
+## Version baseline (pinned)
 
 - Next.js 16.1.2
 - React 19.2.3
 - TypeScript 5.9.3
 - pnpm 10.28.0 (Corepack)
 - Zod 4.3.5
-- Vitest 4.0.x
-- Playwright 1.57.x
-- Biome 2.3.x
+- Vitest 4.0.17
+- Playwright 1.57.0
+- Biome 2.3.11
+
+*Note: All dependencies are pinned to exact versions to ensure build reproducibility and
+compatibility with the static export architecture.*
 
 ## Rationale
 
@@ -44,6 +47,6 @@ and improved DX while preserving static export constraints.
 
 - `package.json` for the authoritative versions
 - `AGENTS.md` and `docs/development/README.md` for toolchain guidance
-- [Zod v4 migration guide](https://zod.dev/?id=migration-guide) / ADR-0002 (Zod v4 strategy)
+- [Zod v4 migration guide](https://zod.dev/v4/changelog) / ADR-0002 (Zod v4 strategy)
 - [Vitest v4 migration notes](https://vitest.dev/guide/migration) / ADR-0003 (testing changes)
 - ADR-0004 (toolchain changes) / ADR-0005 (static export constraints)
