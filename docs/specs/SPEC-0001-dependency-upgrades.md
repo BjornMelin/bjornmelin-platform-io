@@ -7,7 +7,7 @@ owners: ["ai-arch"]
 status: Implemented
 related_requirements:
   - FR-001: Document dependency versions and compatibility constraints
-  - NFR-001: Maintain compatibility with Next.js 14 and React 18 static export
+  - NFR-001: Maintain compatibility with Next.js 16 and React 19 static export
 related_adrs: ["ADR-0002", "ADR-0003", "ADR-0004", "ADR-0005"]
 notes: "Tracks dependency versions and upgrade rationale for the current release."
 ---
@@ -19,15 +19,15 @@ constraints following the recent upgrade pass.
 
 ## Constraints
 
-- Next.js remains on 14.2.x
-- React remains on 18.3.x
+- Next.js remains on 16.1.x
+- React remains on 19.2.x
 - Node.js engine remains `>=24 <25`
 - Static export (`output: "export"`) remains required
 
 ## Version baseline (selected)
 
-- Next.js 14.2.35
-- React 18.3.1
+- Next.js 16.1.2
+- React 19.2.3
 - TypeScript 5.9.3
 - pnpm 10.28.0 (Corepack)
 - Zod 4.3.5

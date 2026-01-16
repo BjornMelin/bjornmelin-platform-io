@@ -100,6 +100,19 @@ in app code:
 - Treat introduction of unsupported features as a breaking architectural change requiring a new ADR.
 - Keep docs aligned with the static export limitations and deployment pipeline.
 
+#### Explicit Deploy Sequence
+
+To ensure CSP/static-export sync and prevent hash drift, follow this repeatable sequence:
+
+1. **Build the static export**: Run `pnpm build` to generate the `out/` directory.
+2. **Generate/Validate CSP hashes**: Ensure all inline script/style hashes used by the app are generated and validated
+   against the build output.
+3. **Publish static assets**: Upload the `out/` directory to the CDN/storage (e.g., S3).
+4. **Deploy server-side components**: Deploy components that serve or validate CSP, including local dev API routes in
+   `src/app/api/` (for dev) and the CDK-deployed Lambda (for production).
+5. **Update/Flush CDN**: Invalidate the CDN cache (e.g., CloudFront) and update downstream configurations to ensure
+   the new assets and CSP are active.
+
 ### Dependencies
 
 - **Added**: None.

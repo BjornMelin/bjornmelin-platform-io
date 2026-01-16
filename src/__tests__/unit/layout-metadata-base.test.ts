@@ -26,7 +26,11 @@ describe("RootLayout metadataBase", () => {
   const originalBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   afterEach(() => {
-    process.env.NEXT_PUBLIC_BASE_URL = originalBaseUrl;
+    if (originalBaseUrl === undefined) {
+      delete process.env.NEXT_PUBLIC_BASE_URL;
+    } else {
+      process.env.NEXT_PUBLIC_BASE_URL = originalBaseUrl;
+    }
     vi.resetModules();
   });
 
