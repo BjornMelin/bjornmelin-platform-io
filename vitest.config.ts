@@ -63,7 +63,7 @@ export default defineConfig({
           name: "node",
           environment: "node",
           pool: "threads",
-          isolate: false,
+          isolate: true,
           setupFiles: "./src/test/setup-node.ts",
           include: ["src/__tests__/**/*.test.ts"],
         },
