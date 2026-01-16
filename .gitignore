@@ -113,3 +113,6 @@ test-results/
 agent-logs/
 .archive/
 .codex/
+
+# opensrc - source code for packages
+opensrc/
