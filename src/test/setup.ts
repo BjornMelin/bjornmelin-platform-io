@@ -53,6 +53,53 @@ vi.mock("next/navigation", () => {
 });
 
 /**
+ * Mock `next/link` to a plain anchor that prevents jsdom navigation noise.
+ *
+ * jsdom does not implement full document navigation and logs:
+ * "Not implemented: navigation to another Document" when clicking real anchors.
+ *
+ * Unit tests should assert hrefs and local click handlers (e.g. closing menus),
+ * while route-level navigation remains covered by Playwright.
+ */
+vi.mock("next/link", () => ({
+  __esModule: true,
+  default: (props: Record<string, unknown>) => {
+    const {
+      href,
+      children,
+      onClick,
+      prefetch: _prefetch,
+      replace: _replace,
+      scroll: _scroll,
+      shallow: _shallow,
+      passHref: _passHref,
+      legacyBehavior: _legacyBehavior,
+      locale: _locale,
+      as: _as,
+      ...anchorProps
+    } = props as Record<string, unknown>;
+
+    const resolvedHref =
+      typeof href === "string" ? href : href instanceof URL ? href.toString() : "#";
+
+    return React.createElement(
+      "a",
+      {
+        ...(anchorProps as Record<string, unknown>),
+        href: resolvedHref,
+        onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
+          event.preventDefault();
+          if (typeof onClick === "function") {
+            (onClick as (event: React.MouseEvent<HTMLAnchorElement>) => void)(event);
+          }
+        },
+      },
+      children as React.ReactNode,
+    );
+  },
+}));
+
+/**
  * Mock `next/image` to a plain `img` element for deterministic unit tests.
  *
  * Next's Image component behavior (loader, srcset generation, layout) is covered by Next itself
@@ -117,7 +164,7 @@ afterEach(() => {
   vi.unstubAllEnvs();
   cleanup();
   server.resetHandlers();
-  vi.clearAllMocks();
+  vi.restoreAllMocks();
   vi.resetAllMocks();
 });
 

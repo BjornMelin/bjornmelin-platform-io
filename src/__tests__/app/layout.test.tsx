@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { isValidElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("next/font/google", () => ({
@@ -27,8 +28,26 @@ vi.mock("@/app/providers", () => ({
   ),
 }));
 
-import { metadata, viewport } from "@/app/layout";
+import RootLayout, { metadata, viewport } from "@/app/layout";
+import { Providers } from "@/app/providers";
 import { AppShell } from "@/components/layout/app-shell";
+import { ThemeScript } from "@/components/theme";
+
+const walkReactTree = (
+  node: unknown,
+  visitor: (element: { type: unknown; props: Record<string, unknown> }) => void,
+): void => {
+  if (!node) return;
+  if (Array.isArray(node)) {
+    for (const child of node) walkReactTree(child, visitor);
+    return;
+  }
+
+  if (isValidElement(node)) {
+    visitor(node as { type: unknown; props: Record<string, unknown> });
+    walkReactTree((node as { props: { children?: unknown } }).props.children, visitor);
+  }
+};
 
 describe("<AppShell />", () => {
   it("renders Navbar and Footer", () => {
@@ -54,6 +73,28 @@ describe("<AppShell />", () => {
     const main = screen.getByRole("main");
     expect(main).toHaveAttribute("id", "main-content");
     expect(main).toContainElement(screen.getByTestId("child-content"));
+  });
+});
+
+describe("RootLayout", () => {
+  it("includes ThemeScript, Providers, and passed children", () => {
+    const child = <div data-testid="root-child">Child</div>;
+    const tree = RootLayout({ children: child });
+
+    let hasThemeScript = false;
+    let hasProviders = false;
+    let hasChild = false;
+
+    walkReactTree(tree, (element) => {
+      if (element.type === ThemeScript) hasThemeScript = true;
+      if (element.type === Providers) hasProviders = true;
+      // Ensure the exact child element instance is present in the returned tree.
+      if (element === (child as unknown)) hasChild = true;
+    });
+
+    expect(hasThemeScript).toBe(true);
+    expect(hasProviders).toBe(true);
+    expect(hasChild).toBe(true);
   });
 });
 

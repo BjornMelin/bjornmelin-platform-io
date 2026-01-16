@@ -1,4 +1,4 @@
-import { delay, HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw";
 
 /**
  * Default success handler for contact form API
@@ -12,16 +12,6 @@ export const contactSuccessHandler = http.post("*/contact", () => {
  */
 export const contactServerErrorHandler = http.post("*/contact", () => {
   return HttpResponse.json({ error: "Server error" }, { status: 500 });
-});
-
-/**
- * Handler that simulates a slow/pending request (never resolves during test)
- * Use this for loading state tests
- */
-export const contactPendingHandler = http.post("*/contact", async () => {
-  // Delay indefinitely - test controls resolution via server.use() override
-  await delay("infinite");
-  return HttpResponse.json({ success: true });
 });
 
 /**

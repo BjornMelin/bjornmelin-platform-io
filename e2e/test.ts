@@ -13,6 +13,18 @@ const isIgnorableConsoleError = (message: ConsoleMessage): boolean => {
   if (text.includes("favicon.ico")) return true;
   if (text.includes("chrome-extension://")) return true;
   if (text.includes("failed to load resource") && text.includes("net::err_failed")) return true;
+  if (text.includes("failed to load resource") && text.includes("net::err_network_changed")) {
+    if (message.location?.url) {
+      try {
+        const url = new URL(message.location.url);
+        if (url.pathname.startsWith("/_next/static/")) {
+          return true;
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }
 
   if (
     text.includes("failed to load resource") &&

@@ -35,6 +35,22 @@ describe("Navbar/Footer", () => {
     expect(contactAfter).toHaveLength(1);
   });
 
+  it("closes the mobile menu when a mobile link is clicked", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    const toggle = screen.getByRole("button", { name: /toggle menu/i });
+    await user.click(toggle);
+
+    const projectsLinks = screen.getAllByRole("link", { name: "Projects" });
+    expect(projectsLinks.length).toBeGreaterThan(1);
+
+    await user.click(projectsLinks[1]);
+
+    const contactLinks = screen.getAllByRole("link", { name: "Contact" });
+    expect(contactLinks).toHaveLength(1);
+  });
+
   it("renders Footer with copyright text", () => {
     render(<Footer />);
     expect(screen.getByText(/bjorn melin/i)).toBeInTheDocument();

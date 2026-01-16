@@ -32,6 +32,36 @@ describe("ErrorBoundary", () => {
     expect(screen.getByRole("button", { name: /refresh page/i })).toBeInTheDocument();
   });
 
-  // Clicking the refresh button triggers a page reload in browsers; asserting
-  // fallback rendering is sufficient for unit scope here.
+  it("catches errors thrown by children and renders the fallback UI", () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    function Boom(): never {
+      throw new Error("boom");
+    }
+
+    render(
+      <ErrorBoundary>
+        <Boom />
+      </ErrorBoundary>,
+    );
+
+    expect(screen.getByRole("heading", { name: /something went wrong/i })).toBeInTheDocument();
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
+  });
+
+  it("renders a refresh button in the fallback UI", () => {
+    class TestBoundary extends ErrorBoundary {
+      public state = { hasError: true };
+    }
+
+    render(
+      <TestBoundary>
+        <div>Child</div>
+      </TestBoundary>,
+    );
+
+    const button = screen.getByRole("button", { name: /refresh page/i });
+    expect(button).toHaveAttribute("type", "button");
+  });
 });

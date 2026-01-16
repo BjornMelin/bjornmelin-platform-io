@@ -1,19 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Mock next/link
-vi.mock("next/link", () => ({
-  default: ({
-    children,
-    href,
-    ...props
-  }: { children: React.ReactNode; href: string } & Record<string, unknown>) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  ),
-}));
-
 // Mock SectionHeader
 vi.mock("@/components/shared/section-header", () => ({
   SectionHeader: ({ title, description }: { title: string; description: string }) => (

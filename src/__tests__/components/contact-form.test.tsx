@@ -1,36 +1,17 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { delay, HttpResponse, http } from "msw";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { HttpResponse, http } from "msw";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ContactForm } from "@/components/contact/contact-form";
 import { buildContactEndpoint } from "@/lib/api/contact";
 import { server } from "@/mocks/node";
+import { createDeferred, fillContactForm } from "@/test/helpers";
 
 // Mock the toast hook
 const mockToast = vi.fn();
 vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({ toast: mockToast }),
 }));
-
-/**
- * Helper to fill the form with valid data and trigger validation.
- * Uses blur events since the form uses mode: "onTouched" validation.
- */
-async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
-  const nameInput = screen.getByLabelText(/name/i);
-  const emailInput = screen.getByLabelText(/email/i);
-  const messageInput = screen.getByLabelText(/message/i);
-
-  // Type and blur each field to trigger validation
-  await user.type(nameInput, "John Doe");
-  await user.tab(); // Blur name
-
-  await user.type(emailInput, "john@example.com");
-  await user.tab(); // Blur email
-
-  await user.type(messageInput, "This is a test message that is long enough.");
-  await user.tab(); // Blur message
-}
 
 function requireTestEnv(name: string): string {
   const value = process.env[name];
@@ -42,10 +23,6 @@ describe("ContactForm", () => {
   beforeEach(() => {
     vi.stubEnv("NEXT_PUBLIC_API_URL", "http://localhost:3000");
     mockToast.mockClear();
-  });
-
-  afterEach(() => {
-    vi.unstubAllEnvs();
   });
 
   it("renders form with name, email, message fields", () => {
@@ -122,7 +99,7 @@ describe("ContactForm", () => {
     );
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -147,7 +124,7 @@ describe("ContactForm", () => {
     );
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -162,27 +139,34 @@ describe("ContactForm", () => {
   it("shows loading state during submission", async () => {
     const user = userEvent.setup();
     const endpoint = buildContactEndpoint(requireTestEnv("NEXT_PUBLIC_API_URL"));
+    const pending = createDeferred<void>();
 
-    // Use an infinite delay to keep the request pending
     server.use(
       http.post(endpoint, async () => {
-        await delay("infinite");
+        await pending.promise;
         return HttpResponse.json({ success: true });
       }),
     );
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    // Should show loading state while fetch is pending
-    await waitFor(() => {
-      expect(screen.getByText(/sending/i)).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /sending/i })).toBeDisabled();
-    });
+    try {
+      // Should show loading state while fetch is pending
+      await waitFor(() => {
+        expect(screen.getByText(/sending/i)).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /sending/i })).toBeDisabled();
+      });
+    } finally {
+      pending.resolve();
+    }
 
-    // Note: MSW cleanup is handled globally in src/test/setup.ts
+    // Ensure pending request resolves before test completes to avoid open handles.
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /send message/i })).toBeEnabled();
+    });
   });
 
   it("shows success message on 200 response", async () => {
@@ -190,7 +174,7 @@ describe("ContactForm", () => {
     // Default handler returns success - no override needed
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -211,7 +195,7 @@ describe("ContactForm", () => {
     );
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
