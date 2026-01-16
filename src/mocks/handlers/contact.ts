@@ -3,14 +3,14 @@ import { delay, HttpResponse, http } from "msw";
 /**
  * Default success handler for contact form API
  */
-export const contactSuccessHandler = http.post("*/api/contact", () => {
+export const contactSuccessHandler = http.post("*/contact", () => {
   return HttpResponse.json({ success: true });
 });
 
 /**
  * Error handler - 500 server error
  */
-export const contactServerErrorHandler = http.post("*/api/contact", () => {
+export const contactServerErrorHandler = http.post("*/contact", () => {
   return HttpResponse.json({ error: "Server error" }, { status: 500 });
 });
 
@@ -18,7 +18,7 @@ export const contactServerErrorHandler = http.post("*/api/contact", () => {
  * Handler that simulates a slow/pending request (never resolves during test)
  * Use this for loading state tests
  */
-export const contactPendingHandler = http.post("*/api/contact", async () => {
+export const contactPendingHandler = http.post("*/contact", async () => {
   // Delay indefinitely - test controls resolution via server.use() override
   await delay("infinite");
   return HttpResponse.json({ success: true });
@@ -27,14 +27,14 @@ export const contactPendingHandler = http.post("*/api/contact", async () => {
 /**
  * Rate limit handler - 429 response
  */
-export const contactRateLimitHandler = http.post("*/api/contact", () => {
+export const contactRateLimitHandler = http.post("*/contact", () => {
   return HttpResponse.json({ error: "Too many requests" }, { status: 429 });
 });
 
 /**
  * Validation error handler - 400 response
  */
-export const contactValidationErrorHandler = http.post("*/api/contact", () => {
+export const contactValidationErrorHandler = http.post("*/contact", () => {
   return HttpResponse.json(
     { code: "VALIDATION_ERROR", error: "Invalid submission" },
     { status: 400 },

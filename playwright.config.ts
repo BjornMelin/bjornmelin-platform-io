@@ -77,7 +77,8 @@ export default defineConfig({
       PORT: webServerPort,
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? baseURL,
       NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL ?? baseURL,
-      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? new URL("/api", baseURL).toString(),
+      // Default to same-origin and rely on Playwright request routing for determinism.
+      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? baseURL,
       CONTACT_EMAIL: process.env.CONTACT_EMAIL ?? "test@example.com",
     },
   },

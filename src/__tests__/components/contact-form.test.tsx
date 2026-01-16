@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { delay, HttpResponse, http } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ContactForm } from "@/components/contact/contact-form";
+import { buildContactEndpoint } from "@/lib/api/contact";
 import { server } from "@/mocks/node";
 
 // Mock the toast hook
@@ -31,9 +32,15 @@ async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
   await user.tab(); // Blur message
 }
 
+function requireTestEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing required test env var: ${name}`);
+  return value;
+}
+
 describe("ContactForm", () => {
   beforeEach(() => {
-    vi.stubEnv("NEXT_PUBLIC_API_URL", "http://localhost:3000/api");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "http://localhost:3000");
     mockToast.mockClear();
   });
 
@@ -101,9 +108,10 @@ describe("ContactForm", () => {
   it("submits form data to API endpoint", async () => {
     const user = userEvent.setup();
     let capturedRequest: { url: string; method: string; headers: Headers } | null = null;
+    const endpoint = buildContactEndpoint(requireTestEnv("NEXT_PUBLIC_API_URL"));
 
     server.use(
-      http.post("*/api/contact", ({ request }) => {
+      http.post(endpoint, ({ request }) => {
         capturedRequest = {
           url: request.url,
           method: request.method,
@@ -129,9 +137,10 @@ describe("ContactForm", () => {
   it("includes honeypot and formLoadTime in payload", async () => {
     const user = userEvent.setup();
     let capturedBody: Record<string, unknown> | null = null;
+    const endpoint = buildContactEndpoint(requireTestEnv("NEXT_PUBLIC_API_URL"));
 
     server.use(
-      http.post("*/api/contact", async ({ request }) => {
+      http.post(endpoint, async ({ request }) => {
         capturedBody = (await request.json()) as Record<string, unknown>;
         return HttpResponse.json({ success: true });
       }),
@@ -152,10 +161,11 @@ describe("ContactForm", () => {
 
   it("shows loading state during submission", async () => {
     const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(requireTestEnv("NEXT_PUBLIC_API_URL"));
 
     // Use an infinite delay to keep the request pending
     server.use(
-      http.post("*/api/contact", async () => {
+      http.post(endpoint, async () => {
         await delay("infinite");
         return HttpResponse.json({ success: true });
       }),
@@ -191,10 +201,11 @@ describe("ContactForm", () => {
 
   it("shows error message on failure", async () => {
     const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(requireTestEnv("NEXT_PUBLIC_API_URL"));
 
     // Override with error response
     server.use(
-      http.post("*/api/contact", () => {
+      http.post(endpoint, () => {
         return HttpResponse.json({ error: "Server error" }, { status: 500 });
       }),
     );
