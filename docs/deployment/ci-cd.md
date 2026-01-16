@@ -47,6 +47,13 @@ CDK stacks do **not** create IAM users or access keys.
 
 ## Next.js Application Deployment
 
+Production is deployed automatically by `.github/workflows/deploy.yml` on merges to `main`. The
+workflow performs the safe sequence to keep the static export and CSP hashes in sync:
+
+1. `pnpm build` (generates `out/` and refreshes `infrastructure/lib/generated/next-inline-script-hashes.ts`)
+2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage` (updates CSP headers in CloudFront)
+3. Upload `out/` to S3 + invalidate CloudFront
+
 ### Production Build
 
 1. Install web application dependencies from the repository root:
@@ -82,10 +89,10 @@ CDK stacks do **not** create IAM users or access keys.
 
 The build process includes automatic image optimization:
 
-| Step | Tool | Output |
-|------|------|--------|
-| Static export | `next build` | HTML, JS, CSS in `out/` |
-| Image optimization | `next-export-optimize-images` | WebP images in `out/_next/static/chunks/images/` |
+| Step               | Tool                          | Output                                    |
+| :----------------- | :---------------------------- | :---------------------------------------- |
+| Static export      | `next build`                  | HTML/JS/CSS in `out/`                     |
+| Image optimization | `next-export-optimize-images` | WebP in `out/_next/static/chunks/images/` |
 
 Configuration is defined in `export-images.config.js`:
 
@@ -127,11 +134,11 @@ See [docs/development/releasing.md](../development/releasing.md) for full detail
 GitHub Actions environments define the full variable set for each target stage.
 Production uses GitHub Environment "production" variables and secrets:
 
-| Type | Variables | Purpose |
-|------|-----------|---------|
-| Variables | `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_APP_URL` | Public client config |
-| Secrets | `AWS_DEPLOY_ROLE_ARN` | OIDC role ARN used by `aws-actions/configure-aws-credentials` |
-| AWS | OIDC via `aws-actions/configure-aws-credentials` | No static keys |
+| Type      | Variables                                         | Purpose                          |
+| :-------- | :------------------------------------------------ | :------------------------------- |
+| Variables | `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_APP_URL`     | Public client config             |
+| Secrets   | `AWS_DEPLOY_ROLE_ARN`                             | OIDC role ARN for AWS auth       |
+| AWS       | OIDC via `aws-actions/configure-aws-credentials`  | No static keys                   |
 
 At runtime (Lambda), use AWS SSM Parameter Store / Secrets Manager rather than `.env` files.
 
@@ -151,13 +158,13 @@ At runtime (Lambda), use AWS SSM Parameter Store / Secrets Manager rather than `
 
 ## CI Workflows
 
-| Workflow | Trigger | Purpose |
-|----------|---------|---------|
-| `ci.yml` | Push/PR | Lint, type-check, test, build |
-| `performance-check.yml` | Push/PR to main | Lighthouse CI, bundle analysis |
-| `security-audit.yml` | Daily/Push | pnpm audit, dependency scanning |
-| `release-please.yml` | Push to main | Open/update Release PR, create releases |
-| `deploy.yml` | Push to main | Deploy to production |
+| Workflow                 | Trigger         | Purpose                                 |
+| :----------------------- | :-------------- | :-------------------------------------- |
+| `ci.yml`                 | Push/PR         | Lint, type-check, test, build           |
+| `performance-check.yml`  | Push/PR to main | Lighthouse CI, bundle analysis          |
+| `security-audit.yml`     | Daily/Push      | pnpm audit, dependency scanning         |
+| `release-please.yml`     | Push to main    | Open/update Release PR, create releases |
+| `deploy.yml`             | Push to main    | Deploy to production                    |
 
 ## Monitoring
 

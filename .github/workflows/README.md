@@ -17,9 +17,10 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
    - Jobs: CI pipeline, actionlint validation
 
 3. **deploy.yml** - Production deployment workflow
-   - Runs on: Push to main (excludes `infrastructure/**` and `**.md`)
+   - Runs on: Push to main (excludes `**.md`)
    - Calls: _reusable-ci.yml for testing
-   - Features: AWS OIDC authentication, preflight config validation, S3 sync, CloudFront invalidation, smoke check, job summary
+   - Features: AWS OIDC authentication, preflight config validation, static build,
+     **CDK Storage deploy (CSP headers)**, S3 sync, CloudFront invalidation, smoke check, job summary
    - workflow_dispatch inputs: `dry_run` (skip upload/invalidation) and `skip_smoke_check`
 
 4. **release-please.yml** - Automated semantic versioning and releases
@@ -29,7 +30,8 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 5. **manual-deploy.yml** - Manual deployment workflow
    - Runs on: Workflow dispatch
-   - Features: Environment selection, test skipping option, stack-output based S3/CloudFront deploy, deployment tracking, concurrency control
+   - Features: Environment selection, test skipping option, stack-output based S3/CloudFront deploy,
+     deployment tracking, concurrency control
 
 ### Security & Quality
 
@@ -63,10 +65,14 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
     - Runs on: Push, PRs, monthly schedule (8th at 04:00 UTC)
     - Features: Markdown link validation, issue creation on failure
     - Exclusions:
-      - `https://bjornmelin.io` and `https://www.bjornmelin.io` are intentionally excluded because this workflow is for documentation/external link hygiene and should not fail PRs/scheduled runs when the production site returns transient 5xx (e.g., CloudFront edge/runtime errors during deploys).
+      - `https://bjornmelin.io` and `https://www.bjornmelin.io` are intentionally excluded because this
+        workflow is for documentation/external link hygiene and should not fail PRs/scheduled runs when
+        the production site returns transient 5xx (e.g., CloudFront edge/runtime errors during deploys).
       - Production availability is validated separately by `deploy.yml` via the post-deploy smoke check.
       - Approved by: Bjorn Melin
-      - Follow-up: keep excluded; if homepage availability should be continuously validated, add a dedicated uptime/smoke check (or a stable `/healthz` endpoint) rather than gating docs link checks on prod status.
+      - Follow-up: keep excluded; if homepage availability should be continuously validated, add a
+        dedicated uptime/smoke check (or a stable `/healthz` endpoint) rather than gating docs link
+        checks on prod status.
 
 ### Performance
 
@@ -78,7 +84,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 ### Infrastructure
 
 14. **infrastructure.yml** - AWS CDK infrastructure deployment
-    - Runs on: Push to main (infrastructure/** changes), workflow dispatch
+    - Runs on: Workflow dispatch
     - Features: CDK deploy for DNS, storage, email, monitoring stacks
 
 ## Reusable Workflow Architecture
@@ -127,7 +133,9 @@ These workflows use GitHub OIDC for keyless AWS authentication, eliminating long
      --thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
    ```
 
-2. **Create IAM Role** with OIDC trust policy (see [infrastructure/README.md](../../infrastructure/README.md)). For CDK workflows, the role must be able to read the CDK bootstrap version SSM parameter (`/cdk-bootstrap/hnb659fds/version`) and (recommended) assume the CDK bootstrap roles.
+2. **Create IAM Role** with OIDC trust policy (see [infrastructure/README.md](../../infrastructure/README.md)).
+   For CDK workflows, the role must be able to read the CDK bootstrap version SSM parameter
+   (`/cdk-bootstrap/hnb659fds/version`) and (recommended) assume the CDK bootstrap roles.
 
 3. **Add Role ARN to GitHub Environment `production` secret** as `AWS_DEPLOY_ROLE_ARN`
 
