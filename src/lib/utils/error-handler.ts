@@ -26,7 +26,7 @@ export function handleAPIError(error: unknown) {
       {
         error: "Validation failed",
         code: "VALIDATION_ERROR",
-        details: error.errors,
+        details: error.issues,
       },
       { status: 400 },
     );

@@ -16,7 +16,12 @@ describe("env validation", () => {
     vi.stubEnv("CONTACT_EMAIL", "invalid-email");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
 
-    await expect(import("@/env.mjs")).rejects.toThrow("Invalid environment variables");
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      await expect(import("@/env.mjs")).rejects.toThrow("Invalid environment variables");
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it("accepts valid CONTACT_EMAIL", async () => {
@@ -34,7 +39,12 @@ describe("env validation", () => {
     vi.stubEnv("CONTACT_EMAIL", "test@example.com");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
 
-    await expect(import("@/env.mjs")).rejects.toThrow("Invalid environment variables");
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      await expect(import("@/env.mjs")).rejects.toThrow("Invalid environment variables");
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it("accepts optional server variables when not set in env", async () => {
