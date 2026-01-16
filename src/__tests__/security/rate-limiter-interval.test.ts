@@ -9,10 +9,13 @@ describe("rate limiter cleanup interval", () => {
     vi.setSystemTime(new Date("2024-01-01T00:00:00Z"));
 
     let capturedCallback: (() => void) | undefined;
+    let capturedIntervalMs: number | undefined;
     const setIntervalSpy = vi.spyOn(globalThis, "setInterval").mockImplementation(((
       callback: () => void,
+      ms: number,
     ) => {
       capturedCallback = callback;
+      capturedIntervalMs = ms;
       return 123 as unknown as ReturnType<typeof setInterval>;
     }) as typeof setInterval);
     const clearIntervalSpy = vi
@@ -26,6 +29,7 @@ describe("rate limiter cleanup interval", () => {
       const mod = await import("@/lib/security/rate-limiter");
 
       expect(setIntervalSpy).toHaveBeenCalledTimes(1);
+      expect(capturedIntervalMs).toBe(60_000);
       expect(typeof capturedCallback).toBe("function");
 
       const ip = "cleanup-ip";

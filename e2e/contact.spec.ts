@@ -41,5 +41,5 @@ test("contact form validates required fields and submits successfully", async ({
 
   await page.getByRole("button", { name: "Send Message" }).click();
 
-  await expect(page.getByText("Message Sent Successfully!")).toBeVisible();
+  await expect(page.getByText(/message sent successfully/i)).toBeVisible();
 });

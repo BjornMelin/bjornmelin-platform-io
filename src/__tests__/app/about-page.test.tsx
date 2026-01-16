@@ -20,13 +20,6 @@ describe("AboutPage", () => {
 
     expect(screen.getByTestId("about-detail")).toBeInTheDocument();
   });
-
-  it("renders AboutDetail as the page body", () => {
-    render(<AboutPage />);
-
-    const aboutDetail = screen.getByTestId("about-detail");
-    expect(aboutDetail).toBeInTheDocument();
-  });
 });
 
 describe("AboutPage metadata", () => {

@@ -46,5 +46,6 @@ describe("structured-data", () => {
     expect(jsonLd.length).toBe(1);
     const text = jsonLd[0]?.textContent ?? "";
     expect(text).toContain('"@type":"WebSite"');
+    expect(text).not.toContain('"@type":"Person"');
   });
 });

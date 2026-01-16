@@ -13,6 +13,7 @@ const isIgnorableConsoleError = (message: ConsoleMessage): boolean => {
   if (text.includes("favicon.ico")) return true;
   if (text.includes("chrome-extension://")) return true;
   if (text.includes("failed to load resource") && text.includes("net::err_failed")) return true;
+
   if (
     text.includes("failed to load resource") &&
     text.includes("status of 404") &&
@@ -20,8 +21,17 @@ const isIgnorableConsoleError = (message: ConsoleMessage): boolean => {
   ) {
     try {
       const url = new URL(message.location.url);
-      // Allow the 404 route itself (no file extension) while still surfacing missing JS/CSS/assets.
-      if (!url.pathname.includes(".")) return true;
+      // Whitelist of known non-app routes or test artifacts that can 404 without being regressions.
+      const whitelist = [
+        "/favicon.ico",
+        "/health",
+        "/api/health",
+        "/apple-touch-icon.png",
+        "/apple-touch-icon-precomposed.png",
+      ];
+      if (whitelist.includes(url.pathname) || url.pathname.startsWith("/__test/")) {
+        return true;
+      }
     } catch {
       // ignore
     }

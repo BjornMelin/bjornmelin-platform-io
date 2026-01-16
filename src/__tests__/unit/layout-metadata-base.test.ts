@@ -1,5 +1,6 @@
 /* @vitest-environment node */
-import { describe, expect, it, vi } from "vitest";
+import type React from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/font/google", () => ({
   Inter: () => ({ className: "mock-inter-font" }),
@@ -22,8 +23,14 @@ vi.mock("@/app/providers", () => ({
 }));
 
 describe("RootLayout metadataBase", () => {
-  it("falls back when NEXT_PUBLIC_BASE_URL is unset", async () => {
+  const originalBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+  afterEach(() => {
+    process.env.NEXT_PUBLIC_BASE_URL = originalBaseUrl;
     vi.resetModules();
+  });
+
+  it("falls back when NEXT_PUBLIC_BASE_URL is unset", async () => {
     delete process.env.NEXT_PUBLIC_BASE_URL;
 
     const { metadata } = await import("@/app/layout");
