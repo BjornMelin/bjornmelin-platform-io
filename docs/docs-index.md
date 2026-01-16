@@ -35,13 +35,13 @@ docs/
 ├── deployment/
 │   ├── README.md              # Deployment overview
 │   ├── environments.md        # Environment configurations
-│   ├── ci-cd.md              # CI/CD pipeline documentation
-│   └── monitoring.md         # Monitoring and logging
+│   ├── ci-cd.md               # CI/CD pipeline documentation
+│   └── monitoring.md          # Monitoring and logging
 │
 ├── api/
 │   ├── README.md              # API overview
 │   ├── contact.md             # Contact form endpoints
-│   └── schemas.md            # Data schemas
+│   └── schemas.md             # Data schemas
 │
 ├── specs/
 │   ├── SPEC-0001-*.md
@@ -49,7 +49,7 @@ docs/
 │   ├── SPEC-0003-*.md
 │   └── (add more specs as needed)
 │
-└── README.md                 # This documentation index
+└── README.md                  # This documentation index
 ```
 
 ## Getting Started
