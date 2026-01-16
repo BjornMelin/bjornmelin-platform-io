@@ -120,9 +120,19 @@ export function ContactForm() {
       if (!response.ok) {
         // Map API validation errors onto form fields.
         if (response.status === 400 && result?.details) {
+          const validFields: ReadonlySet<keyof ContactFormData> = new Set([
+            "name",
+            "email",
+            "message",
+          ]);
           result.details.forEach(({ message, path }) => {
             const field = path[0] as keyof ContactFormData;
-            setError(field, { message });
+            if (typeof field === "string" && validFields.has(field)) {
+              setError(field, { message });
+            } else {
+              // eslint-disable-next-line no-console
+              console.warn("contact-form: unexpected field error", field);
+            }
           });
           throw new Error("Please check the form for errors");
         }

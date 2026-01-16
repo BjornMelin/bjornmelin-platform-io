@@ -1,13 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
+import { allImageWidths } from "../src/lib/config/image-sizes.mjs";
 
 const cwd = process.cwd();
 const publicDir = path.join(cwd, "public");
 const variantsDir = path.join(publicDir, "_images");
 
-// Keep these in sync with next.config.mjs `images.deviceSizes` + `images.imageSizes`.
-const widths = [16, 32, 48, 64, 96, 128, 256, 640, 750, 828, 1080, 1200, 1920];
+const widths = allImageWidths;
 
 const isRasterSource = (ext) => ext === ".png" || ext === ".jpg" || ext === ".jpeg";
 
@@ -96,6 +96,8 @@ const main = async () => {
   try {
     await fs.access(publicDir);
   } catch {
+    // eslint-disable-next-line no-console
+    console.log(`images: ${publicDir} not found, skipping variant generation`);
     return;
   }
 

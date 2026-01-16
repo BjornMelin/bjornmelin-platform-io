@@ -1,6 +1,7 @@
 type ImageLoaderParams = {
   src: string;
   width: number;
+  // quality is intentionally ignored: WebP quality is set at build time; keep for Next.js ImageLoader compatibility.
   quality?: number;
 };
 
