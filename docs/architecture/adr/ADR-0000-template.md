@@ -1,15 +1,19 @@
 ---
 ADR: <zero-padded number>
 Title: <concise decision>
-Status: <Proposed|Accepted|Deprecated|Superseded>
+Status: <Proposed|Accepted|Deprecated|Superseded|Implemented>
 Version: <X.Y>
 Date: <YYYY-MM-DD>
-Supersedes: <ADR-IDs>
-Superseded-by: <ADR-IDs>
-Related: <ADR-IDs>
-Tags: <e.g., architecture, streamlit, orchestration, auth, embeddings, agents, retrieval>
-References: <official docs and key sources as markdown links>
+Supersedes: <ADR-IDs or []>
+Superseded-by: <ADR-IDs or []>
+Related: <ADR-IDs or []>
+Tags: <e.g., architecture, testing, security>
+References: <official docs and key sources as markdown links or []>
 ---
+
+## Status
+
+[Accepted/Implemented/etc. + date if needed.]
 
 ## Description
 
@@ -42,6 +46,10 @@ References: <official docs and key sources as markdown links>
 
 We will adopt **[Chosen Solution]** to address [the problem]. This involves using
 **[Specific Library/Pattern/Component]** configured with **[Key Parameters]**.
+
+## Constraints
+
+[Static export constraints, runtime limitations, policy constraints, etc.]
 
 ## High-Level Architecture
 
@@ -84,6 +92,10 @@ We will adopt **[Chosen Solution]** to address [the problem]. This involves usin
 ## Testing
 
 [Describe the strategy for testing the new architecture. Include skeleton code for tests if appropriate.]
+
+## Implementation Notes
+
+[Concise notes on what changed in code or behavior, and where to look.]
 
 ## Consequences
 

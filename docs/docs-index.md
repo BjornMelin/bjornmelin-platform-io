@@ -47,7 +47,7 @@ docs/
 │   ├── SPEC-0001-*.md
 │   ├── SPEC-0002-*.md
 │   ├── SPEC-0003-*.md
-│   └── SPEC-0004-*.md
+│   └── (add more specs as needed)
 │
 └── README.md                 # This documentation index
 ```
