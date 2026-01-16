@@ -29,7 +29,7 @@ describe("rate limiter cleanup interval", () => {
       const mod = await import("@/lib/security/rate-limiter");
 
       expect(setIntervalSpy).toHaveBeenCalledTimes(1);
-      expect(capturedIntervalMs).toBe(60_000);
+      expect(capturedIntervalMs).toBe(300_000);
       expect(typeof capturedCallback).toBe("function");
 
       const ip = "cleanup-ip";

@@ -1,7 +1,6 @@
-import type { z } from "zod";
-import type { projectSchema } from "@/lib/schemas/project";
+import type { Project as ProjectType } from "@/lib/schemas/project";
 
-export type Project = z.infer<typeof projectSchema>;
+export type Project = ProjectType;
 
 export interface ProjectFilterState {
   category: string;

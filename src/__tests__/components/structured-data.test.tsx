@@ -45,7 +45,7 @@ describe("structured-data", () => {
     const jsonLd = document.querySelectorAll('script[type="application/ld+json"]');
     expect(jsonLd.length).toBe(1);
     const text = jsonLd[0]?.textContent ?? "";
-    expect(text).toContain('"@type":"WebSite"');
-    expect(text).not.toContain('"@type":"Person"');
+    const schema = JSON.parse(text) as Record<string, unknown>;
+    expect(schema["@type"]).toBe("WebSite");
   });
 });

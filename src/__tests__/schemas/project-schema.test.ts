@@ -52,18 +52,35 @@ describe("projectsSchema", () => {
     ).toThrow();
   });
 
-  it("rejects missing required fields", () => {
+  it("rejects missing title", () => {
     expect(() =>
       projectsSchema.parse([
         {
           id: "1",
-          // missing title
+          // title is missing
           description: "Example description",
           technologies: ["TypeScript"],
           category: "Web",
           image: "/projects/example.png",
           links: { github: "https://github.com" },
-          // biome-ignore lint/suspicious/noExplicitAny: Intentional for testing missing required fields
+          // biome-ignore lint/suspicious/noExplicitAny: Intentional for testing missing title
+        } as any,
+      ]),
+    ).toThrow();
+  });
+
+  it("rejects missing id", () => {
+    expect(() =>
+      projectsSchema.parse([
+        {
+          // id is missing
+          title: "Example",
+          description: "Example description",
+          technologies: ["TypeScript"],
+          category: "Web",
+          image: "/projects/example.png",
+          links: { github: "https://github.com" },
+          // biome-ignore lint/suspicious/noExplicitAny: Intentional for testing missing id
         } as any,
       ]),
     ).toThrow();

@@ -54,11 +54,32 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: "jsdom",
-    pool: "threads",
     maxWorkers: isCi ? 4 : undefined,
     reporters: ["default"],
-    setupFiles: "./src/test/setup.ts",
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "node",
+          environment: "node",
+          pool: "threads",
+          isolate: false,
+          setupFiles: "./src/test/setup-node.ts",
+          include: ["src/__tests__/**/*.test.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "dom",
+          environment: "jsdom",
+          pool: "threads",
+          isolate: true,
+          setupFiles: "./src/test/setup.ts",
+          include: ["src/__tests__/**/*.test.tsx"],
+        },
+      },
+    ],
     exclude: [
       "**/node_modules/**",
       "**/dist/**",

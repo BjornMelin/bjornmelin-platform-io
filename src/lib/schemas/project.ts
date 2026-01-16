@@ -22,3 +22,6 @@ export const projectSchema = z.strictObject({
 });
 
 export const projectsSchema = z.array(projectSchema);
+
+export type Project = z.infer<typeof projectSchema>;
+export type Projects = z.infer<typeof projectsSchema>;
