@@ -12,8 +12,6 @@ related_adrs: ["ADR-0004"]
 notes: "Defines Playwright scope, browser targets, and runtime configuration."
 ---
 
-# Playwright E2E coverage and practices
-
 ## Scope
 
 Playwright covers:

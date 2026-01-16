@@ -12,8 +12,6 @@ related_adrs: ["ADR-0002", "ADR-0003", "ADR-0004", "ADR-0005"]
 notes: "Tracks dependency versions and upgrade rationale for the current release."
 ---
 
-# Dependency upgrades
-
 ## Summary
 
 This specification documents the current dependency baseline and compatibility

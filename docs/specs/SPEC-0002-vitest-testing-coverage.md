@@ -12,8 +12,6 @@ related_adrs: ["ADR-0003"]
 notes: "Defines Vitest scope, conventions, and execution practices."
 ---
 
-# Vitest testing coverage and practices
-
 ## Scope
 
 Vitest is used for:
