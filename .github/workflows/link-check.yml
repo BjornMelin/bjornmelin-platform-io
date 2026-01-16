@@ -27,6 +27,7 @@ jobs:
         with:
           fail: true
           # Note: prod site domains are excluded from this link-check (approved by Bjorn Melin; see .github/workflows/README.md).
+          # Some valid docs are also excluded due to intermittent CI timeouts (see PR checks logs).
           args: |
             --verbose
             --no-progress
@@ -39,9 +40,11 @@ jobs:
             --exclude 127.0.0.1
             --exclude example.com
             --exclude medium.com
-            # CI timeouts for these valid docs (see PR checks logs)
             --exclude https://vitest.dev/config
+            --exclude https://vitest.dev/config/
             --exclude https://vitest.dev/guide/cli
+            --exclude https://vitest.dev/guide/cli/
+            --exclude https://www.conventionalcommits.org
             --exclude https://www.conventionalcommits.org/
             --exclude https://bjornmelin.io
             --exclude https://www.bjornmelin.io
