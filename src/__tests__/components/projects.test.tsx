@@ -2,27 +2,7 @@
  * @fileoverview Interaction tests for ProjectGrid and smoke for ProjectCard.
  */
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
-
-vi.mock("next-export-optimize-images/image", () => ({
-  __esModule: true,
-  default: (props: Record<string, unknown>) => {
-    // Minimal shim that renders a plain img for tests
-    const {
-      alt,
-      fill: _fill,
-      priority: _priority,
-      placeholder: _placeholder,
-      blurDataURL: _blurDataURL,
-      unoptimized: _unoptimized,
-      loader: _loader,
-      quality: _quality,
-      ...imgProps
-    } = props as Record<string, unknown>;
-    // biome-ignore lint/performance/noImgElement: test shim replaces next-export-optimize-images/image
-    return <img alt={(alt as string) ?? ""} {...imgProps} />;
-  },
-}));
+import { describe, expect, it } from "vitest";
 
 import { ProjectCard } from "@/components/projects/project-card";
 import { ProjectGrid } from "@/components/projects/project-grid";

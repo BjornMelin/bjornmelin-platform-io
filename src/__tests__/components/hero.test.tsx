@@ -14,27 +14,6 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-// Mock next-export-optimize-images/image
-vi.mock("next-export-optimize-images/image", () => ({
-  __esModule: true,
-  default: (props: Record<string, unknown>) => {
-    const {
-      alt,
-      src,
-      fill: _fill,
-      priority: _priority,
-      placeholder: _placeholder,
-      blurDataURL: _blurDataURL,
-      unoptimized: _unoptimized,
-      loader: _loader,
-      quality: _quality,
-      ...imgProps
-    } = props as Record<string, unknown>;
-    // biome-ignore lint/performance/noImgElement: test shim replaces next-export-optimize-images/image
-    return <img alt={(alt as string) ?? ""} src={src as string} {...imgProps} />;
-  },
-}));
-
 // Import after mocks
 import { Hero } from "@/components/sections/hero";
 
