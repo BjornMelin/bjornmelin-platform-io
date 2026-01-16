@@ -6,4 +6,5 @@
 export * from "./console";
 export * from "./deferred";
 export * from "./form";
+export * from "./react-tree";
 export * from "./render";

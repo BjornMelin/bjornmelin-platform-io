@@ -52,10 +52,13 @@ const buildVariantPaths = (relativeSourcePathNoExt, width) => {
 
 const generateForFile = async (absSourcePath) => {
   const relativeSourcePath = path.relative(publicDir, absSourcePath);
+  const relativeSourcePathPosix = toPosix(relativeSourcePath);
   const ext = path.extname(relativeSourcePath).toLowerCase();
 
-  if (!isRasterSource(ext)) return { source: relativeSourcePath, generated: 0, skipped: 0 };
-  if (relativeSourcePath.startsWith(`_images${path.sep}`)) return { source: relativeSourcePath, generated: 0, skipped: 0 };
+  if (!isRasterSource(ext)) return { source: relativeSourcePathPosix, generated: 0, skipped: 0 };
+  if (relativeSourcePathPosix.startsWith("_images/")) {
+    return { source: relativeSourcePathPosix, generated: 0, skipped: 0 };
+  }
 
   const relativeNoExt = toPosix(relativeSourcePath.slice(0, -ext.length));
   const image = sharp(absSourcePath, { failOn: "none" });
@@ -69,11 +72,6 @@ const generateForFile = async (absSourcePath) => {
   let skipped = 0;
 
   for (const width of widths) {
-    if (width > sourceWidth) {
-      skipped += 1;
-      continue;
-    }
-
     const { abs: absVariantPath } = buildVariantPaths(relativeNoExt, width);
     if (await isNewerThan(absSourcePath, absVariantPath)) {
       skipped += 1;
@@ -129,4 +127,3 @@ const main = async () => {
 };
 
 await main();
-

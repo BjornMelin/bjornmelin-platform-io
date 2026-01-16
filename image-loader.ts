@@ -4,7 +4,12 @@ type ImageLoaderParams = {
   quality?: number;
 };
 
-const isRemoteUrl = (src: string) => src.startsWith("https://") || src.startsWith("http://");
+const isRemoteUrl = (src: string) =>
+  src.startsWith("https://") ||
+  src.startsWith("http://") ||
+  src.startsWith("//") ||
+  src.startsWith("data:") ||
+  src.startsWith("blob:");
 
 const stripQuery = (src: string) => {
   const index = src.indexOf("?");
@@ -17,6 +22,9 @@ const getExtension = (src: string) => {
 };
 
 const stripLeadingSlash = (src: string) => (src.startsWith("/") ? src.slice(1) : src);
+
+const removeExtension = (src: string, extension: string) =>
+  extension ? src.slice(0, Math.max(0, src.length - (extension.length + 1))) : src;
 
 export default function staticExportImageLoader({ src, width }: ImageLoaderParams): string {
   if (isRemoteUrl(src)) {
@@ -31,9 +39,6 @@ export default function staticExportImageLoader({ src, width }: ImageLoaderParam
     return src;
   }
 
-  const base = cleanSrc.slice(
-    0,
-    Math.max(0, cleanSrc.length - (extension ? extension.length + 1 : 0)),
-  );
+  const base = removeExtension(cleanSrc, extension);
   return `/_images/${base}_${width}.webp`;
 }

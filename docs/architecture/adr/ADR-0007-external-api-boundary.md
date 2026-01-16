@@ -42,7 +42,9 @@ would introduce server/runtime requirements and violates the static export archi
 ## Decision
 
 - The web app submits `POST ${NEXT_PUBLIC_API_URL}/contact`.
-- In production, CloudFront routes `/api/*` to the contact Lambda/API stack deployed by CDK.
+- In production, `NEXT_PUBLIC_API_URL` is either a dedicated API subdomain (e.g. `https://api.example.com`)
+  or the site domain with an `/api` path. When using the same domain, CloudFront routes `/api/*` to the
+  contact Lambda/API stack deployed by CDK.
 - In tests, Playwright mocks the `POST */contact` request for determinism.
 
 ## Decision Framework Score (must be ≥ 9.0)

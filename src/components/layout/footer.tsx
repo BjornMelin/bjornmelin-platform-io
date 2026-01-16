@@ -82,13 +82,13 @@ export function Footer() {
               >
                 <BookOpenCheck size={20} aria-hidden="true" />
               </a>
-              <a
+              <Link
                 href="/contact"
                 className="rounded-sm text-foreground/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 aria-label="Contact form"
               >
                 <Mail size={20} aria-hidden="true" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>

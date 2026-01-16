@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-// Import after mocks
 import { Hero } from "@/components/sections/hero";
 
 describe("Hero", () => {

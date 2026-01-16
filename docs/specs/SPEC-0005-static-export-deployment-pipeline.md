@@ -30,8 +30,8 @@ S3/CloudFront with a CSP hash allow-list for Next.js inline scripts.
 
 ## Production pipeline (authoritative)
 
-Production deploys are performed by `.github/workflows/deploy.yml` on merges to `main` (docs-only
-changes are ignored by that workflow).
+Production deploys are performed by GitHub Actions (`.github/workflows/deploy.yml`) on merges to
+`main` (docs-only changes are ignored by that workflow).
 
 The workflow sequence is:
 

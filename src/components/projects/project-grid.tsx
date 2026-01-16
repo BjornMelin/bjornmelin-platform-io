@@ -38,7 +38,7 @@ export function ProjectGrid({ projects, className }: ProjectGridProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(projects.map((project) => project.category)))],
@@ -91,12 +91,16 @@ export function ProjectGrid({ projects, className }: ProjectGridProps) {
       if (sortBy === "featured") {
         return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
       }
+      // Use accent-insensitive sorting for consistent ordering across locales.
       return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
     });
   }, [category, projects, sortBy]);
 
   return (
-    <div className={`space-y-8 ${className || ""}`}>
+    <div
+      className={`space-y-8 ${isPending ? "opacity-70 transition-opacity" : ""} ${className || ""}`}
+      aria-busy={isPending}
+    >
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap gap-2">
           {categories.map((categoryName) => (

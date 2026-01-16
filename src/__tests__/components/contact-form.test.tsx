@@ -13,15 +13,11 @@ vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({ toast: mockToast }),
 }));
 
-function requireTestEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(`Missing required test env var: ${name}`);
-  return value;
-}
+const apiBaseUrl = "http://localhost:3000";
 
 describe("ContactForm", () => {
   beforeEach(() => {
-    vi.stubEnv("NEXT_PUBLIC_API_URL", "http://localhost:3000");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", apiBaseUrl);
     mockToast.mockClear();
   });
 
@@ -85,7 +81,7 @@ describe("ContactForm", () => {
   it("submits form data to API endpoint", async () => {
     const user = userEvent.setup();
     let capturedRequest: { url: string; method: string; headers: Headers } | null = null;
-    const endpoint = buildContactEndpoint(requireTestEnv("NEXT_PUBLIC_API_URL"));
+    const endpoint = buildContactEndpoint(apiBaseUrl);
 
     server.use(
       http.post(endpoint, ({ request }) => {
@@ -114,7 +110,7 @@ describe("ContactForm", () => {
   it("includes honeypot and formLoadTime in payload", async () => {
     const user = userEvent.setup();
     let capturedBody: Record<string, unknown> | null = null;
-    const endpoint = buildContactEndpoint(requireTestEnv("NEXT_PUBLIC_API_URL"));
+    const endpoint = buildContactEndpoint(apiBaseUrl);
 
     server.use(
       http.post(endpoint, async ({ request }) => {
@@ -138,7 +134,7 @@ describe("ContactForm", () => {
 
   it("shows loading state during submission", async () => {
     const user = userEvent.setup();
-    const endpoint = buildContactEndpoint(requireTestEnv("NEXT_PUBLIC_API_URL"));
+    const endpoint = buildContactEndpoint(apiBaseUrl);
     const pending = createDeferred<void>();
 
     server.use(
@@ -185,7 +181,7 @@ describe("ContactForm", () => {
 
   it("shows error message on failure", async () => {
     const user = userEvent.setup();
-    const endpoint = buildContactEndpoint(requireTestEnv("NEXT_PUBLIC_API_URL"));
+    const endpoint = buildContactEndpoint(apiBaseUrl);
 
     // Override with error response
     server.use(

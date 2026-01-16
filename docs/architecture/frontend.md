@@ -62,7 +62,7 @@ pnpm build  # Runs: prebuild (sharp) → next build → CSP hash generation
 
 ### Key Files
 
-- `scripts/generate-static-image-variants.mjs`: Sharp-based variant generation
+- `scripts/generate-static-image-variants.mjs`: Sharp-based variant generation (repo root)
 - `image-loader.ts`: next/image custom loader for static export
 - `next.config.mjs`: `images.loader = "custom"` and size configuration
 

@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import { isValidElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("next/font/google", () => ({
@@ -31,23 +30,9 @@ vi.mock("@/app/providers", () => ({
 import RootLayout, { metadata, viewport } from "@/app/layout";
 import { Providers } from "@/app/providers";
 import { AppShell } from "@/components/layout/app-shell";
+import StructuredData from "@/components/structured-data";
 import { ThemeScript } from "@/components/theme";
-
-const walkReactTree = (
-  node: unknown,
-  visitor: (element: { type: unknown; props: Record<string, unknown> }) => void,
-): void => {
-  if (!node) return;
-  if (Array.isArray(node)) {
-    for (const child of node) walkReactTree(child, visitor);
-    return;
-  }
-
-  if (isValidElement(node)) {
-    visitor(node as { type: unknown; props: Record<string, unknown> });
-    walkReactTree((node as { props: { children?: unknown } }).props.children, visitor);
-  }
-};
+import { walkReactTree } from "@/test/helpers";
 
 describe("<AppShell />", () => {
   it("renders Navbar and Footer", () => {
@@ -84,10 +69,12 @@ describe("RootLayout", () => {
     let hasThemeScript = false;
     let hasProviders = false;
     let hasChild = false;
+    let hasStructuredData = false;
 
     walkReactTree(tree, (element) => {
       if (element.type === ThemeScript) hasThemeScript = true;
       if (element.type === Providers) hasProviders = true;
+      if (element.type === StructuredData) hasStructuredData = true;
       // Ensure the exact child element instance is present in the returned tree.
       if (element === (child as unknown)) hasChild = true;
     });
@@ -95,6 +82,7 @@ describe("RootLayout", () => {
     expect(hasThemeScript).toBe(true);
     expect(hasProviders).toBe(true);
     expect(hasChild).toBe(true);
+    expect(hasStructuredData).toBe(true);
   });
 });
 

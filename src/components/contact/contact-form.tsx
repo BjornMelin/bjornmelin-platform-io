@@ -70,7 +70,9 @@ export function ContactForm() {
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
       if (!apiBaseUrl) {
-        throw new Error("Contact form is not configured. Missing NEXT_PUBLIC_API_URL.");
+        throw new Error(
+          "Contact form is not configured. Set NEXT_PUBLIC_API_URL in your environment (see .env.example).",
+        );
       }
 
       if (process.env.NODE_ENV === "development") {
@@ -106,7 +108,14 @@ export function ContactForm() {
         }),
       });
 
-      const result = (await response.json().catch(() => null)) as APIErrorResponse | null;
+      let result: APIErrorResponse | null = null;
+      try {
+        result = (await response.json()) as APIErrorResponse;
+      } catch {
+        if (!response.ok) {
+          throw new Error("Failed to send message. The API returned invalid JSON.");
+        }
+      }
 
       if (!response.ok) {
         // Map API validation errors onto form fields.

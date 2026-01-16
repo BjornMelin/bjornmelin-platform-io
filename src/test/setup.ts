@@ -11,6 +11,12 @@ import { applyDefaultTestEnv } from "./setup-env";
  */
 applyDefaultTestEnv();
 
+const resetSearchParams = () => {
+  currentSearchParams = new URLSearchParams(window.location.search);
+};
+
+let currentSearchParams = new URLSearchParams(window.location.search);
+
 /**
  * Mock `next/navigation` for client component tests.
  *
@@ -18,8 +24,6 @@ applyDefaultTestEnv();
  * predictable `replace()` behavior.
  */
 vi.mock("next/navigation", () => {
-  let currentSearchParams = new URLSearchParams(window.location.search);
-
   const getUrl = (href: string) => {
     const base = "http://localhost";
     try {
@@ -45,8 +49,14 @@ vi.mock("next/navigation", () => {
         currentSearchParams = new URLSearchParams(url.search);
       },
       prefetch: async () => {},
-      back: () => window.history.back(),
-      forward: () => window.history.forward(),
+      back: () => {
+        window.history.back();
+        resetSearchParams();
+      },
+      forward: () => {
+        window.history.forward();
+        resetSearchParams();
+      },
       refresh: () => {},
     }),
   };
@@ -122,9 +132,11 @@ vi.mock("next/image", () => ({
       ...imgProps
     } = props as Record<string, unknown>;
 
+    const resolvedSrc = typeof src === "string" ? src : ((src as { src?: string }).src ?? "");
+
     return React.createElement("img", {
       alt: (alt as string) ?? "",
-      src: src as string,
+      src: resolvedSrc,
       ...imgProps,
     });
   },
@@ -155,6 +167,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   applyDefaultTestEnv();
+  resetSearchParams();
 });
 
 /**
