@@ -1,6 +1,6 @@
-import type { Project } from "@/types/project";
+import { projectsSchema } from "@/lib/schemas/project";
 
-export const projectsData: Project[] = [
+export const projectsData = projectsSchema.parse([
   {
     id: "1",
     title: "Stardex - Explore GitHub Stars Intelligently",
@@ -135,4 +135,4 @@ export const projectsData: Project[] = [
     },
     featured: false,
   },
-];
+]);

@@ -84,11 +84,18 @@ describe("ContactForm", () => {
     });
   });
 
-  it("disables submit button when form is invalid", () => {
+  it("keeps submit enabled and shows validation errors on submit", async () => {
+    const user = userEvent.setup();
     render(<ContactForm />);
 
     const submitButton = screen.getByRole("button", { name: /send message/i });
-    expect(submitButton).toBeDisabled();
+    expect(submitButton).toBeEnabled();
+
+    await user.click(submitButton);
+
+    expect(await screen.findByText(/name must be/i)).toBeInTheDocument();
+    expect(await screen.findByText(/valid email/i)).toBeInTheDocument();
+    expect(await screen.findByText(/message must be/i)).toBeInTheDocument();
   });
 
   it("submits form data to API endpoint", async () => {
@@ -108,11 +115,6 @@ describe("ContactForm", () => {
 
     render(<ContactForm />);
     await fillValidForm(user);
-
-    // Wait for form to become valid
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
-    });
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -138,10 +140,6 @@ describe("ContactForm", () => {
     render(<ContactForm />);
     await fillValidForm(user);
 
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
-    });
-
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     await waitFor(() => {
@@ -166,15 +164,12 @@ describe("ContactForm", () => {
     render(<ContactForm />);
     await fillValidForm(user);
 
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
-    });
-
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     // Should show loading state while fetch is pending
     await waitFor(() => {
       expect(screen.getByText(/sending/i)).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /sending/i })).toBeDisabled();
     });
 
     // Note: MSW cleanup is handled globally in src/test/setup.ts
@@ -186,10 +181,6 @@ describe("ContactForm", () => {
 
     render(<ContactForm />);
     await fillValidForm(user);
-
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
-    });
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -210,10 +201,6 @@ describe("ContactForm", () => {
 
     render(<ContactForm />);
     await fillValidForm(user);
-
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
-    });
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -239,10 +226,6 @@ describe("ContactForm", () => {
     await user.tab();
     await user.type(messageInput, "This is a test message that is long enough.");
     await user.tab();
-
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /send message/i })).not.toBeDisabled();
-    });
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 

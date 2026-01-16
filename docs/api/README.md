@@ -48,10 +48,11 @@ Error response:
 ### Error Codes
 
 | Code | Description |
-|------|-------------|
+| ------ | ------------- |
 | `INVALID_JSON` | Request body is not valid JSON |
 | `VALIDATION_ERROR` | Request body failed schema validation |
-| `EMAIL_SEND_ERROR` | Failed to send email via SES |
+| `EMAIL_SEND_ERROR` | Failed to send email via Resend |
+| `INTERNAL_SERVER_ERROR` | Unexpected server error |
 
 ## Development
 
@@ -80,7 +81,7 @@ API endpoints will be available at `http://localhost:3000/api/`
 
 The API relies on:
 
-- AWS SES for email sending
+- Resend for email sending
 - Environment variables for configuration (see [schemas.md](./schemas.md))
 - Zod for request validation
 

@@ -45,14 +45,14 @@ AWS_REGION=us-east-1
 ### GitHub Secrets (CI/CD)
 
 | Secret | Purpose | Example |
-|--------|---------|---------|
+| -------- | --------- | --------- |
 | `AWS_DEPLOY_ROLE_ARN` | IAM role for OIDC deployment (recommended: **Environment secret** in GitHub Environment `production`) | `arn:aws:iam::123456789:role/prod-portfolio-deploy` |
 | `OPENAI_API_KEY` | Auto-release version detection | `sk-proj-...` |
 
 ### GitHub Variables (CI/CD)
 
 | Variable | Purpose | Example |
-|----------|---------|---------|
+| ---------- | --------- | --------- |
 | `NEXT_PUBLIC_BASE_URL` | Production domain | `https://bjornmelin.io` |
 | `NEXT_PUBLIC_API_URL` | API endpoint | `https://api.bjornmelin.io` |
 | `NEXT_PUBLIC_APP_URL` | Application URL | `https://bjornmelin.io` |
@@ -61,10 +61,10 @@ AWS_REGION=us-east-1
 ### AWS SSM Parameters
 
 | Parameter | Type | Purpose |
-|-----------|------|---------|
+| ----------- | ------ | --------- |
 | `/portfolio/prod/CONTACT_EMAIL` | SecureString | Contact form recipient email |
 | `/portfolio/prod/resend/api-key` | SecureString | Resend API key for email delivery |
-| `/portfolio/prod/EMAIL_FROM` | SecureString | Sender email address (optional) |
+| `/portfolio/prod/resend/email-from` | SecureString | Sender email address (optional) |
 
 ### Local Development (.env.local)
 
@@ -136,19 +136,21 @@ export const env = {
 
 ## Service Configuration
 
-### Email Service (SES)
+### Email Service (Resend)
 
 ```typescript
-// Development
+// Development (local)
 const emailConfig = {
-  region: "us-east-1",
-  sandbox: true,
+  provider: "resend",
+  apiKey: process.env.RESEND_API_KEY,
+  from: process.env.EMAIL_FROM,
 };
 
-// Production
+// Production (Lambda)
 const emailConfig = {
-  region: "us-east-1",
-  sandbox: false,
+  provider: "resend",
+  apiKey: "ssm:/portfolio/prod/resend/api-key",
+  from: "ssm:/portfolio/prod/resend/email-from",
 };
 ```
 

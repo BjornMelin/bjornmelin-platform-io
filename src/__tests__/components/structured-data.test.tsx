@@ -30,4 +30,22 @@ describe("structured-data", () => {
     expect(texts).toContain('"@type":"Person"');
     expect(texts).toContain('"@type":"WebSite"');
   });
+
+  it("renders only person JSON-LD", () => {
+    render(<StructuredData type="person" />);
+    const jsonLd = document.querySelectorAll('script[type="application/ld+json"]');
+    expect(jsonLd.length).toBe(1);
+    const text = jsonLd[0]?.textContent ?? "";
+    expect(text).toContain('"@type":"Person"');
+    expect(text).not.toContain('"@type":"WebSite"');
+  });
+
+  it("renders only website JSON-LD", () => {
+    render(<StructuredData type="website" />);
+    const jsonLd = document.querySelectorAll('script[type="application/ld+json"]');
+    expect(jsonLd.length).toBe(1);
+    const text = jsonLd[0]?.textContent ?? "";
+    const schema = JSON.parse(text) as Record<string, unknown>;
+    expect(schema["@type"]).toBe("WebSite");
+  });
 });

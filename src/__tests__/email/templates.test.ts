@@ -1,6 +1,10 @@
 /* @vitest-environment node */
 import { describe, expect, it } from "vitest";
-import { createContactEmailHtml, createContactEmailText } from "@/lib/email/templates/contact-form";
+import {
+  createContactEmailHtml,
+  createContactEmailText,
+  validateContactForm,
+} from "@/lib/email/templates/contact-form";
 
 describe("createContactEmailText", () => {
   const fixedDate = new Date("2024-01-01T12:00:00Z");
@@ -145,5 +149,156 @@ describe("createContactEmailHtml", () => {
     });
 
     expect(html).toContain("Submitted at: 2024-01-01T12:00:00.000Z");
+  });
+
+  it("uses the provided domain when supplied", () => {
+    const html = createContactEmailHtml({
+      data: {
+        name: "Test",
+        email: "test@example.com",
+        message: "Test message",
+      },
+      submittedAt: fixedDate,
+      domain: "example.org",
+    });
+
+    expect(html).toContain("contact form on example.org");
+  });
+
+  it("escapes quotes", () => {
+    const html = createContactEmailHtml({
+      data: {
+        name: 'Test "quoted"',
+        email: "test@example.com",
+        message: "Test",
+      },
+      submittedAt: fixedDate,
+    });
+
+    expect(html).toContain("Test &quot;quoted&quot;");
+  });
+});
+
+describe("validateContactForm", () => {
+  it("returns valid for well-formed input", () => {
+    const result = validateContactForm({
+      name: "John Doe",
+      email: "john@example.com",
+      message: "Hello there! This is valid.",
+    });
+
+    expect(result).toEqual({ valid: true });
+  });
+
+  it("rejects missing name", () => {
+    expect(
+      validateContactForm({
+        email: "john@example.com",
+        message: "Hello world!!",
+      }),
+    ).toEqual({
+      valid: false,
+      error: "Name must be at least 2 characters",
+      field: "name",
+    });
+  });
+
+  it("rejects short name after trimming", () => {
+    const result = validateContactForm({
+      name: " ",
+      email: "john@example.com",
+      message: "Hello world!!",
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.field).toBe("name");
+  });
+
+  it("rejects long name", () => {
+    const result = validateContactForm({
+      name: "a".repeat(51),
+      email: "john@example.com",
+      message: "Hello world!!",
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.field).toBe("name");
+  });
+
+  it("rejects name containing newlines", () => {
+    const result = validateContactForm({
+      name: "John\nDoe",
+      email: "john@example.com",
+      message: "Hello world!!",
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      error: "Invalid name",
+      field: "name",
+    });
+  });
+
+  it("rejects invalid email", () => {
+    const result = validateContactForm({
+      name: "John",
+      email: "not-an-email",
+      message: "Hello world!!",
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      error: "Invalid email address",
+      field: "email",
+    });
+  });
+
+  it("rejects email containing newlines", () => {
+    const result = validateContactForm({
+      name: "John",
+      email: "john@example.com\nspam",
+      message: "Hello world!!",
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      error: "Invalid email address",
+      field: "email",
+    });
+  });
+
+  it("rejects missing message", () => {
+    const result = validateContactForm({
+      name: "John",
+      email: "john@example.com",
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      error: "Message must be at least 10 characters",
+      field: "message",
+    });
+  });
+
+  it("rejects short message after trimming", () => {
+    const result = validateContactForm({
+      name: "John",
+      email: "john@example.com",
+      message: "  short  ",
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.field).toBe("message");
+  });
+
+  it("rejects long message", () => {
+    const result = validateContactForm({
+      name: "John",
+      email: "john@example.com",
+      message: "a".repeat(1001),
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.field).toBe("message");
   });
 });

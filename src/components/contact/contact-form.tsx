@@ -21,7 +21,7 @@ import { type ContactFormData, contactFormSchema } from "@/lib/schemas/contact";
 interface APIErrorResponse {
   error: string;
   code?: string;
-  details?: Array<{ message: string; path: string[] }>;
+  details?: Array<{ message: string; path: Array<string | number> }>;
 }
 
 /**
@@ -53,7 +53,7 @@ export function ContactForm() {
     handleSubmit,
     reset,
     setError,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     mode: "onTouched",
@@ -142,7 +142,12 @@ export function ContactForm() {
         </Alert>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6"
+        noValidate
+        aria-busy={isSubmitting}
+      >
         {/* Honeypot field - hidden from users, catches bots */}
         <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
           <label htmlFor={fieldIds.honeypot}>
@@ -164,8 +169,9 @@ export function ContactForm() {
           <Input
             id={fieldIds.name}
             type="text"
-            placeholder="Your name"
+            placeholder="Your name…"
             {...register("name")}
+            autoComplete="name"
             aria-describedby={errors.name ? `${fieldIds.name}-error` : undefined}
             aria-invalid={!!errors.name}
             disabled={isSubmitting}
@@ -183,8 +189,11 @@ export function ContactForm() {
           <Input
             id={fieldIds.email}
             type="email"
-            placeholder="your.email@example.com"
+            placeholder="your.email@example.com…"
             {...register("email")}
+            autoComplete="email"
+            inputMode="email"
+            spellCheck={false}
             aria-describedby={errors.email ? `${fieldIds.email}-error` : undefined}
             aria-invalid={!!errors.email}
             disabled={isSubmitting}
@@ -201,8 +210,9 @@ export function ContactForm() {
           <Label htmlFor={fieldIds.message}>Message</Label>
           <Textarea
             id={fieldIds.message}
-            placeholder="Your message..."
+            placeholder="Your message…"
             {...register("message")}
+            autoComplete="off"
             aria-describedby={errors.message ? `${fieldIds.message}-error` : undefined}
             aria-invalid={!!errors.message}
             disabled={isSubmitting}
@@ -216,7 +226,7 @@ export function ContactForm() {
           )}
         </div>
 
-        <Button type="submit" disabled={isSubmitting || !isValid} className="w-full">
+        <Button type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

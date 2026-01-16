@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [2.0.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v1.1.0...v2.0.0) (2026-01-16)
+## [2.0.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v1.0.5...v2.0.0) (2026-01-16)
 
 
 ### ⚠ BREAKING CHANGES

@@ -48,7 +48,7 @@ infrastructure/
 - Manages S3 buckets
 - Configures storage policies
 - Handles asset storage (S3 + CloudFront)
-- Applies strict CloudFront security headers (including CSP for Next.js inline bootstrap scripts; see `docs/architecture/adr/0001-cloudfront-csp-nextjs-inline-hashes.md`)
+- Applies strict CloudFront security headers (including CSP for Next.js inline bootstrap scripts; see `docs/architecture/adr/ADR-0001-cloudfront-csp-nextjs-inline-hashes.md`)
 
 ### Deployment Stack
 

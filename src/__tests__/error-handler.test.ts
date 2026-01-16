@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ZodError } from "zod";
+import { z } from "zod";
 
 import { APIError, handleAPIError } from "@/lib/utils/error-handler";
 
@@ -15,18 +15,13 @@ describe("handleAPIError", () => {
   });
 
   it("serializes validation issues when a ZodError is received", async () => {
-    const zodError = new ZodError([
-      {
-        code: "too_small",
-        minimum: 1,
-        type: "string",
-        inclusive: true,
-        message: "Required",
-        path: ["name"],
-      },
-    ]);
+    const result = z.string().min(1).safeParse("");
+    expect(result.success).toBe(false);
+    if (result.success) {
+      throw new Error("Expected schema to fail validation");
+    }
 
-    const response = handleAPIError(zodError);
+    const response = handleAPIError(result.error);
     const payload = await response.json();
 
     expect(response.status).toBe(400);

@@ -8,13 +8,13 @@
 - Vitest
 - TypeScript
 - MSW (Mock Service Worker)
+- Playwright (E2E)
 
 ## Test Types
 
 ### 1. Component Testing
 
 - UI components
-- Server Components
 - Client Components
 - Custom Hooks
 
@@ -29,6 +29,12 @@
 - Page Flows
 - Form Submissions
 - Data Fetching
+
+### 4. End-to-End (E2E) Testing
+
+- Route navigation
+- Cross-page flows
+- Browser-only behaviors
 
 ## Component Testing
 
@@ -55,16 +61,8 @@ describe("Button", () => {
 
 ### Server Components
 
-```typescript
-import { Contact } from "@/app/contact/page";
-
-describe("Contact Page", () => {
-  it("renders contact form", () => {
-    render(<Contact />);
-    expect(screen.getByRole("form")).toBeInTheDocument();
-  });
-});
-```
+Vitest does not support async Server Components. For async Server Components,
+use Playwright E2E tests instead.
 
 ## API Testing
 
@@ -139,6 +137,19 @@ describe("Contact Form Flow", () => {
 });
 ```
 
+## End-to-End Testing (Playwright)
+
+```typescript
+import { test, expect } from "@playwright/test";
+
+test("navigates to the about page", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "About" }).click();
+  await expect(page).toHaveURL(/\\/about$/);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+```
+
 ## Test Organization
 
 ### Directory Structure
@@ -152,6 +163,10 @@ src/
 └── test-utils/
     ├── setup.ts
     └── helpers.ts
+
+e2e/
+├── smoke.spec.ts
+└── navigation.spec.ts
 ```
 
 ### Naming Conventions
@@ -159,6 +174,7 @@ src/
 - `ComponentName.test.tsx` - Component tests
 - `route.test.ts` - API route tests
 - `flow.test.tsx` - Integration tests
+- `*.spec.ts` - Playwright E2E tests
 
 ## Best Practices
 
@@ -199,8 +215,13 @@ pnpm test -- ComponentName.test.tsx
 # Run tests in watch mode
 pnpm test -- --watch
 
-# Generate coverage report
-pnpm test -- --coverage
+# Run tests with coverage
+pnpm test:coverage
+
+# Note: pnpm test -- --coverage is an equivalent alias for pnpm test:coverage.
+
+# Run E2E tests
+pnpm test:e2e
 ```
 
 ## Continuous Integration

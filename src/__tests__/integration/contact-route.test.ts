@@ -78,24 +78,34 @@ describe("POST /api/contact (integration)", () => {
   it("returns 400 when honeypot field is filled (schema validation rejects non-empty)", async () => {
     const { POST } = await import("@/app/api/contact/route");
 
-    const req = createContactRequest(buildContactFormWithSecurity({ honeypot: "I am a bot" }));
-    const res = await POST(req);
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const req = createContactRequest(buildContactFormWithSecurity({ honeypot: "I am a bot" }));
+      const res = await POST(req);
 
-    // Schema validation rejects non-empty honeypot
-    expect(res.status).toBe(400);
-    const data = (await res.json()) as { code: string };
-    expect(data.code).toBe("VALIDATION_ERROR");
+      // Schema validation rejects non-empty honeypot
+      expect(res.status).toBe(400);
+      const data = (await res.json()) as { code: string };
+      expect(data.code).toBe("VALIDATION_ERROR");
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it("does NOT send email when honeypot field is filled", async () => {
     const { POST } = await import("@/app/api/contact/route");
 
-    const req = createContactRequest(buildContactFormWithSecurity({ honeypot: "spam content" }));
-    const res = await POST(req);
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const req = createContactRequest(buildContactFormWithSecurity({ honeypot: "spam content" }));
+      const res = await POST(req);
 
-    // Email should NOT be sent - validation fails before email sending
-    expect(res.status).toBe(400);
-    expect(mockSendContactEmail).not.toHaveBeenCalled();
+      // Email should NOT be sent - validation fails before email sending
+      expect(res.status).toBe(400);
+      expect(mockSendContactEmail).not.toHaveBeenCalled();
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it("returns 400 when submission too fast", async () => {
@@ -118,9 +128,14 @@ describe("POST /api/contact (integration)", () => {
     // Force a fresh import to trigger env validation
     vi.resetModules();
 
-    await expect(import("@/app/api/contact/route")).rejects.toThrow(
-      "Invalid environment variables",
-    );
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      await expect(import("@/app/api/contact/route")).rejects.toThrow(
+        "Invalid environment variables",
+      );
+    } finally {
+      consoleError.mockRestore();
+    }
 
     // Restore modules for subsequent tests
     vi.resetModules();
@@ -132,11 +147,17 @@ describe("POST /api/contact (integration)", () => {
     const { POST } = await import("@/app/api/contact/route");
 
     const req = createContactRequest(buildContactFormWithSecurity());
-    const res = await POST(req);
 
-    expect(res.status).toBe(500);
-    const data = (await res.json()) as { code: string };
-    expect(data.code).toBe("EMAIL_SEND_ERROR");
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const res = await POST(req);
+
+      expect(res.status).toBe(500);
+      const data = (await res.json()) as { code: string };
+      expect(data.code).toBe("EMAIL_SEND_ERROR");
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it("extracts IP from x-forwarded-for header", async () => {

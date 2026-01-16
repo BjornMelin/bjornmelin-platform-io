@@ -28,12 +28,6 @@ describe("ContactPage", () => {
 
     expect(screen.getByTestId("contact-form")).toBeInTheDocument();
   });
-
-  it("has accessible structure with main landmark", () => {
-    render(<ContactPage />);
-
-    expect(screen.getByRole("main")).toBeInTheDocument();
-  });
 });
 
 describe("ContactPage metadata", () => {

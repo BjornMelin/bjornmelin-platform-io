@@ -120,6 +120,13 @@ Run tests:
 pnpm test
 ```
 
+Run coverage or E2E tests:
+
+```bash
+pnpm test:coverage
+pnpm test:e2e
+```
+
 ## Common Issues
 
 ### AWS Credentials

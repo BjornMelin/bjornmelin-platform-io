@@ -19,7 +19,10 @@ interface ProjectCardProps {
  */
 export function ProjectCard({ project, className }: ProjectCardProps) {
   return (
-    <div className={cn("bg-card rounded-lg shadow-lg overflow-hidden", className)}>
+    <div
+      data-testid="project-card"
+      className={cn("bg-card rounded-lg shadow-lg overflow-hidden", className)}
+    >
       <div className="relative h-48">
         <Image
           src={project.image}

@@ -30,9 +30,9 @@ src/
 ## Key Technologies
 
 | Technology | Purpose |
-|------------|---------|
+| ------------ | --------- |
 | Next.js 14.2.35 | React framework with App Router |
-| TypeScript 5.8 | Type-safe JavaScript |
+| TypeScript 5.9.3 | Type-safe JavaScript |
 | Tailwind CSS | Utility-first CSS |
 | shadcn/ui | UI component library |
 | Framer Motion | Animation library (LazyMotion) |
@@ -124,6 +124,7 @@ pnpm build  # Runs: next build && next-export-optimize-images
 
 ### Layout Components
 
+- `AppShell`: Skip link + single main landmark wrapper
 - `Navbar`: Site navigation with mobile menu
 - `Footer`: Site footer with links
 - `ThemeProvider`: Dark/light theme management
@@ -157,7 +158,7 @@ pnpm build  # Runs: next build && next-export-optimize-images
 ## Performance
 
 | Optimization | Implementation |
-|--------------|----------------|
+| -------------- | ---------------- |
 | Static Export | `output: 'export'` in next.config.mjs |
 | Image Optimization | WebP conversion, responsive sizes |
 | Animation Bundle | LazyMotion (27KB savings) |
@@ -179,6 +180,11 @@ pnpm build  # Runs: next build && next-export-optimize-images
 ## Development Practices
 
 - Functional components
-- React Server Components where applicable
+- React Server Components run at build time for static export
 - Strict TypeScript
 - Biome for linting and formatting
+
+## Static Export Constraints
+
+Static export disallows runtime request APIs (cookies/headers), redirects/rewrites,
+Server Actions, ISR, and request-dependent Route Handlers. See ADR-0005.

@@ -29,7 +29,7 @@ Deployment processes and practices for bjornmelin-platform-io.
 - Next.js static export
 - AWS CDK stacks
 - Static assets (S3 + CloudFront)
-- Email service (Lambda + SES)
+- Email service (Lambda + Resend)
 
 ## Deployment Types
 
@@ -142,6 +142,7 @@ No `.env.production` file is used. Local development uses `.env.local` only.
 ### Pre-deployment Checks
 
 - Run all tests (`pnpm test`)
+- Run E2E tests when routes or form flows change (`pnpm test:e2e`)
 - Check types (`pnpm type-check`)
 - Verify dependencies (`pnpm install`)
 - Analyze bundle size (`pnpm analyze`)

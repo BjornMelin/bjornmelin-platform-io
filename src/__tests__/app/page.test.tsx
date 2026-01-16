@@ -50,12 +50,8 @@ describe("Home page", () => {
 
   it("renders sections in correct order", () => {
     const { container } = render(<Home />);
-    const main = container.querySelector("main");
 
-    expect(main).toBeInTheDocument();
-
-    // Check sections are children of main
-    const sections = main?.querySelectorAll("[data-testid$='-section']");
+    const sections = container.querySelectorAll("[data-testid$='-section']");
     expect(sections?.length).toBe(3);
     expect(sections?.[0].getAttribute("data-testid")).toBe("hero-section");
     expect(sections?.[1].getAttribute("data-testid")).toBe("about-section");

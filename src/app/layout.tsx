@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Footer } from "@/components/layout/footer";
-import { Navbar } from "@/components/layout/navbar";
+import { AppShell } from "@/components/layout/app-shell";
 import StructuredData from "@/components/structured-data";
 import { ThemeScript } from "@/components/theme";
 import { Providers } from "./providers";
@@ -19,6 +18,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "https://bjornmelin.com"),
   title: {
     template: "%s | Bjorn Melin",
     default: "Bjorn Melin - Senior Data Scientist & Cloud Solutions Architect",
@@ -105,11 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={inter.className}>
         <Providers>
-          <div className="relative min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-grow container mx-auto px-4 pt-16 pb-8">{children}</main>
-            <Footer />
-          </div>
+          <AppShell>{children}</AppShell>
         </Providers>
         <StructuredData type="both" />
       </body>

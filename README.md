@@ -239,7 +239,7 @@ Frontend:
   Core:
     - React 18.3.1
     - Next.js 14.2.35
-    - TypeScript 5.8
+    - TypeScript 5.9.3
 
   UI:
     - Tailwind CSS
@@ -265,7 +265,7 @@ Infrastructure:
 
 Development:
   Tools:
-    - pnpm 10.18.3 (Corepack)
+    - pnpm 10.28.0 (Corepack)
     - Biome (lint + format)
     - Vitest (unit tests)
     - Playwright (E2E tests)
@@ -302,11 +302,15 @@ pnpm serve        # Serve static export (alternative)
 
 # Quality
 pnpm lint         # Run Biome lint/format checks
+pnpm format:check # Run Biome format check
 pnpm type-check   # TypeScript type checking
 
 # Testing
 pnpm test         # Run unit tests
+pnpm test:coverage # Run unit tests with coverage
 pnpm test:e2e     # Run E2E tests
+pnpm test:e2e:ui  # Run Playwright in UI mode
+pnpm test:e2e:report # Open Playwright HTML report
 
 # Analysis
 pnpm analyze      # Build with bundle analyzer

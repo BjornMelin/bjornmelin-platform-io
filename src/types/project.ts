@@ -1,17 +1,6 @@
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  technologies: string[];
-  category: string;
-  image: string;
-  links: {
-    github?: string;
-    live?: string;
-    demo?: string;
-  };
-  featured?: boolean;
-}
+import type { Project as ProjectType } from "@/lib/schemas/project";
+
+export type Project = ProjectType;
 
 export interface ProjectFilterState {
   category: string;

@@ -20,21 +20,6 @@ describe("AboutPage", () => {
 
     expect(screen.getByTestId("about-detail")).toBeInTheDocument();
   });
-
-  it("has main landmark for accessibility", () => {
-    render(<AboutPage />);
-
-    expect(screen.getByRole("main")).toBeInTheDocument();
-  });
-
-  it("contains AboutDetail inside main", () => {
-    render(<AboutPage />);
-
-    const main = screen.getByRole("main");
-    const aboutDetail = screen.getByTestId("about-detail");
-
-    expect(main).toContainElement(aboutDetail);
-  });
 });
 
 describe("AboutPage metadata", () => {
