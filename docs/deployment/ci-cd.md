@@ -9,7 +9,7 @@ Deployment process for bjornmelin-platform-io.
 - AWS credentials provisioned for the target account
 - AWS CDK CLI via `pnpm dlx aws-cdk` (no global install required)
 - Node.js 24.x LTS (pinned via `.nvmrc`)
-- pnpm 10.18.x (activated via Corepack from `package.json#packageManager`)
+- pnpm 10.28.0 (activated via Corepack from `package.json#packageManager`)
 
 ### CDK Deployment Process
 

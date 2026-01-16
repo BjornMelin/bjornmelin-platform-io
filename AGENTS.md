@@ -20,7 +20,7 @@
 - `pnpm lint` / `pnpm format`: Biome lint+format (writes fixes).
 - `pnpm type-check`: TypeScript typecheck.
 - `pnpm test` / `pnpm test:coverage`: Vitest unit/integration tests + coverage.
-- `pnpm test:e2e`: Playwright (expects tests in `e2e/`, `--pass-with-no-tests` enabled).
+- `pnpm test:e2e`: Playwright (expects tests in `e2e/`).
 
 Infrastructure:
 
@@ -53,7 +53,7 @@ Infrastructure:
 - CSP inline script hashes are generated and are **not secrets** (they appear in public CSP headers).
   Never delete or manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
   Regenerate with `pnpm generate:csp-hashes` (usually via `pnpm build`).
-  See `docs/architecture/adr/0001-cloudfront-csp-nextjs-inline-hashes.md`.
+  See `docs/architecture/adr/ADR-0001-cloudfront-csp-nextjs-inline-hashes.md`.
 - Static export + CSP must stay in sync: `pnpm build` → `pnpm -C infrastructure deploy:storage` → `pnpm deploy:static:prod`.
 - GitHub Actions: merges to `main` run the same sequence automatically via `.github/workflows/deploy.yml`.
 

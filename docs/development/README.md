@@ -26,7 +26,7 @@ Development documentation for the bjornmelin-platform-io project.
 
 - Next.js 14.2.35 (App Router, static export)
 - React 18.3.1
-- TypeScript 5.8
+- TypeScript 5.9.3
 - Tailwind CSS
 - shadcn/ui components
 - Framer Motion (LazyMotion)
@@ -73,6 +73,12 @@ graph LR
 - Component testing with Vitest
 - E2E testing with Playwright
 - Type checking with `pnpm type-check`
+
+### 4. Static Export Constraints
+
+This project ships as a static export (`output: "export"`). Do not introduce
+features that require a server runtime (cookies/headers, redirects/rewrites,
+Server Actions, ISR, or request-dependent Route Handlers).
 
 ## Code Organization
 
@@ -132,6 +138,9 @@ pnpm type-check
 
 # Run linting
 pnpm lint
+
+# Run format checks
+pnpm format:check
 
 # Run unit tests
 pnpm test

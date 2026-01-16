@@ -13,16 +13,20 @@ The contact form API handles submission of contact form messages.
   name: string;    // 2-50 characters
   email: string;   // Valid email format
   message: string; // 10-1000 characters
+  honeypot?: string; // Must be empty (bot detection)
+  formLoadTime?: number; // Timestamp (ms) when form loaded
 }
 ```
 
 ### Validation Rules
 
 | Field | Type | Constraints |
-|-------|------|-------------|
+| ------- | ------ | ------------- |
 | `name` | string | Required, 2-50 characters |
 | `email` | string | Required, valid email format |
 | `message` | string | Required, 10-1000 characters |
+| `honeypot` | string | Optional, must be empty |
+| `formLoadTime` | number | Optional, used for timing checks |
 
 ## Response
 
@@ -37,6 +41,15 @@ The contact form API handles submission of contact form messages.
 ### Error Responses
 
 **Validation Error (400)**:
+
+```json
+{
+  "error": "Validation failed",
+  "code": "VALIDATION_ERROR"
+}
+```
+
+**Invalid JSON (400)**:
 
 ```json
 {
@@ -62,6 +75,15 @@ The contact form API handles submission of contact form messages.
 }
 ```
 
+**Internal Error (500)**:
+
+```json
+{
+  "error": "An unexpected error occurred",
+  "code": "INTERNAL_SERVER_ERROR"
+}
+```
+
 ## Implementation Details
 
 The contact form endpoint uses Resend for email delivery with built-in abuse prevention:
@@ -69,6 +91,8 @@ The contact form endpoint uses Resend for email delivery with built-in abuse pre
 - **Rate Limiting**: 5 requests per minute per IP
 - **Honeypot Field**: Hidden field to catch bots
 - **Time-based Validation**: Rejects submissions faster than 3 seconds
+
+Honeypot submissions return a success response without sending email.
 
 The implementation can be found in:
 

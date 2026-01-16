@@ -24,11 +24,11 @@ graph TB
         S3[S3 Bucket]
         CF[CloudFront CDN]
         LAMBDA[Contact Lambda]
-        SES[AWS SES]
+        RESEND[Resend]
         OUT --> S3
         CF --> S3
         CF --> LAMBDA
-        LAMBDA --> SES
+        LAMBDA --> RESEND
     end
 
     subgraph "DNS & SSL"
@@ -74,7 +74,7 @@ In production, the contact form is handled by an AWS Lambda function.
 
 ### Email Service
 
-- **Provider**: AWS Lambda + SES
+- **Provider**: AWS Lambda + Resend
 - **Deployment**: AWS CDK infrastructure
 - **Features**:
   - Contact form processing
@@ -118,7 +118,7 @@ S3:
 ### Email
 
 ```yaml
-SES:
+Resend:
   Purpose: Contact form email delivery
   Integration: Lambda function
 ```
@@ -128,7 +128,7 @@ SES:
 ```yaml
 CDK Stacks:
   - DNS Stack (Route 53)
-  - Email Stack (SES + Lambda)
+  - Email Stack (Resend + Lambda)
   - Monitoring Stack (CloudWatch)
   - Storage Stack (S3)
   - Deployment Stack (CloudFront)
@@ -141,6 +141,8 @@ CDK Stacks:
 - **Rationale**: Reduced infrastructure complexity, lower costs, fast global delivery
 - **Implementation**: `output: 'export'` in next.config.mjs
 - **Trade-offs**: No server-side runtime; API routes are dev-only
+- **Constraints**: Avoid request-time APIs (cookies/headers), redirects/rewrites,
+  Server Actions, ISR, and request-dependent Route Handlers (see ADR-0005).
 
 ### LazyMotion for Animations
 

@@ -37,7 +37,7 @@ api/
 ### Schema Validation
 
 - Located in `src/lib/schemas/`
-- Uses Zod for runtime type checking
+- Uses Zod v4 for runtime type checking
 - Validates incoming API requests
 
 Example contact form schema:

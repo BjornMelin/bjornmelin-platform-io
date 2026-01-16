@@ -8,6 +8,7 @@ Documentation for bjornmelin-platform-io. Organized into the following sections:
 - [`/development`](./development/README.md) - Development guides and practices
 - [`/deployment`](./deployment/README.md) - Deployment and CI/CD processes
 - [`/api`](./api/README.md) - API documentation and usage guides
+- [`/specs`](./specs/) - Specifications and historical plans
 
 ## Directory Structure
 
@@ -17,7 +18,13 @@ docs/
 │   ├── README.md              # Architecture overview
 │   ├── aws-services.md        # AWS services documentation
 │   ├── frontend.md            # Frontend architecture (Next.js)
-│   └── infrastructure.md      # Infrastructure design
+│   ├── infrastructure.md      # Infrastructure design
+│   └── adr/                   # Architecture Decision Records
+│       ├── ADR-0001-*.md
+│       ├── ADR-0002-*.md
+│       ├── ADR-0003-*.md
+│       ├── ADR-0004-*.md
+│       └── ADR-0005-*.md
 │
 ├── development/
 │   ├── README.md              # Development overview
@@ -35,6 +42,12 @@ docs/
 │   ├── README.md              # API overview
 │   ├── contact.md             # Contact form endpoints
 │   └── schemas.md            # Data schemas
+│
+├── specs/
+│   ├── SPEC-0001-*.md
+│   ├── SPEC-0002-*.md
+│   ├── SPEC-0003-*.md
+│   └── SPEC-0004-*.md
 │
 └── README.md                 # This documentation index
 ```
