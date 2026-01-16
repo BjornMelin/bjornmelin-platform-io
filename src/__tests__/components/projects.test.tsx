@@ -1,12 +1,41 @@
 /**
  * @fileoverview Interaction tests for ProjectGrid and smoke for ProjectCard.
  */
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import type { ReactNode } from "react";
+import { describe, expect, it, vi } from "vitest";
 
 import { ProjectCard } from "@/components/projects/project-card";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import type { Project } from "@/types/project";
+
+vi.mock("@/components/ui/select", () => ({
+  Select: ({
+    value,
+    onValueChange,
+    children,
+  }: {
+    value: string;
+    onValueChange: (value: string) => void;
+    children: ReactNode;
+  }) => (
+    <select
+      aria-label="Sort projects by"
+      value={value}
+      onChange={(event) => onValueChange(event.target.value)}
+    >
+      {children}
+    </select>
+  ),
+  SelectTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,
+  SelectContent: ({ children }: { children: ReactNode }) => <>{children}</>,
+  SelectItem: ({ value, children }: { value: string; children: ReactNode }) => (
+    <option value={value}>{children}</option>
+  ),
+  SelectValue: ({ placeholder }: { placeholder?: string }) => <>{placeholder}</>,
+}));
 
 const demoProjects: Project[] = [
   {
@@ -56,5 +85,109 @@ describe("Project components", () => {
     fireEvent.click(screen.getByRole("button", { name: "All" }));
     expect(screen.getByText(/A project/)).toBeInTheDocument();
     expect(screen.getByText(/B project/)).toBeInTheDocument();
+  });
+
+  it("ProjectGrid respects search params for category and alphabetical sort", async () => {
+    const user = userEvent.setup();
+    const { useRouter } = await import("next/navigation");
+    useRouter().replace("/projects?category=Data&sort=alphabetical");
+
+    const projects: Project[] = [
+      {
+        id: "a",
+        title: "Zulu Project",
+        description: "Zulu",
+        technologies: ["ts"],
+        category: "Data",
+        image: "/z.png",
+        links: {},
+        featured: false,
+      },
+      {
+        id: "b",
+        title: "Alpha Project",
+        description: "Alpha",
+        technologies: ["ts"],
+        category: "Data",
+        image: "/a.png",
+        links: {},
+        featured: false,
+      },
+      {
+        id: "c",
+        title: "Web Project",
+        description: "Web",
+        technologies: ["react"],
+        category: "Web",
+        image: "/w.png",
+        links: {},
+        featured: true,
+      },
+    ];
+
+    render(<ProjectGrid projects={projects} />);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/web project/i)).toBeNull();
+    });
+
+    const cards = screen.getAllByTestId("project-card");
+    expect(cards[0]?.textContent).toContain("Alpha Project");
+    expect(cards[1]?.textContent).toContain("Zulu Project");
+
+    const trigger = screen.getByRole("combobox", { name: /sort projects by/i });
+    await user.selectOptions(trigger, "featured");
+
+    await waitFor(() => {
+      expect(window.location.search).toContain("category=Data");
+      expect(window.location.search).not.toContain("sort=");
+    });
+  });
+
+  it("ProjectGrid defaults to All and featured when params are invalid", async () => {
+    const user = userEvent.setup();
+    const { useRouter } = await import("next/navigation");
+    useRouter().replace("/projects?category=Unknown&sort=bogus");
+
+    const projects: Project[] = [
+      {
+        id: "a",
+        title: "Featured Project",
+        description: "Featured",
+        technologies: ["ts"],
+        category: "Web",
+        image: "/f.png",
+        links: {},
+        featured: true,
+      },
+      {
+        id: "b",
+        title: "Regular Project",
+        description: "Regular",
+        technologies: ["ts"],
+        category: "Data",
+        image: "/r.png",
+        links: {},
+        featured: false,
+      },
+    ];
+
+    render(<ProjectGrid projects={projects} />);
+
+    const cards = await screen.findAllByTestId("project-card");
+    expect(cards).toHaveLength(2);
+    expect(cards[0]?.textContent).toContain("Featured Project");
+
+    const trigger = screen.getByRole("combobox", { name: /sort projects by/i });
+    await user.selectOptions(trigger, "alphabetical");
+
+    await waitFor(() => {
+      expect(window.location.search).toContain("sort=alphabetical");
+    });
+  });
+
+  it("ProjectGrid shows empty state when no projects are available", () => {
+    render(<ProjectGrid projects={[]} />);
+    expect(screen.getByText(/no projects found/i)).toBeInTheDocument();
   });
 });

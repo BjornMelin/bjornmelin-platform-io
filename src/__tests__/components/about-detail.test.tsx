@@ -31,6 +31,18 @@ vi.mock("@/data/certifications", () => ({
       image: "/cert.png",
       link: "https://aws.amazon.com",
     },
+    {
+      name: "AWS Machine Learning",
+      issuedBy: "Amazon Web Services",
+      issuedDate: "2023",
+      image: "/cert-ml.png",
+      link: "https://aws.amazon.com/ml",
+      earlyAdopterBadge: {
+        name: "Early Adopter",
+        link: "https://aws.amazon.com/badges",
+        image: "/badge.png",
+      },
+    },
   ],
 }));
 
@@ -41,7 +53,7 @@ vi.mock("@/data/education", () => ({
     startDate: "2016",
     endDate: "2020",
     gpa: "3.9",
-    honors: [{ name: "Summa Cum Laude" }],
+    honors: [{ name: "Summa Cum Laude" }, { name: "Dean's List" }],
     activities: [{ name: "Computer Science Club" }],
   },
 }));
@@ -57,6 +69,16 @@ vi.mock("@/data/experience", () => ({
       endDate: "Present",
       achievements: [{ text: "Led AI initiatives" }],
       skills: [{ name: "Python" }],
+    },
+    {
+      title: "ML Engineer",
+      company: "Example Corp",
+      location: "Onsite",
+      isRemote: false,
+      startDate: "2020",
+      endDate: "2022",
+      achievements: [{ text: "Shipped models" }],
+      skills: [],
     },
   ],
   previousExperiences: [

@@ -51,6 +51,34 @@ describe("Navbar/Footer", () => {
     expect(contactLinks).toHaveLength(1);
   });
 
+  it("closes the mobile menu when home and contact links are clicked", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    const toggle = screen.getByRole("button", { name: /toggle menu/i });
+    await user.click(toggle);
+
+    const homeLinks = screen.getAllByRole("link", { name: "Home" });
+    expect(homeLinks.length).toBeGreaterThan(1);
+    await user.click(homeLinks[1]);
+
+    expect(screen.getAllByRole("link", { name: "Contact" })).toHaveLength(1);
+
+    await user.click(toggle);
+    const aboutLinks = screen.getAllByRole("link", { name: "About" });
+    expect(aboutLinks.length).toBeGreaterThan(1);
+    await user.click(aboutLinks[1]);
+
+    expect(screen.getAllByRole("link", { name: "Contact" })).toHaveLength(1);
+
+    await user.click(toggle);
+    const contactLinks = screen.getAllByRole("link", { name: "Contact" });
+    expect(contactLinks.length).toBeGreaterThan(1);
+    await user.click(contactLinks[1]);
+
+    expect(screen.getAllByRole("link", { name: "Contact" })).toHaveLength(1);
+  });
+
   it("renders Footer with copyright text", () => {
     render(<Footer />);
     expect(screen.getByText(/bjorn melin/i)).toBeInTheDocument();

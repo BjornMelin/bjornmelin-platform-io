@@ -83,7 +83,7 @@ interface StructuredDataProps {
  * @param schema Arbitrary JSON-LD schema.
  * @returns Stable key string safe for React keys.
  */
-const createSchemaKey = (schema: Record<string, unknown>): string => {
+export const createSchemaKey = (schema: Record<string, unknown>): string => {
   const type = typeof schema["@type"] === "string" ? (schema["@type"] as string) : undefined;
   const name = typeof schema.name === "string" ? (schema.name as string) : undefined;
   const baseKey = [type, name].filter(Boolean).join("-");

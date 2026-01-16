@@ -160,4 +160,102 @@ describe("useToast() + toast()", () => {
     // Ensure empty state and that we exercised the reducer "dismiss all" path.
     expect(screen.queryAllByRole("listitem")).toHaveLength(0);
   });
+
+  it("invokes onOpenChange(false) to dismiss a toast", async () => {
+    const toastMod = await import("@/hooks/use-toast");
+
+    function ToastStateView() {
+      const { toasts } = toastMod.useToast();
+      return (
+        <div>
+          <button
+            type="button"
+            onClick={() => {
+              toasts[0]?.onOpenChange?.(false);
+            }}
+          >
+            Close toast
+          </button>
+          <ul aria-label="toasts">
+            {toasts.map((toast) => (
+              <li key={toast.id}>
+                {String(toast.title ?? "")} [{toast.open === false ? "closed" : "open"}]
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    render(<ToastStateView />);
+    await act(async () => {});
+
+    act(() => {
+      toastMod.toast({ title: "A" });
+    });
+
+    expect(screen.getByText("A [open]")).toBeInTheDocument();
+
+    act(() => {
+      screen.getByRole("button", { name: "Close toast" }).click();
+    });
+
+    expect(screen.getByText("A [closed]")).toBeInTheDocument();
+  });
+
+  it("does not double-schedule removal for repeated dismiss calls", async () => {
+    const toastMod = await import("@/hooks/use-toast");
+
+    function ToastStateView() {
+      const { toasts } = toastMod.useToast();
+      return (
+        <ul aria-label="toasts">
+          {toasts.map((toast) => (
+            <li key={toast.id}>
+              {String(toast.title ?? "")} [{toast.open === false ? "closed" : "open"}]
+            </li>
+          ))}
+        </ul>
+      );
+    }
+
+    render(<ToastStateView />);
+    await act(async () => {});
+
+    let controls: ToastControls;
+    act(() => {
+      controls = toastMod.toast({ title: "A" });
+    });
+
+    act(() => {
+      controls.dismiss();
+      controls.dismiss();
+    });
+
+    expect(screen.getByText("A [closed]")).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(TOAST_REMOVE_DELAY_MS + 1);
+    });
+
+    expect(screen.queryAllByRole("listitem")).toHaveLength(0);
+  });
+
+  it("cleans up listeners on unmount", async () => {
+    const toastMod = await import("@/hooks/use-toast");
+
+    function ToastStateView() {
+      toastMod.useToast();
+      return <div>Mounted</div>;
+    }
+
+    const view = render(<ToastStateView />);
+    await act(async () => {});
+
+    view.unmount();
+
+    act(() => {
+      toastMod.toast({ title: "A" });
+    });
+  });
 });

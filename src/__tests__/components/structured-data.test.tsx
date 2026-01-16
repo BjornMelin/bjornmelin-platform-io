@@ -5,6 +5,7 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import StructuredData, {
+  createSchemaKey,
   generatePersonSchema,
   generateWebsiteSchema,
 } from "@/components/structured-data";
@@ -47,5 +48,13 @@ describe("structured-data", () => {
     const text = jsonLd[0]?.textContent ?? "";
     const schema = JSON.parse(text) as Record<string, unknown>;
     expect(schema["@type"]).toBe("WebSite");
+  });
+
+  it("creates schema keys with and without type/name metadata", () => {
+    const withType = createSchemaKey({ "@type": "Person", name: "Bjorn" });
+    expect(withType).toContain("Person-Bjorn-");
+
+    const withoutType = createSchemaKey({ foo: "bar" });
+    expect(withoutType).toMatch(/^[a-f0-9]{12}$/);
   });
 });
