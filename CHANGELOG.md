@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file.
 
+## [2.1.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v2.0.0...v2.1.0) (2026-01-16)
+
+
+### Features
+
+* major version deps upgrades ([#227](https://github.com/BjornMelin/bjornmelin-platform-io/issues/227)) ([0eb0460](https://github.com/BjornMelin/bjornmelin-platform-io/commit/0eb046007f678f1be7df0a83feef2faa8d443db4))
+
 ## [2.0.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v1.0.5...v2.0.0) (2026-01-16)
 
 
