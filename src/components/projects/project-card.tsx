@@ -1,5 +1,5 @@
+import Image from "next/image";
 import Link from "next/link";
-import Image from "next-export-optimize-images/image";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

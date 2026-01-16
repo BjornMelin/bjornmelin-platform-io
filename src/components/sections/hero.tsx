@@ -1,5 +1,5 @@
+import Image from "next/image";
 import Link from "next/link";
-import Image from "next-export-optimize-images/image";
 
 export function Hero() {
   return (
@@ -30,13 +30,13 @@ export function Hero() {
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link
                 href="/contact"
-                className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Get in Touch
               </Link>
               <Link
                 href="/projects"
-                className="inline-flex h-12 items-center justify-center rounded-lg border border-input bg-background px-8 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                className="inline-flex h-12 items-center justify-center rounded-lg border border-input bg-background px-8 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 View Projects
               </Link>

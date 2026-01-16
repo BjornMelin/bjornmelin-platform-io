@@ -1,5 +1,5 @@
 import { Award, Brain, Building2, Cloud, Code, GraduationCap, Sparkles } from "lucide-react";
-import Image from "next-export-optimize-images/image";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { certifications } from "@/data/certifications";
@@ -12,7 +12,6 @@ export function AboutDetail() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
       <div className="container mx-auto px-4 py-24">
-        {/* Profile Section - First thing recruiters see */}
         <div className="mb-20">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-primary/10">
@@ -32,30 +31,29 @@ export function AboutDetail() {
               </p>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="outline" className="bg-primary/10">
-                  <Cloud className="w-3 h-3 mr-2" /> AWS Certified
+                  <Cloud className="w-3 h-3 mr-2" aria-hidden="true" /> AWS Certified
                 </Badge>
                 <Badge variant="outline" className="bg-primary/10">
-                  <Brain className="w-3 h-3 mr-2" /> AI/ML Expert
+                  <Brain className="w-3 h-3 mr-2" aria-hidden="true" /> AI/ML Expert
                 </Badge>
                 <Badge variant="outline" className="bg-primary/10">
-                  <Building2 className="w-3 h-3 mr-2" /> Cloud Architect
+                  <Building2 className="w-3 h-3 mr-2" aria-hidden="true" /> Cloud Architect
                 </Badge>
                 <Badge variant="outline" className="bg-primary/10">
-                  <Code className="w-3 h-3 mr-2" /> Full-Stack Developer
+                  <Code className="w-3 h-3 mr-2" aria-hidden="true" /> Full-Stack Developer
                 </Badge>
                 <Badge variant="outline" className="bg-primary/10">
-                  <Sparkles className="w-3 h-3 mr-2" /> Generative AI Evangelist
+                  <Sparkles className="w-3 h-3 mr-2" aria-hidden="true" /> Generative AI Evangelist
                 </Badge>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Professional Summary - Quick overview of value proposition */}
         <div className="mb-20">
           <Card className="p-8 backdrop-blur-xl bg-card/50 border-primary/10">
             <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-              <Building2 className="w-6 h-6 text-primary" />
+              <Building2 className="w-6 h-6 text-primary" aria-hidden="true" />
               Professional Summary
             </h2>
             <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
@@ -88,10 +86,9 @@ export function AboutDetail() {
           </Card>
         </div>
 
-        {/* Skills Section */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
-            <Code className="w-8 h-8 text-primary" />
+            <Code className="w-8 h-8 text-primary" aria-hidden="true" />
             Skills & Expertise
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -101,7 +98,7 @@ export function AboutDetail() {
                 className="p-6 backdrop-blur-xl bg-card/50 border-primary/10"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <category.Icon className={`w-6 h-6 ${category.color}`} />
+                  <category.Icon className={`w-6 h-6 ${category.color}`} aria-hidden="true" />
                   <h3 className="text-xl font-semibold">{category.name}</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -116,10 +113,9 @@ export function AboutDetail() {
           </div>
         </div>
 
-        {/* Work Experience - Most important for recruiters */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
-            <Building2 className="w-8 h-8 text-primary" />
+            <Building2 className="w-8 h-8 text-primary" aria-hidden="true" />
             Work Experience
           </h2>
           <div className="space-y-6">
@@ -184,10 +180,9 @@ export function AboutDetail() {
           </div>
         </div>
 
-        {/* Certifications - Shows current skills and continuous learning */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
-            <Award className="w-8 h-8 text-primary" />
+            <Award className="w-8 h-8 text-primary" aria-hidden="true" />
             AWS Certifications
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -202,7 +197,7 @@ export function AboutDetail() {
                       href={cert.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-start gap-4"
+                      className="flex items-start gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                       <Image
                         src={cert.image}
@@ -225,7 +220,7 @@ export function AboutDetail() {
                           href={cert.earlyAdopterBadge.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3"
+                          className="flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                         >
                           <Image
                             src={cert.earlyAdopterBadge.image}
@@ -252,11 +247,10 @@ export function AboutDetail() {
           </div>
         </div>
 
-        {/* Education - Supporting qualifications */}
         <div className="mb-20">
           <Card className="p-8 backdrop-blur-xl bg-card/50 border-primary/10">
             <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-              <GraduationCap className="w-6 h-6 text-primary" />
+              <GraduationCap className="w-6 h-6 text-primary" aria-hidden="true" />
               Education
             </h2>
             <div className="space-y-6">
@@ -297,7 +291,6 @@ export function AboutDetail() {
           </Card>
         </div>
 
-        {/* Hobbies & Interests - Personal side */}
         <div>
           <Card className="p-8 backdrop-blur-xl bg-card/50 border-primary/10">
             <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
@@ -310,8 +303,9 @@ export function AboutDetail() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="w-6 h-6 text-primary"
+                aria-hidden="true"
+                focusable="false"
               >
-                <title>Creative pursuits icon</title>
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
               </svg>
               Hobbies & Interests
