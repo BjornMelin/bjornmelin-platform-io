@@ -6,7 +6,7 @@ Version: 1.0
 Date: 2026-01-16
 Supersedes: []
 Superseded-by: []
-Related: ["ADR-0004", "ADR-0001"]
+Related: ["ADR-0001", "ADR-0004", "ADR-0006", "ADR-0007"]
 Tags: ["architecture", "nextjs", "static-export"]
 References:
   - "[Next.js static export guide](https://nextjs.org/docs/app/guides/static-exports)"
@@ -46,6 +46,18 @@ Commit to static export constraints:
 - Keep `output: "export"` in `next.config.mjs`.
 - Avoid runtime server features that require per-request data.
 - Use AWS Lambda (via CDK) for server-side contact form processing in production.
+- Do not add Next.js API Route Handlers for runtime requests (static export constraint).
+
+## Decision Framework Score (must be ≥ 9.0)
+
+| Criterion | Weight | Score | Weighted |
+| --- | --- | --- | --- |
+| Solution leverage | 0.35 | 9.5 | 3.33 |
+| Application value | 0.30 | 9.5 | 2.85 |
+| Maintenance & cognitive load | 0.25 | 9.5 | 2.38 |
+| Architectural adaptability | 0.10 | 8.8 | 0.88 |
+
+**Total:** 9.43 / 10.0
 
 ## Constraints
 
@@ -56,7 +68,8 @@ in app code:
 - Redirects/rewrites/headers in Next.js config
 - Server Actions
 - ISR
-- Dynamic Route Handlers that depend on request data
+- Route Handlers that depend on request data (static export supports `GET` only)
+- Runtime API endpoints implemented as `POST` handlers under `src/app/**/route.ts`
 
 ## High-Level Architecture
 
@@ -115,8 +128,9 @@ To ensure CSP/static-export sync and prevent hash drift, follow this repeatable 
 
 ## Implementation Notes
 
-- Local dev API routes in `src/app/api/` exist for local development only.
 - Production contact processing is handled by CDK-deployed Lambda.
+- Local development should point `NEXT_PUBLIC_API_URL` at the deployed API Gateway/Lambda base URL
+  (or use MSW for tests).
 
 ## Testing
 

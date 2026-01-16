@@ -1,17 +1,12 @@
 # Backend Architecture
 
-The backend architecture is primarily serverless, using Next.js API routes and
-AWS services.
+The backend architecture is serverless and runs outside Next.js, using AWS services.
 
-## API Routes
+## API
 
-Located in `src/app/api/`:
-
-```text
-api/
-└── contact/
-    └── route.ts    # Contact form endpoint
-```
+The frontend posts to `${NEXT_PUBLIC_API_URL}/contact`. In production, CloudFront routes
+`/api/*` to the contact-form Lambda (see `infrastructure/`). See ADR-0007 for the
+static export API boundary decision.
 
 ## Services
 

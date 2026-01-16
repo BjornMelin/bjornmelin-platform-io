@@ -21,7 +21,7 @@ constraints following the recent upgrade pass.
 
 - Next.js remains on 16.1.x
 - React remains on 19.2.x
-- Node.js engine remains `>=24 <25` (Node.js <25 due to Next.js 16.1.x compatibility)
+- Node.js engine remains `>=24 <25` (validated in CI for this repository)
 - Static export (`output: "export"`) remains required
 
 ## Version baseline (pinned)
@@ -35,13 +35,33 @@ constraints following the recent upgrade pass.
 - Playwright 1.57.0
 - Biome 2.3.11
 
-*Note: All dependencies are pinned to exact versions to ensure build reproducibility and
-compatibility with the static export architecture.*
+*Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
+spec lists the intentional baseline versions for the core toolchain.*
+
+## Decision Framework Score (must be ≥ 9.0)
+
+| Criterion | Weight | Score | Weighted |
+| --- | --- | --- | --- |
+| Solution leverage | 0.35 | 9.0 | 3.15 |
+| Application value | 0.30 | 9.1 | 2.73 |
+| Maintenance & cognitive load | 0.25 | 9.0 | 2.25 |
+| Architectural adaptability | 0.10 | 9.0 | 0.90 |
+
+**Total:** 9.03 / 10.0
+
+## Reproducibility Note
+
+The lockfile is the source of truth for reproducible installs. Core runtime
+dependencies are pinned, while many non-core dependencies use ranges and are
+resolved via `pnpm-lock.yaml`.
 
 ## Rationale
 
 Upgrades prioritize security fixes, compatibility with the Next.js 16.1.x App Router,
 and improved DX while preserving static export constraints.
+
+This baseline also removes unused dependencies to reduce the operational surface area (example:
+`framer-motion` was removed after it was no longer referenced in app code).
 
 ## References
 

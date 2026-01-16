@@ -11,10 +11,10 @@ for automated semantic versioning and releases.
 
 ## Commit Message Format
 
-| Commit Type | Version Bump | Example |
-|-------------|--------------|---------|
-| `fix:` | PATCH (1.0.x) | `fix: resolve navigation bug` |
-| `feat:` | MINOR (1.x.0) | `feat: add dark mode toggle` |
+| Commit Type                          | Version Bump  | Example                         |
+| :----------------------------------- | :------------ | :------------------------------ |
+| `fix:`                               | PATCH (1.0.x) | `fix: resolve navigation bug`   |
+| `feat:`                              | MINOR (1.x.0) | `feat: add dark mode toggle`    |
 | `feat!:` or `BREAKING CHANGE` footer | MAJOR (x.0.0) | `feat!: redesign API endpoints` |
 
 ### Examples
@@ -66,11 +66,11 @@ any new commits on `main`:
 
 ## Configuration Files
 
-| File | Purpose |
-|------|---------|
-| `release-please-config.json` | release-please configuration (release type, changelog sections) |
-| `.release-please-manifest.json` | Tracks current version (updated automatically) |
-| `.github/workflows/release-please.yml` | GitHub Actions workflow |
+| File                                   | Purpose                                                         |
+| :------------------------------------- | :-------------------------------------------------------------- |
+| `release-please-config.json`           | release-please configuration (release type, changelog sections) |
+| `.release-please-manifest.json`        | Tracks current version (updated automatically)                  |
+| `.github/workflows/release-please.yml` | GitHub Actions workflow                                         |
 
 ## What Gets Updated on Release
 

@@ -1,15 +1,14 @@
 # Frontend Architecture
 
-The frontend is built with Next.js 14 using the App Router and static export
+The frontend is built with Next.js 16 using the App Router and static export
 (`output: 'export'`).
 
 ## Project Structure
 
 ```text
 src/
-├── app/                    # Next.js 14 App Router pages
+├── app/                    # Next.js 16 App Router pages
 │   ├── about/             # About page
-│   ├── api/               # API routes (dev only)
 │   ├── contact/           # Contact page
 │   ├── projects/          # Projects page
 │   └── page.tsx           # Home page
@@ -31,94 +30,41 @@ src/
 
 | Technology | Purpose |
 | ------------ | --------- |
-| Next.js 14.2.35 | React framework with App Router |
+| React 19.2.3 | UI library (RSC + Client Components) |
+| Next.js 16.1.2 | React framework with App Router |
 | TypeScript 5.9.3 | Type-safe JavaScript |
 | Tailwind CSS | Utility-first CSS |
 | shadcn/ui | UI component library |
-| Framer Motion | Animation library (LazyMotion) |
 | Zod | Runtime validation |
-
-## Animation Optimization (LazyMotion)
-
-The project uses Framer Motion with LazyMotion for optimized bundle size.
-
-### Configuration
-
-```typescript
-// src/lib/framer-features.ts
-export const domAnimation = () =>
-  import("framer-motion").then((mod) => mod.domAnimation);
-```
-
-```typescript
-// src/app/providers.tsx
-import { LazyMotion } from "framer-motion";
-
-const loadFeatures = () =>
-  import("@/lib/framer-features").then((mod) => mod.domAnimation());
-
-export function Providers({ children }) {
-  return (
-    <LazyMotion features={loadFeatures} strict>
-      {children}
-    </LazyMotion>
-  );
-}
-```
-
-### Usage
-
-Components use `m` instead of `motion` for tree-shaking:
-
-```typescript
-import { m } from "framer-motion";
-
-// Use m.div instead of motion.div
-<m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-  Content
-</m.div>
-```
-
-### Bundle Impact
-
-- Before: ~32KB gzipped (full framer-motion)
-- After: ~5KB gzipped (domAnimation feature set)
-- Savings: 27KB (84% reduction)
 
 ## Image Optimization
 
-Images are optimized at build time using next-export-optimize-images.
+Static export cannot use the default Next.js Image Optimization runtime. We
+instead generate image variants at build time and use a custom `next/image`
+loader (supported for static exports).
 
-### Configuration
-
-```javascript
-// export-images.config.js
-const config = {
-  convertFormat: [
-    ["png", "webp"],
-    ["jpg", "webp"],
-    ["jpeg", "webp"],
-  ],
-  quality: 75,
-  deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-  imageSizes: [16, 32, 48, 64, 96, 128, 256],
-  generateFormats: ["webp"],
-};
-```
+See ADR-0006 for the detailed decision and constraints.
 
 ### Build Process
 
-The build command runs both Next.js build and image optimization:
+The build uses a prebuild hook to ensure variants exist before the export is
+generated:
 
 ```bash
-pnpm build  # Runs: next build && next-export-optimize-images
+pnpm build  # Runs: prebuild (sharp) → next build → CSP hash generation
 ```
 
 ### Output
 
-- Source images in `public/` are converted to WebP
-- Responsive variants are generated for each device size
-- Optimized images are placed in `out/_next/static/chunks/images/`
+- Source images in `public/` are converted to WebP variants.
+- Variants are written to `public/_images/` and copied into `out/_images/` during export.
+- `next/image` requests resolve to `/_images/<src>_<width>.webp` via `image-loader.ts`.
+
+### Key Files
+
+- `scripts/generate-static-image-variants.mjs`: Sharp-based variant generation
+- `image-loader.ts`: next/image custom loader for static export
+- `next.config.mjs`: `images.loader = "custom"` and size configuration
 
 ## Components
 
@@ -161,7 +107,6 @@ pnpm build  # Runs: next build && next-export-optimize-images
 | -------------- | ---------------- |
 | Static Export | `output: 'export'` in next.config.mjs |
 | Image Optimization | WebP conversion, responsive sizes |
-| Animation Bundle | LazyMotion (27KB savings) |
 | Bundle Analysis | `pnpm analyze` |
 | Modern Targets | Browserslist for ES6 modules |
 

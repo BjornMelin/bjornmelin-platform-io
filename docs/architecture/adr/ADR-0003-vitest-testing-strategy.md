@@ -24,9 +24,20 @@ locally and in CI. The app uses the Next.js App Router and static export.
 Use Vitest for unit and integration tests:
 
 - Unit tests for pure functions, schema validation, and utilities.
-- Integration tests for API handlers and multi-module workflows.
+- Integration tests for multi-module workflows (no Next.js API Route Handlers in the web app).
 - React component tests in `jsdom` when DOM behavior is required.
 - Avoid testing async Server Components in Vitest; cover them via Playwright E2E.
+
+## Decision Framework Score (must be ≥ 9.0)
+
+| Criterion | Weight | Score | Weighted |
+| --- | --- | --- | --- |
+| Solution leverage | 0.35 | 9.2 | 3.22 |
+| Application value | 0.30 | 9.1 | 2.73 |
+| Maintenance & cognitive load | 0.25 | 9.2 | 2.30 |
+| Architectural adaptability | 0.10 | 9.0 | 0.90 |
+
+**Total:** 9.15 / 10.0
 
 ## Consequences
 

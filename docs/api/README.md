@@ -2,9 +2,8 @@
 
 API endpoints available in bjornmelin-platform-io.
 
-Note: With `output: 'export'` in next.config.mjs, API routes are only available
-during local development. In production, the contact form is handled by an
-AWS Lambda function deployed via CDK infrastructure.
+Note: This site is deployed as a pure static export (`output: "export"`). API
+requests are handled by AWS Lambda behind CloudFront.
 
 ## Available Endpoints
 
@@ -12,13 +11,9 @@ AWS Lambda function deployed via CDK infrastructure.
 
 ## API Structure
 
-The API is implemented using Next.js API routes located in `src/app/api/`:
-
-```text
-src/app/api/
-└── contact/
-    └── route.ts    # Contact form handler
-```
+- The UI posts to `${NEXT_PUBLIC_API_URL}/contact`.
+- In production, CloudFront routes `/api/*` to Lambda (see `infrastructure/`).
+- In local development, set `NEXT_PUBLIC_API_URL` to your deployed API Gateway/Lambda base URL.
 
 ## Common Patterns
 
@@ -58,13 +53,11 @@ Error response:
 
 ### Local Testing
 
-The API can be tested locally using the development server:
+The site can be run locally with:
 
 ```bash
 pnpm dev
 ```
-
-API endpoints will be available at `http://localhost:3000/api/`
 
 ### API Testing Tools
 
@@ -75,7 +68,7 @@ API endpoints will be available at `http://localhost:3000/api/`
 ## Security
 
 - Input validation using Zod schema
-- Request size limits (Next.js defaults)
+- Request size limits and rate limiting are enforced in the Lambda handler (infrastructure).
 
 ## Service Dependencies
 

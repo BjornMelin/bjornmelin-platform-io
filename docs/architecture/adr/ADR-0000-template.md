@@ -37,10 +37,16 @@ References: <official docs and key sources as markdown links or []>
 
 ### Decision Framework
 
-| Option | Criterion 1 (Weight: X%) | Criterion 2 (Weight: Y%) | Criterion 3 (Weight: Z%) | Total Score | Decision |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **[Chosen Solution]** | [Score] | [Score] | [Score] | **[Score]** | ✅ **Selected** |
-| [Alternative Option A] | [Score] | [Score] | [Score] | [Score] | Rejected |
+Use the repository decision framework. The chosen solution must score **≥ 9.0 / 10.0**:
+
+| Criterion | Weight | Score | Weighted |
+| --- | --- | --- | --- |
+| Solution leverage | 0.35 | [0-10] | [auto] |
+| Application value | 0.30 | [0-10] | [auto] |
+| Maintenance & cognitive load | 0.25 | [0-10] | [auto] |
+| Architectural adaptability | 0.10 | [0-10] | [auto] |
+
+**Total:** [≥ 9.0] / 10.0
 
 ## Decision
 

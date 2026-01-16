@@ -11,7 +11,7 @@ bjornmelin-platform-io.
 
 ```bash
 # .env.development
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=https://api.example.com
 AWS_REGION=us-east-1
 ```
 
@@ -72,7 +72,11 @@ AWS_REGION=us-east-1
 AWS_REGION=us-east-1
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+# Contact form API base URL (must be deployed; the web app is a static export and has no local /api route).
+# Examples:
+#   https://api.your-domain.com
+#   https://your-domain.com/api
+NEXT_PUBLIC_API_URL=https://api.example.com
 CONTACT_EMAIL=test@example.com
 
 # Optional: For testing email functionality locally
