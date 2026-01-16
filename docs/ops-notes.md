@@ -8,8 +8,8 @@ portfolio site without maintaining a full runbook.
 - Trigger GitHub Action `Deploy Portfolio` on `main` (push or manual dispatch).
 - For manual runs, ensure the latest code is on `main`, then use **Run workflow**
   in the Actions tab.
-- Deployment artifacts are exported via `next build` and uploaded to the
-  `bjornmelin.io-prod-website` S3 bucket.
+- The workflow builds the static export (`out/`), deploys the Storage stack (CSP headers),
+  then uploads `out/` to the `bjornmelin.io-prod-website` S3 bucket and invalidates CloudFront.
 
 ## Smoke Check
 
@@ -26,8 +26,7 @@ portfolio site without maintaining a full runbook.
 
 ## Notifications
 
-- Deployment workflow writes to the Actions job summary and posts a comment on
-  the deployed commit containing status and HTTP code.
+- Deployment workflow writes to the Actions job summary.
 - GitHub email notifications are sent for failure states by default—ensure
   repository notifications are enabled.
 

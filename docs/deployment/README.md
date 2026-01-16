@@ -86,7 +86,9 @@ pnpm cdk deploy --all
 
 ### 3. Upload Static Assets
 
-GitHub Actions uploads the `out/` directory to S3 and invalidates CloudFront cache.
+GitHub Actions deploys production automatically on merges to `main` via `deploy.yml`:
+it builds the static export, deploys the Storage stack (CSP headers), then uploads the matching
+`out/` directory to S3 and invalidates CloudFront.
 
 #### CSP + static export coupling (important)
 

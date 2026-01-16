@@ -25,6 +25,36 @@ hash allow-list did not match the currently deployed static export.
 - The allow-list is generated from the static export (`out/**/*.html`) by `pnpm generate:csp-hashes`,
   which writes `infrastructure/lib/generated/next-inline-script-hashes.ts`.
 
+## Security Model
+
+CSP script hashes work through **cryptographic integrity verification**, not secrecy.
+
+### Why hashes are safe to be public
+
+1. **Collision resistance**: SHA-256 makes it computationally infeasible to craft different content that
+   produces the same hash
+2. **Exact match required**: The browser computes the hash of each inline script and compares it to the
+   allowlist - only identical content executes
+3. **Public by design**: These hashes appear in the `Content-Security-Policy` header sent to every
+   browser; they were never intended to be secret
+4. **One-way function**: Knowing the hash reveals nothing about how to create content that matches
+
+An attacker knowing `sha256-abc123...` cannot:
+
+- Inject arbitrary scripts (no matching hash in allowlist)
+- Modify existing scripts (hash would no longer match)
+- Reverse-engineer exploitable content (cryptographically impossible)
+
+### Why hashes instead of nonces
+
+| Approach | Requirement | Our Situation |
+| --- | --- | --- |
+| **Nonces** | Server middleware to generate fresh value per request | Not possible - static export |
+| **Hashes** | Pre-computed checksums of known inline scripts | Correct for static exports |
+
+Static exports have no server-side middleware to inject per-request nonces. Hashes are the only viable
+strict CSP approach for CloudFront-served static content.
+
 ## Operational requirements (to prevent outages)
 
 - **Never deploy `prod-portfolio-storage` (CSP) without also deploying the matching static export.**

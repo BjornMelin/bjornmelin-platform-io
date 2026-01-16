@@ -1,11 +1,6 @@
 name: Deploy Infrastructure
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "infrastructure/**"
   workflow_dispatch:
 
 jobs:
