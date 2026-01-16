@@ -68,7 +68,7 @@ describe("useToast() + toast()", () => {
     render(<ToastStateView />);
     await act(async () => {});
 
-    let controls: ToastControls;
+    let controls!: ToastControls;
     act(() => {
       controls = toastMod.toast({ title: "A" });
     });
@@ -99,7 +99,7 @@ describe("useToast() + toast()", () => {
     render(<ToastStateView />);
     await act(async () => {});
 
-    let controls: ToastControls;
+    let controls!: ToastControls;
     act(() => {
       controls = toastMod.toast({ title: "A" });
     });
@@ -222,7 +222,7 @@ describe("useToast() + toast()", () => {
     render(<ToastStateView />);
     await act(async () => {});
 
-    let controls: ToastControls;
+    let controls!: ToastControls;
     act(() => {
       controls = toastMod.toast({ title: "A" });
     });
@@ -249,13 +249,18 @@ describe("useToast() + toast()", () => {
       return <div>Mounted</div>;
     }
 
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const view = render(<ToastStateView />);
     await act(async () => {});
 
     view.unmount();
+    expect(screen.queryByText("Mounted")).toBeNull();
 
     act(() => {
       toastMod.toast({ title: "A" });
     });
+
+    expect(errorSpy).not.toHaveBeenCalled();
+    errorSpy.mockRestore();
   });
 });

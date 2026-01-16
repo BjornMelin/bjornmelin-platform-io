@@ -34,7 +34,12 @@ vi.mock("@/components/ui/select", () => ({
   SelectItem: ({ value, children }: { value: string; children: ReactNode }) => (
     <option value={value}>{children}</option>
   ),
-  SelectValue: ({ placeholder }: { placeholder?: string }) => <>{placeholder}</>,
+  SelectValue: ({ placeholder }: { placeholder?: string }) =>
+    placeholder ? (
+      <option value="" disabled hidden>
+        {placeholder}
+      </option>
+    ) : null,
 }));
 
 const demoProjects: Project[] = [

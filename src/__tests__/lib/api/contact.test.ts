@@ -3,9 +3,7 @@ import { buildContactEndpoint, safeParseUrl } from "@/lib/api/contact";
 
 describe("buildContactEndpoint", () => {
   it("appends /contact to a base URL with a path", () => {
-    expect(buildContactEndpoint("https://example.com/api")).toBe(
-      "https://example.com/api/contact",
-    );
+    expect(buildContactEndpoint("https://example.com/api")).toBe("https://example.com/api/contact");
   });
 
   it("appends /contact to a base URL with a trailing slash", () => {
@@ -16,6 +14,10 @@ describe("buildContactEndpoint", () => {
 
   it("appends /contact to a base URL without a path", () => {
     expect(buildContactEndpoint("https://example.com")).toBe("https://example.com/contact");
+  });
+
+  it("throws for invalid base URLs", () => {
+    expect(() => buildContactEndpoint("not a url")).toThrow();
   });
 });
 

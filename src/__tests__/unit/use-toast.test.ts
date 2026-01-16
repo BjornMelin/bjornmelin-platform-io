@@ -32,9 +32,9 @@ describe("use-toast reducer", () => {
     };
     const updated = reducer(base as never, {
       type: "UPDATE_TOAST",
-      toast: { id: "x", title: "B" } as never,
+      toast: { id: "x", title: "Updated" } as never,
     });
-    expect(updated.toasts[0].title).toBe("B");
+    expect(updated.toasts[0].title).toBe("Updated");
     expect(updated.toasts[1].title).toBe("B");
   });
 

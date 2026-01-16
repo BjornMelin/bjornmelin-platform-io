@@ -82,7 +82,7 @@ export function Navbar() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4">
+          <div className="md:hidden py-4" data-testid="mobile-nav">
             <div className="flex flex-col space-y-4">
               <Link href="/" className={navLinkClassName} onClick={() => setIsMenuOpen(false)}>
                 Home

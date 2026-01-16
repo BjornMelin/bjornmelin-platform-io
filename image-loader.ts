@@ -33,6 +33,9 @@ export default function staticExportImageLoader({ src, width }: ImageLoaderParam
   }
 
   const cleanSrc = stripQuery(stripLeadingSlash(src));
+  if (cleanSrc.startsWith("_images/")) {
+    return src;
+  }
   const extension = getExtension(cleanSrc);
 
   // Keep SVG/GIF as-is (no variants generated)

@@ -9,7 +9,8 @@ const variantsDir = path.join(publicDir, "_images");
 
 const widths = allImageWidths;
 
-const isRasterSource = (ext) => ext === ".png" || ext === ".jpg" || ext === ".jpeg";
+const isRasterSource = (ext) =>
+  ext === ".png" || ext === ".jpg" || ext === ".jpeg" || ext === ".webp";
 
 const walk = async (dir) => {
   const entries = await fs.readdir(dir, { withFileTypes: true });

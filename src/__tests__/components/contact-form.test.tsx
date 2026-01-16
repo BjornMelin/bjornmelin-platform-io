@@ -389,20 +389,22 @@ describe("ContactForm", () => {
     const originalFetch = globalThis.fetch;
     globalThis.fetch = vi.fn().mockRejectedValue("boom") as typeof fetch;
 
-    render(<ContactForm />);
-    await fillContactForm(user);
+    try {
+      render(<ContactForm />);
+      await fillContactForm(user);
 
-    await user.click(screen.getByRole("button", { name: /send message/i }));
+      await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          description: "Failed to send message",
-        }),
-      );
-    });
-
-    globalThis.fetch = originalFetch;
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            description: "Failed to send message",
+          }),
+        );
+      });
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 
   it("resets form after successful submission", async () => {
