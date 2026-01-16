@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const defaultBaseURL = "http://localhost:3000";
+const defaultBaseURL = "http://localhost:3100";
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? defaultBaseURL;
 const baseUrlPort = (() => {
   try {
@@ -69,13 +69,15 @@ export default defineConfig({
 
   // Run your local dev server before starting the tests
   webServer: {
-    command: `pnpm dev -- -p ${webServerPort}`,
+    command: `pnpm exec next dev -p ${webServerPort}`,
     url: baseURL,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
     env: {
       PORT: webServerPort,
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? baseURL,
+      NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL ?? baseURL,
+      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? new URL("/api", baseURL).toString(),
       CONTACT_EMAIL: process.env.CONTACT_EMAIL ?? "test@example.com",
     },
   },
