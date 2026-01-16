@@ -1,14 +1,14 @@
 # bjornmelin-platform-io
 
-Cloud-native portfolio platform powering bjornmelin.io. Static site built with React 18, Next.js 14,
+Cloud-native portfolio platform powering bjornmelin.io. Static export built with React 19, Next.js 16,
 and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js 24.x LTS.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![CI](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml)
 [![Security Audit](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml)
 [![CodeQL](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml)
-[![React](https://img.shields.io/badge/React-18.3.1-blue?logo=react)](https://react.dev)
-[![Next.js](https://img.shields.io/badge/Next.js-14.2.35-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.3-blue?logo=react)](https://react.dev)
+[![Next.js](https://img.shields.io/badge/Next.js-16.1.2-black?logo=next.js)](https://nextjs.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-BjornMelin-181717?logo=github)](https://github.com/BjornMelin)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin)
 [![Medium](https://img.shields.io/badge/Medium-000000?logo=medium&logoColor=white)](https://medium.com/@bjornmelin)
@@ -40,16 +40,15 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 
 ### Frontend
 
-- **Next.js 14 App Router**: Server Components, static export (`output: 'export'`)
-- **React 18**: Concurrent features, Suspense boundaries
+- **Next.js 16 App Router**: Server Components (build-time), static export (`output: 'export'`)
+- **React 19**: Modern React features with smaller client bundles
 - **TypeScript**: Strict mode with Zod runtime validation
 - **Tailwind CSS**: Utility-first styling with shadcn/ui components
 
 ### Performance Optimization
 
-- **LazyMotion**: Framer Motion lazy-loaded feature set (32KB to 5KB reduction)
-- **Image Optimization**: WebP conversion via next-export-optimize-images
-- **Bundle Analysis**: @next/bundle-analyzer for size monitoring
+- **Image Optimization**: Pre-generated WebP variants via Sharp (static export compatible)
+- **Bundle Analysis**: Next.js built-in analyzer (`pnpm analyze`)
 - **Modern Targets**: Browserslist configured for ES6 module support
 
 ## Documentation
@@ -113,7 +112,7 @@ sequenceDiagram
     participant Resend
 
     User->>Frontend: Submit Contact Form
-    Frontend->>Lambda: POST /api/contact
+    Frontend->>Lambda: POST ${NEXT_PUBLIC_API_URL}/contact
     Lambda->>Resend: Send Email
     Resend-->>Lambda: Email Sent
     Lambda-->>Frontend: Success Response
@@ -161,21 +160,21 @@ bjornmelin-platform-io/
 │   ├── headshot/          # Profile images
 │   └── projects/          # Project images
 ├── src/                   # Application source
-│   ├── app/               # Next.js 14 App Router
-│   │   ├── api/           # API routes (dev only)
+│   ├── app/               # Next.js 16 App Router
 │   │   └── fonts/         # Custom fonts
 │   ├── components/        # React components
 │   ├── data/              # Static data
 │   ├── hooks/             # Custom hooks
 │   ├── lib/               # Utilities
 │   └── types/             # TypeScript types
-├── export-images.config.js # Image optimization config
+├── image-loader.ts        # next/image custom loader (static export)
+├── scripts/               # Build/deploy utilities (includes image generation)
 └── next.config.mjs        # Next.js configuration
 ```
 
 ### Core Components
 
-- **Frontend**: Next.js 14 static export with App Router
+- **Frontend**: Next.js 16 static export with App Router
 - **Infrastructure**: AWS CDK for resource provisioning
 - **CI/CD**: GitHub Actions for automated deployments
 - **CDN**: CloudFront with Route 53 DNS
@@ -237,19 +236,18 @@ pnpm dev
 ```yaml
 Frontend:
   Core:
-    - React 18.3.1
-    - Next.js 14.2.35
+    - React 19.2.3
+    - Next.js 16.1.2
     - TypeScript 5.9.3
 
   UI:
     - Tailwind CSS
     - shadcn/ui
-    - Framer Motion (LazyMotion)
     - GeistVF Font
 
   Build:
-    - next-export-optimize-images (WebP conversion)
-    - @next/bundle-analyzer
+    - Sharp-based WebP variants (static export)
+    - Next.js built-in analyzer (`pnpm analyze`)
     - Browserslist (ES6 module targets)
 
 Infrastructure:
@@ -400,4 +398,4 @@ If you use this project in your research or work:
 
 ---
 
-Built with React 18 + Next.js 14 by [Bjorn Melin](https://bjornmelin.io).
+Built with React 19 + Next.js 16 by [Bjorn Melin](https://bjornmelin.io).

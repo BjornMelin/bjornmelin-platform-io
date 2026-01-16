@@ -15,7 +15,7 @@
 
 - `pnpm install`: install dependencies (Node version pinned via `.nvmrc`).
 - `pnpm dev`: run Next.js locally on `http://localhost:3000`.
-- `pnpm build`: production build, generates `out/`, and updates CSP hashes.
+- `pnpm build`: production build; generates image variants, writes static `out/`, and updates CSP hashes.
 - `pnpm start` or `pnpm serve`: serve the `out/` static export.
 - `pnpm lint` / `pnpm format`: Biome lint+format (writes fixes).
 - `pnpm type-check`: TypeScript typecheck.
@@ -50,6 +50,8 @@ Infrastructure:
 ## Security, Configuration, and Deployment Notes
 
 - Keep secrets out of git. Use `.env.local` for local overrides (start from `.env.example`).
+- Static export is mandatory (`output: "export"`). Do not introduce Server Actions, ISR, Draft Mode,
+  request-dependent Route Handlers, or other features that require a server runtime.
 - CSP inline script hashes are generated and are **not secrets** (they appear in public CSP headers).
   Never delete or manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
   Regenerate with `pnpm generate:csp-hashes` (usually via `pnpm build`).
