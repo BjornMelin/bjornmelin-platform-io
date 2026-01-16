@@ -39,6 +39,10 @@ jobs:
             --exclude 127.0.0.1
             --exclude example.com
             --exclude medium.com
+            # CI timeouts for these valid docs (see PR checks logs)
+            --exclude https://vitest.dev/config
+            --exclude https://vitest.dev/guide/cli
+            --exclude https://www.conventionalcommits.org/
             --exclude https://bjornmelin.io
             --exclude https://www.bjornmelin.io
             --timeout 30

@@ -45,6 +45,11 @@ export const test = base.extend({
     const consoleErrors: ConsoleMessage[] = [];
     const pageErrors: string[] = [];
 
+    const normalizePathname = (pathname: string): string => {
+      if (pathname !== "/" && pathname.endsWith("/")) return pathname.slice(0, -1);
+      return pathname;
+    };
+
     page.on("pageerror", (error) => {
       pageErrors.push(String(error));
     });
@@ -57,6 +62,28 @@ export const test = base.extend({
         text: message.text(),
         location: message.location(),
       };
+
+      // Navigating to an unknown route is expected to 404 and can show as a console error where
+      // the failing resource URL equals the current document URL. Don't treat that as an app
+      // regression, but keep catching missing asset/API 404s.
+      if (
+        entry.text.toLowerCase().includes("failed to load resource") &&
+        entry.text.toLowerCase().includes("status of 404") &&
+        entry.location?.url
+      ) {
+        try {
+          const failingUrl = new URL(entry.location.url);
+          const currentUrl = new URL(page.url());
+          if (
+            failingUrl.origin === currentUrl.origin &&
+            normalizePathname(failingUrl.pathname) === normalizePathname(currentUrl.pathname)
+          ) {
+            return;
+          }
+        } catch {
+          // ignore
+        }
+      }
 
       if (isIgnorableConsoleError(entry)) return;
       consoleErrors.push(entry);
