@@ -6,13 +6,11 @@ Version: 1.0
 Date: 2026-01-16
 Supersedes: []
 Superseded-by: []
-Related: ["ADR-0004"]
+Related: ["ADR-0004", "ADR-0001"]
 Tags: ["architecture", "nextjs", "static-export"]
 References:
   - "[Next.js static export guide](https://nextjs.org/docs/app/guides/static-exports)"
 ---
-
-# ADR 0005: Static export constraints
 
 ## Status
 

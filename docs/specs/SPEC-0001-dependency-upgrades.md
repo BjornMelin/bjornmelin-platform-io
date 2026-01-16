@@ -22,7 +22,7 @@ constraints following the recent upgrade pass.
 - Next.js remains on 14.2.x
 - React remains on 18.3.x
 - Node.js engine remains `>=24 <25`
-- Static export (`output: \"export\"`) remains required
+- Static export (`output: "export"`) remains required
 
 ## Version baseline (selected)
 

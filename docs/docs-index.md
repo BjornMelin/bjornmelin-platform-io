@@ -20,6 +20,7 @@ docs/
 │   ├── frontend.md            # Frontend architecture (Next.js)
 │   ├── infrastructure.md      # Infrastructure design
 │   └── adr/                   # Architecture Decision Records
+│       ├── ADR-0000-template.md
 │       ├── ADR-0001-*.md
 │       ├── ADR-0002-*.md
 │       ├── ADR-0003-*.md

@@ -218,11 +218,10 @@ pnpm test -- --watch
 # Run tests with coverage
 pnpm test:coverage
 
+# Note: pnpm test -- --coverage is an equivalent alias for pnpm test:coverage.
+
 # Run E2E tests
 pnpm test:e2e
-
-# Generate coverage report
-pnpm test -- --coverage
 ```
 
 ## Continuous Integration

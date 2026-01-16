@@ -8,7 +8,7 @@ status: Implemented
 related_requirements:
   - FR-101: Unit and integration tests cover core modules and API logic
   - NFR-101: Tests are deterministic and CI-friendly
-related_adrs: ["ADR-0003"]
+related_adrs: ["ADR-0003", "ADR-0004"]
 notes: "Defines Vitest scope, conventions, and execution practices."
 ---
 

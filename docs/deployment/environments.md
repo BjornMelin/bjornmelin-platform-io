@@ -64,7 +64,7 @@ AWS_REGION=us-east-1
 | ----------- | ------ | --------- |
 | `/portfolio/prod/CONTACT_EMAIL` | SecureString | Contact form recipient email |
 | `/portfolio/prod/resend/api-key` | SecureString | Resend API key for email delivery |
-| `/portfolio/prod/EMAIL_FROM` | SecureString | Sender email address (optional) |
+| `/portfolio/prod/resend/email-from` | SecureString | Sender email address (optional) |
 
 ### Local Development (.env.local)
 
@@ -143,12 +143,14 @@ export const env = {
 const emailConfig = {
   provider: "resend",
   apiKey: process.env.RESEND_API_KEY,
+  from: process.env.EMAIL_FROM,
 };
 
 // Production (Lambda)
 const emailConfig = {
   provider: "resend",
   apiKey: "ssm:/portfolio/prod/resend/api-key",
+  from: "ssm:/portfolio/prod/resend/email-from",
 };
 ```
 

@@ -45,7 +45,13 @@ The contact form API handles submission of contact form messages.
 ```json
 {
   "error": "Validation failed",
-  "code": "VALIDATION_ERROR"
+  "code": "VALIDATION_ERROR",
+  "details": [
+    {
+      "path": ["fieldName"],
+      "message": "Error description"
+    }
+  ]
 }
 ```
 

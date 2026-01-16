@@ -14,8 +14,6 @@ References:
   - "[Vitest CLI](https://vitest.dev/guide/cli)"
 ---
 
-# ADR 0003: Vitest unit and integration testing strategy
-
 ## Context
 
 We need fast, deterministic, and maintainable unit/integration tests that run

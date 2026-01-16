@@ -14,8 +14,6 @@ References:
   - "[Playwright webServer](https://playwright.dev/docs/test-webserver)"
 ---
 
-# ADR 0004: Playwright end-to-end testing strategy
-
 ## Status
 
 Implemented (2026-01-16).
@@ -56,6 +54,20 @@ Use Playwright for E2E coverage:
 - E2E tests validate behaviors that span multiple components and runtime layers.
 - Environment variables needed for the contact form are provided in `webServer.env`.
 - Base URL is configurable via `PLAYWRIGHT_BASE_URL`, defaulting to port 3100.
+
+### Positive Outcomes
+
+- E2E tests validate the application as a user experiences it.
+- Async Server Component flows are covered without relying on unsupported unit test paths.
+
+### Negative Consequences / Trade-offs
+
+- E2E tests are slower than unit tests and should remain minimal and high-signal.
+
+### Ongoing Maintenance & Considerations
+
+- Add multi-browser coverage only when a real bug class justifies it.
+- Prefer adding unit tests first when the behavior is not route-level.
 
 ## Constraints
 
@@ -101,22 +113,6 @@ Use Playwright for E2E coverage:
 
 - Run locally: `pnpm test:e2e` (uses `webServer` to start Next dev).
 - In CI: run `pnpm test:e2e` in headless mode and upload the HTML report on failure.
-
-## Consequences
-
-### Positive Outcomes
-
-- E2E tests validate the application as a user experiences it.
-- Async Server Component flows are covered without relying on unsupported unit test paths.
-
-### Negative Consequences / Trade-offs
-
-- E2E tests are slower than unit tests and should remain minimal and high-signal.
-
-### Ongoing Maintenance & Considerations
-
-- Add multi-browser coverage only when a real bug class justifies it.
-- Prefer adding unit tests first when the behavior is not route-level.
 
 ### Dependencies
 

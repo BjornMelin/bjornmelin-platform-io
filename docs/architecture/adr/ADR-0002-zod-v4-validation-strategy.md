@@ -13,8 +13,6 @@ References:
   - "[Zod v4 changelog](https://zod.dev/v4/changelog)"
 ---
 
-# ADR 0002: Zod v4 validation strategy
-
 ## Status
 
 Implemented (2026-01-16).

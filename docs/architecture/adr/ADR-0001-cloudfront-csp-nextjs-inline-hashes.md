@@ -12,8 +12,6 @@ References:
   - "[Next.js Content Security Policy](https://nextjs.org/docs/app/guides/content-security-policy)"
 ---
 
-# ADR 0001: CloudFront CSP for Next.js static export uses hash allow-list
-
 ## Status
 
 Accepted (2025-12-27) and implemented in production.
