@@ -37,10 +37,13 @@ constraints following the recent upgrade pass.
 
 ## Rationale
 
-Upgrades prioritize security fixes, compatibility with the Next.js 14 App Router,
+Upgrades prioritize security fixes, compatibility with the Next.js 16.1.x App Router,
 and improved DX while preserving static export constraints.
 
 ## References
 
 - `package.json` for the authoritative versions
 - `AGENTS.md` and `docs/development/README.md` for toolchain guidance
+- [Zod v4 migration guide](https://zod.dev/?id=migration-guide) / ADR-0002 (Zod v4 strategy)
+- [Vitest v4 migration notes](https://vitest.dev/guide/migration) / ADR-0003 (testing changes)
+- ADR-0004 (toolchain changes) / ADR-0005 (static export constraints)
