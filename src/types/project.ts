@@ -1,17 +1,7 @@
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  technologies: string[];
-  category: string;
-  image: string;
-  links: {
-    github?: string;
-    live?: string;
-    demo?: string;
-  };
-  featured?: boolean;
-}
+import type { z } from "zod";
+import type { projectSchema } from "@/lib/schemas/project";
+
+export type Project = z.infer<typeof projectSchema>;
 
 export interface ProjectFilterState {
   category: string;

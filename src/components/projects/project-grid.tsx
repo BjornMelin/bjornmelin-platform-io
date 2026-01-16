@@ -4,7 +4,7 @@
  * @fileoverview Interactive projects grid supporting category filters and sorting.
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -28,23 +28,28 @@ interface ProjectGridProps {
  * @returns Filterable/sortable projects grid.
  */
 export function ProjectGrid({ projects, className }: ProjectGridProps) {
-  const categories = ["All", ...Array.from(new Set(projects.map((project) => project.category)))];
+  const categories = useMemo(
+    () => ["All", ...Array.from(new Set(projects.map((project) => project.category)))],
+    [projects],
+  );
 
   const [filters, setFilters] = useState<ProjectFilterState>({
     category: "All",
     sortBy: "featured",
   });
 
-  const filteredProjects = projects
-    .filter((project) =>
-      filters.category === "All" ? true : project.category === filters.category,
-    )
-    .sort((a, b) => {
-      if (filters.sortBy === "featured") {
-        return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-      }
-      return a.title.localeCompare(b.title);
-    });
+  const filteredProjects = useMemo(() => {
+    return projects
+      .filter((project) =>
+        filters.category === "All" ? true : project.category === filters.category,
+      )
+      .sort((a, b) => {
+        if (filters.sortBy === "featured") {
+          return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+        }
+        return a.title.localeCompare(b.title);
+      });
+  }, [filters.category, filters.sortBy, projects]);
 
   return (
     <div className={`space-y-8 ${className || ""}`}>

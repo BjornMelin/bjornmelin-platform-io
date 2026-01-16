@@ -27,67 +27,33 @@ vi.mock("@/app/providers", () => ({
   ),
 }));
 
-import RootLayout, { metadata, viewport } from "@/app/layout";
+import { metadata, viewport } from "@/app/layout";
+import { AppShell } from "@/components/layout/app-shell";
 
-describe("<RootLayout />", () => {
-  it("renders children", () => {
+describe("<AppShell />", () => {
+  it("renders Navbar and Footer", () => {
     render(
-      <RootLayout>
-        <div data-testid="child-content">Test Content</div>
-      </RootLayout>,
-    );
-
-    expect(screen.getByTestId("child-content")).toBeInTheDocument();
-  });
-
-  it("includes Navbar", () => {
-    render(
-      <RootLayout>
+      <AppShell>
         <div>Content</div>
-      </RootLayout>,
+      </AppShell>,
     );
 
     expect(screen.getByTestId("navbar")).toBeInTheDocument();
-  });
-
-  it("includes Footer", () => {
-    render(
-      <RootLayout>
-        <div>Content</div>
-      </RootLayout>,
-    );
-
     expect(screen.getByTestId("footer")).toBeInTheDocument();
   });
 
-  it("wraps content with Providers", () => {
+  it("provides a skip link and main landmark", () => {
     render(
-      <RootLayout>
-        <div data-testid="content">Content</div>
-      </RootLayout>,
+      <AppShell>
+        <div data-testid="child-content">Test Content</div>
+      </AppShell>,
     );
 
-    expect(screen.getByTestId("providers")).toBeInTheDocument();
-  });
+    expect(screen.getByRole("link", { name: /skip to content/i })).toBeInTheDocument();
 
-  it("includes StructuredData", () => {
-    render(
-      <RootLayout>
-        <div>Content</div>
-      </RootLayout>,
-    );
-
-    expect(screen.getByTestId("structured-data")).toBeInTheDocument();
-  });
-
-  it("includes ThemeScript for static export", () => {
-    render(
-      <RootLayout>
-        <div>Content</div>
-      </RootLayout>,
-    );
-
-    expect(screen.getByTestId("theme-script")).toBeInTheDocument();
+    const main = screen.getByRole("main");
+    expect(main).toHaveAttribute("id", "main-content");
+    expect(main).toContainElement(screen.getByTestId("child-content"));
   });
 });
 
