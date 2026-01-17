@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import * as React from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, type Mock, vi } from "vitest";
 
 // We mock react to make useState spayable/mockable, as ESM exports are typically read-only.
 vi.mock("react", async (importOriginal) => {
@@ -23,7 +23,7 @@ describe("useToast cleanup", () => {
 
     // Capture the mock setter that our mocked useState will return
     const stateSetter = vi.fn();
-    (React.useState as any).mockReturnValue([{}, stateSetter]);
+    (React.useState as Mock).mockReturnValue([{}, stateSetter]);
 
     function ToastProbe() {
       useToast();
