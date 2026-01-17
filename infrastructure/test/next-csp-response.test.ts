@@ -7,6 +7,14 @@ type CloudFrontHeaders = Record<string, { value: string }>;
 type CloudFrontRequest = { uri: string; headers?: CloudFrontHeaders };
 type CloudFrontResponse = { headers?: CloudFrontHeaders };
 
+/**
+ * Loads the CSP response handler from the CloudFront Function file.
+ * Uses Node's vm module to execute the function in an isolated context,
+ * simulating the CloudFront Functions runtime environment.
+ *
+ * `@returns` The handler function extracted from the CloudFront Function file
+ * `@throws` Error if the file doesn't define a global `handler` function
+ */
 function loadCspResponseHandler(): (event: {
   request: CloudFrontRequest;
   response: CloudFrontResponse;

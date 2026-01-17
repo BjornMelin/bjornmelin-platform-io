@@ -1,6 +1,5 @@
 /* biome-ignore-all lint/style/useTemplate: CloudFront Functions require ES5.1. */
-/* biome-ignore-all lint/complexity/useOptionalChain: CloudFront Functions require ES5.1. */
-/* biome-ignore-all lint/correctness/noUnusedVariables: CloudFront handler is invoked by AWS. */
+/* biome-ignore-all lint/correctness/noUnusedVariables: CloudFront Functions require globals. */
 /* biome-ignore-all lint/style/useConst: CloudFront Functions require ES5.1. */
 /**
  * Generated file -- do not edit by hand.
@@ -208,55 +207,3 @@ var PATH_HASHES = {
     "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
   ],
 };
-
-var BASE_DIRECTIVES = [
-  "default-src 'self'",
-  "img-src 'self' data: blob:",
-  "style-src 'self' 'unsafe-inline'",
-  "font-src 'self' data:",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "upgrade-insecure-requests",
-];
-
-var SCRIPT_PREFIX = "script-src 'self'";
-
-// Include test domains so infra tests can validate connect-src values.
-var CONNECT_SRC_BY_HOST = {
-  "bjornmelin.io": "https://api.bjornmelin.io",
-  "www.bjornmelin.io": "https://api.bjornmelin.io",
-  "example.com": "https://api.example.com",
-  "www.example.com": "https://api.example.com",
-};
-
-function normalizePath(uri) {
-  if (!uri) return "/index.html";
-  var decoded = decodeURIComponent(uri.split("?")[0].split("#")[0]);
-  if (decoded.charAt(decoded.length - 1) === "/") return decoded + "index.html";
-  var lastSegment = decoded.split("/").pop() || "";
-  if (lastSegment.indexOf(".") === -1) return decoded + "/index.html";
-  return decoded;
-}
-
-function buildCsp(host, hashes) {
-  var normalizedHost = (host || "").toLowerCase().split(":")[0];
-  var connectSrc = CONNECT_SRC_BY_HOST[normalizedHost];
-  var script = SCRIPT_PREFIX + " " + hashes.map((hash) => "'" + hash + "'").join(" ");
-  var connectDirective = connectSrc ? "connect-src 'self' " + connectSrc : "connect-src 'self'";
-  return BASE_DIRECTIVES.concat([script, connectDirective]).join("; ");
-}
-
-function handler(event) {
-  var request = event.request || {};
-  var response = event.response || {};
-  var uri = request.uri || "/index.html";
-  var normalized = normalizePath(uri);
-  var hashes =
-    PATH_HASHES[normalized] || PATH_HASHES["/404.html"] || PATH_HASHES["/index.html"] || [];
-  var hostHeader = request.headers && request.headers.host && request.headers.host.value;
-  var csp = buildCsp(hostHeader || "", hashes);
-  response.headers = response.headers || {};
-  response.headers["content-security-policy"] = { value: csp };
-  return response;
-}
