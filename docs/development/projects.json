@@ -1,0 +1,1335 @@
+{
+  "metadata": {
+    "description": "Comprehensive reference for all public GitHub repositories with 5+ stars",
+    "generated": "2026-01-17",
+    "totalRepositories": 17,
+    "author": "Bjorn Melin",
+    "updateFrequency": "As-needed",
+    "source": "GitHub API + Repository Documentation Analysis"
+  },
+  "projects": [
+    {
+      "id": "ai-docs-vector-db-hybrid-scraper",
+      "name": "ai-docs-vector-db-hybrid-scraper",
+      "url": "https://github.com/BjornMelin/ai-docs-vector-db-hybrid-scraper",
+      "stars": 8,
+      "forks": 2,
+      "watchers": 8,
+      "license": "MIT",
+      "language": "Python",
+      "created": "2025-05-22",
+      "updated": "2026-01-01",
+      "description": "Retrieval-augmented docs ingestion stack: Firecrawl + Crawl4AI + Qdrant vector search with FastAPI and MCP interfaces for AI engineers.",
+      "summary": "Production-ready documentation ingestion and retrieval system combining multi-tier crawling orchestration (HTTP, Crawl4AI, browser-use, Playwright, Firecrawl) with hybrid retrieval using dense embeddings + BM25 sparse signals. Exposes FastAPI REST and FastMCP server interfaces.",
+      "keyFeatures": [
+        "Multi-tier crawling orchestration via UnifiedBrowserManager",
+        "Hybrid retrieval stack with OpenAI + FastEmbed + BM25",
+        "Dual interfaces: FastAPI REST and FastMCP server",
+        "Built-in rate limiting (SlowAPI), OpenTelemetry tracing",
+        "Prometheus metrics and health monitoring"
+      ],
+      "techStack": {
+        "languages": ["Python"],
+        "frameworks": ["FastAPI", "LangChain", "LangGraph", "FastMCP"],
+        "vectorDb": "Qdrant",
+        "crawling": ["Firecrawl", "Crawl4AI", "Playwright"],
+        "observability": ["OpenTelemetry", "Prometheus"],
+        "cache": "Dragonfly",
+        "codeQuality": ["ruff", "pylint", "pyright"]
+      },
+      "architecture": {
+        "layers": [
+          "Infrastructure Orchestration (ApplicationContainer)",
+          "Crawling & Ingestion (AutomationRouter, UnifiedBrowserManager)",
+          "Vector Search & Retrieval (Qdrant, hybrid search, HyDE)",
+          "Caching (Unified CacheManager + Dragonfly)",
+          "Interfaces (FastAPI, FastMCP, CLI)",
+          "Observability (OpenTelemetry, Prometheus)"
+        ],
+        "adrs": 10,
+        "keyDecisions": "Library-first retrieval, deterministic compression, profile-driven app factory"
+      },
+      "guidelines": {
+        "codeStyle": "4-space indentation, full type hints, Google-style docstrings",
+        "commits": "Conventional Commits (feat:, fix:, docs:)",
+        "testing": "unit, integration, performance, property, data_quality, scripts",
+        "quality": "Zero ruff violations required before push"
+      },
+      "status": "Active",
+      "topics": [
+        "ai",
+        "crawl4ai",
+        "documentation-ingestion",
+        "fastapi",
+        "firecrawl",
+        "mcp",
+        "qdrant",
+        "rag",
+        "retrieval-augmented-generation",
+        "vector-search"
+      ]
+    },
+    {
+      "id": "ai-job-scraper",
+      "name": "ai-job-scraper",
+      "url": "https://github.com/BjornMelin/ai-job-scraper",
+      "stars": 14,
+      "forks": 3,
+      "watchers": 14,
+      "license": "MIT",
+      "language": "Python",
+      "created": "2025-07-29",
+      "updated": "2026-01-09",
+      "description": "Privacy-focused AI job scraper with local storage, interactive dashboard. Auto-scrapes AI/ML roles using ScrapeGraph-AI + LLM. Built for developers seeking AI careers.",
+      "summary": "Well-documented, production-ready local-first job search automation tool using 2-tier scraping (JobSpy + ScrapeGraphAI), Qwen3-4B-Instruct-2507-FP8 local LLM, SQLite + DuckDB analytics, and Streamlit UI. Achieves 92.8% code reduction through library-first architecture.",
+      "keyFeatures": [
+        "Local-first AI with Qwen3-4B-Instruct-2507 on RTX 4090",
+        "2-tier scraping: JobSpy (90%) + ScrapeGraphAI (10%)",
+        "SQLite + FTS5 full-text search, DuckDB analytics",
+        "5-agent LangGraph supervisor orchestration",
+        "Streamlit card-based UI with real-time scraping dashboard"
+      ],
+      "techStack": {
+        "languages": ["Python"],
+        "frameworks": ["Streamlit", "SQLModel", "LangGraph", "LiteLLM"],
+        "database": "SQLite + DuckDB",
+        "llm": "Qwen3-4B-Instruct-2507-FP8 (local), GPT-4o-mini (cloud fallback)",
+        "scraping": ["JobSpy", "ScrapeGraphAI"],
+        "inference": "vLLM",
+        "deployment": ["Docker", "systemd"]
+      },
+      "architecture": {
+        "layers": 6,
+        "descriptions": [
+          "Foundation: KISS > DRY > YAGNI principles",
+          "Infrastructure: SQLite + SQLModel service patterns",
+          "AI Processing: Local Qwen3-4B + GPT-4o-mini with 8K token routing",
+          "Data Collection: 2-tier scraping with proxy support",
+          "Search & Analytics: FTS5 search, DuckDB analytics",
+          "UI: Mobile-first card interface, Docker containerization"
+        ],
+        "adrs": 25,
+        "codeReduction": "92.8%"
+      },
+      "capacityTiers": {
+        "personal": "1K-10K jobs: 5-15ms search, 2GB RAM",
+        "professional": "10K-50K jobs: 15-50ms search, 8-16GB RAM",
+        "enterprise": "50K-500K jobs: 50-300ms search, 16GB+ RAM"
+      },
+      "guidelines": {
+        "pythonVersion": "3.12+",
+        "packageManager": "uv",
+        "testing": ">90% coverage target",
+        "deployment": "Docker (recommended) or local production"
+      },
+      "status": "Production-Ready",
+      "topics": [
+        "ai-jobs",
+        "ai-ml",
+        "async-scraping",
+        "automation",
+        "career-tools",
+        "dashboard",
+        "docker",
+        "job-scraper",
+        "job-search",
+        "privacy-focused",
+        "python",
+        "streamlit"
+      ]
+    },
+    {
+      "id": "bjornmelin-platform-io",
+      "name": "bjornmelin-platform-io",
+      "url": "https://github.com/BjornMelin/bjornmelin-platform-io",
+      "stars": 22,
+      "forks": 3,
+      "watchers": 22,
+      "license": "MIT",
+      "language": "TypeScript",
+      "created": "2024-11-16",
+      "updated": "2026-01-17",
+      "homepage": "https://bjornmelin.io/",
+      "description": "Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutions architecture through microservices, serverless APIs, and infrastructure as code.",
+      "summary": "Production-ready Next.js 16 portfolio and solutions architecture showcase integrating AWS CDK infrastructure, serverless APIs, static export with CloudFront/Route53. Features comprehensive documentation, AGENTS.md guidelines, and static export + CSP management.",
+      "keyFeatures": [
+        "Next.js 16 with static export deployment",
+        "AWS CDK infrastructure-as-code",
+        "CloudFront + Route53 global distribution",
+        "Cognito authentication integration",
+        "Automated CSP hash generation",
+        "GitHub Actions CI/CD pipeline"
+      ],
+      "techStack": {
+        "languages": ["TypeScript", "JavaScript"],
+        "frameworks": ["Next.js 16", "React", "Express"],
+        "css": "Tailwind CSS",
+        "infrastructure": ["AWS CDK", "CloudFront", "Route53", "DynamoDB"],
+        "auth": "AWS Cognito",
+        "storage": "S3",
+        "deployment": "GitHub Actions",
+        "security": "CSP with inline script hashes"
+      },
+      "architecture": {
+        "deployment": "Static export + CloudFront CDN",
+        "constraints": "No Server Actions, ISR, Draft Mode, or request-dependent Route Handlers",
+        "csp": "Automated inline script hash generation",
+        "sections": ["Projects", "Blog", "About", "Contact"]
+      },
+      "guidelines": {
+        "formatting": "Biome (2 spaces, double quotes, semicolons)",
+        "commits": "Conventional Commits (feat, fix, docs, etc.)",
+        "testing": "Vitest + jsdom, coverage thresholds enforced",
+        "quality": "pnpm lint && pnpm test required before PR"
+      },
+      "status": "Active Production",
+      "topics": [
+        "aws",
+        "aws-cdk",
+        "aws-cognito",
+        "cicd",
+        "cloud-architecture",
+        "cloudfront",
+        "containerization",
+        "devops",
+        "dynamodb",
+        "github-actions",
+        "infrastructure-as-code",
+        "microservices",
+        "nextjs",
+        "portfolio-website",
+        "solutions-architecture",
+        "tailwindcss",
+        "typescript"
+      ]
+    },
+    {
+      "id": "crawl4ai-mcp-server",
+      "name": "crawl4ai-mcp-server",
+      "url": "https://github.com/BjornMelin/crawl4ai-mcp-server",
+      "stars": 19,
+      "forks": 12,
+      "watchers": 19,
+      "license": null,
+      "language": "TypeScript",
+      "created": "2025-05-04",
+      "updated": "2025-12-31",
+      "description": "High-performance MCP Server for Crawl4AI - Enable AI assistants to access web scraping, crawling, and deep research via Model Context Protocol.",
+      "summary": "TypeScript-based MCP server for integrating Crawl4AI web scraping capabilities with AI assistants. Under development with architecture planning for migration from Firecrawl API to proper Crawl4AI integration. Designed for CloudFlare Workers deployment.",
+      "keyFeatures": [
+        "Single webpage scraping",
+        "Web crawling with configurable depth/page limits",
+        "URL discovery and mapping",
+        "Asynchronous crawling",
+        "Deep research across multiple pages",
+        "Structured data extraction (CSS selectors, LLM-based)",
+        "OAuth and API key authentication",
+        "MCP integration with Claude Desktop"
+      ],
+      "techStack": {
+        "languages": ["TypeScript", "JavaScript"],
+        "runtime": "Node.js 18+",
+        "deployment": ["CloudFlare Workers", "Wrangler"],
+        "storage": "CloudFlare KV",
+        "tools": ["Crawl4AI API", "Stagehand", "Playwright"],
+        "api": "OpenAI-compatible format"
+      },
+      "architecture": {
+        "status": "Under Development - Not Production Ready",
+        "design": "Cloudflare Worker + Remote Crawl4AI Docker Instance",
+        "infrastructure": {
+          "worker": "Cloudflare Worker (standard, with KV storage)",
+          "crawlServer": "Crawl4AI Docker: 4GB RAM min (8GB rec), 2 vCPUs, 20GB storage, Port 11235"
+        },
+        "phases": [
+          "Docker Server Setup (1-2 days)",
+          "MCP Server Updates (2-3 days)",
+          "Deployment and Testing (1-2 days)",
+          "Documentation and Monitoring (1 day)"
+        ]
+      },
+      "availableTools": [
+        "crawl - Crawl web pages from URL",
+        "getCrawl - Retrieve crawl data by ID",
+        "listCrawls - List/filter crawls by domain",
+        "search - Search indexed documents",
+        "extract - Extract structured content from URL"
+      ],
+      "guidelines": {
+        "codeStyle": "TypeScript strict mode, interfaces for types",
+        "commits": "Conventional Commits (feat, fix, docs, etc.)",
+        "testing": "Tests required for new functionality",
+        "branches": "feature/ or fix/ prefix"
+      },
+      "status": "Active Development",
+      "topics": [
+        "crawl4ai",
+        "mcp",
+        "mcp-server",
+        "web-scraping",
+        "cloudflare-workers",
+        "ai-assistant"
+      ]
+    },
+    {
+      "id": "dev-pro-agents",
+      "name": "dev-pro-agents",
+      "url": "https://github.com/BjornMelin/dev-pro-agents",
+      "stars": 5,
+      "forks": 5,
+      "watchers": 5,
+      "license": "MIT",
+      "language": "Python",
+      "created": "2025-08-04",
+      "updated": "2025-12-16",
+      "description": "Advanced multi-agent orchestration framework built with LangGraph - Coordinate specialized AI agents for autonomous development, research, testing, and documentation workflows.",
+      "summary": "Production-ready multi-agent orchestration system using LangGraph Supervisor, Pydantic v2.11.7, and SQLModel. Achieved 91.8% code reduction through library-first refactoring with comprehensive planning documentation across 11 planning documents.",
+      "keyFeatures": [
+        "Dynamic agent discovery and registration",
+        "Capability-based task routing",
+        "Health monitoring and load balancing",
+        "Dependency resolution with cycle detection",
+        "Real-time progress tracking",
+        "5-agent orchestration system"
+      ],
+      "agentTypes": [
+        "Coding Agent - code generation, refactoring",
+        "Documentation Agent - documentation creation",
+        "Research Agent - web research using Exa API and Firecrawl",
+        "Testing Agent - test generation and execution",
+        "Query Analyzer, Synthesizer, Validator"
+      ],
+      "techStack": {
+        "languages": ["Python"],
+        "frameworks": ["LangGraph", "Pydantic v2.11.7", "SQLModel"],
+        "orchestration": "langgraph-supervisor v0.0.29",
+        "dataValidation": "Pydantic v2.11.7",
+        "database": "SQLModel ORM",
+        "cli": "Rich",
+        "api": ["Exa API", "Firecrawl"],
+        "async": "Full async/await support"
+      },
+      "architecture": {
+        "refactoringResults": {
+          "codeReduction": "91.8%",
+          "typeSafety": "100%",
+          "developmentVelocity": "60% faster",
+          "onboardingTime": "50% reduction",
+          "featureDevelopment": "45% faster",
+          "bugResolution": "55% faster",
+          "developerOnboarding": "3x faster"
+        },
+        "adrs": 5,
+        "phases": [
+          "Foundation & Standards",
+          "Schema Integration & Database Migration",
+          "Modularization & Advanced Features",
+          "LangGraph Migration & Library Adoption",
+          "Validation & Documentation"
+        ]
+      },
+      "guidelines": {
+        "pythonVersion": "3.12+",
+        "packageManager": "uv",
+        "typeHints": "Mandatory",
+        "testing": "95%+ coverage",
+        "commits": "Conventional Commits"
+      },
+      "status": "Production-Ready",
+      "topics": [
+        "agent-coordination",
+        "ai-agents",
+        "ai-orchestration",
+        "artificial-intelligence",
+        "async-programming",
+        "autonomous-agents",
+        "code-generation",
+        "distributed-systems",
+        "documentation-automation",
+        "langgraph",
+        "llm-integration",
+        "multi-agent-systems",
+        "openai",
+        "pydantic",
+        "python",
+        "research-automation",
+        "task-automation",
+        "task-management",
+        "testing-automation",
+        "workflow-orchestration"
+      ]
+    },
+    {
+      "id": "docmind-ai-llm",
+      "name": "docmind-ai-llm",
+      "url": "https://github.com/BjornMelin/docmind-ai-llm",
+      "stars": 76,
+      "forks": 12,
+      "watchers": 76,
+      "license": "MIT",
+      "language": "Python",
+      "created": "2025-01-21",
+      "updated": "2026-01-16",
+      "description": "Offline-first Streamlit application with LlamaIndex, LangGraph, and local LLMs (Ollama, LMStudio, llama.cpp, vLLM) for advanced document analysis.",
+      "summary": "Most-starred repository (76 stars). Comprehensive offline-first document analysis system with Qwen3-4B-Instruct-2507-FP8, 128K context window, 5-agent LangGraph supervisor, hybrid retrieval, GraphRAG support, and extensive documentation (37+ specs, 48+ ADRs).",
+      "keyFeatures": [
+        "Offline-first operation with zero cloud dependency",
+        "5-agent LangGraph supervisor orchestration",
+        "Hybrid retrieval (dense + sparse with optional GraphRAG)",
+        "Multimodal support (PDFs, Office docs, HTML, images)",
+        "Advanced reranking (ColPali + BGE)",
+        "Local LLM integration (Qwen, Ollama, vLLM)",
+        "Context window: 128K tokens",
+        "Performance: 100-160 tok/s decode, 800-1300 tok/s prefill"
+      ],
+      "techStack": {
+        "languages": ["Python"],
+        "frameworks": ["Streamlit", "LlamaIndex", "LangGraph"],
+        "llm": "Qwen/Qwen3-4B-Instruct-2507-FP8",
+        "inference": ["vLLM", "llama.cpp", "ollama", "lmstudio"],
+        "vectorDb": "Qdrant",
+        "embedding": "BGE-M3 (768-dim)",
+        "reranking": ["ColPali", "BGE"],
+        "database": "SQLite, DuckDB",
+        "documentParsing": "unstructured",
+        "deployment": "Docker, docker-compose"
+      },
+      "architecture": {
+        "agents": 5,
+        "agentSystem": [
+          "Query Router - picks retrieval strategy",
+          "Query Planner - decomposes complex queries",
+          "Retrieval Expert - executes adaptive retrieval",
+          "Result Synthesizer - aggregates evidence",
+          "Response Validator - checks relevance/faithfulness"
+        ],
+        "specs": 37,
+        "adrs": 48,
+        "vram": "12-14GB on RTX 4090"
+      },
+      "documentation": {
+        "prds": 1,
+        "specs": 37,
+        "adrs": 48,
+        "traceabilityMatrix": "Complete requirements mapping"
+      },
+      "guidelines": {
+        "pythonVersion": ">=3.11,<3.12",
+        "formatting": "Black, isort, ruff, pyright",
+        "commits": "Conventional Commits",
+        "logging": "Metadata-only, never log secrets",
+        "security": "Offline-first, strict URL validation"
+      },
+      "status": "Production-Ready",
+      "topics": [
+        "ai-agents",
+        "document-analysis",
+        "hybrid-search",
+        "langchain",
+        "langgraph-supervisor-py",
+        "llama-cpp",
+        "llamacpp",
+        "lmstudio",
+        "local-llm",
+        "multimodal-embeddings",
+        "ollama",
+        "private-ai-agents",
+        "python",
+        "qdrant",
+        "sentence-transformers",
+        "streamlit",
+        "torch",
+        "transformers",
+        "vllm"
+      ]
+    },
+    {
+      "id": "github-copilot-proxy",
+      "name": "github-copilot-proxy",
+      "url": "https://github.com/BjornMelin/github-copilot-proxy",
+      "stars": 29,
+      "forks": 6,
+      "watchers": 29,
+      "license": "MIT",
+      "language": "TypeScript",
+      "created": "2025-03-24",
+      "updated": "2026-01-15",
+      "description": "OpenAI-compatible proxy server that lets Cursor IDE connect directly to GitHub Copilot's LLM services. Bypass Cursor's 500 premium requests/month limit.",
+      "summary": "TypeScript proxy server enabling Cursor IDE to use GitHub Copilot's API directly, bypassing Cursor's 500 requests/month limit. Implements OpenAI API compatibility, GitHub OAuth authentication, automatic token refresh, and streaming support.",
+      "keyFeatures": [
+        "OpenAI API compatibility for Cursor IDE",
+        "GitHub Copilot integration",
+        "Seamless authentication via GitHub OAuth device flow",
+        "Automatic token management and refresh",
+        "Streaming support for real-time completions",
+        "Rate limiting based on requests and token usage",
+        "Usage monitoring and metrics dashboard",
+        "Web-based authentication UI"
+      ],
+      "techStack": {
+        "languages": ["TypeScript", "HTML"],
+        "runtime": "Node.js 18+",
+        "deployment": ["Docker", "npm"],
+        "auth": ["OAuth device flow", "GitHub API"],
+        "api": "OpenAI-compatible format"
+      },
+      "endpoints": [
+        "/v1/models - List available models",
+        "/v1/chat/completions - Chat completions endpoint"
+      ],
+      "deployment": {
+        "platforms": ["Local machine", "Server", "Cloud"],
+        "docker": "Multi-stage Dockerfile provided",
+        "environmentConfig": "Zod validation, .env.example provided"
+      },
+      "guidelines": {
+        "codeStyle": "TypeScript strict mode, ESLint, Prettier",
+        "testing": "Jest test suite",
+        "linting": "ESLint configuration",
+        "commits": "Conventional Commits",
+        "version": "v0.1.0 initial release"
+      },
+      "status": "Active",
+      "topics": [
+        "ai-agents",
+        "ai-coding-assistant",
+        "ai-tools",
+        "api-integration",
+        "code-completion",
+        "cursor-ide",
+        "developer-tools",
+        "github-copilot",
+        "node-js",
+        "oauth-authentication",
+        "openai-api-compatible",
+        "proxy-server",
+        "streaming-api",
+        "token-management",
+        "typescript"
+      ]
+    },
+    {
+      "id": "linkedin-saved-posts-ai",
+      "name": "linkedin-saved-posts-ai",
+      "url": "https://github.com/BjornMelin/linkedin-saved-posts-ai",
+      "stars": 6,
+      "forks": 3,
+      "watchers": 6,
+      "license": "MIT",
+      "language": null,
+      "created": "2025-04-24",
+      "updated": "2025-12-30",
+      "description": "Scrape, classify & chat over your LinkedIn Saved Posts with Supabase, pgvector, Vercel Edge Functions, Playwright MCP and OpenRouter + OpenAI LLMs.",
+      "summary": "Early-stage minimal repository for LinkedIn saved posts AI application. Uses Next.js with App Router, Supabase with pgvector for semantic search, Vercel Edge Functions, and Playwright MCP for scraping. Configuration scaffolding present but implementation sparse.",
+      "keyFeatures": [
+        "One-time bootstrap scrape of LinkedIn saved posts",
+        "Daily incremental sync via Vercel cron",
+        "Rigid Topic -> Category -> Subcategory taxonomy",
+        "Vector & full-text search (pgvector + Postgres)",
+        "Chat assistant with switchable LLM models",
+        "Firecrawl enrichment for external links",
+        "MCP server integration"
+      ],
+      "techStack": {
+        "languages": ["TypeScript"],
+        "frontend": ["Next.js", "App Router", "Tailwind CSS", "shadcn/ui"],
+        "backend": ["Vercel Edge Functions", "Playwright MCP"],
+        "database": ["Supabase Postgres", "pgvector"],
+        "ai": ["OpenRouter", "OpenAI", "Gemini"],
+        "agents": [
+          "MCP Servers (playwright, firecrawl, tavily, git, github, sequential-thinking, memory)"
+        ],
+        "packageManager": "pnpm"
+      },
+      "architecture": {
+        "layers": [
+          "Frontend: Next.js App Router, Tailwind, shadcn/ui",
+          "Backend: Vercel Edge Functions + Playwright MCP",
+          "Database: Supabase Postgres + pgvector",
+          "AI/LLM: OpenRouter (OpenAI & Gemini models)"
+        ]
+      },
+      "guidelines": {
+        "architecture": "SOLID principles, KISS, DRY, YAGNI",
+        "codeStyle": "Cursor AI rule-files for structured generation",
+        "security": "Secrets in Vercel's encrypted env-store only",
+        "authentication": "Supabase Email-Link Auth"
+      },
+      "status": "Early Development",
+      "topics": [
+        "ai",
+        "ai-agents",
+        "browser-use",
+        "firecrawl",
+        "gemini",
+        "linkedin",
+        "nextjs",
+        "openai",
+        "openai-agents-sdk",
+        "openrouter",
+        "pgvector",
+        "playwright",
+        "rag",
+        "saved-posts",
+        "supabase",
+        "typescript",
+        "vector-search",
+        "vercel"
+      ]
+    },
+    {
+      "id": "mcp-search-hub",
+      "name": "mcp-search-hub",
+      "url": "https://github.com/BjornMelin/mcp-search-hub",
+      "stars": 6,
+      "forks": 1,
+      "watchers": 6,
+      "license": "MIT",
+      "language": "Python",
+      "created": "2025-05-14",
+      "updated": "2025-12-31",
+      "description": "Intelligent multi-provider search aggregation server built on FastMCP 2.0",
+      "summary": "Production-ready MCP server aggregating 5 leading search providers (Linkup, Exa, Perplexity, Tavily, Firecrawl) with intelligent routing, result merging, tiered caching, and 30-45% cost reduction through provider selection optimization.",
+      "keyFeatures": [
+        "Unified interface for 5 search providers",
+        "Intelligent provider routing based on query characteristics",
+        "Official MCP server integration for each provider",
+        "Cost optimization (30-45% reduction)",
+        "Zero maintenance (automatic provider updates)",
+        "Smart result merging and multi-factor ranking",
+        "Multi-tier caching (memory + Redis)",
+        "Production-ready error handling and monitoring"
+      ],
+      "providerStrengths": {
+        "linkup": "Factual information, current events - Accuracy: 91%",
+        "exa": "Semantic search, academic content - Accuracy: 90%",
+        "perplexity": "AI-powered analysis, current events - Accuracy: 86%",
+        "tavily": "RAG-optimized results - Accuracy: 73%",
+        "firecrawl": "Deep content extraction - N/A"
+      },
+      "techStack": {
+        "languages": ["Python"],
+        "frameworks": ["FastMCP 2.0"],
+        "runtime": "Python 3.10+",
+        "caching": ["Memory", "Redis"],
+        "providers": ["Linkup", "Exa", "Perplexity", "Tavily", "Firecrawl"],
+        "deployment": ["Docker", "Docker Compose"]
+      },
+      "architecture": {
+        "adrs": 6,
+        "keyDecisions": [
+          "Embedded MCP Server Architecture with Generic Provider Pattern",
+          "Unified Router Architecture with pluggable execution strategies",
+          "Tiered Caching (memory 5min TTL, Redis 1hr TTL)",
+          "Centralized Middleware Architecture",
+          "Multi-Factor Provider Selection Strategy",
+          "Embedding Official MCP Servers"
+        ],
+        "cachePerformance": "90% hit rate, 5ms avg response for memory hits"
+      },
+      "apiReference": {
+        "coreTools": ["search", "get_provider_info"],
+        "providerSpecificTools": "25+ tools across all providers",
+        "httpEndpoints": ["POST /search/combined", "GET /health", "GET /metrics", "GET /providers"]
+      },
+      "guidelines": {
+        "pythonVersion": "3.10+",
+        "packageManager": "uv",
+        "formatting": "Black, isort, ruff",
+        "typing": "mypy strict mode",
+        "commits": "Conventional Commits"
+      },
+      "status": "Production-Ready",
+      "topics": [
+        "agentic-rag",
+        "ai",
+        "fastmcp",
+        "hybrid-search",
+        "llm",
+        "mcp",
+        "mcp-server",
+        "search-aggregation",
+        "vector-search"
+      ]
+    },
+    {
+      "id": "openai-agents-travel-graph",
+      "name": "openai-agents-travel-graph",
+      "url": "https://github.com/BjornMelin/openai-agents-travel-graph",
+      "stars": 12,
+      "forks": 1,
+      "watchers": 12,
+      "license": "MIT",
+      "language": "Python",
+      "created": "2025-05-05",
+      "updated": "2026-01-05",
+      "description": "State-of-the-art multi-agent travel planning system powered by OpenAI Agents SDK and LangGraph orchestration.",
+      "summary": "Production-ready travel planning system with 6 specialized agents (destination research, flight/accommodation search, transportation, activity planning, budget management) orchestrated via LangGraph with browser automation, semantic search, and budget optimization.",
+      "keyFeatures": [
+        "Multi-agent travel planning system",
+        "Destination research agent",
+        "Flight and accommodation search agents",
+        "Transportation planning agent",
+        "Activity planning with user interests",
+        "Budget management and optimization",
+        "Browser automation (Stagehand/Playwright)",
+        "Semantic search integration"
+      ],
+      "agentSystem": [
+        "Destination Research Agent - Tavily, Firecrawl, Context7",
+        "Flight Search Agent - Multiple booking sites",
+        "Accommodation Search Agent - Lodging platform queries",
+        "Transportation Planning Agent - Local transit options",
+        "Activity Planning Agent - Interest-matched activities",
+        "Budget Management Agent - Cost tracking and optimization"
+      ],
+      "techStack": {
+        "languages": ["Python"],
+        "frameworks": ["OpenAI Agents SDK", "LangGraph", "LangChain"],
+        "browserAutomation": ["Stagehand v2.0+", "Playwright"],
+        "database": "Supabase",
+        "research": ["Tavily API", "Firecrawl", "Context7"],
+        "memory": "Memory MCP Server",
+        "pythonVersion": ">= 3.12",
+        "packageManager": "uv"
+      },
+      "architecture": {
+        "layers": [
+          "User Interface Layer",
+          "Input Processing (Budget Analysis, Preference Extraction)",
+          "Orchestration Layer (State Management, Agent Workflow)",
+          "Browser Automation Layer (Stagehand)",
+          "Data Integration Layer (Tavily, Firecrawl, Context7)",
+          "Knowledge & Memory Layer (MCP Memory Server)",
+          "Output Generation Layer",
+          "Persistent Storage (Supabase)"
+        ]
+      },
+      "deployment": {
+        "interactive": "python -m travel_planner.main",
+        "direct": "python -m travel_planner.main --query \"...\" --origin \"...\" --budget \"...\""
+      },
+      "guidelines": {
+        "principles": ["DRY", "KISS", "YAGNI", "SOLID"],
+        "fileSize": "< 300 lines max",
+        "pythonStyle": "PEP 8, type hints mandatory, Google-style docstrings",
+        "tools": ["Black (line-length=88)", "isort", "Ruff", "mypy"],
+        "testing": "pytest, pytest-cov, pytest-mock"
+      },
+      "status": "Production-Ready",
+      "topics": [
+        "ai-travel-planning",
+        "autonomous-planning",
+        "browser-automation",
+        "budget-optimization",
+        "firecrawl",
+        "itinerary-planning",
+        "langchain",
+        "langgraph",
+        "multi-agent-system",
+        "openai",
+        "openai-agents",
+        "playwright",
+        "stagehand",
+        "supabase",
+        "tavily-api",
+        "travel-recommendations"
+      ]
+    },
+    {
+      "id": "polyagent-research-intelligence",
+      "name": "polyagent-research-intelligence",
+      "url": "https://github.com/BjornMelin/polyagent-research-intelligence",
+      "stars": 9,
+      "forks": 6,
+      "watchers": 9,
+      "license": "MIT",
+      "language": "TypeScript",
+      "created": "2025-01-19",
+      "updated": "2025-10-21",
+      "description": "Modular, multi-agent AI research and report generation platform using LangChain, FastAPI, PostgreSQL, and Next.js.",
+      "summary": "Multi-agent research orchestration platform (PolyAgent) where users input topics and specialized agents retrieve literature, analyze data, and generate polished reports. Built with TypeScript frontend and FastAPI backend with PostgreSQL + FAISS vector database.",
+      "keyFeatures": [
+        "Multi-agent system with specialized agents",
+        "Real-time progress updates via WebSockets",
+        "Automatic structured research report generation",
+        "Report download in PDF/DOCX formats",
+        "Data storage with PostgreSQL and FAISS",
+        "Monitoring with Prometheus and Grafana"
+      ],
+      "agentTypes": ["Research Agent", "Analysis Agent", "Writing Agent", "Proofreading Agent"],
+      "llmIntegration": {
+        "provider": "OpenRouter",
+        "models": [
+          "DeepSeek-v3 (Retrieval, Summarization)",
+          "LLaMA3.3-70B-Instruct (Report Generation)",
+          "GPT-4o (Reasoning, Hypothesis Generation)",
+          "PHI-4 (Proofreading, Grammar)"
+        ]
+      },
+      "techStack": {
+        "frontend": [
+          "Next.js",
+          "TypeScript",
+          "Tailwind CSS",
+          "shadcn-ui",
+          "React Context API/Zustand"
+        ],
+        "backend": ["FastAPI", "LangChain", "Celery/Ray", "Uvicorn"],
+        "database": ["PostgreSQL", "SQLAlchemy ORM", "FAISS"],
+        "monitoring": ["Prometheus", "Grafana"],
+        "storage": ["LocalStack (AWS S3 emulation)", "AWS S3 (production)"],
+        "packageManager": "pnpm"
+      },
+      "architecture": {
+        "frontend": "Next.js with component library",
+        "backend": "FastAPI with multi-agent orchestration",
+        "dataFlow": "User -> Next.js Frontend -> FastAPI Backend -> Multiple Agents -> LLMs"
+      },
+      "guidelines": {
+        "commits": "Conventional Commits (feat/version/...)",
+        "development": "Fork, branch, PR workflow",
+        "codeStyle": "TypeScript strict mode"
+      },
+      "status": "Active Development",
+      "topics": [
+        "ai-engineering",
+        "ai-research",
+        "faiss-vector-database",
+        "fastapi",
+        "grafana",
+        "langchain",
+        "llms",
+        "machine-learning",
+        "multi-agent-systems",
+        "nextjs",
+        "openrouter",
+        "postgresql",
+        "prometheus",
+        "report-generation",
+        "tailwindcss"
+      ]
+    },
+    {
+      "id": "qdrant-neo4j-crawl4ai-mcp",
+      "name": "qdrant-neo4j-crawl4ai-mcp",
+      "url": "https://github.com/BjornMelin/qdrant-neo4j-crawl4ai-mcp",
+      "stars": 7,
+      "forks": 1,
+      "watchers": 7,
+      "license": "MIT",
+      "language": "Python",
+      "created": "2025-06-27",
+      "updated": "2025-11-27",
+      "description": "MCP server combining Qdrant vector search, Neo4j knowledge graphs, and Crawl4AI web intelligence with agentic RAG capabilities.",
+      "summary": "Production-ready agentic RAG MCP server combining Qdrant (semantic similarity), Neo4j (relationship reasoning), Crawl4AI (web intelligence), and Pydantic-AI (agentic orchestration). Features 6 specialized agents, GraphRAG hybrid memory, RAGAs evaluation framework.",
+      "keyFeatures": [
+        "Qdrant vector search for semantic similarity",
+        "Neo4j knowledge graphs for relationship reasoning",
+        "Crawl4AI integration for real-time web content",
+        "Pydantic-AI orchestration for autonomous query routing",
+        "FastMCP 2.0 server composition",
+        "Hybrid retrieval with RRF fusion",
+        "GraphRAG hybrid memory system"
+      ],
+      "agentSystem": [
+        "Query Analyzer - understands user intent",
+        "Vector Search Agent - semantic similarity retrieval",
+        "Graph Analysis Agent - relationship-based reasoning",
+        "Web Research Agent - real-time information",
+        "Validation Agent - answer quality checks",
+        "Synthesis Agent - unified response generation"
+      ],
+      "techStack": {
+        "languages": ["Python", "Shell"],
+        "frameworks": ["FastMCP 2.0", "Pydantic-AI", "LangChain"],
+        "vectorDb": "Qdrant",
+        "graphDb": "Neo4j",
+        "webCrawling": "Crawl4AI",
+        "evaluation": "RAGAs",
+        "monitoring": ["Prometheus", "Grafana", "OpenTelemetry"],
+        "deployment": "Docker, Kubernetes",
+        "pythonVersion": "3.11+"
+      },
+      "architecture": {
+        "adrs": 7,
+        "performanceTargets": {
+          "queryLatency": "50-150ms (target: <200ms)",
+          "complexQueryLatency": "800ms-1.5s (target: <2s)",
+          "throughput": "1200+ QPS (target: 1000+ QPS)",
+          "availability": "99.95% (target: 99.9%)"
+        },
+        "memoryTiers": [
+          "Hot Memory (In-Memory): Active context, <1ms access",
+          "Warm Memory (Vector/Qdrant): Semantic clusters, <50ms access",
+          "Cold Memory (Graph/Neo4j): Long-term relationships, <100ms access"
+        ]
+      },
+      "evaluationMetrics": {
+        "retrieval": [
+          "Answer relevancy (>0.85)",
+          "Faithfulness (>0.90)",
+          "Context precision/recall"
+        ],
+        "agents": ["Trajectory quality", "Tool precision", "Coordination efficiency"]
+      },
+      "securityFeatures": [
+        "Multi-layer security (Network, Auth, Input Validation, Execution, Output)",
+        "JWT authentication with RBAC",
+        "Prompt injection detection",
+        "PII detection and redaction",
+        "OWASP compliance"
+      ],
+      "guidelines": {
+        "pythonVersion": "3.11+",
+        "packageManager": "uv",
+        "formatting": "Ruff format, Ruff check",
+        "typing": "mypy strict mode",
+        "testing": "pytest with coverage"
+      },
+      "status": "Production-Ready",
+      "topics": [
+        "agentic-rag",
+        "ai",
+        "crawl4ai",
+        "fastmcp",
+        "graph-database",
+        "hybrid-search",
+        "keyword-search",
+        "kubernetes",
+        "mcp",
+        "mcp-server",
+        "neo4j",
+        "pydantic-ai",
+        "pydantic-v2",
+        "qdrant",
+        "reranking",
+        "semantic-search",
+        "vector-database",
+        "vector-embeddings"
+      ]
+    },
+    {
+      "id": "stardex",
+      "name": "stardex",
+      "url": "https://github.com/BjornMelin/stardex",
+      "stars": 13,
+      "forks": 1,
+      "watchers": 13,
+      "license": "MIT",
+      "language": "TypeScript",
+      "created": "2025-01-15",
+      "updated": "2025-12-30",
+      "description": "Explore GitHub stars intelligently. Search, filter, and cluster any GitHub user's starred repositories with AI-powered exploration.",
+      "summary": "Full-stack monorepo application for exploring GitHub starred repositories. Features Next.js 16 frontend with React 19, TanStack Query, and shadcn/ui; FastAPI backend with scikit-learn for K-means, hierarchical, and PCA+hierarchical clustering with tunable parameters from UI.",
+      "keyFeatures": [
+        "Search GitHub users and pull starred repositories",
+        "Multi-user support for starred repository aggregation",
+        "List view with search, language/topic filtering",
+        "Minimum stars filtering and sorting",
+        "Cluster repositories by description similarity",
+        "Tunable clustering parameters from UI",
+        "Support for K-means, hierarchical, and PCA+hierarchical algorithms"
+      ],
+      "techStack": {
+        "frontend": {
+          "framework": "Next.js 16.1 with App Router",
+          "react": "React 19.2",
+          "typescript": "TypeScript 5.9",
+          "stateManagement": "TanStack Query, Zustand",
+          "ui": "shadcn/ui components (Radix + Tailwind 4.1)",
+          "validation": "Zod",
+          "styling": "Tailwind CSS 4.1"
+        },
+        "backend": {
+          "framework": "FastAPI 0.128",
+          "python": "Python 3.13",
+          "ml": ["scikit-learn 1.8", "SciPy"],
+          "packageManager": "uv",
+          "codeQuality": ["Ruff", "Pyright"]
+        },
+        "testing": ["pytest (backend)", "Vitest (frontend)"],
+        "deployment": "Monorepo with frontend and backend services"
+      },
+      "architecture": {
+        "dataFlow": "Browser -> GitHub REST API -> Backend for clustering",
+        "apiEndpoints": [
+          "POST /clustering - K-means, hierarchical, PCA+hierarchical",
+          "GET /health - Health check"
+        ],
+        "clusteringLimits": {
+          "repos": "2-250 repos",
+          "kmeansClusters": "2-20",
+          "hierarchicalThreshold": "0-10",
+          "pcaComponents": "2-50"
+        }
+      },
+      "guidelines": {
+        "frontend": [
+          "TypeScript/React",
+          "Biome formatting",
+          "ESLint",
+          "PascalCase components",
+          "kebab-case routes"
+        ],
+        "backend": ["Python 3.11+", "Ruff + Pyright", "explicit types"],
+        "testing": ["Vitest (frontend)", "pytest (backend)"],
+        "commits": "Conventional Commits (type(scope): summary)"
+      },
+      "status": "Active Development",
+      "topics": [
+        "aws-api-gateway",
+        "aws-cdk",
+        "aws-lambda",
+        "aws-s3",
+        "clustering",
+        "fastapi",
+        "hierarchical-clustering",
+        "k-means-clustering",
+        "machine-learning",
+        "ml",
+        "nextjs",
+        "pca",
+        "search-engine",
+        "shadcn-ui",
+        "sklearn",
+        "starred-repositories",
+        "tailwindcss",
+        "text-embeddings"
+      ]
+    },
+    {
+      "id": "tripsage-ai",
+      "name": "tripsage-ai",
+      "url": "https://github.com/BjornMelin/tripsage-ai",
+      "stars": 22,
+      "forks": 11,
+      "watchers": 22,
+      "license": "MIT",
+      "language": "TypeScript",
+      "created": "2025-05-08",
+      "updated": "2026-01-10",
+      "description": "AI-powered travel planning system with budget optimization, multi-source search, and personalized recommendations built on Vercel AI SDK v6, Supabase, Upstash, and Next.js 16.",
+      "summary": "Production-ready sophisticated travel planning platform with 15+ AI tools, multi-provider LLM routing (OpenAI, Anthropic, xAI, OpenRouter), hybrid RAG with Cohere Rerank, zero-trust security with BYOK encryption, and comprehensive specifications (11 active, 50+ ADRs).",
+      "keyFeatures": [
+        "Multi-provider AI routing with automatic fallback",
+        "15+ production-ready AI tools",
+        "Hybrid RAG pipeline with Cohere Rerank v3.5",
+        "Streaming intelligence with interleaved tool calls",
+        "Zero-trust security with BYOK encryption",
+        "Budget optimization algorithms",
+        "Personalized travel recommendations",
+        "Multi-day itinerary generation"
+      ],
+      "aiTools": [
+        "Flight search and optimization",
+        "Accommodation discovery",
+        "Weather forecasting",
+        "Map integration",
+        "Activity planning",
+        "Budget tracking",
+        "Memory management",
+        "RAG-based recommendations"
+      ],
+      "techStack": {
+        "frontend": {
+          "framework": "Next.js 16 with React 19",
+          "typescript": "TypeScript 5.9",
+          "stateManagement": "Zustand v5",
+          "dataFetching": "TanStack Query v5",
+          "validation": "Zod v4",
+          "styling": "Tailwind CSS + CVA",
+          "icons": "Lucide icons",
+          "ui": "Radix UI + shadcn/ui"
+        },
+        "backend": {
+          "framework": "Next.js 16 (Server Actions + Route Handlers)",
+          "dataFetching": "Server-first with `use cache`",
+          "auth": "Supabase SSR",
+          "database": "Supabase PostgreSQL with pgvector",
+          "cache": ["Upstash Redis", "Upstash QStash"],
+          "rateLimit": "@upstash/ratelimit"
+        },
+        "ai": {
+          "framework": "Vercel AI SDK v6",
+          "gateway": "Vercel AI Gateway",
+          "providers": ["OpenAI", "Anthropic", "xAI", "OpenRouter"],
+          "features": ["BYOK support", "Multi-provider routing"]
+        },
+        "search": ["Cohere Rerank v3.5", "pgvector semantic search"],
+        "security": ["BotID integration", "RLS-first data access", "PII redaction"]
+      },
+      "architecture": {
+        "specifications": 11,
+        "arrs": 50,
+        "finalBaseline": "ADR-0059 through ADR-0069",
+        "deploymentPattern": "RSC shell + TanStack Query doughnut",
+        "caching": "Server `use cache` for reads, Server Actions for mutations"
+      },
+      "specifications": [
+        "SPEC-0100: Application Architecture (Next.js RSC + TanStack Query)",
+        "SPEC-0101: Auth and Session",
+        "SPEC-0102: Trips Domain",
+        "SPEC-0103: Chat and Agents (AI SDK v6)",
+        "SPEC-0104: Memory and RAG",
+        "SPEC-0105: Attachments (Supabase Storage)",
+        "SPEC-0106: Search and Places",
+        "SPEC-0107: Jobs and Webhooks",
+        "SPEC-0108: Security and Abuse Protection",
+        "SPEC-0109: Testing, Quality, CI",
+        "SPEC-0110: Deployment and Operations"
+      ],
+      "guidelines": {
+        "principles": ["Library-first", "KISS", "DRY", "YAGNI"],
+        "typescript": "Strict mode, no `any` or unsafe casts",
+        "serverFirst": "Route handlers and Server Actions own data fetching",
+        "qualityGates": ["pnpm biome:fix", "pnpm type-check", "pnpm test:affected"]
+      },
+      "status": "Production-Ready",
+      "latestVersion": "v1.25.0 (2026-01-10)",
+      "topics": [
+        "accommodation-search",
+        "ai-agents",
+        "ai-sdk-v6",
+        "ai-travel-assistant",
+        "budget-optimization",
+        "flight-search",
+        "itinerary-generator",
+        "knowledge-graph",
+        "multi-agent-system",
+        "nextjs16",
+        "pgvector",
+        "streamlit-ui",
+        "supabase",
+        "travel-planner",
+        "travel-recommendations",
+        "trip-planning",
+        "upstash-qstash",
+        "upstash-redis",
+        "vercel-ai-sdk"
+      ]
+    },
+    {
+      "id": "unified-knowledge-system",
+      "name": "unified-knowledge-system",
+      "url": "https://github.com/BjornMelin/unified-knowledge-system",
+      "stars": 5,
+      "forks": 1,
+      "watchers": 5,
+      "license": "MIT",
+      "language": null,
+      "created": "2025-03-23",
+      "updated": "2025-11-16",
+      "description": "Comprehensive unified knowledge management system integrating multiple data sources with advanced search capabilities.",
+      "summary": "Early-stage knowledge management system design combining DevDocs (1000 pages/min free) and Firecrawl ($16/month) for content acquisition, Qdrant vector DB, Neo4j knowledge graphs, and Obsidian vault integration. Architecture documented with 6-layer design, cost analysis ($16/mo vs $519/mo alternatives).",
+      "keyFeatures": [
+        "Multi-source content acquisition (DevDocs + Firecrawl)",
+        "Automatic text chunking and embedding",
+        "Entity extraction and knowledge graph construction",
+        "Qdrant vector database for semantic search",
+        "Neo4j knowledge graph for relationship reasoning",
+        "Obsidian vault integration",
+        "MCP server layer for AI assistant integration",
+        "Unified search engine"
+      ],
+      "techStack": {
+        "languages": ["TypeScript", "Python"],
+        "contentAcquisition": ["DevDocs", "Firecrawl"],
+        "vectorDb": "Qdrant",
+        "graphDb": "Neo4j",
+        "knowledgeVault": "Obsidian",
+        "mcp": "MCP servers for DevDocs, Firecrawl, Qdrant, Knowledge Graph",
+        "search": "Unified Search Engine with Supergateway",
+        "clients": ["Claude Desktop", "Cursor", "Roo Code"]
+      },
+      "architecture": {
+        "layers": 6,
+        "layerDescriptions": [
+          "Web Content Acquisition - DevDocs & Firecrawl",
+          "Knowledge Processing - Chunking, embedding, entity extraction",
+          "Knowledge Storage - Docs, Qdrant, Knowledge Graph, Obsidian",
+          "MCP Server Layer - Individual MCP servers",
+          "Integration Layer - Unified Search Engine & Supergateway",
+          "Client Layer - Claude Desktop, Cursor, Roo Code"
+        ],
+        "performanceBenchmarks": {
+          "devdocs": "1000 pages/min (50x faster than Firecrawl)",
+          "qdrant": "626 QPS at 99.5% recall",
+          "unifiedSearch": "50ms avg query time",
+          "supergatewayOverhead": "<5ms per request"
+        },
+        "costAnalysis": {
+          "thisSystem": "$16/month",
+          "commercialAlternatives": "$519/month",
+          "savings": "97%"
+        }
+      },
+      "guidelines": {
+        "commits": "Conventional Commits with semantic versioning",
+        "testing": "80% line coverage minimum, 100% for critical components",
+        "cicd": "Automated tests on PRs, production deployment on main merge"
+      },
+      "implementationStatus": "10% complete (Phase 1 done, Phase 2 in progress)",
+      "status": "Early Development",
+      "topics": [
+        "ai-agent",
+        "devdocs",
+        "firecrawl",
+        "knowledge-base",
+        "llm",
+        "model-context-protocol",
+        "obsidian-vault",
+        "qdrant-vector-database",
+        "unified-search",
+        "vector-database",
+        "vector-search"
+      ]
+    },
+    {
+      "id": "prompt-atlas",
+      "name": "prompt-atlas",
+      "url": "https://github.com/BjornMelin/prompt-atlas",
+      "stars": 9,
+      "forks": 4,
+      "watchers": 9,
+      "license": "MIT",
+      "language": null,
+      "created": "2024-11-14",
+      "updated": "2025-12-31",
+      "description": "Expert-level prompt templates for modern software development using AI pair programming.",
+      "summary": "Collection of expert-level prompt templates for AI pair programming. Repository structure contains prompts for various development scenarios. Limited documentation available in repository.",
+      "keyFeatures": [
+        "Expert prompt templates",
+        "AI pair programming guidance",
+        "Software development focused",
+        "Modern development practices"
+      ],
+      "techStack": {
+        "languages": ["Python", "TypeScript"],
+        "focus": "Prompt engineering for AI"
+      },
+      "guidelines": {
+        "documentation": "README with prompt examples",
+        "organization": "Template-based approach"
+      },
+      "status": "Active",
+      "topics": [
+        "agents",
+        "generative-ai",
+        "prompt-engineering",
+        "prompt-optimization",
+        "prompt-template",
+        "python",
+        "reference",
+        "typescript"
+      ],
+      "note": "Rate limit encountered during documentation fetch - minimal details available"
+    },
+    {
+      "id": "enhanced-mem-vector-rag",
+      "name": "enhanced-mem-vector-rag",
+      "url": "https://github.com/BjornMelin/enhanced-mem-vector-rag",
+      "stars": 16,
+      "forks": 3,
+      "watchers": 16,
+      "license": "MIT",
+      "language": "Python",
+      "created": "2025-05-06",
+      "updated": "2025-12-12",
+      "description": "Developer-friendly hybrid-RAG toolkit merging Graphiti, Qdrant, mem0, LlamaIndex, and LangChain into one powerful engine.",
+      "summary": "Hybrid RAG toolkit integrating multiple leading libraries (Graphiti, Qdrant, mem0, LlamaIndex, LangChain) for comprehensive retrieval-augmented generation capabilities. Combines vector search, knowledge graphs, and memory management.",
+      "keyFeatures": [
+        "Integrated Graphiti support",
+        "Qdrant vector database integration",
+        "mem0 memory management",
+        "LlamaIndex and LangChain compatibility",
+        "Hybrid retrieval approaches",
+        "Developer-friendly API"
+      ],
+      "techStack": {
+        "languages": ["Python"],
+        "libraries": ["Graphiti", "Qdrant", "mem0", "LlamaIndex", "LangChain"],
+        "vectorDb": "Qdrant",
+        "rag": "Hybrid approaches"
+      },
+      "status": "Active",
+      "topics": [
+        "hybrid-rag",
+        "vector-search",
+        "knowledge-graphs",
+        "memory-management",
+        "langchain",
+        "llamaindex",
+        "qdrant",
+        "rag"
+      ],
+      "note": "Rate limit encountered during documentation fetch - limited details available"
+    }
+  ],
+  "statistics": {
+    "totalStars": 267,
+    "averageStars": 15.7,
+    "topRepositories": [
+      "docmind-ai-llm (76 stars)",
+      "bjornmelin-platform-io (22 stars)",
+      "tripsage-ai (22 stars)",
+      "github-copilot-proxy (29 stars)",
+      "crawl4ai-mcp-server (19 stars)"
+    ],
+    "languageDistribution": {
+      "typescript": 6,
+      "python": 10,
+      "mixed": 1
+    },
+    "licenseDistribution": {
+      "mit": 16,
+      "unlicensed": 1
+    },
+    "topicClusters": {
+      "aiAgents": [
+        "dev-pro-agents",
+        "docmind-ai-llm",
+        "tripsage-ai",
+        "polyagent-research-intelligence"
+      ],
+      "raG": [
+        "ai-docs-vector-db-hybrid-scraper",
+        "docmind-ai-llm",
+        "mcp-search-hub",
+        "qdrant-neo4j-crawl4ai-mcp",
+        "enhanced-mem-vector-rag"
+      ],
+      "webScraping": [
+        "ai-docs-vector-db-hybrid-scraper",
+        "crawl4ai-mcp-server",
+        "openai-agents-travel-graph"
+      ],
+      "travelPlanning": ["tripsage-ai", "openai-agents-travel-graph"],
+      "llmIntegration": [
+        "docmind-ai-llm",
+        "dev-pro-agents",
+        "github-copilot-proxy",
+        "polyagent-research-intelligence"
+      ],
+      "dataAnalytics": ["ai-job-scraper", "stardex"]
+    }
+  },
+  "recommendations": {
+    "forNewUsers": [
+      "Start with bjornmelin-platform-io for architecture patterns",
+      "Review docmind-ai-llm for comprehensive documentation examples",
+      "Study dev-pro-agents for agent orchestration patterns"
+    ],
+    "forContributions": [
+      "ai-job-scraper - Active project with clear guidelines",
+      "docmind-ai-llm - High stars, extensive documentation",
+      "tripsage-ai - Production-ready with comprehensive specs"
+    ],
+    "keyArchitecturalPatterns": [
+      "Library-first development (dev-pro-agents, ai-job-scraper)",
+      "Multi-agent orchestration (dev-pro-agents, docmind-ai-llm, openai-agents-travel-graph)",
+      "Hybrid RAG (docmind-ai-llm, qdrant-neo4j-crawl4ai-mcp, enhanced-mem-vector-rag)",
+      "Infrastructure-as-Code (bjornmelin-platform-io)"
+    ]
+  }
+}
