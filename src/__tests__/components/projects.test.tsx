@@ -99,7 +99,7 @@ describe("Project components", () => {
 
     render(<ProjectCard project={richProject} />);
 
-    const trigger = screen.getByRole("button", { name: /show 2 more technologies/i });
+    const trigger = screen.getByLabelText(/show 2 more technologies/i);
     expect(trigger).toBeInTheDocument();
 
     await user.click(trigger);

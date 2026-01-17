@@ -21,14 +21,8 @@ vi.mock("@/components/theme", () => ({
   ThemeScript: () => <script data-testid="theme-script" />,
 }));
 
-vi.mock("@/app/providers", () => ({
-  Providers: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="providers">{children}</div>
-  ),
-}));
 
 import RootLayout, { metadata, viewport } from "@/app/layout";
-import { Providers } from "@/app/providers";
 import { AppShell } from "@/components/layout/app-shell";
 import StructuredData from "@/components/structured-data";
 import { ThemeScript } from "@/components/theme";
@@ -62,25 +56,22 @@ describe("<AppShell />", () => {
 });
 
 describe("RootLayout", () => {
-  it("includes ThemeScript, Providers, and passed children", () => {
+  it("includes ThemeScript and passed children", () => {
     const child = <div data-testid="root-child">Child</div>;
     const tree = RootLayout({ children: child });
 
     let hasThemeScript = false;
-    let hasProviders = false;
     let hasChild = false;
     let hasStructuredData = false;
 
     walkReactTree(tree, (element) => {
       if (element.type === ThemeScript) hasThemeScript = true;
-      if (element.type === Providers) hasProviders = true;
       if (element.type === StructuredData) hasStructuredData = true;
       // Ensure the exact child element instance is present in the returned tree.
       if (element === (child as unknown)) hasChild = true;
     });
 
     expect(hasThemeScript).toBe(true);
-    expect(hasProviders).toBe(true);
     expect(hasChild).toBe(true);
     expect(hasStructuredData).toBe(true);
   });

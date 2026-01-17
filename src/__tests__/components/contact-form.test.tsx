@@ -236,7 +236,7 @@ describe("ContactForm", () => {
     const user = userEvent.setup();
     vi.stubEnv("NEXT_PUBLIC_API_URL", "");
     vi.stubEnv("NEXT_PUBLIC_ALLOW_LOCAL_CONTACT", "true");
-    const endpoint = buildContactEndpoint(window.location.origin);
+    const endpoint = buildContactEndpoint(`${window.location.origin}/api`);
 
     server.use(
       http.post(endpoint, () => {
@@ -435,7 +435,7 @@ describe("ContactForm", () => {
     });
   });
 
-  it("treats successful responses with invalid JSON as success", async () => {
+  it("treats successful responses with invalid JSON as an error", async () => {
     const user = userEvent.setup();
     const endpoint = buildContactEndpoint(apiBaseUrl);
 
@@ -451,7 +451,11 @@ describe("ContactForm", () => {
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringContaining("invalid JSON"),
+        }),
+      );
     });
   });
 

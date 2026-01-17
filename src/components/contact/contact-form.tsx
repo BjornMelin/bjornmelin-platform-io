@@ -77,7 +77,7 @@ export function ContactForm() {
 
       if (!apiBaseUrl) {
         if (allowLocalContact) {
-          apiBaseUrl = window.location.origin;
+          apiBaseUrl = `${window.location.origin}/api`;
         } else {
           throw new Error(
             "Contact form is not configured. Set NEXT_PUBLIC_API_URL in your environment (see .env.example).",
@@ -122,9 +122,7 @@ export function ContactForm() {
       try {
         result = (await response.json()) as APIErrorResponse;
       } catch {
-        if (!response.ok) {
-          throw new Error("Failed to send message. The API returned invalid JSON.");
-        }
+        throw new Error("Failed to send message. The API returned invalid JSON.");
       }
 
       if (!response.ok) {

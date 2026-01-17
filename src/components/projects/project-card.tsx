@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/project";
 
@@ -34,7 +33,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
           src={project.image}
           alt={project.title}
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 30vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 360px"
           className="object-cover duration-300 motion-safe:transition-transform motion-safe:hover:scale-105"
         />
       </div>
@@ -55,18 +54,15 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
             ))}
           </div>
           {hiddenCount > 0 ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-full border border-muted/60 bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                  aria-label={`Show ${hiddenCount} more technologies`}
-                  title="Show all technologies"
-                >
-                  +{hiddenCount}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent align="start" className="w-64">
+            <details className="relative">
+              <summary
+                className="inline-flex list-none items-center rounded-full border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
+                aria-label={`Show ${hiddenCount} more technologies`}
+                title="Show all technologies"
+              >
+                +{hiddenCount}
+              </summary>
+              <div className="absolute left-0 top-full z-10 mt-2 w-64 rounded-md border bg-popover p-3 text-popover-foreground shadow-md">
                 <div className="space-y-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Technologies
@@ -79,8 +75,8 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
                     </div>
                   </div>
                 </div>
-              </PopoverContent>
-            </Popover>
+              </div>
+            </details>
           ) : null}
         </div>
         <div className="flex gap-4 pt-2">

@@ -50,7 +50,7 @@ describe("TechBadge", () => {
     render(<TechBadge name="Docker" />);
 
     const badge = getBadge("Docker");
-    expect(badge).toHaveClass("text-muted-foreground", "bg-muted");
+    expect(badge).toHaveClass("text-foreground/80", "bg-muted/70");
   });
 
   it("applies custom className when provided", () => {

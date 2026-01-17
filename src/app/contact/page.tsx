@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/contact-form";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Contact | Bjorn Melin",
@@ -19,6 +20,7 @@ export default function ContactPage() {
         </div>
         <ContactForm />
       </div>
+      <Toaster />
     </div>
   );
 }
