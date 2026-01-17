@@ -33,18 +33,19 @@ describe("rate limiter cleanup interval", () => {
     expect(intervalCallback).toBeDefined();
 
     const callsBefore = deleteSpy.mock.calls.length;
-    expect(intervalCallback).toBeDefined();
-    if (intervalCallback) intervalCallback();
-    const callsAfterFirst = deleteSpy.mock.calls.length;
-
     vi.setSystemTime(new Date("2024-01-01T00:02:00Z"));
     expect(intervalCallback).toBeDefined();
     if (intervalCallback) intervalCallback();
+    expect(deleteSpy.mock.calls.length).toBeGreaterThan(callsBefore);
+
+    const callsAfterFirst = deleteSpy.mock.calls.length;
+    checkRateLimit("2.3.4.5");
+    vi.setSystemTime(new Date("2024-01-01T00:03:01Z"));
+    expect(intervalCallback).toBeDefined();
+    if (intervalCallback) intervalCallback();
+    expect(deleteSpy.mock.calls.length).toBeGreaterThan(callsAfterFirst);
 
     stopCleanupInterval();
-
-    expect(deleteSpy.mock.calls.length).toBeGreaterThanOrEqual(callsAfterFirst);
-    expect(deleteSpy.mock.calls.length).toBeGreaterThanOrEqual(callsBefore);
     intervalSpy.mockRestore();
   });
 });

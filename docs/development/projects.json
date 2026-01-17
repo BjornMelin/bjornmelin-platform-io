@@ -1267,8 +1267,10 @@
     }
   ],
   "statistics": {
+    "_comment": "All statistics are computed from the projects array: totalStars = sum of all stars; averageStars = totalStars / numberOfProjects; licenseDistribution counts projects with license === null; languageDistribution counts projects with language === null",
     "totalStars": 278,
     "averageStars": 16.35,
+    "numberOfProjects": 17,
     "topRepositories": [
       "docmind-ai-llm (76 stars)",
       "github-copilot-proxy (29 stars)",
@@ -1279,11 +1281,11 @@
     "languageDistribution": {
       "python": 8,
       "typescript": 6,
-      "unspecified": 3
+      "null": 3
     },
     "licenseDistribution": {
       "mit": 16,
-      "unlicensed": 1
+      "null": 1
     },
     "topicClusters": {
       "aiAgents": [

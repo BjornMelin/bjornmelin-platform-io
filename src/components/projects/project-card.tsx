@@ -47,7 +47,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
           )}
           <p className="text-muted-foreground break-words">{project.description}</p>
         </div>
-        <div className="flex items-center gap-2 overflow-hidden" suppressHydrationWarning>
+        <div className="flex items-center gap-2 overflow-hidden">
           <div className="flex min-w-0 items-center gap-2 overflow-hidden">
             {visibleTech.map((tech) => (
               <TechBadge key={tech} name={tech} size="sm" />

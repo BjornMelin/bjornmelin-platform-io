@@ -1,6 +1,8 @@
 /**
- * Inline script to prevent theme flash on static export.
- * Runs before React hydration to apply the correct theme class.
+ * Injects a theme initialization script that prevents flash of unstyled theme on page load.
+ * Runs before React hydration to detect stored preference, apply the correct theme class,
+ * and handle theme changes via data-theme-set attributes.
+ * @returns {JSX.Element} A script element containing the theme initialization logic.
  */
 export function ThemeScript() {
   const themeScript = `

@@ -5,6 +5,10 @@
 
 import { Moon, Sun } from "lucide-react";
 
+/**
+ * Renders a native details-based theme chooser wired via data-theme-set.
+ * @returns {JSX.Element} Theme toggle control.
+ */
 export function ThemeToggle() {
   return (
     <details className="relative">

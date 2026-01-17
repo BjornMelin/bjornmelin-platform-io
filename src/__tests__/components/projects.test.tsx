@@ -77,9 +77,9 @@ describe("Project components", () => {
 
     await user.click(trigger);
 
-    expect(await screen.findByText(/technologies/i)).toBeInTheDocument();
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(await screen.findByText("Vite")).toBeInTheDocument();
     expect(screen.getByText("Radix")).toBeInTheDocument();
-    expect(screen.getByText("Vite")).toBeInTheDocument();
   });
 
   it("ProjectGrid filters by category and sorts by featured", () => {
