@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.0.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v2.1.0...v3.0.0) (2026-01-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* The application has been fully migrated from Next.js 14 to Next.js 16 and React 18 to React 19. This includes a complete refactor of the routing architecture and core component logic.
+
+### Features
+
+* architecture overhaul and upgrade to Next.js 16 ([4473510](https://github.com/BjornMelin/bjornmelin-platform-io/commit/4473510fbaef7ee31c0e017a91f00a356ae6d0d3))
+* external contact boundary and UI refresh ([#229](https://github.com/BjornMelin/bjornmelin-platform-io/issues/229)) ([fa89a3d](https://github.com/BjornMelin/bjornmelin-platform-io/commit/fa89a3dbe6e16ffe0f276ebe584f3845a34d0711))
+
 ## [2.1.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v2.0.0...v2.1.0) (2026-01-16)
 
 
