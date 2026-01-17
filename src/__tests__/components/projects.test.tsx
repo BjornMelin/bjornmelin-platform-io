@@ -5,43 +5,16 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReadonlyURLSearchParams } from "next/navigation";
-import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ProjectCard } from "@/components/projects/project-card";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import type { Project } from "@/types/project";
 
-vi.mock("@/components/ui/select", () => ({
-  Select: ({
-    value,
-    onValueChange,
-    children,
-  }: {
-    value: string;
-    onValueChange: (value: string) => void;
-    children: ReactNode;
-  }) => (
-    <select
-      aria-label="Sort projects by"
-      value={value}
-      onChange={(event) => onValueChange(event.target.value)}
-    >
-      {children}
-    </select>
-  ),
-  SelectTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,
-  SelectContent: ({ children }: { children: ReactNode }) => <>{children}</>,
-  SelectItem: ({ value, children }: { value: string; children: ReactNode }) => (
-    <option value={value}>{children}</option>
-  ),
-  SelectValue: ({ placeholder }: { placeholder?: string }) =>
-    placeholder ? (
-      <option value="" disabled hidden>
-        {placeholder}
-      </option>
-    ) : null,
-}));
+vi.mock("@/components/ui/select", async () => {
+  const { SelectMocks } = await import("@/test/ui-mocks");
+  return SelectMocks;
+});
 
 const demoProjects: Project[] = [
   {

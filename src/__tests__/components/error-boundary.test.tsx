@@ -3,11 +3,15 @@
  */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 describe("ErrorBoundary", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("derives error state from thrown error", () => {
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
@@ -83,6 +87,5 @@ describe("ErrorBoundary", () => {
 
     await user.click(screen.getByRole("button", { name: /refresh page/i }));
     expect(reloadSpy).toHaveBeenCalled();
-    vi.unstubAllGlobals();
   });
 });

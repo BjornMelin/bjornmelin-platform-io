@@ -1,5 +1,5 @@
 /**
- * @fileoverview Theme toggle built with native HTML to avoid client JS bundles.
+ * @fileoverview Theme toggle built with native HTML -- avoids client JS bundles.
  * Theme changes are handled by ThemeScript via data-theme-set attributes.
  */
 

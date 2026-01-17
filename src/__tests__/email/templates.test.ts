@@ -40,18 +40,19 @@ describe("createContactEmailText", () => {
   it("uses the current time when submittedAt is missing", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-02-01T09:30:00Z"));
+    try {
+      const text = createContactEmailText({
+        data: {
+          name: "Test",
+          email: "test@example.com",
+          message: "Test message",
+        },
+      });
 
-    const text = createContactEmailText({
-      data: {
-        name: "Test",
-        email: "test@example.com",
-        message: "Test message",
-      },
-    });
-
-    expect(text).toContain("Submitted at: 2024-02-01T09:30:00.000Z");
-
-    vi.useRealTimers();
+      expect(text).toContain("Submitted at: 2024-02-01T09:30:00.000Z");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("preserves multiline messages", () => {
@@ -171,18 +172,19 @@ describe("createContactEmailHtml", () => {
   it("uses the current time when submittedAt is missing", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-02-01T09:30:00Z"));
+    try {
+      const html = createContactEmailHtml({
+        data: {
+          name: "Test",
+          email: "test@example.com",
+          message: "Test",
+        },
+      });
 
-    const html = createContactEmailHtml({
-      data: {
-        name: "Test",
-        email: "test@example.com",
-        message: "Test",
-      },
-    });
-
-    expect(html).toContain("Submitted at: 2024-02-01T09:30:00.000Z");
-
-    vi.useRealTimers();
+      expect(html).toContain("Submitted at: 2024-02-01T09:30:00.000Z");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("uses the provided domain when supplied", () => {

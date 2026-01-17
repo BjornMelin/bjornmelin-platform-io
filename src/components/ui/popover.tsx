@@ -5,12 +5,28 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * Floating panel that appears when a trigger is clicked.
+ */
 const Popover = PopoverPrimitive.Root;
 
+/**
+ * Element that opens the popover.
+ */
 const PopoverTrigger = PopoverPrimitive.Trigger;
 
+/**
+ * Optional anchor element for the popover.
+ */
 const PopoverAnchor = PopoverPrimitive.Anchor;
 
+/**
+ * Main content container for the popover.
+ *
+ * @param {React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>} props Popover content props including alignment and offset.
+ * @param {React.ComponentRef<typeof PopoverPrimitive.Content>} ref Forwarded ref to the content element.
+ * @returns {JSX.Element} Popover content element.
+ */
 const PopoverContent = React.forwardRef<
   React.ComponentRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>

@@ -31,7 +31,9 @@ export function ThemeScript() {
           } else {
             localStorage.setItem('theme', theme);
           }
-        } catch (e) {}
+        } catch (e) {
+          ${process.env.NODE_ENV === "development" ? 'if (typeof console !== "undefined" && console.warn) console.warn("Failed to persist theme:", e);' : ""}
+        }
       }
 
       applyTheme(getTheme());

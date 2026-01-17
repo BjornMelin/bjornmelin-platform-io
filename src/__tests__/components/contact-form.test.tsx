@@ -13,7 +13,7 @@ vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({ toast: mockToast }),
 }));
 
-const apiBaseUrl = "http://localhost:3000";
+const apiBaseUrl = "https://api.example.com";
 
 describe("ContactForm", () => {
   beforeEach(() => {
@@ -258,26 +258,28 @@ describe("ContactForm", () => {
     const user = userEvent.setup();
     vi.stubEnv("NEXT_PUBLIC_API_URL", "");
 
-    (window as typeof window & { __CONTACT_API_URL__?: string }).__CONTACT_API_URL__ =
-      "https://runtime.example.com";
-    const endpoint = buildContactEndpoint("https://runtime.example.com");
+    const runtimeWindow = window as typeof window & { __CONTACT_API_URL__?: string };
+    runtimeWindow.__CONTACT_API_URL__ = "https://runtime.example.com";
+    try {
+      const endpoint = buildContactEndpoint("https://runtime.example.com");
 
-    server.use(
-      http.post(endpoint, () => {
-        return HttpResponse.json({ success: true });
-      }),
-    );
+      server.use(
+        http.post(endpoint, () => {
+          return HttpResponse.json({ success: true });
+        }),
+      );
 
-    render(<ContactForm />);
-    await fillContactForm(user);
+      render(<ContactForm />);
+      await fillContactForm(user);
 
-    await user.click(screen.getByRole("button", { name: /send message/i }));
+      await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    await waitFor(() => {
-      expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
-    });
-
-    delete (window as typeof window & { __CONTACT_API_URL__?: string }).__CONTACT_API_URL__;
+      await waitFor(() => {
+        expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
+      });
+    } finally {
+      delete runtimeWindow.__CONTACT_API_URL__;
+    }
   });
 
   it("shows error when NEXT_PUBLIC_API_URL is invalid", async () => {

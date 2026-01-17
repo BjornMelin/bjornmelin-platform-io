@@ -15,6 +15,13 @@ const SheetClose = SheetPrimitive.Close;
 
 const SheetPortal = SheetPrimitive.Portal;
 
+/**
+ * Backdrop overlay for the sheet.
+ *
+ * @param {React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>} props Overlay props.
+ * @param {React.ComponentRef<typeof SheetPrimitive.Overlay>} ref Forwarded ref to the overlay element.
+ * @returns {JSX.Element} The overlay element.
+ */
 const SheetOverlay = React.forwardRef<
   React.ComponentRef<typeof SheetPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
@@ -53,6 +60,13 @@ interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
     VariantProps<typeof sheetVariants> {}
 
+/**
+ * Main content container for the sheet.
+ *
+ * @param {SheetContentProps} props Content props including side and className.
+ * @param {React.ComponentRef<typeof SheetPrimitive.Content>} ref Forwarded ref to the content element.
+ * @returns {JSX.Element} The content element.
+ */
 const SheetContent = React.forwardRef<
   React.ComponentRef<typeof SheetPrimitive.Content>,
   SheetContentProps
@@ -83,6 +97,13 @@ const SheetFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
 );
 SheetFooter.displayName = "SheetFooter";
 
+/**
+ * Heading element for the sheet.
+ *
+ * @param {React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>} props Title props.
+ * @param {React.ComponentRef<typeof SheetPrimitive.Title>} ref Forwarded ref to the title element.
+ * @returns {JSX.Element} The title element.
+ */
 const SheetTitle = React.forwardRef<
   React.ComponentRef<typeof SheetPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
@@ -95,6 +116,13 @@ const SheetTitle = React.forwardRef<
 ));
 SheetTitle.displayName = SheetPrimitive.Title.displayName;
 
+/**
+ * Explanatory text element for the sheet.
+ *
+ * @param {React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>} props Description props.
+ * @param {React.ComponentRef<typeof SheetPrimitive.Description>} ref Forwarded ref to the description element.
+ * @returns {JSX.Element} The description element.
+ */
 const SheetDescription = React.forwardRef<
   React.ComponentRef<typeof SheetPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>

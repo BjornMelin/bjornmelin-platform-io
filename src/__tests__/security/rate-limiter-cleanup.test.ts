@@ -33,11 +33,13 @@ describe("rate limiter cleanup interval", () => {
     expect(intervalCallback).toBeDefined();
 
     const callsBefore = deleteSpy.mock.calls.length;
-    intervalCallback!();
+    expect(intervalCallback).toBeDefined();
+    if (intervalCallback) intervalCallback();
     const callsAfterFirst = deleteSpy.mock.calls.length;
 
     vi.setSystemTime(new Date("2024-01-01T00:02:00Z"));
-    intervalCallback!();
+    expect(intervalCallback).toBeDefined();
+    if (intervalCallback) intervalCallback();
 
     stopCleanupInterval();
 

@@ -1267,19 +1267,19 @@
     }
   ],
   "statistics": {
-    "totalStars": 267,
-    "averageStars": 15.7,
+    "totalStars": 278,
+    "averageStars": 16.35,
     "topRepositories": [
       "docmind-ai-llm (76 stars)",
+      "github-copilot-proxy (29 stars)",
       "bjornmelin-platform-io (22 stars)",
       "tripsage-ai (22 stars)",
-      "github-copilot-proxy (29 stars)",
       "crawl4ai-mcp-server (19 stars)"
     ],
     "languageDistribution": {
+      "python": 8,
       "typescript": 6,
-      "python": 10,
-      "mixed": 1
+      "other": 3
     },
     "licenseDistribution": {
       "mit": 16,

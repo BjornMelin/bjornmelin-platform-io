@@ -8,6 +8,11 @@ export const metadata: Metadata = {
     "Explore my portfolio of projects in machine learning and AI, cloud architecture, and web development.",
 };
 
+/**
+ * Projects page listing portfolio items.
+ *
+ * @returns {JSX.Element} Projects page element.
+ */
 export default function ProjectsPage() {
   return (
     <div className="container mx-auto px-4 py-12">
