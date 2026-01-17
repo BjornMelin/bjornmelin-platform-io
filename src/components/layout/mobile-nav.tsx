@@ -5,6 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 
+/**
+ * Mobile navigation menu using a details/summary disclosure pattern.
+ * Automatically closes on route changes and link clicks.
+ *
+ * @param props.linkClassName - CSS classes to apply to navigation links.
+ * @param props.children - Additional content to render in the menu (e.g., ThemeToggle).
+ * @returns The mobile navigation component.
+ */
 export function MobileNav({
   linkClassName,
   children,
@@ -20,8 +28,8 @@ export function MobileNav({
   }, []);
 
   React.useEffect(() => {
-    if (!pathname) return;
     closeMenu();
+    void pathname;
   }, [closeMenu, pathname]);
 
   return (

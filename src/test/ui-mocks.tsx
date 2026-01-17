@@ -10,13 +10,15 @@ export const SelectMocks = {
     value,
     onValueChange,
     children,
+    "aria-label": ariaLabel = "Sort projects by",
   }: {
     value: string;
     onValueChange: (value: string) => void;
     children: ReactNode;
+    "aria-label"?: string;
   }) => (
     <select
-      aria-label="Sort projects by"
+      aria-label={ariaLabel}
       value={value}
       onChange={(event) => onValueChange(event.target.value)}
     >
@@ -56,7 +58,9 @@ export const ToggleGroupMocks = {
       {children}
     </div>
   ),
-  ToggleGroupItem: ({ children }: { children: ReactNode }) => (
-    <button type="button">{children}</button>
+  ToggleGroupItem: ({ children, onClick }: { children: ReactNode; onClick?: () => void }) => (
+    <button type="button" onClick={onClick}>
+      {children}
+    </button>
   ),
 };

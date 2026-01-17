@@ -49,7 +49,7 @@ describe("useToast cleanup", () => {
 
   it("gracefully handles unmounts", async () => {
     vi.resetModules();
-    const { useToast } = await import("@/hooks/use-toast");
+    const { useToast, toast } = await import("@/hooks/use-toast");
 
     function ToastProbe() {
       useToast();
@@ -58,5 +58,8 @@ describe("useToast cleanup", () => {
 
     const { unmount } = render(<ToastProbe />);
     expect(() => unmount()).not.toThrow();
+
+    // Verify toast calls after unmount don't cause errors
+    expect(() => toast({ title: "After unmount" })).not.toThrow();
   });
 });

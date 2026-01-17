@@ -1,3 +1,4 @@
+import { deepStrictEqual } from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -57,7 +58,9 @@ async function main() {
   for (const key of Object.keys(expected)) {
     const expectedValue = expected[key];
     const actualValue = actual[key];
-    if (JSON.stringify(expectedValue) !== JSON.stringify(actualValue)) {
+    try {
+      deepStrictEqual(actualValue, expectedValue);
+    } catch {
       mismatches.push({ key, expected: expectedValue, actual: actualValue });
     }
   }
