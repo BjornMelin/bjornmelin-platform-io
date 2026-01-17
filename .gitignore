@@ -21,6 +21,9 @@ infrastructure/coverage
 /.next/
 /out/
 
+# Generated responsive image variants for static export
+/public/_images/
+
 # production
 *build/
 *dist/

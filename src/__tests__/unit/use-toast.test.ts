@@ -24,23 +24,46 @@ describe("use-toast reducer", () => {
   });
 
   it("updates a toast by id", () => {
-    const base: State = { toasts: [{ id: "x", title: "A" }] };
+    const base: State = {
+      toasts: [
+        { id: "x", title: "A" },
+        { id: "y", title: "B" },
+      ],
+    };
     const updated = reducer(base as never, {
       type: "UPDATE_TOAST",
-      toast: { id: "x", title: "B" } as never,
+      toast: { id: "x", title: "Updated" } as never,
     });
-    expect(updated.toasts[0].title).toBe("B");
+    expect(updated.toasts[0].title).toBe("Updated");
+    expect(updated.toasts[1].title).toBe("B");
   });
 
   it("dismisses matching toast by id", () => {
-    const base: State = { toasts: [{ id: "x", title: "A", open: true }] };
+    const base: State = {
+      toasts: [
+        { id: "x", title: "A", open: true },
+        { id: "y", title: "B", open: true },
+      ],
+    };
     const dismissed = reducer(base as never, { type: "DISMISS_TOAST", toastId: "x" } as never);
     expect(dismissed.toasts[0].open).toBe(false);
+    expect(dismissed.toasts[1].open).toBe(true);
   });
 
   it("removes a toast by id", () => {
     const base: State = { toasts: [{ id: "x", title: "A" }] };
     const removed = reducer(base as never, { type: "REMOVE_TOAST", toastId: "x" } as never);
+    expect(removed.toasts).toHaveLength(0);
+  });
+
+  it("removes all toasts when no id is provided", () => {
+    const base: State = {
+      toasts: [
+        { id: "x", title: "A" },
+        { id: "y", title: "B" },
+      ],
+    };
+    const removed = reducer(base as never, { type: "REMOVE_TOAST" } as never);
     expect(removed.toasts).toHaveLength(0);
   });
 });

@@ -49,6 +49,17 @@ Adopt Zod v4 conventions consistently:
 - Keep all schemas under `src/lib/schemas/` and export inferred types from there.
 - Validate static datasets at module load time to prevent invalid data from shipping.
 
+## Decision Framework Score (must be ≥ 9.0)
+
+| Criterion | Weight | Score | Weighted |
+| --- | --- | --- | --- |
+| Solution leverage | 0.35 | 9.3 | 3.26 |
+| Application value | 0.30 | 9.1 | 2.73 |
+| Maintenance & cognitive load | 0.25 | 9.0 | 2.25 |
+| Architectural adaptability | 0.10 | 9.0 | 0.90 |
+
+**Total:** 9.14 / 10.0
+
 ## Constraints
 
 - API and security validation must reject unexpected keys where it matters (`z.strictObject`).
@@ -97,7 +108,7 @@ Adopt Zod v4 conventions consistently:
 ## Testing
 
 - Unit tests validate schema behavior (happy paths and error paths).
-- Integration tests validate API route error handling for invalid payloads.
+- E2E tests validate contact form client-side behavior and payload shape (without relying on Next API routes).
 
 ## Changelog
 

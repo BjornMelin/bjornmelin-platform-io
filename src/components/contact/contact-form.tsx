@@ -1,9 +1,11 @@
 "use client";
 
 /**
- * @fileoverview Contact form component with client-side validation and POST to
- * /api/contact. Displays success/error alerts and toasts.
- * Includes honeypot and timing-based abuse prevention.
+ * Contact form component with client-side validation and POST to
+ * `${NEXT_PUBLIC_API_URL}/contact`.
+ *
+ * Includes honeypot and timing-based abuse prevention and provides accessible
+ * success/error feedback via alerts and toasts.
  */
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { buildContactEndpoint, safeParseUrl } from "@/lib/api/contact";
 import { type ContactFormData, contactFormSchema } from "@/lib/schemas/contact";
 
 interface APIErrorResponse {
@@ -45,7 +48,6 @@ export function ContactForm() {
   );
   // Track when form was loaded for timing-based abuse prevention
   const formLoadTime = useRef(Date.now());
-  // Honeypot field value
   const [honeypot, setHoneypot] = useState("");
 
   const {
@@ -65,7 +67,36 @@ export function ContactForm() {
     setFormStatus("idle");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contact`, {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      if (!apiBaseUrl) {
+        throw new Error(
+          "Contact form is not configured. Set NEXT_PUBLIC_API_URL in your environment (see .env.example).",
+        );
+      }
+
+      if (process.env.NODE_ENV === "development") {
+        const url = safeParseUrl(apiBaseUrl);
+        if (url) {
+          const normalizedPath = url.pathname.replace(/\/$/, "");
+          if (url.origin === window.location.origin && normalizedPath === "/api") {
+            throw new Error(
+              "Contact API is not available on the local Next.js dev server. Set NEXT_PUBLIC_API_URL to a deployed API (e.g. https://api.your-domain.com or https://your-domain.com/api).",
+            );
+          }
+        }
+      }
+
+      let endpoint: string;
+      try {
+        endpoint = buildContactEndpoint(apiBaseUrl);
+      } catch {
+        throw new Error(
+          "Invalid NEXT_PUBLIC_API_URL. Expected a full URL like https://api.your-domain.com or https://your-domain.com/api.",
+        );
+      }
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,19 +108,36 @@ export function ContactForm() {
         }),
       });
 
-      const result = (await response.json()) as APIErrorResponse;
+      let result: APIErrorResponse | null = null;
+      try {
+        result = (await response.json()) as APIErrorResponse;
+      } catch {
+        if (!response.ok) {
+          throw new Error("Failed to send message. The API returned invalid JSON.");
+        }
+      }
 
       if (!response.ok) {
-        // Handle validation errors
-        if (response.status === 400 && result.details) {
+        // Map API validation errors onto form fields.
+        if (response.status === 400 && result?.details) {
+          const validFields: ReadonlySet<keyof ContactFormData> = new Set([
+            "name",
+            "email",
+            "message",
+          ]);
           result.details.forEach(({ message, path }) => {
             const field = path[0] as keyof ContactFormData;
-            setError(field, { message });
+            if (typeof field === "string" && validFields.has(field)) {
+              setError(field, { message });
+            } else {
+              // eslint-disable-next-line no-console
+              console.warn("contact-form: unexpected field error", field);
+            }
           });
           throw new Error("Please check the form for errors");
         }
 
-        throw new Error(result.error || "Failed to send message");
+        throw new Error(result?.error || "Failed to send message");
       }
 
       setFormStatus("success");
@@ -113,7 +161,11 @@ export function ContactForm() {
   return (
     <div className="space-y-6">
       {formStatus === "success" && (
-        <Alert className="border-emerald-200/70 bg-emerald-50/90 text-emerald-950 shadow-sm dark:border-emerald-900/60 dark:bg-emerald-950/35 dark:text-emerald-50">
+        <Alert
+          role="status"
+          aria-live="polite"
+          className="border-emerald-200/70 bg-emerald-50/90 text-emerald-950 shadow-sm dark:border-emerald-900/60 dark:bg-emerald-950/35 dark:text-emerald-50"
+        >
           <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />
           <AlertTitle>Message Sent Successfully!</AlertTitle>
           <AlertDescription className="text-emerald-800/90 dark:text-emerald-200/90">
@@ -133,7 +185,7 @@ export function ContactForm() {
               href="https://www.linkedin.com/in/bjornmelin/"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-red-400"
+              className="rounded-sm underline hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               LinkedIn
             </a>
@@ -230,7 +282,7 @@ export function ContactForm() {
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Sending...
+              Sending…
             </>
           ) : (
             "Send Message"

@@ -130,26 +130,17 @@ export function Button({ variant = "default", className }: ButtonProps) {
 }
 ```
 
-## API Routes
+## External APIs (Static Export)
 
-### Route Handlers
+This application is deployed as a strict static export (`output: "export"`).
+Do not add Next.js API Route Handlers for runtime requests (e.g. `POST` handlers
+under `src/app/**/route.ts`). They will either break static export or create
+deployment-time drift.
 
-```typescript
-// app/api/contact/route.ts
-import { NextResponse } from "next/server";
-import { contactSchema } from "@/lib/schemas/contact";
+Use:
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const validatedData = contactSchema.parse(body);
-    // Implementation
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-  }
-}
-```
+- AWS Lambda (deployed via CDK under `infrastructure/`) for server-side behavior.
+- Client-side fetches from `${NEXT_PUBLIC_API_URL}` for API calls.
 
 ## Error Handling
 
@@ -182,6 +173,14 @@ export function ClientComponent() {
 ```
 
 ## Documentation
+
+### Comments and JSDoc
+
+Follow the Airbnb guidance for comments: keep them concise, explain *why* (not
+what), and avoid narrating the code. Prefer JSDoc for public APIs and exported
+utilities when the contract is non-obvious.
+
+Reference: `https://github.com/airbnb/javascript?tab=readme-ov-file#comments`.
 
 ### Component Documentation
 

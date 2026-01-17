@@ -24,17 +24,16 @@ Development documentation for the bjornmelin-platform-io project.
 
 #### Frontend
 
-- Next.js 14.2.35 (App Router, static export)
-- React 18.3.1
+- Next.js 16.1.2 (App Router, static export)
+- React 19.2.3
 - TypeScript 5.9.3
 - Tailwind CSS
 - shadcn/ui components
-- Framer Motion (LazyMotion)
 
 #### Build Optimization
 
-- next-export-optimize-images (WebP conversion)
-- @next/bundle-analyzer
+- sharp (generate WebP variants)
+- Next.js built-in analyzer (`pnpm analyze`)
 - Browserslist (ES6 module targets)
 
 #### Infrastructure
@@ -84,7 +83,7 @@ Server Actions, ISR, or request-dependent Route Handlers).
 
 ```text
 src/
-├── app/          # Next.js 14 App Router pages
+├── app/          # Next.js 16 App Router pages
 ├── components/   # React components
 ├── lib/          # Utilities and services
 ├── types/        # TypeScript types
@@ -95,8 +94,7 @@ src/
 
 - Server Components where applicable
 - Static generation (`output: 'export'`)
-- Image optimization (WebP via next-export-optimize-images)
-- Animation optimization (LazyMotion reduces bundle by 27KB)
+- Image optimization (WebP via sharp-generated variants)
 - Bundle size monitoring (`pnpm analyze`)
 
 ## Type Safety

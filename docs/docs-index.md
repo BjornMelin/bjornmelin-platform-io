@@ -25,7 +25,10 @@ docs/
 │       ├── ADR-0002-*.md
 │       ├── ADR-0003-*.md
 │       ├── ADR-0004-*.md
-│       └── ADR-0005-*.md
+│       ├── ADR-0005-*.md
+│       ├── ADR-0006-*.md
+│       ├── ADR-0007-*.md
+│       └── README.md
 │
 ├── development/
 │   ├── README.md              # Development overview
@@ -48,7 +51,9 @@ docs/
 │   ├── SPEC-0001-*.md
 │   ├── SPEC-0002-*.md
 │   ├── SPEC-0003-*.md
-│   └── (add more specs as needed)
+│   ├── SPEC-0004-*.md
+│   ├── SPEC-0005-*.md
+│   └── README.md
 │
 └── README.md                  # This documentation index
 ```

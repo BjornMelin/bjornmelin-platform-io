@@ -3,6 +3,7 @@
  * schemas for Person and WebSite entities.
  */
 import { createHash } from "node:crypto";
+import type React from "react";
 
 /**
  * Builds a JSON-LD Person schema for the portfolio owner.
@@ -82,7 +83,7 @@ interface StructuredDataProps {
  * @param schema Arbitrary JSON-LD schema.
  * @returns Stable key string safe for React keys.
  */
-const createSchemaKey = (schema: Record<string, unknown>): string => {
+export const createSchemaKey = (schema: Record<string, unknown>): string => {
   const type = typeof schema["@type"] === "string" ? (schema["@type"] as string) : undefined;
   const name = typeof schema.name === "string" ? (schema.name as string) : undefined;
   const baseKey = [type, name].filter(Boolean).join("-");
@@ -97,7 +98,7 @@ const createSchemaKey = (schema: Record<string, unknown>): string => {
  * @param type Controls which schemas are emitted.
  * @returns React fragment containing the JSON-LD script elements.
  */
-export default function StructuredData({ type }: StructuredDataProps): JSX.Element {
+export default function StructuredData({ type }: StructuredDataProps): React.ReactElement {
   const schemas = [];
 
   if (type === "person" || type === "both") {

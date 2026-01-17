@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 
@@ -111,5 +111,60 @@ describe("robots", () => {
     expect(result.sitemap).toBeDefined();
     expect(result.sitemap).toMatch(/sitemap\.xml$/);
     expect(() => new URL(result.sitemap as string)).not.toThrow();
+  });
+});
+
+describe("SEO base URL normalization", () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("adds https:// to robots sitemap when NEXT_PUBLIC_APP_URL has no protocol", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
+    const { default: robotsModule } = await import("@/app/robots");
+
+    expect(robotsModule().sitemap).toBe("https://example.com/sitemap.xml");
+  });
+
+  it("falls back to the default base URL when NEXT_PUBLIC_APP_URL is empty", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
+    const { default: robotsModule } = await import("@/app/robots");
+
+    expect(robotsModule().sitemap).toBe("https://bjornmelin.io/sitemap.xml");
+  });
+
+  it("preserves https:// when NEXT_PUBLIC_APP_URL includes protocol", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://example.com");
+    const { default: robotsModule } = await import("@/app/robots");
+
+    expect(robotsModule().sitemap).toBe("https://example.com/sitemap.xml");
+  });
+
+  it("adds https:// to sitemap URLs when NEXT_PUBLIC_APP_URL has no protocol", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
+    const { default: sitemapModule } = await import("@/app/sitemap");
+
+    const result = sitemapModule();
+    expect(result[0]?.url).toContain("https://example.com/");
+  });
+
+  it("falls back to the default base URL for sitemap when NEXT_PUBLIC_APP_URL is empty", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
+    const { default: sitemapModule } = await import("@/app/sitemap");
+
+    const result = sitemapModule();
+    expect(result[0]?.url).toContain("https://bjornmelin.io/");
+  });
+
+  it("preserves https:// for sitemap URLs when NEXT_PUBLIC_APP_URL includes protocol", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://example.com");
+    const { default: sitemapModule } = await import("@/app/sitemap");
+
+    const result = sitemapModule();
+    expect(result[0]?.url).toContain("https://example.com/");
   });
 });

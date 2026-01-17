@@ -15,7 +15,7 @@
 
 - `pnpm install`: install dependencies (Node version pinned via `.nvmrc`).
 - `pnpm dev`: run Next.js locally on `http://localhost:3000`.
-- `pnpm build`: production build, generates `out/`, and updates CSP hashes.
+- `pnpm build`: production build; generates image variants, writes static `out/`, and updates CSP hashes.
 - `pnpm start` or `pnpm serve`: serve the `out/` static export.
 - `pnpm lint` / `pnpm format`: Biome lint+format (writes fixes).
 - `pnpm type-check`: TypeScript typecheck.
@@ -50,6 +50,8 @@ Infrastructure:
 ## Security, Configuration, and Deployment Notes
 
 - Keep secrets out of git. Use `.env.local` for local overrides (start from `.env.example`).
+- Static export is mandatory (`output: "export"`). Do not introduce Server Actions, ISR, Draft Mode,
+  request-dependent Route Handlers, or other features that require a server runtime.
 - CSP inline script hashes are generated and are **not secrets** (they appear in public CSP headers).
   Never delete or manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
   Regenerate with `pnpm generate:csp-hashes` (usually via `pnpm build`).
@@ -67,6 +69,8 @@ Core workflow:
 2. `agent-browser snapshot -i` - Get interactive elements with refs (@e1, @e2)
 3. `agent-browser click @e1` / `fill @e2 "text"` - Interact using refs
 4. Re-snapshot after page changes
+
+<!-- opensrc:start -->
 
 ## Source Code Reference
 
@@ -86,3 +90,5 @@ npx opensrc pypi:<package>      # Python package (e.g., npx opensrc pypi:request
 npx opensrc crates:<package>    # Rust crate (e.g., npx opensrc crates:serde)
 npx opensrc <owner>/<repo>      # GitHub repo (e.g., npx opensrc vercel/ai)
 ```
+
+<!-- opensrc:end -->

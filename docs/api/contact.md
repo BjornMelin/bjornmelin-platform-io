@@ -2,9 +2,21 @@
 
 The contact form API handles submission of contact form messages.
 
+This API is implemented as an AWS Lambda function (deployed via CDK) and is not
+handled by a Next.js Route Handler in the web app (static export constraint).
+See ADR-0007 for the API boundary decision.
+
 ## Endpoint
 
-`POST /api/contact`
+`POST ${NEXT_PUBLIC_API_URL}/contact`
+
+`NEXT_PUBLIC_API_URL` must be a full URL (including `https://`).
+It is the API base URL (not a relative path on the frontend).
+
+For example:
+
+- API on separate domain: `NEXT_PUBLIC_API_URL=https://api.your-domain.com` → `POST https://api.your-domain.com/contact`
+- API routed under `/api`: `NEXT_PUBLIC_API_URL=https://your-domain.com/api` → `POST https://your-domain.com/api/contact`
 
 ## Request Schema
 
@@ -102,7 +114,6 @@ Honeypot submissions return a success response without sending email.
 
 The implementation can be found in:
 
-- `src/app/api/contact/route.ts` - API route handler
 - `src/lib/email/` - Email service implementation (Resend)
 - `src/lib/security/` - Rate limiting, honeypot, and time checks
 - `src/lib/schemas/contact.ts` - Request validation schema
@@ -110,7 +121,7 @@ The implementation can be found in:
 ## Example Request
 
 ```bash
-curl -X POST http://localhost:3000/api/contact \
+curl -X POST "$NEXT_PUBLIC_API_URL/contact" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "John Doe",

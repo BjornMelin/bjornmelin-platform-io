@@ -8,6 +8,8 @@ import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const dynamic = "error";
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,

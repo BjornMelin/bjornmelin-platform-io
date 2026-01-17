@@ -1,27 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-// Mock next-export-optimize-images/image
-vi.mock("next-export-optimize-images/image", () => ({
-  __esModule: true,
-  default: (props: Record<string, unknown>) => {
-    const {
-      alt,
-      src,
-      fill: _fill,
-      priority: _priority,
-      placeholder: _placeholder,
-      blurDataURL: _blurDataURL,
-      unoptimized: _unoptimized,
-      loader: _loader,
-      quality: _quality,
-      ...imgProps
-    } = props as Record<string, unknown>;
-    // biome-ignore lint/performance/noImgElement: test shim replaces next-export-optimize-images/image
-    return <img alt={(alt as string) ?? ""} src={src as string} {...imgProps} />;
-  },
-}));
-
 // Mock UI components
 vi.mock("@/components/ui/badge", () => ({
   Badge: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
@@ -52,6 +31,18 @@ vi.mock("@/data/certifications", () => ({
       image: "/cert.png",
       link: "https://aws.amazon.com",
     },
+    {
+      name: "AWS Machine Learning",
+      issuedBy: "Amazon Web Services",
+      issuedDate: "2023",
+      image: "/cert-ml.png",
+      link: "https://aws.amazon.com/ml",
+      earlyAdopterBadge: {
+        name: "Early Adopter",
+        link: "https://aws.amazon.com/badges",
+        image: "/badge.png",
+      },
+    },
   ],
 }));
 
@@ -62,7 +53,7 @@ vi.mock("@/data/education", () => ({
     startDate: "2016",
     endDate: "2020",
     gpa: "3.9",
-    honors: [{ name: "Summa Cum Laude" }],
+    honors: [{ name: "Summa Cum Laude" }, { name: "Dean's List" }],
     activities: [{ name: "Computer Science Club" }],
   },
 }));
@@ -78,6 +69,16 @@ vi.mock("@/data/experience", () => ({
       endDate: "Present",
       achievements: [{ text: "Led AI initiatives" }],
       skills: [{ name: "Python" }],
+    },
+    {
+      title: "ML Engineer",
+      company: "Example Corp",
+      location: "Onsite",
+      isRemote: false,
+      startDate: "2020",
+      endDate: "2022",
+      achievements: [{ text: "Shipped models" }],
+      skills: [],
     },
   ],
   previousExperiences: [
@@ -139,12 +140,15 @@ describe("AboutDetail", () => {
     expect(screen.getByText("Work Experience")).toBeInTheDocument();
     expect(screen.getByText("Senior Data Scientist")).toBeInTheDocument();
     expect(screen.getByText("Test Corp")).toBeInTheDocument();
+    expect(screen.getByText("ML Engineer")).toBeInTheDocument();
+    expect(screen.getByText("Example Corp")).toBeInTheDocument();
   });
 
   it("renders achievements in experience", () => {
     render(<AboutDetail />);
 
     expect(screen.getByText("Led AI initiatives")).toBeInTheDocument();
+    expect(screen.getByText("Shipped models")).toBeInTheDocument();
   });
 
   it("renders previous experience section", () => {
@@ -159,6 +163,16 @@ describe("AboutDetail", () => {
 
     expect(screen.getByText("AWS Certifications")).toBeInTheDocument();
     expect(screen.getByText("AWS Solutions Architect")).toBeInTheDocument();
+    expect(screen.getByText("AWS Machine Learning")).toBeInTheDocument();
+    const machineLearningLink = screen.getByRole("link", { name: /aws machine learning/i });
+    expect(machineLearningLink).toHaveAttribute("href", "https://aws.amazon.com/ml");
+    expect(screen.getByRole("img", { name: "AWS Machine Learning" })).toHaveAttribute(
+      "src",
+      "/cert-ml.png",
+    );
+    const earlyAdopterLink = screen.getByRole("link", { name: /early adopter/i });
+    expect(earlyAdopterLink).toHaveAttribute("href", "https://aws.amazon.com/badges");
+    expect(screen.getByRole("img", { name: "Early Adopter" })).toHaveAttribute("src", "/badge.png");
   });
 
   it("renders education section", () => {
@@ -167,6 +181,8 @@ describe("AboutDetail", () => {
     expect(screen.getByText("Education")).toBeInTheDocument();
     expect(screen.getByText("B.S. in Computer Science")).toBeInTheDocument();
     expect(screen.getByText("Test University")).toBeInTheDocument();
+    expect(screen.getByText("Summa Cum Laude")).toBeInTheDocument();
+    expect(screen.getByText("Dean's List")).toBeInTheDocument();
   });
 
   it("renders hobbies section", () => {

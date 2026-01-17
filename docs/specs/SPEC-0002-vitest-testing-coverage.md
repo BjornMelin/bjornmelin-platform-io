@@ -6,7 +6,7 @@ date: 2026-01-16
 owners: ["ai-arch"]
 status: Implemented
 related_requirements:
-  - FR-101: Unit and integration tests cover core modules and API logic
+  - FR-101: Unit and integration tests cover core modules and API contracts
   - NFR-101: Tests are deterministic and CI-friendly
 related_adrs: ["ADR-0003", "ADR-0004"]
 notes: "Defines Vitest scope, conventions, and execution practices."
@@ -17,10 +17,21 @@ notes: "Defines Vitest scope, conventions, and execution practices."
 Vitest is used for:
 
 - Unit tests (pure functions, schemas, utilities)
-- Integration tests (API handlers, multi-module workflows)
+- Integration tests (multi-module workflows and API contract helpers)
 - Component tests in `jsdom` when DOM behavior is required
 
 Async Server Components are covered by Playwright E2E per ADR-0004.
+
+## Decision Framework Score (must be ≥ 9.0)
+
+| Criterion | Weight | Score | Weighted |
+| --- | --- | --- | --- |
+| Solution leverage | 0.35 | 9.2 | 3.22 |
+| Application value | 0.30 | 9.0 | 2.70 |
+| Maintenance & cognitive load | 0.25 | 9.1 | 2.28 |
+| Architectural adaptability | 0.10 | 9.0 | 0.90 |
+
+**Total:** 9.10 / 10.0
 
 ## Coverage targets
 

@@ -2,7 +2,8 @@
 
 ## Overview
 
-Contact form emails are delivered via [Resend](https://resend.com), a developer-friendly transactional email service. The infrastructure uses proper DNS authentication (SPF, DKIM, DMARC) for optimal deliverability.
+Contact form emails are delivered via [Resend](https://resend.com), a developer-friendly transactional email service.
+The infrastructure uses proper DNS authentication (SPF, DKIM, DMARC) for optimal deliverability.
 
 ## Architecture
 
@@ -37,13 +38,16 @@ Contact form emails are delivered via [Resend](https://resend.com), a developer-
 │   Contact Form (browser)                                         │
 │         │                                                        │
 │         ▼                                                        │
-│   POST http://localhost:3000/api/contact                        │
+│   POST ${NEXT_PUBLIC_API_URL}/contact                           │
 │         │                                                        │
 │         ▼                                                        │
-│   Next.js API Route (/app/api/contact/route.ts)                 │
+│   API Gateway (Regional)                                         │
 │         │                                                        │
-│         ├──► env: RESEND_API_KEY                                │
-│         ├──► env: CONTACT_EMAIL                                 │
+│         ▼                                                        │
+│   Lambda (contact-form)                                          │
+│         │                                                        │
+│         ├──► SSM: /portfolio/prod/resend/api-key                │
+│         ├──► SSM: /portfolio/prod/CONTACT_EMAIL                 │
 │         │                                                        │
 │         ▼                                                        │
 │   Resend API ──► Email delivered to recipient                   │
@@ -55,22 +59,23 @@ Contact form emails are delivered via [Resend](https://resend.com), a developer-
 
 All email DNS records are managed via AWS CDK in `infrastructure/lib/stacks/email-stack.ts`.
 
-| Record | Type | Host | Value | Purpose |
-|--------|------|------|-------|---------|
-| SPF | TXT | `@` | `v=spf1 include:_spf.resend.com ~all` | Authorize Resend to send |
-| DKIM | TXT | `resend._domainkey` | `p=MIGfMA0GCSq...` | Email signature verification |
-| DMARC | TXT | `_dmarc` | `v=DMARC1; p=quarantine; rua=mailto:...` | Policy + reporting |
-| Send MX | MX | `send` | `10 feedback-smtp.us-east-1.amazonses.com` | Bounce/complaint handling |
-| Send SPF | TXT | `send` | `v=spf1 include:amazonses.com ~all` | SPF alignment for send subdomain |
+| Record   | Type | Host                | Value                                      | Purpose                          |
+| :------- | :--- | :------------------ | :----------------------------------------- | :------------------------------- |
+| SPF      | TXT  | `@`                 | `v=spf1 include:_spf.resend.com ~all`      | Authorize Resend to send         |
+| DKIM     | TXT  | `resend._domainkey` | `p=MIGfMA0GCSq...`                         | Email signature verification     |
+| DMARC    | TXT  | `_dmarc`            | `v=DMARC1; p=quarantine; rua=mailto:...`   | Policy + reporting               |
+| Send MX  | MX   | `send`              | `10 feedback-smtp.us-east-1.amazonses.com` | Bounce/complaint handling        |
+| Send SPF | TXT  | `send`              | `v=spf1 include:amazonses.com ~all`        | SPF alignment for send subdomain |
 
-**Note:** The MX record is optional for basic sending. Enable "Receiving" in Resend dashboard only if you need to receive emails through Resend.
+**Note:** The MX record is optional for basic sending. Enable "Receiving" in Resend dashboard only if
+you need to receive emails through Resend.
 
 ## Secrets Management
 
-| Parameter | Path | Type | Description |
-|-----------|------|------|-------------|
-| Resend API Key | `/portfolio/prod/resend/api-key` | SecureString | Resend API key (JSON or plain) |
-| Recipient Email | `/portfolio/prod/CONTACT_EMAIL` | SecureString | Contact form recipient |
+| Parameter       | Path                             | Type         | Description                    |
+| :-------------- | :------------------------------- | :----------- | :----------------------------- |
+| Resend API Key  | `/portfolio/prod/resend/api-key` | SecureString | Resend API key (JSON or plain) |
+| Recipient Email | `/portfolio/prod/CONTACT_EMAIL`  | SecureString | Contact form recipient         |
 
 Encrypted with KMS alias: `alias/portfolio-email-service`
 
@@ -94,8 +99,8 @@ pnpm resend:sync-dns --dry-run
 
 ## Sender Addresses
 
-| Purpose | Address |
-|---------|---------|
+| Purpose      | Address                                |
+| :----------- | :------------------------------------- |
 | Contact Form | `Contact Form <contact@bjornmelin.io>` |
 
 ## Shared Code
@@ -109,7 +114,7 @@ Email templates and validation are centralized in `src/lib/email/templates/conta
 - `CONTACT_FORM_LIMITS` - Shared validation constraints
 
 This module is imported by both:
-- Frontend API routes (`src/app/api/contact/route.ts`)
+
 - Lambda handler (`infrastructure/lib/functions/contact-form/index.ts`)
 
 ## Troubleshooting
@@ -135,11 +140,10 @@ Ensure `send.bjornmelin.io` MX and SPF records are configured for bounce handlin
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `infrastructure/lib/stacks/email-stack.ts` | CDK stack (Lambda, API Gateway, DNS) |
-| `infrastructure/lib/functions/contact-form/index.ts` | Lambda handler |
-| `src/lib/email/templates/contact-form.ts` | Shared templates + validation |
-| `src/app/api/contact/route.ts` | Next.js API route (local dev) |
-| `scripts/ops/resend-domain-manager.ts` | Domain management CLI |
-| `scripts/ops/cleanup-legacy-ses-dns.sh` | Legacy DNS cleanup |
+| File                                                 | Purpose                              |
+| :--------------------------------------------------- | :----------------------------------- |
+| `infrastructure/lib/stacks/email-stack.ts`           | CDK stack (Lambda, API Gateway, DNS) |
+| `infrastructure/lib/functions/contact-form/index.ts` | Lambda handler                       |
+| `src/lib/email/templates/contact-form.ts`            | Shared templates + validation        |
+| `scripts/ops/resend-domain-manager.ts`               | Domain management CLI                |
+| `scripts/ops/cleanup-legacy-ses-dns.sh`              | Legacy DNS cleanup                   |

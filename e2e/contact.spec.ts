@@ -13,7 +13,7 @@ test("contact form validates required fields and submits successfully", async ({
   await expect(page.getByText("Message must be")).toBeVisible();
 
   // Mock the API response and assert request payload.
-  await page.route("**/api/contact", async (route) => {
+  await page.route("**/contact", async (route) => {
     const request = route.request();
     if (request.method() !== "POST") return route.continue();
 

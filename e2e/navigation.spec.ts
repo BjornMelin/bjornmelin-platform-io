@@ -31,3 +31,20 @@ test("hero CTAs navigate to contact and projects", async ({ page }) => {
   await page.getByRole("link", { name: "View Projects" }).click();
   await expect(page).toHaveURL(/\/projects\/?$/);
 });
+
+test("mobile menu closes on navigation", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  const primaryNav = page.getByRole("navigation", { name: "Primary" });
+
+  await primaryNav.getByRole("button", { name: /toggle menu/i }).click();
+  await expect(primaryNav.getByRole("link", { name: "Home" })).toBeVisible();
+
+  await primaryNav.getByRole("link", { name: "Projects" }).click();
+  await expect(page).toHaveURL(/\/projects\/?$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Projects" })).toBeVisible();
+
+  // Menu content should be gone after link click (the "Home" entry only exists in the mobile panel).
+  await expect(primaryNav.getByRole("link", { name: "Home" })).toHaveCount(0);
+});

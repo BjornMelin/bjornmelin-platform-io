@@ -27,8 +27,12 @@ vi.mock("@/app/providers", () => ({
   ),
 }));
 
-import { metadata, viewport } from "@/app/layout";
+import RootLayout, { metadata, viewport } from "@/app/layout";
+import { Providers } from "@/app/providers";
 import { AppShell } from "@/components/layout/app-shell";
+import StructuredData from "@/components/structured-data";
+import { ThemeScript } from "@/components/theme";
+import { walkReactTree } from "@/test/helpers";
 
 describe("<AppShell />", () => {
   it("renders Navbar and Footer", () => {
@@ -54,6 +58,31 @@ describe("<AppShell />", () => {
     const main = screen.getByRole("main");
     expect(main).toHaveAttribute("id", "main-content");
     expect(main).toContainElement(screen.getByTestId("child-content"));
+  });
+});
+
+describe("RootLayout", () => {
+  it("includes ThemeScript, Providers, and passed children", () => {
+    const child = <div data-testid="root-child">Child</div>;
+    const tree = RootLayout({ children: child });
+
+    let hasThemeScript = false;
+    let hasProviders = false;
+    let hasChild = false;
+    let hasStructuredData = false;
+
+    walkReactTree(tree, (element) => {
+      if (element.type === ThemeScript) hasThemeScript = true;
+      if (element.type === Providers) hasProviders = true;
+      if (element.type === StructuredData) hasStructuredData = true;
+      // Ensure the exact child element instance is present in the returned tree.
+      if (element === (child as unknown)) hasChild = true;
+    });
+
+    expect(hasThemeScript).toBe(true);
+    expect(hasProviders).toBe(true);
+    expect(hasChild).toBe(true);
+    expect(hasStructuredData).toBe(true);
   });
 });
 

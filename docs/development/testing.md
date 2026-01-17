@@ -66,43 +66,10 @@ use Playwright E2E tests instead.
 
 ## API Testing
 
-### Contact Form API
+This application is deployed as a static export. API behavior should be tested via:
 
-```typescript
-import { POST } from "@/app/api/contact/route";
-
-describe("Contact API", () => {
-  it("handles valid submission", async () => {
-    const response = await POST(
-      new Request("api/contact", {
-        method: "POST",
-        body: JSON.stringify({
-          name: "Test User",
-          email: "test@example.com",
-          message: "Test message",
-        }),
-      })
-    );
-
-    expect(response.status).toBe(200);
-  });
-
-  it("validates input", async () => {
-    const response = await POST(
-      new Request("api/contact", {
-        method: "POST",
-        body: JSON.stringify({
-          name: "",
-          email: "invalid",
-          message: "",
-        }),
-      })
-    );
-
-    expect(response.status).toBe(400);
-  });
-});
-```
+- Component + integration tests using MSW to mock the contact endpoint (`*/contact`).
+- Playwright E2E tests against a running dev server and/or deployed API.
 
 ## Integration Testing
 

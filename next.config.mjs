@@ -1,9 +1,4 @@
-import bundleAnalyzer from "@next/bundle-analyzer";
-import withExportImages from "next-export-optimize-images";
-
-const withBundleAnalyzer = bundleAnalyzer({
-  enabled: process.env.ANALYZE === "true",
-});
+import { deviceSizes, imageSizes } from "./src/lib/config/image-sizes.mjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -11,7 +6,10 @@ const nextConfig = {
   output: "export",
 
   images: {
-    // Note: unoptimized removed - next-export-optimize-images handles optimization
+    loader: "custom",
+    loaderFile: "./image-loader.ts",
+    deviceSizes,
+    imageSizes,
     remotePatterns: [
       {
         protocol: "https",
@@ -22,21 +20,10 @@ const nextConfig = {
   trailingSlash: true,
   reactStrictMode: true,
 
-  // Optimize package imports for smaller bundles
-  experimental: {
-    optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
-  },
-
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
 };
 
-// withExportImages is async, so we must use an async config function
-const config = async () => {
-  const exportConfig = await withExportImages(nextConfig);
-  return withBundleAnalyzer(exportConfig);
-};
-
-export default config;
+export default nextConfig;

@@ -1,32 +1,47 @@
 /**
  * @fileoverview Interaction tests for ProjectGrid and smoke for ProjectCard.
  */
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
 
-vi.mock("next-export-optimize-images/image", () => ({
-  __esModule: true,
-  default: (props: Record<string, unknown>) => {
-    // Minimal shim that renders a plain img for tests
-    const {
-      alt,
-      fill: _fill,
-      priority: _priority,
-      placeholder: _placeholder,
-      blurDataURL: _blurDataURL,
-      unoptimized: _unoptimized,
-      loader: _loader,
-      quality: _quality,
-      ...imgProps
-    } = props as Record<string, unknown>;
-    // biome-ignore lint/performance/noImgElement: test shim replaces next-export-optimize-images/image
-    return <img alt={(alt as string) ?? ""} {...imgProps} />;
-  },
-}));
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import type { ReadonlyURLSearchParams } from "next/navigation";
+import type { ReactNode } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ProjectCard } from "@/components/projects/project-card";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import type { Project } from "@/types/project";
+
+vi.mock("@/components/ui/select", () => ({
+  Select: ({
+    value,
+    onValueChange,
+    children,
+  }: {
+    value: string;
+    onValueChange: (value: string) => void;
+    children: ReactNode;
+  }) => (
+    <select
+      aria-label="Sort projects by"
+      value={value}
+      onChange={(event) => onValueChange(event.target.value)}
+    >
+      {children}
+    </select>
+  ),
+  SelectTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,
+  SelectContent: ({ children }: { children: ReactNode }) => <>{children}</>,
+  SelectItem: ({ value, children }: { value: string; children: ReactNode }) => (
+    <option value={value}>{children}</option>
+  ),
+  SelectValue: ({ placeholder }: { placeholder?: string }) =>
+    placeholder ? (
+      <option value="" disabled hidden>
+        {placeholder}
+      </option>
+    ) : null,
+}));
 
 const demoProjects: Project[] = [
   {
@@ -52,6 +67,10 @@ const demoProjects: Project[] = [
 ];
 
 describe("Project components", () => {
+  afterEach(() => {
+    window.history.replaceState({}, "", "/");
+  });
+
   it("ProjectCard renders title and links conditionally", () => {
     render(<ProjectCard project={demoProjects[0]} />);
     expect(screen.getByText(/A project/)).toBeInTheDocument();
@@ -76,5 +95,114 @@ describe("Project components", () => {
     fireEvent.click(screen.getByRole("button", { name: "All" }));
     expect(screen.getByText(/A project/)).toBeInTheDocument();
     expect(screen.getByText(/B project/)).toBeInTheDocument();
+  });
+
+  it("ProjectGrid respects search params for category and alphabetical sort", async () => {
+    const user = userEvent.setup();
+    const { useRouter } = await import("next/navigation");
+    useRouter().replace("/projects?category=Data&sort=alphabetical");
+
+    const projects: Project[] = [
+      {
+        id: "a",
+        title: "Zulu Project",
+        description: "Zulu",
+        technologies: ["ts"],
+        category: "Data",
+        image: "/z.png",
+        links: {},
+        featured: false,
+      },
+      {
+        id: "b",
+        title: "Alpha Project",
+        description: "Alpha",
+        technologies: ["ts"],
+        category: "Data",
+        image: "/a.png",
+        links: {},
+        featured: false,
+      },
+      {
+        id: "c",
+        title: "Web Project",
+        description: "Web",
+        technologies: ["react"],
+        category: "Web",
+        image: "/w.png",
+        links: {},
+        featured: true,
+      },
+    ];
+
+    render(<ProjectGrid projects={projects} />);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/web project/i)).toBeNull();
+    });
+
+    const cards = screen.getAllByTestId("project-card");
+    expect(cards[0]?.textContent).toContain("Alpha Project");
+    expect(cards[1]?.textContent).toContain("Zulu Project");
+
+    const trigger = screen.getByRole("combobox", { name: /sort projects by/i });
+    await user.selectOptions(trigger, "featured");
+
+    await waitFor(() => {
+      expect(window.location.search).toContain("category=Data");
+      expect(window.location.search).not.toContain("sort=");
+    });
+  });
+
+  it("ProjectGrid defaults to All and featured when params are invalid", async () => {
+    const user = userEvent.setup();
+    const navigation = await import("next/navigation");
+    const invalidParams = new URLSearchParams(
+      "category=Unknown&sort=bogus",
+    ) as ReadonlyURLSearchParams;
+    const searchParamsSpy = vi.spyOn(navigation, "useSearchParams").mockReturnValue(invalidParams);
+
+    const projects: Project[] = [
+      {
+        id: "a",
+        title: "Featured Project",
+        description: "Featured",
+        technologies: ["ts"],
+        category: "Web",
+        image: "/f.png",
+        links: {},
+        featured: true,
+      },
+      {
+        id: "b",
+        title: "Regular Project",
+        description: "Regular",
+        technologies: ["ts"],
+        category: "Data",
+        image: "/r.png",
+        links: {},
+        featured: false,
+      },
+    ];
+
+    render(<ProjectGrid projects={projects} />);
+
+    const cards = await screen.findAllByTestId("project-card");
+    expect(cards).toHaveLength(2);
+    expect(cards[0]?.textContent).toContain("Featured Project");
+
+    const trigger = screen.getByRole("combobox", { name: /sort projects by/i });
+    await user.selectOptions(trigger, "alphabetical");
+
+    await waitFor(() => {
+      expect(window.location.search).toContain("sort=alphabetical");
+    });
+
+    searchParamsSpy.mockRestore();
+  });
+
+  it("ProjectGrid shows empty state when no projects are available", () => {
+    render(<ProjectGrid projects={[]} />);
+    expect(screen.getByText(/no projects found/i)).toBeInTheDocument();
   });
 });

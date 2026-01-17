@@ -73,8 +73,9 @@ pnpm build
 
 The build command executes:
 
-1. `next build` - Generates static HTML/JS/CSS in `out/`
-2. `next-export-optimize-images` - Converts images to WebP with responsive variants
+1. `prebuild` - Generates WebP responsive variants into `public/_images/`
+2. `next build` - Generates static HTML/JS/CSS in `out/`
+3. `pnpm generate:csp-hashes` - Regenerates CSP inline script hashes for CDK
 
 ### 2. Deploy Infrastructure
 
@@ -89,6 +90,9 @@ pnpm cdk deploy --all
 GitHub Actions deploys production automatically on merges to `main` via `deploy.yml`:
 it builds the static export, deploys the Storage stack (CSP headers), then uploads the matching
 `out/` directory to S3 and invalidates CloudFront.
+
+Note: `deploy.yml` ignores documentation-only changes (`**.md`). Use `manual-deploy.yml` if you
+intentionally need to redeploy the site for a docs-only commit.
 
 #### CSP + static export coupling (important)
 

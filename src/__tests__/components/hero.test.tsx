@@ -1,41 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
-// Mock next/link
-vi.mock("next/link", () => ({
-  default: ({
-    children,
-    href,
-    ...props
-  }: { children: React.ReactNode; href: string } & Record<string, unknown>) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  ),
-}));
-
-// Mock next-export-optimize-images/image
-vi.mock("next-export-optimize-images/image", () => ({
-  __esModule: true,
-  default: (props: Record<string, unknown>) => {
-    const {
-      alt,
-      src,
-      fill: _fill,
-      priority: _priority,
-      placeholder: _placeholder,
-      blurDataURL: _blurDataURL,
-      unoptimized: _unoptimized,
-      loader: _loader,
-      quality: _quality,
-      ...imgProps
-    } = props as Record<string, unknown>;
-    // biome-ignore lint/performance/noImgElement: test shim replaces next-export-optimize-images/image
-    return <img alt={(alt as string) ?? ""} src={src as string} {...imgProps} />;
-  },
-}));
-
-// Import after mocks
 import { Hero } from "@/components/sections/hero";
 
 describe("Hero", () => {

@@ -127,6 +127,9 @@ export default defineConfig({
         "**/*.type.ts",
         ".next/**",
         "infrastructure/**",
+        // Re-export-only barrels are validated by contract tests but are not meaningful to track as covered lines/functions.
+        "src/lib/email/index.ts",
+        "src/lib/security/index.ts",
         // UI library components (shadcn/radix - vendor code)
         "src/components/ui/**",
         // Thin wrappers around third-party libraries

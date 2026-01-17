@@ -1,7 +1,7 @@
 /**
  * @fileoverview Smoke tests for Navbar and Footer components.
  */
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -23,16 +23,61 @@ describe("Navbar/Footer", () => {
     const toggle = screen.getByRole("button", { name: /toggle menu/i });
     expect(toggle).toBeInTheDocument();
 
-    const contactBefore = screen.getAllByRole("link", { name: "Contact" });
-    expect(contactBefore).toHaveLength(1);
+    expect(screen.queryByTestId("mobile-nav")).not.toBeInTheDocument();
 
     await user.click(toggle);
-    const contactOpen = screen.getAllByRole("link", { name: "Contact" });
-    expect(contactOpen.length).toBeGreaterThan(contactBefore.length);
+    expect(screen.getByTestId("mobile-nav")).toBeInTheDocument();
 
     await user.click(toggle);
-    const contactAfter = screen.getAllByRole("link", { name: "Contact" });
-    expect(contactAfter).toHaveLength(1);
+    await waitFor(() => {
+      expect(screen.queryByTestId("mobile-nav")).not.toBeInTheDocument();
+    });
+  });
+
+  it("closes the mobile menu when a mobile link is clicked", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    const toggle = screen.getByRole("button", { name: /toggle menu/i });
+    await user.click(toggle);
+
+    const mobileMenu = screen.getByTestId("mobile-nav");
+    await user.click(within(mobileMenu).getByRole("link", { name: "Projects" }));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("mobile-nav")).not.toBeInTheDocument();
+    });
+  });
+
+  it("closes the mobile menu when Home, About, or Contact link is clicked", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    const toggle = screen.getByRole("button", { name: /toggle menu/i });
+    await user.click(toggle);
+
+    const mobileMenu = screen.getByTestId("mobile-nav");
+    await user.click(within(mobileMenu).getByRole("link", { name: "Home" }));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("mobile-nav")).not.toBeInTheDocument();
+    });
+
+    await user.click(toggle);
+    const mobileMenuAfterHome = screen.getByTestId("mobile-nav");
+    await user.click(within(mobileMenuAfterHome).getByRole("link", { name: "About" }));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("mobile-nav")).not.toBeInTheDocument();
+    });
+
+    await user.click(toggle);
+    const mobileMenuAfterAbout = screen.getByTestId("mobile-nav");
+    await user.click(within(mobileMenuAfterAbout).getByRole("link", { name: "Contact" }));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("mobile-nav")).not.toBeInTheDocument();
+    });
   });
 
   it("renders Footer with copyright text", () => {

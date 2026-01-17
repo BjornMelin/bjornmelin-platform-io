@@ -1,9 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { delay, HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ContactForm } from "@/components/contact/contact-form";
+import { buildContactEndpoint } from "@/lib/api/contact";
 import { server } from "@/mocks/node";
+import { createDeferred, fillContactForm } from "@/test/helpers";
 
 // Mock the toast hook
 const mockToast = vi.fn();
@@ -11,29 +13,11 @@ vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({ toast: mockToast }),
 }));
 
-/**
- * Helper to fill the form with valid data and trigger validation.
- * Uses blur events since the form uses mode: "onTouched" validation.
- */
-async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
-  const nameInput = screen.getByLabelText(/name/i);
-  const emailInput = screen.getByLabelText(/email/i);
-  const messageInput = screen.getByLabelText(/message/i);
-
-  // Type and blur each field to trigger validation
-  await user.type(nameInput, "John Doe");
-  await user.tab(); // Blur name
-
-  await user.type(emailInput, "john@example.com");
-  await user.tab(); // Blur email
-
-  await user.type(messageInput, "This is a test message that is long enough.");
-  await user.tab(); // Blur message
-}
+const apiBaseUrl = "http://localhost:3000";
 
 describe("ContactForm", () => {
   beforeEach(() => {
-    vi.stubEnv("NEXT_PUBLIC_API_URL", "http://localhost:3000/api");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", apiBaseUrl);
     mockToast.mockClear();
   });
 
@@ -56,6 +40,16 @@ describe("ContactForm", () => {
     const honeypotInput = document.querySelector('input[name="honeypot"]');
     expect(honeypotInput).toBeInTheDocument();
     expect(honeypotInput).toHaveAttribute("tabIndex", "-1");
+  });
+
+  it("updates honeypot value when changed", async () => {
+    const user = userEvent.setup();
+    render(<ContactForm />);
+
+    const honeypotInput = document.querySelector('input[name="honeypot"]') as HTMLInputElement;
+    await user.type(honeypotInput, "bot");
+
+    expect(honeypotInput.value).toBe("bot");
   });
 
   it("shows validation errors on blur for invalid name", async () => {
@@ -101,9 +95,10 @@ describe("ContactForm", () => {
   it("submits form data to API endpoint", async () => {
     const user = userEvent.setup();
     let capturedRequest: { url: string; method: string; headers: Headers } | null = null;
+    const endpoint = buildContactEndpoint(apiBaseUrl);
 
     server.use(
-      http.post("*/api/contact", ({ request }) => {
+      http.post(endpoint, ({ request }) => {
         capturedRequest = {
           url: request.url,
           method: request.method,
@@ -114,7 +109,7 @@ describe("ContactForm", () => {
     );
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -129,16 +124,17 @@ describe("ContactForm", () => {
   it("includes honeypot and formLoadTime in payload", async () => {
     const user = userEvent.setup();
     let capturedBody: Record<string, unknown> | null = null;
+    const endpoint = buildContactEndpoint(apiBaseUrl);
 
     server.use(
-      http.post("*/api/contact", async ({ request }) => {
+      http.post(endpoint, async ({ request }) => {
         capturedBody = (await request.json()) as Record<string, unknown>;
         return HttpResponse.json({ success: true });
       }),
     );
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -152,27 +148,35 @@ describe("ContactForm", () => {
 
   it("shows loading state during submission", async () => {
     const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(apiBaseUrl);
+    const pending = createDeferred<void>();
 
-    // Use an infinite delay to keep the request pending
     server.use(
-      http.post("*/api/contact", async () => {
-        await delay("infinite");
+      http.post(endpoint, async () => {
+        await pending.promise;
         return HttpResponse.json({ success: true });
       }),
     );
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    // Should show loading state while fetch is pending
-    await waitFor(() => {
-      expect(screen.getByText(/sending/i)).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /sending/i })).toBeDisabled();
-    });
+    try {
+      // Should show loading state while fetch is pending
+      await waitFor(() => {
+        expect(screen.getByText(/sending/i)).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /sending/i })).toBeDisabled();
+      });
+    } finally {
+      pending.resolve();
+    }
 
-    // Note: MSW cleanup is handled globally in src/test/setup.ts
+    // Ensure pending request resolves before test completes to avoid open handles.
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /send message/i })).toBeEnabled();
+    });
   });
 
   it("shows success message on 200 response", async () => {
@@ -180,7 +184,7 @@ describe("ContactForm", () => {
     // Default handler returns success - no override needed
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
@@ -191,22 +195,216 @@ describe("ContactForm", () => {
 
   it("shows error message on failure", async () => {
     const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(apiBaseUrl);
 
     // Override with error response
     server.use(
-      http.post("*/api/contact", () => {
+      http.post(endpoint, () => {
         return HttpResponse.json({ error: "Server error" }, { status: 500 });
       }),
     );
 
     render(<ContactForm />);
-    await fillValidForm(user);
+    await fillContactForm(user);
 
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/failed to send message/i)).toBeInTheDocument();
     });
+  });
+
+  it("shows actionable error when API base URL is missing", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "");
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringContaining("Set NEXT_PUBLIC_API_URL"),
+        }),
+      );
+    });
+  });
+
+  it("shows error when NEXT_PUBLIC_API_URL is invalid", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "not a url");
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringContaining("Invalid NEXT_PUBLIC_API_URL"),
+        }),
+      );
+    });
+  });
+
+  it("blocks local dev submissions to /api on the same origin", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", `${window.location.origin}/api`);
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringContaining("Contact API is not available"),
+        }),
+      );
+    });
+  });
+
+  it("allows development API URLs on a different origin", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com");
+    const endpoint = buildContactEndpoint("https://api.example.com");
+
+    server.use(
+      http.post(endpoint, () => {
+        return HttpResponse.json({ success: true });
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
+    });
+  });
+
+  it("maps validation errors from a 400 response onto fields", async () => {
+    const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(apiBaseUrl);
+
+    server.use(
+      http.post(endpoint, () => {
+        return HttpResponse.json(
+          {
+            details: [{ message: "Name is required", path: ["name"] }],
+          },
+          { status: 400 },
+        );
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/name is required/i)).toBeInTheDocument();
+    });
+  });
+
+  it("surfaces invalid JSON responses from the API", async () => {
+    const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(apiBaseUrl);
+
+    server.use(
+      http.post(endpoint, () => {
+        return new HttpResponse("not-json", { status: 500 });
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringContaining("invalid JSON"),
+        }),
+      );
+    });
+  });
+
+  it("treats successful responses with invalid JSON as success", async () => {
+    const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(apiBaseUrl);
+
+    server.use(
+      http.post(endpoint, () => {
+        return new HttpResponse("not-json", { status: 200 });
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
+    });
+  });
+
+  it("falls back to a generic error when the API response lacks details", async () => {
+    const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(apiBaseUrl);
+
+    server.use(
+      http.post(endpoint, () => {
+        return HttpResponse.json({}, { status: 500 });
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: "Failed to send message",
+        }),
+      );
+    });
+  });
+
+  it("uses fallback messaging when a non-Error is thrown", async () => {
+    const user = userEvent.setup();
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn().mockRejectedValue("boom") as typeof fetch;
+
+    try {
+      render(<ContactForm />);
+      await fillContactForm(user);
+
+      await user.click(screen.getByRole("button", { name: /send message/i }));
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            description: "Failed to send message",
+          }),
+        );
+      });
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 
   it("resets form after successful submission", async () => {
