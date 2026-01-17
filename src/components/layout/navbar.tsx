@@ -2,8 +2,8 @@
  * @fileoverview Responsive site navigation bar with theme toggle.
  */
 
-import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 const NavSeparator = () => <span className="text-muted-foreground/30">|</span>;
@@ -58,35 +58,9 @@ export function Navbar() {
             <ThemeToggle />
           </div>
 
-          {/* Mobile Menu Button */}
-          <details className="group md:hidden">
-            <summary
-              className="list-none rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
-              aria-label="Toggle menu"
-            >
-              <Menu size={24} aria-hidden="true" className="block group-open:hidden" />
-              <X size={24} aria-hidden="true" className="hidden group-open:block" />
-            </summary>
-            <div className="py-4" data-testid="mobile-nav">
-              <div className="flex flex-col space-y-4">
-                <Link href="/" className={navLinkClassName}>
-                  Home
-                </Link>
-                <Link href="/about" className={navLinkClassName}>
-                  About
-                </Link>
-                <Link href="/projects" className={navLinkClassName}>
-                  Projects
-                </Link>
-                <Link href="/contact" className={navLinkClassName}>
-                  Contact
-                </Link>
-                <div className="flex items-center">
-                  <ThemeToggle />
-                </div>
-              </div>
-            </div>
-          </details>
+          <MobileNav linkClassName={navLinkClassName}>
+            <ThemeToggle />
+          </MobileNav>
         </div>
       </div>
     </nav>

@@ -1,0 +1,55 @@
+"use client";
+
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import * as React from "react";
+
+export function MobileNav({
+  linkClassName,
+  children,
+}: {
+  linkClassName: string;
+  children: React.ReactNode;
+}) {
+  const detailsRef = React.useRef<HTMLDetailsElement>(null);
+  const pathname = usePathname();
+
+  const closeMenu = React.useCallback(() => {
+    detailsRef.current?.removeAttribute("open");
+  }, []);
+
+  React.useEffect(() => {
+    if (!pathname) return;
+    closeMenu();
+  }, [closeMenu, pathname]);
+
+  return (
+    <details ref={detailsRef} className="group md:hidden">
+      <summary
+        className="list-none rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
+        aria-label="Toggle menu"
+      >
+        <Menu size={24} aria-hidden="true" className="block group-open:hidden" />
+        <X size={24} aria-hidden="true" className="hidden group-open:block" />
+      </summary>
+      <div className="py-4" data-testid="mobile-nav">
+        <div className="flex flex-col space-y-4">
+          <Link href="/" className={linkClassName} onClick={closeMenu}>
+            Home
+          </Link>
+          <Link href="/about" className={linkClassName} onClick={closeMenu}>
+            About
+          </Link>
+          <Link href="/projects" className={linkClassName} onClick={closeMenu}>
+            Projects
+          </Link>
+          <Link href="/contact" className={linkClassName} onClick={closeMenu}>
+            Contact
+          </Link>
+          <div className="flex items-center">{children}</div>
+        </div>
+      </div>
+    </details>
+  );
+}

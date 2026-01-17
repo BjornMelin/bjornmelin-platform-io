@@ -1,8 +1,7 @@
 import { render } from "@testing-library/react";
-import * as React from "react";
 import { afterEach, describe, expect, it, type Mock, vi } from "vitest";
 
-// We mock react to make useState spayable/mockable, as ESM exports are typically read-only.
+// We mock react to make useState spyable/mockable, as ESM exports are typically read-only.
 vi.mock("react", async (importOriginal) => {
   const actual = await importOriginal<typeof import("react")>();
   return {
@@ -19,11 +18,12 @@ describe("useToast cleanup", () => {
   it("stops notifying the component after it unmounts", async () => {
     // Reset modules to ensure a fresh internal listeners array in the hook
     vi.resetModules();
+    const React = await import("react");
     const { useToast, toast } = await import("@/hooks/use-toast");
 
     // Capture the mock setter that our mocked useState will return
     const stateSetter = vi.fn();
-    (React.useState as Mock).mockReturnValue([{}, stateSetter]);
+    (React.useState as unknown as Mock).mockReturnValue([{}, stateSetter]);
 
     function ToastProbe() {
       useToast();

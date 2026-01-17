@@ -1061,7 +1061,7 @@
       },
       "architecture": {
         "specifications": 11,
-        "arrs": 50,
+        "adrs": 50,
         "finalBaseline": "ADR-0059 through ADR-0069",
         "deploymentPattern": "RSC shell + TanStack Query doughnut",
         "caching": "Server `use cache` for reads, Server Actions for mutations"
@@ -1099,7 +1099,7 @@
         "multi-agent-system",
         "nextjs16",
         "pgvector",
-        "streamlit-ui",
+        "shadcn-ui",
         "supabase",
         "travel-planner",
         "travel-recommendations",
@@ -1267,25 +1267,25 @@
     }
   ],
   "statistics": {
-    "_comment": "All statistics are computed from the projects array: totalStars = sum of all stars; averageStars = totalStars / numberOfProjects; licenseDistribution counts projects with license === null; languageDistribution counts projects with language === null",
+    "_comment": "All statistics are computed from the projects array: totalStars = sum of all stars; averageStars = totalStars / numberOfProjects; licenseDistribution.unlicensed counts projects with license === null; languageDistribution.unknown counts projects with language === null",
     "totalStars": 278,
     "averageStars": 16.35,
     "numberOfProjects": 17,
     "topRepositories": [
       "docmind-ai-llm (76 stars)",
       "github-copilot-proxy (29 stars)",
-      "tripsage-ai (22 stars)",
       "bjornmelin-platform-io (22 stars)",
+      "tripsage-ai (22 stars)",
       "crawl4ai-mcp-server (19 stars)"
     ],
     "languageDistribution": {
       "python": 8,
       "typescript": 6,
-      "null": 3
+      "unknown": 3
     },
     "licenseDistribution": {
       "mit": 16,
-      "null": 1
+      "unlicensed": 1
     },
     "topicClusters": {
       "aiAgents": [

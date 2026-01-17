@@ -34,6 +34,11 @@ export const SelectMocks = {
         {placeholder}
       </option>
     ) : null,
+  SelectGroup: ({ children }: { children: ReactNode }) => <>{children}</>,
+  SelectLabel: ({ children }: { children: ReactNode }) => <>{children}</>,
+  SelectSeparator: () => null,
+  SelectScrollUpButton: () => null,
+  SelectScrollDownButton: () => null,
 };
 
 export const ToggleGroupMocks = {

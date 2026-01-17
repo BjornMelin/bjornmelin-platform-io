@@ -1,28 +1,25 @@
 import { expect, test } from "./test";
 
 test("contact form validates required fields and submits successfully", async ({ page }) => {
-  await page.addInitScript(() => {
-    const originalFetch = window.fetch;
+  let payload: unknown;
 
-    (window as typeof window & { __CONTACT_API_URL__?: string }).__CONTACT_API_URL__ =
-      window.location.origin;
+  await page.route("**/api/contact", async (route) => {
+    if (route.request().method() !== "POST") {
+      await route.fallback();
+      return;
+    }
 
-    window.fetch = async (input, init) => {
-      const url =
-        typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+    try {
+      payload = route.request().postDataJSON();
+    } catch {
+      payload = route.request().postData();
+    }
 
-      if (url.includes("/contact")) {
-        const body = init?.body ? JSON.parse(String(init.body)) : null;
-        (window as typeof window & { __e2eContactPayload?: unknown }).__e2eContactPayload = body;
-
-        return new Response(JSON.stringify({ success: true }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-
-      return originalFetch(input, init);
-    };
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true }),
+    });
   });
 
   await page.goto("/contact");
@@ -42,17 +39,7 @@ test("contact form validates required fields and submits successfully", async ({
 
   await page.getByRole("button", { name: "Send Message" }).click();
 
-  await expect
-    .poll(() =>
-      page.evaluate(
-        () => (window as typeof window & { __e2eContactPayload?: unknown }).__e2eContactPayload,
-      ),
-    )
-    .not.toBeNull();
-
-  const payload = await page.evaluate(
-    () => (window as typeof window & { __e2eContactPayload?: unknown }).__e2eContactPayload,
-  );
+  await expect.poll(() => payload).toBeDefined();
 
   expect(payload).toMatchObject({
     name: "Test User",
