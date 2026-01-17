@@ -12,8 +12,8 @@ type CloudFrontResponse = { headers?: CloudFrontHeaders };
  * Uses Node's vm module to execute the function in an isolated context,
  * simulating the CloudFront Functions runtime environment.
  *
- * `@returns` The handler function extracted from the CloudFront Function file
- * `@throws` Error if the file doesn't define a global `handler` function
+ * @returns The handler function extracted from the CloudFront Function file
+ * @throws Error if the file doesn't define a global `handler` function
  */
 function loadCspResponseHandler(): (event: {
   request: CloudFrontRequest;
@@ -83,5 +83,44 @@ describe("next-csp-response CloudFront Function", () => {
 
     expect(csp).toContain("connect-src 'self'");
     expect(csp).not.toContain("connect-src 'self' https://api.unknown.example");
+  });
+
+  it("normalizes trailing slashes to index.html", () => {
+    const response = handler({
+      request: { uri: "/about/", headers: { host: { value: "example.com" } } },
+      response: { headers: {} },
+    });
+    const csp = response.headers?.["content-security-policy"]?.value ?? "";
+
+    expect(csp).toContain("default-src 'self'");
+    expect(csp).toContain("script-src 'self'");
+    expect(csp).toContain("sha256-");
+    expect(csp).toContain("connect-src 'self' https://api.example.com");
+  });
+
+  it("handles URIs with query strings and fragments", () => {
+    const response = handler({
+      request: { uri: "/about?x=1#frag", headers: { host: { value: "example.com" } } },
+      response: { headers: {} },
+    });
+    const csp = response.headers?.["content-security-policy"]?.value ?? "";
+
+    expect(csp).toContain("default-src 'self'");
+    expect(csp).toContain("script-src 'self'");
+    expect(csp).toContain("sha256-");
+    expect(csp).toContain("connect-src 'self' https://api.example.com");
+  });
+
+  it("falls back to connect-src 'self' when host is missing", () => {
+    const response = handler({
+      request: { uri: "/about" },
+      response: { headers: {} },
+    });
+    const csp = response.headers?.["content-security-policy"]?.value ?? "";
+
+    expect(csp).toContain("default-src 'self'");
+    expect(csp).toContain("script-src 'self'");
+    expect(csp).toContain("sha256-");
+    expect(csp).toContain("connect-src 'self'");
   });
 });
