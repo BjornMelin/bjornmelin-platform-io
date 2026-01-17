@@ -4,6 +4,7 @@
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { ReadonlyURLSearchParams } from "next/navigation";
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -156,9 +157,10 @@ describe("Project components", () => {
   it("ProjectGrid defaults to All and featured when params are invalid", async () => {
     const user = userEvent.setup();
     const navigation = await import("next/navigation");
-    const searchParamsSpy = vi
-      .spyOn(navigation, "useSearchParams")
-      .mockReturnValue(new URLSearchParams("category=Unknown&sort=bogus"));
+    const invalidParams = new URLSearchParams(
+      "category=Unknown&sort=bogus",
+    ) as ReadonlyURLSearchParams;
+    const searchParamsSpy = vi.spyOn(navigation, "useSearchParams").mockReturnValue(invalidParams);
 
     const projects: Project[] = [
       {
