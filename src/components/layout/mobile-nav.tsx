@@ -21,27 +21,38 @@ export function MobileNav({
   children: React.ReactNode;
 }) {
   const detailsRef = React.useRef<HTMLDetailsElement>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
   const pathname = usePathname();
 
   const closeMenu = React.useCallback(() => {
     detailsRef.current?.removeAttribute("open");
+    setIsOpen(false);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: close on route changes
   React.useEffect(() => {
     closeMenu();
-    void pathname;
   }, [closeMenu, pathname]);
 
   return (
-    <details ref={detailsRef} className="group md:hidden">
-      <summary
-        className="list-none rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
-        aria-label="Toggle menu"
-      >
-        <Menu size={24} aria-hidden="true" className="block group-open:hidden" />
-        <X size={24} aria-hidden="true" className="hidden group-open:block" />
+    <details
+      ref={detailsRef}
+      className="group md:hidden"
+      onToggle={() => setIsOpen(detailsRef.current?.open ?? false)}
+    >
+      <summary className="list-none [&::-webkit-details-marker]:hidden">
+        <button
+          type="button"
+          className="rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          aria-label="Toggle menu"
+          aria-expanded={isOpen}
+          aria-controls="mobile-nav-panel"
+        >
+          <Menu size={24} aria-hidden="true" className="block group-open:hidden" />
+          <X size={24} aria-hidden="true" className="hidden group-open:block" />
+        </button>
       </summary>
-      <div className="py-4" data-testid="mobile-nav">
+      <div id="mobile-nav-panel" className="py-4" data-testid="mobile-nav">
         <div className="flex flex-col space-y-4">
           <Link href="/" className={linkClassName} onClick={closeMenu}>
             Home
