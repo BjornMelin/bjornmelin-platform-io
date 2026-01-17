@@ -165,7 +165,13 @@ var CONNECT_SRC_BY_HOST = {
 
 function normalizePath(uri) {
   if (!uri) return "/index.html";
-  var decoded = decodeURIComponent(uri.split("?")[0].split("#")[0]);
+  var raw = uri.split("?")[0].split("#")[0];
+  var decoded;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch (error) {
+    decoded = raw;
+  }
   if (decoded.charAt(decoded.length - 1) === "/") return decoded + "index.html";
   var lastSegment = decoded.split("/").pop() || "";
   if (lastSegment.indexOf(".") === -1) return decoded + "/index.html";

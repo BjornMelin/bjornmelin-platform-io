@@ -32,7 +32,7 @@ var PATH_HASHES = {
     "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
     "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0="
   ],
   "/404.html": [
     "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
@@ -54,7 +54,7 @@ var PATH_HASHES = {
     "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
     "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0="
   ],
   "/_not-found/index.html": [
     "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
@@ -76,7 +76,7 @@ var PATH_HASHES = {
     "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
     "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0="
   ],
   "/about/index.html": [
     "sha256-/+GwKS8RMmXJVFHx50WyGF6HDz90wmJRJ5EMh3lkWmc=",
@@ -122,7 +122,7 @@ var PATH_HASHES = {
     "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
     "sha256-vIPipsxmr60TknbtaJQzqCfQw8q+YstbpRawFt++INo=",
     "sha256-wPfYv1zWHlX1qw6lUtFLmo1yPMJ3F1+lrhpuyAamviE=",
-    "sha256-wRApOBxr5vFX6uQTqfswlKwh2VXAJjvawPY0WRzNBNg=",
+    "sha256-wRApOBxr5vFX6uQTqfswlKwh2VXAJjvawPY0WRzNBNg="
   ],
   "/contact/index.html": [
     "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
@@ -142,7 +142,7 @@ var PATH_HASHES = {
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
     "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
     "sha256-vc9sy5Xlp8TenqTC07oPbxAblg1YVItiKWrRo3ecnlU=",
-    "sha256-xQRNT7X+66On4F8vAdPE5PVMYbD1IKhZeHyO/PDZQiY=",
+    "sha256-xQRNT7X+66On4F8vAdPE5PVMYbD1IKhZeHyO/PDZQiY="
   ],
   "/index.html": [
     "sha256-1CPUIJH+j8ghN5fWzmIpPpyBp+VzKiERFMaf5W4o244=",
@@ -183,7 +183,7 @@ var PATH_HASHES = {
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
     "sha256-uwWchwmpZRGdYCdQPYxYIYykz9VzdBCr4X+OQEAs4ck=",
     "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
-    "sha256-yEGaRrYGpaxm7ARgPhiBntsg5AEev3cCwpB5XsXLJf4=",
+    "sha256-yEGaRrYGpaxm7ARgPhiBntsg5AEev3cCwpB5XsXLJf4="
   ],
   "/projects/index.html": [
     "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
@@ -204,6 +204,7 @@ var PATH_HASHES = {
     "sha256-uBUah6fsUdxasVWcVr4IxPzP+umuzSthhRwIWhvoiFE=",
     "sha256-uOGa22LXtMShbqChSljN0r7M5GHUvuB45SbH5pu9ywA=",
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
-  ],
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0="
+  ]
 };
+

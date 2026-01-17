@@ -1,163 +1,214 @@
-/** Optimized for CloudFront Functions - 10KB limit **/
-var CA = [
-  "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
-  "sha256-3ncRmbykpqITpwZBbEQCTCMRs2UGL+zAszEpUz/tj94=",
-  "sha256-5MsGM9v4ULr6ObZAV3722H7EhdrW3pG3FfvPobcvB7Y=",
-  "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
-  "sha256-FGEvVmaMOUnZI2MVfxn6kW5RgNgTQm9sMr0vvdGhrnA=",
-  "sha256-J5nl4uUnCHapFV9LD50oogerdEvJ17PQ5rhYHbkeKaI=",
-  "sha256-M5MJVEx1pRti3czZOZDM+XW7/zG8IBBqZaf0j+f46lQ=",
-  "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
-  "sha256-P9Pqmfti8tG5A4M0/L0VgxvWweWTLvj+Dws/8SR25lY=",
-  "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
-  "sha256-Yf/iJv/5gSiO5oNsUvq246AHV4FU4naO0nwY6GuKlMA=",
-  "sha256-c/dZMBnhowgL5y6XOgy2KaOAHljK5e0UnZGjxo/ta6w=",
-  "sha256-i9pskrcC1nY6XQ0+R50Q5ajY7niLYVGFgv6XZj3ydeI=",
-  "sha256-iUyuxuHaEZok09DTpHlZ/eMm4mY8XNSzeqiW7UsCLao=",
-  "sha256-oOqWZYy4A60iJLlyITNRQqpMtr5mtsQGyBf2cVmDWNQ=",
-  "sha256-ppncqXtC52/RLC8LWRJ363lOaTVGuuF9ZR8eizWxEZY=",
-  "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
-  "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
-  "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-  "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
-];
-var CB = [
-  "sha256-/+GwKS8RMmXJVFHx50WyGF6HDz90wmJRJ5EMh3lkWmc=",
-  "sha256-0ic1IqdscurI4VKjBOvhJ/DvuvzYFRfVsWSWj4/3xpE=",
-  "sha256-15+e1p1BVFXy6TRmQxNCmT8Sq6+qGab27BzwDNcFreI=",
-  "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
-  "sha256-4Gwfrx37YElkPUHm5+Qpda+na9/Bo0CtUBXbQRU+RiA=",
-  "sha256-4UhFmNVED3P4rBkxqzQkG3UBuy7Y1SXHMr22uGHyJ9Q=",
-  "sha256-6SfKOD0clWxBmZiWqpuxpWHGVazA7QdeT9rN126LrwM=",
-  "sha256-757W+zDxXJta7RISVA/d+7ikVB7XmnBtBI9oBgn+2sk=",
-  "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
-  "sha256-7y2oru+ItVhQq5m5cI0vN8y5aj8N3E+352UZf/EdZ24=",
-  "sha256-8oXo0TYtAiN01NyE2ShEHsNbusLAPnmDRP3TTD1ZCmI=",
-  "sha256-B5JX+arDSUK12lIpW4mbOMzxQl32G8edSDbuJyKyEjc=",
-  "sha256-BzK873bmUmhArliR+W7EkYtbR47dYk5zeRMB4SvH6C8=",
-  "sha256-EK3qw1FvbGAXkXjn6aruCxN6dGLaKJajVFYhmq2TuCk=",
-  "sha256-J71QnsUML8NxfeE42NXMLswMVAIxO4+Iz4JT7DWpt1s=",
-  "sha256-Jh2TsWMITdyMU+iRqlw6uJWXx6XvXryKkZoXocMxg00=",
-  "sha256-MgFuChwAPOlxa09+yA808RO3TCTQeY2cU1ykM+owK+0=",
-  "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
-  "sha256-OkEAQ8oivbXFOS83i6hPdwl+Joy6Diofjf7dFObDM4M=",
-  "sha256-P2pfPe4iwzRczTv1V/szDn4W/dQawZ4s+1K9oSXA+2w=",
-  "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
-  "sha256-RIf83i/u7VcXsOML119pEU/XiKU4+2FwMWExdgjXnLA=",
-  "sha256-RSOgGjy5MjPi3Nusv/VDwdV8vyblX5bABQ5q1XhzxHk=",
-  "sha256-RpOWCZ++Rw+6w4HeiI7wppidwnZ7OBrkoQof0vHzN10=",
-  "sha256-SL8tNaaMr8aKIGDKFC5JwLdpoFfZQxYN1QtGUefOgQs=",
-  "sha256-VQtE6d2+QqYwrPlpJLQrDRj85D9R1pG0CfWPZeHj4Os=",
-  "sha256-WA/zlKtyLXTje6Y8BzZLboxi7p0VVAYuyk3fRf/Uv1Y=",
-  "sha256-WG906wmCEmH+bBCdbmH5tFtu/c1kqm9fKnIEH9jdPgY=",
-  "sha256-d7M60TAQYBgkvTF+oX0lT+828MNR90VNBkVmmaWhNNM=",
-  "sha256-fTw7y0v/pdPFkkhy/UaOCBqUTW0CMMlI+axG8tuewn8=",
-  "sha256-hIdPRqGWioE8zq20hkIagvPDQzJWn4PilN9eg+7V8a0=",
-  "sha256-nrPt0axm6yxPdlAweaaiko/uiewjbLYiKhszdgu1S24=",
-  "sha256-ox1vo8sWdwE2+YS6jiML+0XsY3sNMLts6Arsgbbx/8U=",
-  "sha256-pZejXRlm3SaG3qyjMtGAD0W4AP0HE/ZISM/JLjOxwrY=",
-  "sha256-pl6iXW3h5YQxetLyz4f+J9bhSHH4ui3xJ1l+ukuzn+Q=",
-  "sha256-sH3gaGtqTjyn5aiLZBOLXpsC4UvTbCxU/8sxXDnmwj8=",
-  "sha256-tr3mU4oJh7SPEerej02T1rs2EawaXC4n7NCvw/x4uFs=",
-  "sha256-u2YqR2PhoH6VwKt66kpSQOpvLApYgU9GwAgp82uYXJ8=",
-  "sha256-uOGa22LXtMShbqChSljN0r7M5GHUvuB45SbH5pu9ywA=",
-  "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-  "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
-  "sha256-vIPipsxmr60TknbtaJQzqCfQw8q+YstbpRawFt++INo=",
-  "sha256-wPfYv1zWHlX1qw6lUtFLmo1yPMJ3F1+lrhpuyAamviE=",
-  "sha256-wRApOBxr5vFX6uQTqfswlKwh2VXAJjvawPY0WRzNBNg=",
-];
-var CC = [
-  "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
-  "sha256-4Gwfrx37YElkPUHm5+Qpda+na9/Bo0CtUBXbQRU+RiA=",
-  "sha256-6SfKOD0clWxBmZiWqpuxpWHGVazA7QdeT9rN126LrwM=",
-  "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
-  "sha256-A6vjDUZ90aTgWkQ84rOxw2lszXK5haFv+kji58idLJA=",
-  "sha256-FETXtEMDwdoNHOckvHNvjQFOAxc4OhUJeP+WdJJmdRY=",
-  "sha256-FxI+W5dgL3VVPTmjAV1jT4SChe39z1wxV9bLQDP2Rro=",
-  "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
-  "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
-  "sha256-WA/zlKtyLXTje6Y8BzZLboxi7p0VVAYuyk3fRf/Uv1Y=",
-  "sha256-cmfAZZoeWQfQy54eN7TSPkbGXNWyn4fEer/0BNz4R/M=",
-  "sha256-jaQaLicEzOfRHZ3yS/xEP/IWvHJ8CKHzFTK1myWp+eE=",
-  "sha256-u2YqR2PhoH6VwKt66kpSQOpvLApYgU9GwAgp82uYXJ8=",
-  "sha256-uOGa22LXtMShbqChSljN0r7M5GHUvuB45SbH5pu9ywA=",
-  "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-  "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
-  "sha256-vc9sy5Xlp8TenqTC07oPbxAblg1YVItiKWrRo3ecnlU=",
-  "sha256-xQRNT7X+66On4F8vAdPE5PVMYbD1IKhZeHyO/PDZQiY=",
-];
-var CD = [
-  "sha256-1CPUIJH+j8ghN5fWzmIpPpyBp+VzKiERFMaf5W4o244=",
-  "sha256-4JpkDzvZn2s9TOXMh4VGBBBR1wFHIgi05xikGJnYgLw=",
-  "sha256-4XkghvSPspoIijZUEySvcc53RS5Z5QIuL9ysoDesljQ=",
-  "sha256-7CjW1QhnY0Gs6ClRbQsRHJUrzFwLNonntl4iEJGVx2U=",
-  "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
-  "sha256-Hcfl0epq48zYTajL6ROP4HweVyG0xWkWFnjoPu2tyns=",
-  "sha256-Is0u7xvDH1MEXkeyJAsycPQ0w6FFYT6tSi7va/EuFvE=",
-  "sha256-LDLUHmqX1MdB/FmYwCwkpxka9ianY7jj/tfWj/8y0YI=",
-  "sha256-NYMKKSpRPHNY4PZLkNxZakaN2C13MbwsoPtQQh++Dd0=",
-  "sha256-NuzMR78MDBvH+HGx/T2Sm3O6vVXQ7C9XsQAN11wrok0=",
-  "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
-  "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
-  "sha256-SicR/HVbCBeJIsczRcrdFsp1a5XdC7IhQAKxEOJyBAQ=",
-  "sha256-VFJKclxO25Rj7akaZJeYqaJv490oHBRTo4P+VLNJr54=",
-  "sha256-XZZmTWaryaMD/pb/+MbJOU5RArdsgv2k6NhMukw7lqA=",
-  "sha256-eIXX20/QtBq5kMbFrgZRSgNiDFwIHrP27W4Vp9PUv58=",
-  "sha256-eeI3CiG6AtHN2rV25Y8JVV1JV3MsbfSpGC4quH+Gq6U=",
-  "sha256-eiCUaaC1PQyBLK5/Z4uB1J154nUht8nUdp1fPPF+zoY=",
-  "sha256-gakrOPDsGAUU6PcvtbdhJqzeQVvkNFLrwMlfALv2TFg=",
-  "sha256-glf9m25a9dWQk8oobPN7e6G1KC5vaJ5MjjM4z7qtc/I=",
-  "sha256-hej074gQxrtCzu7Wv7aqsLqxvc2RrjzwOwZ5btPT1Po=",
-  "sha256-kYM9sHdKF9Y5WP2Xz4Vz9w5kyY7YLNWM/04F9LO1VOc=",
-  "sha256-l+yErm+ZCt8J9HeKlN8LNPdnNixbRJgGDFiTk5f/580=",
-  "sha256-lqHIvxzGXYNhjC1n0PDXAHbc2KQ4p47R4PGPqOfmKvc=",
-  "sha256-lyml4jjfS91HOyYpaavCSvHJSu4OUiBsogrfs0FUNws=",
-  "sha256-mQi7OQ0qQW/fN32wXcz6Njl28eloOh56pH4g6BFX+H4=",
-  "sha256-mmjYqFj6zqK4y0U0fqTkjUi2VeUId8Qt1MxOwnBBEcQ=",
-  "sha256-nqrIZiB4g5HvdybOGaj1Ky30FbCsMe9nbRItQWW1E3w=",
-  "sha256-oK65/Xo2pTHB4NjU/Eyl2HZulY4490IJK1hwsKMkTic=",
-  "sha256-qXodLOKfpG/a3/Orn87nu5A6ItPlEye2AERm7OaL00o=",
-  "sha256-qeUMmF7rg3IuYGXW99AyKv1Upt3lbj2Gd3g4uDyh5hs=",
-  "sha256-qm2KFmFDvC5Xr6d53K40E41cgs2VBrfgmkQ06dijRRg=",
-  "sha256-r39zmmk2DV7rlSFKylZ6dg2aoqgIgESrXLCi4NB4kMs=",
-  "sha256-ryFhYrloNuIY7tbXRikQoTUQwUemnGBh9pHZMRGiKF4=",
-  "sha256-slvoZoASTyBR/YWKEiWemWuSubPTBCo5POloiJw3dhc=",
-  "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-  "sha256-uwWchwmpZRGdYCdQPYxYIYykz9VzdBCr4X+OQEAs4ck=",
-  "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
-  "sha256-yEGaRrYGpaxm7ARgPhiBntsg5AEev3cCwpB5XsXLJf4=",
-];
-var CE = [
-  "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
-  "sha256-4Gwfrx37YElkPUHm5+Qpda+na9/Bo0CtUBXbQRU+RiA=",
-  "sha256-5kliCkkDfqhPFACb3WFtUaJPuYnBIRh+L6noN0fad6U=",
-  "sha256-6SfKOD0clWxBmZiWqpuxpWHGVazA7QdeT9rN126LrwM=",
-  "sha256-FxI+W5dgL3VVPTmjAV1jT4SChe39z1wxV9bLQDP2Rro=",
-  "sha256-KUD91aKloJunb/i7gvPoHkPS4KeVgUeuV2JCelyMT3U=",
-  "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
-  "sha256-W8ele/1TR8WBPsx75+b5OLzYZNqW3FXBTPA+1ccl7cw=",
-  "sha256-WA/zlKtyLXTje6Y8BzZLboxi7p0VVAYuyk3fRf/Uv1Y=",
-  "sha256-YCD7jr7owaSnlWvWgZTlPh48iZOr7hZ5Jbke51vfEa0=",
-  "sha256-gnDPPi+Rc+5TS68YgHAgsTjCBmJh1KUwoXxGZKyi+BQ=",
-  "sha256-k8nFaLU386vO8hvPpxkYiPtCFzcbzSTp3Hu/ErdKIr8=",
-  "sha256-nNydWDeixY+IR4rTm/xpkbzXZKqJqtb0chvD31XEcOA=",
-  "sha256-ox1vo8sWdwE2+YS6jiML+0XsY3sNMLts6Arsgbbx/8U=",
-  "sha256-u2YqR2PhoH6VwKt66kpSQOpvLApYgU9GwAgp82uYXJ8=",
-  "sha256-uBUah6fsUdxasVWcVr4IxPzP+umuzSthhRwIWhvoiFE=",
-  "sha256-uOGa22LXtMShbqChSljN0r7M5GHUvuB45SbH5pu9ywA=",
-  "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-  "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
-];
+/* biome-ignore-all lint/style/useTemplate: CloudFront Functions require ES5.1. */
+/* biome-ignore-all lint/complexity/useOptionalChain: CloudFront Functions require ES5.1. */
+/* biome-ignore-all lint/correctness/noUnusedVariables: CloudFront handler is invoked by AWS. */
+/* biome-ignore-all lint/style/useConst: CloudFront Functions require ES5.1. */
+/**
+ * Generated file -- do not edit by hand.
+ *
+ * Generated by: `pnpm generate:csp-hashes`
+ *
+ * CloudFront Functions runtime constraints:
+ * - ES5.1 only (no const/let, no arrow functions, no template literals)
+ * - No module system (no require/import)
+ * - No Node.js APIs
+ */
 var PATH_HASHES = {
-  "/404/index.html": CA,
-  "/404.html": CA,
-  "/_not-found/index.html": CA,
-  "/about/index.html": CB,
-  "/contact/index.html": CC,
-  "/index.html": CD,
-  "/projects/index.html": CE,
+  "/404/index.html": [
+    "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
+    "sha256-3ncRmbykpqITpwZBbEQCTCMRs2UGL+zAszEpUz/tj94=",
+    "sha256-5MsGM9v4ULr6ObZAV3722H7EhdrW3pG3FfvPobcvB7Y=",
+    "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
+    "sha256-FGEvVmaMOUnZI2MVfxn6kW5RgNgTQm9sMr0vvdGhrnA=",
+    "sha256-J5nl4uUnCHapFV9LD50oogerdEvJ17PQ5rhYHbkeKaI=",
+    "sha256-M5MJVEx1pRti3czZOZDM+XW7/zG8IBBqZaf0j+f46lQ=",
+    "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
+    "sha256-P9Pqmfti8tG5A4M0/L0VgxvWweWTLvj+Dws/8SR25lY=",
+    "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
+    "sha256-Yf/iJv/5gSiO5oNsUvq246AHV4FU4naO0nwY6GuKlMA=",
+    "sha256-c/dZMBnhowgL5y6XOgy2KaOAHljK5e0UnZGjxo/ta6w=",
+    "sha256-i9pskrcC1nY6XQ0+R50Q5ajY7niLYVGFgv6XZj3ydeI=",
+    "sha256-iUyuxuHaEZok09DTpHlZ/eMm4mY8XNSzeqiW7UsCLao=",
+    "sha256-oOqWZYy4A60iJLlyITNRQqpMtr5mtsQGyBf2cVmDWNQ=",
+    "sha256-ppncqXtC52/RLC8LWRJ363lOaTVGuuF9ZR8eizWxEZY=",
+    "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
+    "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
+    "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+  ],
+  "/404.html": [
+    "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
+    "sha256-3ncRmbykpqITpwZBbEQCTCMRs2UGL+zAszEpUz/tj94=",
+    "sha256-5MsGM9v4ULr6ObZAV3722H7EhdrW3pG3FfvPobcvB7Y=",
+    "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
+    "sha256-FGEvVmaMOUnZI2MVfxn6kW5RgNgTQm9sMr0vvdGhrnA=",
+    "sha256-J5nl4uUnCHapFV9LD50oogerdEvJ17PQ5rhYHbkeKaI=",
+    "sha256-M5MJVEx1pRti3czZOZDM+XW7/zG8IBBqZaf0j+f46lQ=",
+    "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
+    "sha256-P9Pqmfti8tG5A4M0/L0VgxvWweWTLvj+Dws/8SR25lY=",
+    "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
+    "sha256-Yf/iJv/5gSiO5oNsUvq246AHV4FU4naO0nwY6GuKlMA=",
+    "sha256-c/dZMBnhowgL5y6XOgy2KaOAHljK5e0UnZGjxo/ta6w=",
+    "sha256-i9pskrcC1nY6XQ0+R50Q5ajY7niLYVGFgv6XZj3ydeI=",
+    "sha256-iUyuxuHaEZok09DTpHlZ/eMm4mY8XNSzeqiW7UsCLao=",
+    "sha256-oOqWZYy4A60iJLlyITNRQqpMtr5mtsQGyBf2cVmDWNQ=",
+    "sha256-ppncqXtC52/RLC8LWRJ363lOaTVGuuF9ZR8eizWxEZY=",
+    "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
+    "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
+    "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+  ],
+  "/_not-found/index.html": [
+    "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
+    "sha256-3ncRmbykpqITpwZBbEQCTCMRs2UGL+zAszEpUz/tj94=",
+    "sha256-5MsGM9v4ULr6ObZAV3722H7EhdrW3pG3FfvPobcvB7Y=",
+    "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
+    "sha256-FGEvVmaMOUnZI2MVfxn6kW5RgNgTQm9sMr0vvdGhrnA=",
+    "sha256-J5nl4uUnCHapFV9LD50oogerdEvJ17PQ5rhYHbkeKaI=",
+    "sha256-M5MJVEx1pRti3czZOZDM+XW7/zG8IBBqZaf0j+f46lQ=",
+    "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
+    "sha256-P9Pqmfti8tG5A4M0/L0VgxvWweWTLvj+Dws/8SR25lY=",
+    "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
+    "sha256-Yf/iJv/5gSiO5oNsUvq246AHV4FU4naO0nwY6GuKlMA=",
+    "sha256-c/dZMBnhowgL5y6XOgy2KaOAHljK5e0UnZGjxo/ta6w=",
+    "sha256-i9pskrcC1nY6XQ0+R50Q5ajY7niLYVGFgv6XZj3ydeI=",
+    "sha256-iUyuxuHaEZok09DTpHlZ/eMm4mY8XNSzeqiW7UsCLao=",
+    "sha256-oOqWZYy4A60iJLlyITNRQqpMtr5mtsQGyBf2cVmDWNQ=",
+    "sha256-ppncqXtC52/RLC8LWRJ363lOaTVGuuF9ZR8eizWxEZY=",
+    "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
+    "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
+    "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+  ],
+  "/about/index.html": [
+    "sha256-/+GwKS8RMmXJVFHx50WyGF6HDz90wmJRJ5EMh3lkWmc=",
+    "sha256-0ic1IqdscurI4VKjBOvhJ/DvuvzYFRfVsWSWj4/3xpE=",
+    "sha256-15+e1p1BVFXy6TRmQxNCmT8Sq6+qGab27BzwDNcFreI=",
+    "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
+    "sha256-4Gwfrx37YElkPUHm5+Qpda+na9/Bo0CtUBXbQRU+RiA=",
+    "sha256-4UhFmNVED3P4rBkxqzQkG3UBuy7Y1SXHMr22uGHyJ9Q=",
+    "sha256-6SfKOD0clWxBmZiWqpuxpWHGVazA7QdeT9rN126LrwM=",
+    "sha256-757W+zDxXJta7RISVA/d+7ikVB7XmnBtBI9oBgn+2sk=",
+    "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
+    "sha256-7y2oru+ItVhQq5m5cI0vN8y5aj8N3E+352UZf/EdZ24=",
+    "sha256-8oXo0TYtAiN01NyE2ShEHsNbusLAPnmDRP3TTD1ZCmI=",
+    "sha256-B5JX+arDSUK12lIpW4mbOMzxQl32G8edSDbuJyKyEjc=",
+    "sha256-BzK873bmUmhArliR+W7EkYtbR47dYk5zeRMB4SvH6C8=",
+    "sha256-EK3qw1FvbGAXkXjn6aruCxN6dGLaKJajVFYhmq2TuCk=",
+    "sha256-J71QnsUML8NxfeE42NXMLswMVAIxO4+Iz4JT7DWpt1s=",
+    "sha256-Jh2TsWMITdyMU+iRqlw6uJWXx6XvXryKkZoXocMxg00=",
+    "sha256-MgFuChwAPOlxa09+yA808RO3TCTQeY2cU1ykM+owK+0=",
+    "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
+    "sha256-OkEAQ8oivbXFOS83i6hPdwl+Joy6Diofjf7dFObDM4M=",
+    "sha256-P2pfPe4iwzRczTv1V/szDn4W/dQawZ4s+1K9oSXA+2w=",
+    "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
+    "sha256-RIf83i/u7VcXsOML119pEU/XiKU4+2FwMWExdgjXnLA=",
+    "sha256-RSOgGjy5MjPi3Nusv/VDwdV8vyblX5bABQ5q1XhzxHk=",
+    "sha256-RpOWCZ++Rw+6w4HeiI7wppidwnZ7OBrkoQof0vHzN10=",
+    "sha256-SL8tNaaMr8aKIGDKFC5JwLdpoFfZQxYN1QtGUefOgQs=",
+    "sha256-VQtE6d2+QqYwrPlpJLQrDRj85D9R1pG0CfWPZeHj4Os=",
+    "sha256-WA/zlKtyLXTje6Y8BzZLboxi7p0VVAYuyk3fRf/Uv1Y=",
+    "sha256-WG906wmCEmH+bBCdbmH5tFtu/c1kqm9fKnIEH9jdPgY=",
+    "sha256-d7M60TAQYBgkvTF+oX0lT+828MNR90VNBkVmmaWhNNM=",
+    "sha256-fTw7y0v/pdPFkkhy/UaOCBqUTW0CMMlI+axG8tuewn8=",
+    "sha256-hIdPRqGWioE8zq20hkIagvPDQzJWn4PilN9eg+7V8a0=",
+    "sha256-nrPt0axm6yxPdlAweaaiko/uiewjbLYiKhszdgu1S24=",
+    "sha256-ox1vo8sWdwE2+YS6jiML+0XsY3sNMLts6Arsgbbx/8U=",
+    "sha256-pZejXRlm3SaG3qyjMtGAD0W4AP0HE/ZISM/JLjOxwrY=",
+    "sha256-pl6iXW3h5YQxetLyz4f+J9bhSHH4ui3xJ1l+ukuzn+Q=",
+    "sha256-sH3gaGtqTjyn5aiLZBOLXpsC4UvTbCxU/8sxXDnmwj8=",
+    "sha256-tr3mU4oJh7SPEerej02T1rs2EawaXC4n7NCvw/x4uFs=",
+    "sha256-u2YqR2PhoH6VwKt66kpSQOpvLApYgU9GwAgp82uYXJ8=",
+    "sha256-uOGa22LXtMShbqChSljN0r7M5GHUvuB45SbH5pu9ywA=",
+    "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+    "sha256-vIPipsxmr60TknbtaJQzqCfQw8q+YstbpRawFt++INo=",
+    "sha256-wPfYv1zWHlX1qw6lUtFLmo1yPMJ3F1+lrhpuyAamviE=",
+    "sha256-wRApOBxr5vFX6uQTqfswlKwh2VXAJjvawPY0WRzNBNg=",
+  ],
+  "/contact/index.html": [
+    "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
+    "sha256-4Gwfrx37YElkPUHm5+Qpda+na9/Bo0CtUBXbQRU+RiA=",
+    "sha256-6SfKOD0clWxBmZiWqpuxpWHGVazA7QdeT9rN126LrwM=",
+    "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
+    "sha256-A6vjDUZ90aTgWkQ84rOxw2lszXK5haFv+kji58idLJA=",
+    "sha256-FETXtEMDwdoNHOckvHNvjQFOAxc4OhUJeP+WdJJmdRY=",
+    "sha256-FxI+W5dgL3VVPTmjAV1jT4SChe39z1wxV9bLQDP2Rro=",
+    "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
+    "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
+    "sha256-WA/zlKtyLXTje6Y8BzZLboxi7p0VVAYuyk3fRf/Uv1Y=",
+    "sha256-cmfAZZoeWQfQy54eN7TSPkbGXNWyn4fEer/0BNz4R/M=",
+    "sha256-jaQaLicEzOfRHZ3yS/xEP/IWvHJ8CKHzFTK1myWp+eE=",
+    "sha256-u2YqR2PhoH6VwKt66kpSQOpvLApYgU9GwAgp82uYXJ8=",
+    "sha256-uOGa22LXtMShbqChSljN0r7M5GHUvuB45SbH5pu9ywA=",
+    "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+    "sha256-vc9sy5Xlp8TenqTC07oPbxAblg1YVItiKWrRo3ecnlU=",
+    "sha256-xQRNT7X+66On4F8vAdPE5PVMYbD1IKhZeHyO/PDZQiY=",
+  ],
+  "/index.html": [
+    "sha256-1CPUIJH+j8ghN5fWzmIpPpyBp+VzKiERFMaf5W4o244=",
+    "sha256-4JpkDzvZn2s9TOXMh4VGBBBR1wFHIgi05xikGJnYgLw=",
+    "sha256-4XkghvSPspoIijZUEySvcc53RS5Z5QIuL9ysoDesljQ=",
+    "sha256-7CjW1QhnY0Gs6ClRbQsRHJUrzFwLNonntl4iEJGVx2U=",
+    "sha256-7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=",
+    "sha256-Hcfl0epq48zYTajL6ROP4HweVyG0xWkWFnjoPu2tyns=",
+    "sha256-Is0u7xvDH1MEXkeyJAsycPQ0w6FFYT6tSi7va/EuFvE=",
+    "sha256-LDLUHmqX1MdB/FmYwCwkpxka9ianY7jj/tfWj/8y0YI=",
+    "sha256-NYMKKSpRPHNY4PZLkNxZakaN2C13MbwsoPtQQh++Dd0=",
+    "sha256-NuzMR78MDBvH+HGx/T2Sm3O6vVXQ7C9XsQAN11wrok0=",
+    "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
+    "sha256-QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=",
+    "sha256-SicR/HVbCBeJIsczRcrdFsp1a5XdC7IhQAKxEOJyBAQ=",
+    "sha256-VFJKclxO25Rj7akaZJeYqaJv490oHBRTo4P+VLNJr54=",
+    "sha256-XZZmTWaryaMD/pb/+MbJOU5RArdsgv2k6NhMukw7lqA=",
+    "sha256-eIXX20/QtBq5kMbFrgZRSgNiDFwIHrP27W4Vp9PUv58=",
+    "sha256-eeI3CiG6AtHN2rV25Y8JVV1JV3MsbfSpGC4quH+Gq6U=",
+    "sha256-eiCUaaC1PQyBLK5/Z4uB1J154nUht8nUdp1fPPF+zoY=",
+    "sha256-gakrOPDsGAUU6PcvtbdhJqzeQVvkNFLrwMlfALv2TFg=",
+    "sha256-glf9m25a9dWQk8oobPN7e6G1KC5vaJ5MjjM4z7qtc/I=",
+    "sha256-hej074gQxrtCzu7Wv7aqsLqxvc2RrjzwOwZ5btPT1Po=",
+    "sha256-kYM9sHdKF9Y5WP2Xz4Vz9w5kyY7YLNWM/04F9LO1VOc=",
+    "sha256-l+yErm+ZCt8J9HeKlN8LNPdnNixbRJgGDFiTk5f/580=",
+    "sha256-lqHIvxzGXYNhjC1n0PDXAHbc2KQ4p47R4PGPqOfmKvc=",
+    "sha256-lyml4jjfS91HOyYpaavCSvHJSu4OUiBsogrfs0FUNws=",
+    "sha256-mQi7OQ0qQW/fN32wXcz6Njl28eloOh56pH4g6BFX+H4=",
+    "sha256-mmjYqFj6zqK4y0U0fqTkjUi2VeUId8Qt1MxOwnBBEcQ=",
+    "sha256-nqrIZiB4g5HvdybOGaj1Ky30FbCsMe9nbRItQWW1E3w=",
+    "sha256-oK65/Xo2pTHB4NjU/Eyl2HZulY4490IJK1hwsKMkTic=",
+    "sha256-qXodLOKfpG/a3/Orn87nu5A6ItPlEye2AERm7OaL00o=",
+    "sha256-qeUMmF7rg3IuYGXW99AyKv1Upt3lbj2Gd3g4uDyh5hs=",
+    "sha256-qm2KFmFDvC5Xr6d53K40E41cgs2VBrfgmkQ06dijRRg=",
+    "sha256-r39zmmk2DV7rlSFKylZ6dg2aoqgIgESrXLCi4NB4kMs=",
+    "sha256-ryFhYrloNuIY7tbXRikQoTUQwUemnGBh9pHZMRGiKF4=",
+    "sha256-slvoZoASTyBR/YWKEiWemWuSubPTBCo5POloiJw3dhc=",
+    "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
+    "sha256-uwWchwmpZRGdYCdQPYxYIYykz9VzdBCr4X+OQEAs4ck=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+    "sha256-yEGaRrYGpaxm7ARgPhiBntsg5AEev3cCwpB5XsXLJf4=",
+  ],
+  "/projects/index.html": [
+    "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
+    "sha256-4Gwfrx37YElkPUHm5+Qpda+na9/Bo0CtUBXbQRU+RiA=",
+    "sha256-5kliCkkDfqhPFACb3WFtUaJPuYnBIRh+L6noN0fad6U=",
+    "sha256-6SfKOD0clWxBmZiWqpuxpWHGVazA7QdeT9rN126LrwM=",
+    "sha256-FxI+W5dgL3VVPTmjAV1jT4SChe39z1wxV9bLQDP2Rro=",
+    "sha256-KUD91aKloJunb/i7gvPoHkPS4KeVgUeuV2JCelyMT3U=",
+    "sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=",
+    "sha256-W8ele/1TR8WBPsx75+b5OLzYZNqW3FXBTPA+1ccl7cw=",
+    "sha256-WA/zlKtyLXTje6Y8BzZLboxi7p0VVAYuyk3fRf/Uv1Y=",
+    "sha256-YCD7jr7owaSnlWvWgZTlPh48iZOr7hZ5Jbke51vfEa0=",
+    "sha256-gnDPPi+Rc+5TS68YgHAgsTjCBmJh1KUwoXxGZKyi+BQ=",
+    "sha256-k8nFaLU386vO8hvPpxkYiPtCFzcbzSTp3Hu/ErdKIr8=",
+    "sha256-nNydWDeixY+IR4rTm/xpkbzXZKqJqtb0chvD31XEcOA=",
+    "sha256-ox1vo8sWdwE2+YS6jiML+0XsY3sNMLts6Arsgbbx/8U=",
+    "sha256-u2YqR2PhoH6VwKt66kpSQOpvLApYgU9GwAgp82uYXJ8=",
+    "sha256-uBUah6fsUdxasVWcVr4IxPzP+umuzSthhRwIWhvoiFE=",
+    "sha256-uOGa22LXtMShbqChSljN0r7M5GHUvuB45SbH5pu9ywA=",
+    "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+  ],
 };
+
 var BASE_DIRECTIVES = [
   "default-src 'self'",
   "img-src 'self' data: blob:",
@@ -168,46 +219,49 @@ var BASE_DIRECTIVES = [
   "form-action 'self'",
   "upgrade-insecure-requests",
 ];
+
 var SCRIPT_PREFIX = "script-src 'self'";
-// Note: example.com and www.example.com are intentional test/dev placeholders for CONNECT_SRC_BY_HOST
+
+// Include test domains so infra tests can validate connect-src values.
 var CONNECT_SRC_BY_HOST = {
   "bjornmelin.io": "https://api.bjornmelin.io",
   "www.bjornmelin.io": "https://api.bjornmelin.io",
   "example.com": "https://api.example.com",
   "www.example.com": "https://api.example.com",
 };
+
 function normalizePath(uri) {
   if (!uri) return "/index.html";
-  var decoded = decodeURIComponent(uri.split("?")[0].split("#")[0]);
-  if (decoded.charAt(decoded.length - 1) === "/") return `${decoded}index.html`;
+  var raw = uri.split("?")[0].split("#")[0];
+  var decoded;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch (error) {
+    decoded = raw;
+  }
+  if (decoded.charAt(decoded.length - 1) === "/") return decoded + "index.html";
   var lastSegment = decoded.split("/").pop() || "";
-  if (lastSegment.indexOf(".") === -1) return `${decoded}/index.html`;
+  if (lastSegment.indexOf(".") === -1) return decoded + "/index.html";
   return decoded;
 }
+
 function buildCsp(host, hashes) {
   var normalizedHost = (host || "").toLowerCase().split(":")[0];
   var connectSrc = CONNECT_SRC_BY_HOST[normalizedHost];
-  var script = `${SCRIPT_PREFIX} ${hashes.map((hash) => `'${hash}'`).join(" ")}`;
-  var connectDirective = connectSrc ? `connect-src 'self' ${connectSrc}` : "connect-src 'self'";
-  return BASE_DIRECTIVES.concat([script, connectDirective]).join(";");
+  var script = SCRIPT_PREFIX + " " + hashes.map((hash) => "'" + hash + "'").join(" ");
+  var connectDirective = connectSrc ? "connect-src 'self' " + connectSrc : "connect-src 'self'";
+  return BASE_DIRECTIVES.concat([script, connectDirective]).join("; ");
 }
-/**
- * CloudFront Function handler to add Content-Security-Policy headers to responses.
- *
- * @param {Object} event - The CloudFront Function event object.
- * @param {Object} event.request - The HTTP request object.
- * @param {Object} event.response - The HTTP response object.
- * @returns {Object} The modified response object with CSP headers.
- */
-function _handler(event) {
+
+function handler(event) {
   var request = event.request || {};
   var response = event.response || {};
   var uri = request.uri || "/index.html";
   var normalized = normalizePath(uri);
   var hashes =
     PATH_HASHES[normalized] || PATH_HASHES["/404.html"] || PATH_HASHES["/index.html"] || [];
-  var hostHeader = request.headers?.host?.value ? request.headers.host.value : "";
-  var csp = buildCsp(hostHeader, hashes);
+  var hostHeader = request.headers && request.headers.host && request.headers.host.value;
+  var csp = buildCsp(hostHeader || "", hashes);
   response.headers = response.headers || {};
   response.headers["content-security-policy"] = { value: csp };
   return response;
