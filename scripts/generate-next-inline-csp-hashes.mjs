@@ -69,7 +69,8 @@ if (!fs.existsSync(outDir)) {
 
 const allHashes = new Set();
 const perPathHashes = {};
-for (const htmlFile of walkHtmlFiles(outDir)) {
+const htmlFiles = [...walkHtmlFiles(outDir)].sort();
+for (const htmlFile of htmlFiles) {
   const html = fs.readFileSync(htmlFile, "utf8");
   const hashes = [...computeInlineScriptHashes(html)].sort();
   for (const hash of hashes) allHashes.add(hash);
@@ -121,7 +122,7 @@ const perPathFunctionSource = `/* biome-ignore-all lint/style/useTemplate: Cloud
  * - No module system (no require/import)
  * - No Node.js APIs
  */
-var PATH_HASHES = ${JSON.stringify(perPathHashes, null, 2)};
+var PATH_HASHES = ${JSON.stringify(perPathHashes)};
 `;
 
 fs.writeFileSync(perPathJsTarget, `${perPathFunctionSource}\n`, "utf8");
@@ -140,7 +141,7 @@ const functionSource = `/* biome-ignore-all lint/style/useTemplate: CloudFront F
  * - No module system (no require/import)
  * - No Node.js APIs
  */
-var PATH_HASHES = ${JSON.stringify(perPathHashes, null, 2)};
+var PATH_HASHES = ${JSON.stringify(perPathHashes)};
 
 var BASE_DIRECTIVES = [
   "default-src 'self'",

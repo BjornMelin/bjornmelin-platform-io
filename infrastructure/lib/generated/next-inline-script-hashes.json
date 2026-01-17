@@ -1,5 +1,5 @@
 {
-  "/404/index.html": [
+  "/404.html": [
     "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
     "sha256-3ncRmbykpqITpwZBbEQCTCMRs2UGL+zAszEpUz/tj94=",
     "sha256-5MsGM9v4ULr6ObZAV3722H7EhdrW3pG3FfvPobcvB7Y=",
@@ -21,7 +21,7 @@
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
     "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0="
   ],
-  "/404.html": [
+  "/404/index.html": [
     "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
     "sha256-3ncRmbykpqITpwZBbEQCTCMRs2UGL+zAszEpUz/tj94=",
     "sha256-5MsGM9v4ULr6ObZAV3722H7EhdrW3pG3FfvPobcvB7Y=",
