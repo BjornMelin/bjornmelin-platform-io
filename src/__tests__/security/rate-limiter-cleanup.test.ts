@@ -2,17 +2,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("rate limiter cleanup interval", () => {
-  const originalEnv = process.env.NODE_ENV;
-
   beforeEach(() => {
-    process.env.NODE_ENV = "production";
+    vi.stubEnv("NODE_ENV", "production");
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-01T00:00:00Z"));
     vi.resetModules();
   });
 
   afterEach(() => {
-    process.env.NODE_ENV = originalEnv;
+    vi.unstubAllEnvs();
     vi.useRealTimers();
     vi.restoreAllMocks();
     vi.resetModules();

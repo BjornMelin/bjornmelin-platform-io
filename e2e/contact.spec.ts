@@ -8,7 +8,8 @@ test("contact form validates required fields and submits successfully", async ({
       window.location.origin;
 
     window.fetch = async (input, init) => {
-      const url = typeof input === "string" ? input : input.url;
+      const url =
+        typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
 
       if (url.includes("/contact")) {
         const body = init?.body ? JSON.parse(String(init.body)) : null;
