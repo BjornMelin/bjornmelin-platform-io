@@ -49,7 +49,7 @@ describe("Navbar/Footer", () => {
     });
   });
 
-  it("closes the mobile menu when home and contact links are clicked", async () => {
+  it("closes the mobile menu when Home, About, or Contact link is clicked", async () => {
     const user = userEvent.setup();
     render(<Navbar />);
 

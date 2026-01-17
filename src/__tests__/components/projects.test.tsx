@@ -5,7 +5,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ProjectCard } from "@/components/projects/project-card";
 import { ProjectGrid } from "@/components/projects/project-grid";
@@ -66,6 +66,10 @@ const demoProjects: Project[] = [
 ];
 
 describe("Project components", () => {
+  afterEach(() => {
+    window.history.replaceState({}, "", "/");
+  });
+
   it("ProjectCard renders title and links conditionally", () => {
     render(<ProjectCard project={demoProjects[0]} />);
     expect(screen.getByText(/A project/)).toBeInTheDocument();

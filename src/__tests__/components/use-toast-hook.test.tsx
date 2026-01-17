@@ -2,11 +2,10 @@ import { act, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type * as ToastModule from "@/hooks/use-toast";
+import { TOAST_REMOVE_DELAY } from "@/hooks/use-toast";
 
 type ToastControls = ReturnType<typeof ToastModule.toast>;
 type ToastUpdateArg = Parameters<ToastControls["update"]>[0];
-
-const TOAST_REMOVE_DELAY_MS = 1_000_000;
 
 describe("useToast() + toast()", () => {
   beforeEach(() => {
@@ -111,7 +110,7 @@ describe("useToast() + toast()", () => {
     expect(screen.getByText("A [closed]")).toBeInTheDocument();
 
     act(() => {
-      vi.advanceTimersByTime(TOAST_REMOVE_DELAY_MS + 1);
+      vi.advanceTimersByTime(TOAST_REMOVE_DELAY + 1);
     });
 
     expect(screen.queryAllByRole("listitem")).toHaveLength(0);
@@ -154,7 +153,7 @@ describe("useToast() + toast()", () => {
     expect(screen.getByText("A [closed]")).toBeInTheDocument();
 
     act(() => {
-      vi.advanceTimersByTime(TOAST_REMOVE_DELAY_MS + 1);
+      vi.advanceTimersByTime(TOAST_REMOVE_DELAY + 1);
     });
 
     // Ensure empty state and that we exercised the reducer "dismiss all" path.
@@ -235,7 +234,7 @@ describe("useToast() + toast()", () => {
     expect(screen.getByText("A [closed]")).toBeInTheDocument();
 
     act(() => {
-      vi.advanceTimersByTime(TOAST_REMOVE_DELAY_MS + 1);
+      vi.advanceTimersByTime(TOAST_REMOVE_DELAY + 1);
     });
 
     expect(screen.queryAllByRole("listitem")).toHaveLength(0);
