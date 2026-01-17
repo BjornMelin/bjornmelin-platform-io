@@ -160,7 +160,7 @@ var PATH_HASHES = {
 };
 var BASE_DIRECTIVES = [
   "default-src 'self'",
-  "img-src 'self' data:blob:",
+  "img-src 'self' data: blob:",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data:",
   "frame-ancestors 'none'",
@@ -169,6 +169,7 @@ var BASE_DIRECTIVES = [
   "upgrade-insecure-requests",
 ];
 var SCRIPT_PREFIX = "script-src 'self'";
+// Note: example.com and www.example.com are intentional test/dev placeholders for CONNECT_SRC_BY_HOST
 var CONNECT_SRC_BY_HOST = {
   "bjornmelin.io": "https://api.bjornmelin.io",
   "www.bjornmelin.io": "https://api.bjornmelin.io",
@@ -190,6 +191,14 @@ function buildCsp(host, hashes) {
   var connectDirective = connectSrc ? `connect-src 'self' ${connectSrc}` : "connect-src 'self'";
   return BASE_DIRECTIVES.concat([script, connectDirective]).join(";");
 }
+/**
+ * CloudFront Function handler to add Content-Security-Policy headers to responses.
+ *
+ * @param {Object} event - The CloudFront Function event object.
+ * @param {Object} event.request - The HTTP request object.
+ * @param {Object} event.response - The HTTP response object.
+ * @returns {Object} The modified response object with CSP headers.
+ */
 function _handler(event) {
   var request = event.request || {};
   var response = event.response || {};
@@ -197,8 +206,11 @@ function _handler(event) {
   var normalized = normalizePath(uri);
   var hashes =
     PATH_HASHES[normalized] || PATH_HASHES["/404.html"] || PATH_HASHES["/index.html"] || [];
-  var hostHeader = request.headers?.host?.value;
-  var csp = buildCsp(hostHeader || "", hashes);
+  var hostHeader =
+    request.headers && request.headers.host && request.headers.host.value
+      ? request.headers.host.value
+      : "";
+  var csp = buildCsp(hostHeader, hashes);
   response.headers = response.headers || {};
   response.headers["content-security-policy"] = { value: csp };
   return response;
