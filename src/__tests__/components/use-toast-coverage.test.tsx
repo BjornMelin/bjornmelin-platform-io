@@ -26,6 +26,14 @@ describe("useToast coverage", () => {
           >
             Close toast
           </button>
+          <button
+            type="button"
+            onClick={() => {
+              toasts[0]?.onOpenChange?.(true);
+            }}
+          >
+            Keep open
+          </button>
           <button type="button" onClick={() => dismiss()}>
             Dismiss all
           </button>
@@ -45,6 +53,12 @@ describe("useToast coverage", () => {
 
     act(() => {
       toast({ title: "A" });
+    });
+
+    expect(screen.getByText("A [open]")).toBeInTheDocument();
+
+    act(() => {
+      screen.getByRole("button", { name: "Keep open" }).click();
     });
 
     expect(screen.getByText("A [open]")).toBeInTheDocument();
