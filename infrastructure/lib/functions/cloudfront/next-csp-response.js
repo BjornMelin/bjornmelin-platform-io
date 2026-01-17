@@ -206,10 +206,7 @@ function _handler(event) {
   var normalized = normalizePath(uri);
   var hashes =
     PATH_HASHES[normalized] || PATH_HASHES["/404.html"] || PATH_HASHES["/index.html"] || [];
-  var hostHeader =
-    request.headers && request.headers.host && request.headers.host.value
-      ? request.headers.host.value
-      : "";
+  var hostHeader = request.headers?.host?.value ? request.headers.host.value : "";
   var csp = buildCsp(hostHeader, hashes);
   response.headers = response.headers || {};
   response.headers["content-security-policy"] = { value: csp };
