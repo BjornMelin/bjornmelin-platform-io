@@ -79,6 +79,35 @@ describe("Project components", () => {
     expect(screen.queryByRole("link", { name: /live demo/i })).toBeNull();
   });
 
+  it("ProjectCard renders demo link when provided", () => {
+    const demoProject: Project = {
+      ...demoProjects[0],
+      links: { demo: "https://demo.example.com" },
+    };
+
+    render(<ProjectCard project={demoProject} />);
+
+    expect(screen.getByRole("link", { name: /demo/i })).toBeInTheDocument();
+  });
+
+  it("ProjectCard shows a +N trigger when technologies overflow", async () => {
+    const user = userEvent.setup();
+    const richProject: Project = {
+      ...demoProjects[0],
+      technologies: ["Next.js", "React", "TypeScript", "Tailwind", "Radix", "Vite"],
+    };
+
+    render(<ProjectCard project={richProject} />);
+
+    const trigger = screen.getByRole("button", { name: /show 2 more technologies/i });
+    expect(trigger).toBeInTheDocument();
+
+    await user.click(trigger);
+
+    expect(await screen.findByText(/technologies/i)).toBeInTheDocument();
+    expect(screen.getByText("Radix")).toBeInTheDocument();
+  });
+
   it("ProjectGrid filters by category and sorts by featured", () => {
     render(<ProjectGrid projects={demoProjects} />);
 
@@ -87,12 +116,12 @@ describe("Project components", () => {
     expect(screen.getByText(/A project/)).toBeInTheDocument();
 
     // Filter by Data category; only B project remains
-    fireEvent.click(screen.getByRole("button", { name: "Data" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Data" }));
     expect(screen.getByText(/B project/)).toBeInTheDocument();
     expect(screen.queryByText(/A project/)).toBeNull();
 
     // Reset to All and ensure both are visible again
-    fireEvent.click(screen.getByRole("button", { name: "All" }));
+    fireEvent.click(screen.getByRole("radio", { name: "All" }));
     expect(screen.getByText(/A project/)).toBeInTheDocument();
     expect(screen.getByText(/B project/)).toBeInTheDocument();
   });

@@ -10,15 +10,15 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <div className="container py-12">
+    <div className="container mx-auto px-4 py-12">
       <div className="mx-auto max-w-[58rem] space-y-6">
-        <h1 className="font-heading text-4xl font-bold md:text-6xl">Projects</h1>
-        <p className="text-xl text-muted-foreground">
+        <h1 className="text-balance font-heading text-4xl font-bold md:text-6xl">Projects</h1>
+        <p className="text-balance text-xl text-muted-foreground">
           A collection of projects showcasing my work in machine learning and AI, cloud
           architecture, and web development. As well as open source contributions.
         </p>
       </div>
-      <div className="mt-16">
+      <div className="mt-16 mx-auto max-w-6xl">
         <h2 className="sr-only">Project List</h2>
         <ProjectGrid projects={projectsData} />
       </div>

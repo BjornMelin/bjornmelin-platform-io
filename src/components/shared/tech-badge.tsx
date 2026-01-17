@@ -8,22 +8,24 @@ interface TechBadgeProps {
 
 export function TechBadge({ name, className, size = "md" }: TechBadgeProps) {
   const sizeClasses = {
-    sm: "text-xs px-2 py-1",
-    md: "text-sm px-3 py-1",
-    lg: "text-base px-4 py-2",
+    sm: "text-[11px] leading-5 px-2 py-0.5",
+    md: "text-xs leading-5 px-2.5 py-0.5",
+    lg: "text-sm leading-5 px-3 py-1",
   };
 
   return (
     <span
       className={cn(
         "inline-flex items-center rounded-full font-medium",
-        "bg-primary/10 text-primary hover:bg-primary/20 transition-colors",
-        "border border-primary/20",
+        "border border-muted/60 bg-muted text-muted-foreground",
+        "transition-colors hover:bg-muted/70 dark:bg-muted/50 dark:hover:bg-muted/70",
+        "max-w-[10rem]",
         sizeClasses[size],
         className,
       )}
+      title={name}
     >
-      {name}
+      <span className="min-w-0 truncate">{name}</span>
     </span>
   );
 }
