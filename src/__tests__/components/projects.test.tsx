@@ -155,8 +155,10 @@ describe("Project components", () => {
 
   it("ProjectGrid defaults to All and featured when params are invalid", async () => {
     const user = userEvent.setup();
-    const { useRouter } = await import("next/navigation");
-    useRouter().replace("/projects?category=Unknown&sort=bogus");
+    const navigation = await import("next/navigation");
+    const searchParamsSpy = vi
+      .spyOn(navigation, "useSearchParams")
+      .mockReturnValue(new URLSearchParams("category=Unknown&sort=bogus"));
 
     const projects: Project[] = [
       {
@@ -193,6 +195,8 @@ describe("Project components", () => {
     await waitFor(() => {
       expect(window.location.search).toContain("sort=alphabetical");
     });
+
+    searchParamsSpy.mockRestore();
   });
 
   it("ProjectGrid shows empty state when no projects are available", () => {
