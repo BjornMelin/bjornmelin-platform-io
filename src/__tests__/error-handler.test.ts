@@ -62,4 +62,17 @@ describe("handleAPIError", () => {
       code: "INTERNAL_SERVER_ERROR",
     });
   });
+
+  it("falls back to a safe log message when console.error fails", async () => {
+    consoleSpy.mockImplementationOnce(() => {
+      throw new Error("logger failed");
+    });
+
+    const response = handleAPIError(new Error("Boom"));
+    const payload = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(payload.code).toBe("INTERNAL_SERVER_ERROR");
+    expect(consoleSpy).toHaveBeenNthCalledWith(2, "API Error:", "Boom");
+  });
 });

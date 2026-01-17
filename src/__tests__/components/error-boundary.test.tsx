@@ -2,11 +2,16 @@
  * @fileoverview Tests for ErrorBoundary fallback and recovery behavior.
  */
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 describe("ErrorBoundary", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("derives error state from thrown error", () => {
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
@@ -63,5 +68,24 @@ describe("ErrorBoundary", () => {
 
     const button = screen.getByRole("button", { name: /refresh page/i });
     expect(button).toHaveAttribute("type", "button");
+  });
+
+  it("reloads the page when the refresh button is clicked", async () => {
+    const user = userEvent.setup();
+    const reloadSpy = vi.fn();
+    vi.stubGlobal("location", { ...window.location, reload: reloadSpy });
+
+    class TestBoundary extends ErrorBoundary {
+      public state = { hasError: true };
+    }
+
+    render(
+      <TestBoundary>
+        <div>Child</div>
+      </TestBoundary>,
+    );
+
+    await user.click(screen.getByRole("button", { name: /refresh page/i }));
+    expect(reloadSpy).toHaveBeenCalled();
   });
 });

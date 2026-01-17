@@ -5,43 +5,16 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReadonlyURLSearchParams } from "next/navigation";
-import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ProjectCard } from "@/components/projects/project-card";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import type { Project } from "@/types/project";
 
-vi.mock("@/components/ui/select", () => ({
-  Select: ({
-    value,
-    onValueChange,
-    children,
-  }: {
-    value: string;
-    onValueChange: (value: string) => void;
-    children: ReactNode;
-  }) => (
-    <select
-      aria-label="Sort projects by"
-      value={value}
-      onChange={(event) => onValueChange(event.target.value)}
-    >
-      {children}
-    </select>
-  ),
-  SelectTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,
-  SelectContent: ({ children }: { children: ReactNode }) => <>{children}</>,
-  SelectItem: ({ value, children }: { value: string; children: ReactNode }) => (
-    <option value={value}>{children}</option>
-  ),
-  SelectValue: ({ placeholder }: { placeholder?: string }) =>
-    placeholder ? (
-      <option value="" disabled hidden>
-        {placeholder}
-      </option>
-    ) : null,
-}));
+vi.mock("@/components/ui/select", async () => {
+  const { SelectMocks } = await import("@/test/ui-mocks");
+  return SelectMocks;
+});
 
 const demoProjects: Project[] = [
   {
@@ -79,6 +52,36 @@ describe("Project components", () => {
     expect(screen.queryByRole("link", { name: /live demo/i })).toBeNull();
   });
 
+  it("ProjectCard renders demo link when provided", () => {
+    const demoProject: Project = {
+      ...demoProjects[0],
+      links: { demo: "https://demo.example.com" },
+    };
+
+    render(<ProjectCard project={demoProject} />);
+
+    expect(screen.getByRole("link", { name: /demo/i })).toBeInTheDocument();
+  });
+
+  it("ProjectCard shows a +N trigger when technologies overflow", async () => {
+    const user = userEvent.setup();
+    const richProject: Project = {
+      ...demoProjects[0],
+      technologies: ["Next.js", "React", "TypeScript", "Tailwind", "Radix", "Vite"],
+    };
+
+    render(<ProjectCard project={richProject} />);
+
+    const trigger = screen.getByLabelText(/show 2 more technologies/i);
+    expect(trigger).toBeInTheDocument();
+
+    await user.click(trigger);
+
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(await screen.findByText("Vite")).toBeInTheDocument();
+    expect(screen.getByText("Radix")).toBeInTheDocument();
+  });
+
   it("ProjectGrid filters by category and sorts by featured", () => {
     render(<ProjectGrid projects={demoProjects} />);
 
@@ -87,12 +90,12 @@ describe("Project components", () => {
     expect(screen.getByText(/A project/)).toBeInTheDocument();
 
     // Filter by Data category; only B project remains
-    fireEvent.click(screen.getByRole("button", { name: "Data" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Data" }));
     expect(screen.getByText(/B project/)).toBeInTheDocument();
     expect(screen.queryByText(/A project/)).toBeNull();
 
     // Reset to All and ensure both are visible again
-    fireEvent.click(screen.getByRole("button", { name: "All" }));
+    fireEvent.click(screen.getByRole("radio", { name: "All" }));
     expect(screen.getByText(/A project/)).toBeInTheDocument();
     expect(screen.getByText(/B project/)).toBeInTheDocument();
   });

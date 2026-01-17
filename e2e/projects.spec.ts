@@ -11,7 +11,7 @@ test("projects page lists projects and allows filtering", async ({ page }) => {
   const beforeCount = await projectCards.count();
 
   // Filter by a category chip when present (category names are data-driven).
-  const aiCategoryChip = page.getByRole("button", { name: "AI & Machine Learning" });
+  const aiCategoryChip = page.getByRole("radio", { name: "AI & Machine Learning" });
   if (await aiCategoryChip.isVisible()) {
     await aiCategoryChip.click();
 
@@ -23,5 +23,11 @@ test("projects page lists projects and allows filtering", async ({ page }) => {
     }).toPass();
 
     await expect(projectCards.first()).toBeVisible();
+  }
+
+  const overflowTrigger = page.getByRole("button", { name: /show .* more technologies/i }).first();
+  if (await overflowTrigger.isVisible()) {
+    await overflowTrigger.click();
+    await expect(page.getByText("Technologies")).toBeVisible();
   }
 });

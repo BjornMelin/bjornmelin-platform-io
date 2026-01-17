@@ -38,7 +38,7 @@ test("mobile menu closes on navigation", async ({ page }) => {
 
   const primaryNav = page.getByRole("navigation", { name: "Primary" });
 
-  await primaryNav.getByRole("button", { name: /toggle menu/i }).click();
+  await primaryNav.getByLabel(/toggle menu/i).click();
   await expect(primaryNav.getByRole("link", { name: "Home" })).toBeVisible();
 
   await primaryNav.getByRole("link", { name: "Projects" }).click();

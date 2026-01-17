@@ -67,24 +67,36 @@ export function ContactForm() {
     setFormStatus("idle");
 
     try {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+      const allowLocalContact = process.env.NEXT_PUBLIC_ALLOW_LOCAL_CONTACT === "true";
+      const runtimeApiUrl = (
+        globalThis as typeof globalThis & {
+          __CONTACT_API_URL__?: string;
+        }
+      ).__CONTACT_API_URL__;
+      let apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || runtimeApiUrl;
 
       if (!apiBaseUrl) {
-        throw new Error(
-          "Contact form is not configured. Set NEXT_PUBLIC_API_URL in your environment (see .env.example).",
-        );
+        if (allowLocalContact) {
+          // Must include /api prefix to avoid hitting the Next.js /contact page (HTML)
+          apiBaseUrl = `${window.location.origin}/api`;
+        } else {
+          throw new Error(
+            "Contact form is not configured. Set NEXT_PUBLIC_API_URL in your environment (see .env.example).",
+          );
+        }
       }
 
-      if (process.env.NODE_ENV === "development") {
-        const url = safeParseUrl(apiBaseUrl);
-        if (url) {
-          const normalizedPath = url.pathname.replace(/\/$/, "");
-          if (url.origin === window.location.origin && normalizedPath === "/api") {
-            throw new Error(
-              "Contact API is not available on the local Next.js dev server. Set NEXT_PUBLIC_API_URL to a deployed API (e.g. https://api.your-domain.com or https://your-domain.com/api).",
-            );
-          }
-        }
+      // Final safeguard: if the URL points to the same origin without an /api prefix,
+      // it will likely hit our own HTML page instead of an API.
+      const url = safeParseUrl(apiBaseUrl);
+      if (
+        url &&
+        url.origin === window.location.origin &&
+        (!url.pathname.startsWith("/api") || !allowLocalContact)
+      ) {
+        throw new Error(
+          "Contact API is not available on the same origin unless explicitly allowed via NEXT_PUBLIC_ALLOW_LOCAL_CONTACT. Set NEXT_PUBLIC_API_URL to a deployed API.",
+        );
       }
 
       let endpoint: string;
@@ -92,7 +104,7 @@ export function ContactForm() {
         endpoint = buildContactEndpoint(apiBaseUrl);
       } catch {
         throw new Error(
-          "Invalid NEXT_PUBLIC_API_URL. Expected a full URL like https://api.your-domain.com or https://your-domain.com/api.",
+          "Invalid NEXT_PUBLIC_API_URL. Expected a full URL like https://api.your-domain.com.",
         );
       }
 
@@ -108,13 +120,19 @@ export function ContactForm() {
         }),
       });
 
+      // Explicitly check if we got HTML instead of JSON (common when hitting the wrong route)
+      const contentType = response.headers.get("content-type");
+      if (contentType?.includes("text/html")) {
+        throw new Error(
+          "The API returned HTML instead of JSON. You might be hitting the contact page instead of an API route.",
+        );
+      }
+
       let result: APIErrorResponse | null = null;
       try {
         result = (await response.json()) as APIErrorResponse;
       } catch {
-        if (!response.ok) {
-          throw new Error("Failed to send message. The API returned invalid JSON.");
-        }
+        throw new Error("Failed to send message. The API returned invalid JSON.");
       }
 
       if (!response.ok) {

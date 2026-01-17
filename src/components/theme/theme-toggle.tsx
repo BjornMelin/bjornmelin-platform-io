@@ -1,41 +1,18 @@
-"use client";
-
 /**
- * @fileoverview ThemeToggle component renders a dropdown allowing users to switch
- * between light, dark, and system themes using next-themes.
+ * @fileoverview Theme toggle built with native HTML -- avoids client JS bundles.
+ * Theme changes are handled by ThemeScript via data-theme-set attributes.
  */
 
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 /**
- * Toggle button with dropdown to change theme.
- * Uses mounted state guard to prevent hydration mismatches in static export.
- *
- * @returns React element containing the theme selection UI.
+ * Renders a native details-based theme chooser wired via data-theme-set.
+ * @returns {JSX.Element} Theme toggle control.
  */
 export function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
-  const { setTheme } = useTheme();
-
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Render placeholder during SSR to prevent hydration mismatch
-  if (!mounted) {
-    return (
-      <Button variant="ghost" size="icon" disabled>
+  return (
+    <details className="relative">
+      <summary className="list-none rounded-md p-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden">
         <Sun
           aria-hidden="true"
           className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0"
@@ -45,30 +22,30 @@ export function ThemeToggle() {
           className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100"
         />
         <span className="sr-only">Toggle theme</span>
-      </Button>
-    );
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Sun
-            aria-hidden="true"
-            className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0"
-          />
-          <Moon
-            aria-hidden="true"
-            className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100"
-          />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </summary>
+      <div className="absolute right-0 mt-2 w-36 rounded-md border bg-popover p-1 text-popover-foreground shadow-md">
+        <button
+          type="button"
+          data-theme-set="light"
+          className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Light
+        </button>
+        <button
+          type="button"
+          data-theme-set="dark"
+          className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Dark
+        </button>
+        <button
+          type="button"
+          data-theme-set="system"
+          className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          System
+        </button>
+      </div>
+    </details>
   );
 }

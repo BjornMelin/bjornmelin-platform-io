@@ -13,7 +13,7 @@ vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({ toast: mockToast }),
 }));
 
-const apiBaseUrl = "http://localhost:3000";
+const apiBaseUrl = "https://api.example.com";
 
 describe("ContactForm", () => {
   beforeEach(() => {
@@ -232,8 +232,77 @@ describe("ContactForm", () => {
     });
   });
 
+  it("falls back to same-origin API when local contact is allowed", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_ALLOW_LOCAL_CONTACT", "true");
+    const endpoint = buildContactEndpoint(`${window.location.origin}/api`);
+
+    server.use(
+      http.post(endpoint, () => {
+        return HttpResponse.json({ success: true });
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
+    });
+  });
+
+  it("uses runtime API URL when env is missing", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "");
+
+    const runtimeWindow = window as typeof window & { __CONTACT_API_URL__?: string };
+    runtimeWindow.__CONTACT_API_URL__ = "https://runtime.example.com";
+    try {
+      const endpoint = buildContactEndpoint("https://runtime.example.com");
+
+      server.use(
+        http.post(endpoint, () => {
+          return HttpResponse.json({ success: true });
+        }),
+      );
+
+      render(<ContactForm />);
+      await fillContactForm(user);
+
+      await user.click(screen.getByRole("button", { name: /send message/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
+      });
+    } finally {
+      delete runtimeWindow.__CONTACT_API_URL__;
+    }
+  });
+
   it("shows error when NEXT_PUBLIC_API_URL is invalid", async () => {
     const user = userEvent.setup();
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "not a url");
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringContaining("Invalid NEXT_PUBLIC_API_URL"),
+        }),
+      );
+    });
+  });
+
+  it("handles invalid NEXT_PUBLIC_API_URL in development before URL checks", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("NEXT_PUBLIC_API_URL", "not a url");
 
     render(<ContactForm />);
@@ -316,6 +385,35 @@ describe("ContactForm", () => {
     });
   });
 
+  it("logs unexpected field errors from a 400 response", async () => {
+    const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(apiBaseUrl);
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    try {
+      server.use(
+        http.post(endpoint, () => {
+          return HttpResponse.json(
+            {
+              details: [{ message: "Unexpected", path: ["unknown"] }],
+            },
+            { status: 400 },
+          );
+        }),
+      );
+
+      render(<ContactForm />);
+      await fillContactForm(user);
+
+      await user.click(screen.getByRole("button", { name: /send message/i }));
+
+      await waitFor(() => {
+        expect(warnSpy).toHaveBeenCalledWith("contact-form: unexpected field error", "unknown");
+      });
+    } finally {
+      warnSpy.mockRestore();
+    }
+  });
+
   it("surfaces invalid JSON responses from the API", async () => {
     const user = userEvent.setup();
     const endpoint = buildContactEndpoint(apiBaseUrl);
@@ -340,7 +438,7 @@ describe("ContactForm", () => {
     });
   });
 
-  it("treats successful responses with invalid JSON as success", async () => {
+  it("treats successful responses with invalid JSON as an error", async () => {
     const user = userEvent.setup();
     const endpoint = buildContactEndpoint(apiBaseUrl);
 
@@ -356,7 +454,11 @@ describe("ContactForm", () => {
     await user.click(screen.getByRole("button", { name: /send message/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringContaining("invalid JSON"),
+        }),
+      );
     });
   });
 

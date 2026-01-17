@@ -1,73 +1,40 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const mockSetTheme = vi.fn();
-
-vi.mock("next-themes", () => ({
-  useTheme: () => ({ setTheme: mockSetTheme }),
-}));
+import { describe, expect, it } from "vitest";
 
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 describe("<ThemeToggle />", () => {
-  beforeEach(() => {
-    mockSetTheme.mockClear();
-  });
-
-  it("renders the toggle button", () => {
+  it("renders the toggle control", () => {
     render(<ThemeToggle />);
-    expect(screen.getByRole("button", { name: /toggle theme/i })).toBeInTheDocument();
+    expect(screen.getByText(/toggle theme/i)).toBeInTheDocument();
   });
 
-  it("enables button after hydration", async () => {
+  it("renders theme options with data attributes", () => {
     render(<ThemeToggle />);
-    const button = screen.getByRole("button", { name: /toggle theme/i });
-
-    await waitFor(() => {
-      expect(button).not.toBeDisabled();
-    });
-
-    expect(button).toHaveAttribute("aria-haspopup", "menu");
+    expect(screen.getByRole("button", { name: /light/i })).toHaveAttribute(
+      "data-theme-set",
+      "light",
+    );
+    expect(screen.getByRole("button", { name: /dark/i })).toHaveAttribute("data-theme-set", "dark");
+    expect(screen.getByRole("button", { name: /system/i })).toHaveAttribute(
+      "data-theme-set",
+      "system",
+    );
   });
 
-  it("opens dropdown menu when clicked", async () => {
+  it("opens the menu when activated", async () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
-    const button = screen.getByRole("button", { name: /toggle theme/i });
 
-    await waitFor(() => {
-      expect(button).not.toBeDisabled();
-    });
+    const summary = screen.getByText(/toggle theme/i).closest("summary");
+    expect(summary).not.toBeNull();
 
-    await user.click(button);
+    const details = summary?.closest("details");
+    expect(details).not.toBeNull();
+    expect(details).not.toHaveAttribute("open");
 
-    expect(screen.getByRole("menuitem", { name: /light/i })).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: /dark/i })).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: /system/i })).toBeInTheDocument();
-  });
-
-  it("calls setTheme with correct value when menu items are clicked", async () => {
-    const user = userEvent.setup();
-    render(<ThemeToggle />);
-    const button = screen.getByRole("button", { name: /toggle theme/i });
-
-    await waitFor(() => {
-      expect(button).not.toBeDisabled();
-    });
-
-    await user.click(button);
-    await user.click(screen.getByRole("menuitem", { name: /light/i }));
-    expect(mockSetTheme).toHaveBeenCalledWith("light");
-    mockSetTheme.mockClear();
-
-    await user.click(button);
-    await user.click(screen.getByRole("menuitem", { name: /dark/i }));
-    expect(mockSetTheme).toHaveBeenCalledWith("dark");
-    mockSetTheme.mockClear();
-
-    await user.click(button);
-    await user.click(screen.getByRole("menuitem", { name: /system/i }));
-    expect(mockSetTheme).toHaveBeenCalledWith("system");
+    await user.click(summary as HTMLElement);
+    expect(details).toHaveAttribute("open");
   });
 });

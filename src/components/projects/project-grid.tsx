@@ -6,7 +6,6 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -14,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { Project } from "@/types/project";
 import { ProjectCard } from "./project-card";
 
@@ -102,21 +102,27 @@ export function ProjectGrid({ projects, className }: ProjectGridProps) {
       aria-busy={isPending}
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-2">
+        <ToggleGroup
+          type="single"
+          value={category}
+          onValueChange={(value) => {
+            if (!value) {
+              return;
+            }
+            setCategory(value);
+            updateUrl(value, sortBy);
+          }}
+          variant="outline"
+          size="sm"
+          aria-label="Filter projects by category"
+          className="flex flex-wrap justify-start gap-2"
+        >
           {categories.map((categoryName) => (
-            <Button
-              key={categoryName}
-              variant={category === categoryName ? "default" : "outline"}
-              className="rounded-full"
-              onClick={() => {
-                setCategory(categoryName);
-                updateUrl(categoryName, sortBy);
-              }}
-            >
+            <ToggleGroupItem key={categoryName} value={categoryName} className="rounded-full px-3">
               {categoryName}
-            </Button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
         <div>
           <Select
             value={sortBy}
