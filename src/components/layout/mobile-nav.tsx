@@ -47,6 +47,17 @@ export function MobileNav({
           aria-label="Toggle menu"
           aria-expanded={isOpen}
           aria-controls="mobile-nav-panel"
+          onClick={() => {
+            const details = detailsRef.current;
+            if (!details) return;
+            if (details.open) {
+              details.removeAttribute("open");
+              setIsOpen(false);
+              return;
+            }
+            details.setAttribute("open", "");
+            setIsOpen(true);
+          }}
         >
           <Menu size={24} aria-hidden="true" className="block group-open:hidden" />
           <X size={24} aria-hidden="true" className="hidden group-open:block" />
