@@ -28,12 +28,16 @@ describe("rate limiter cleanup interval", () => {
 
     checkRateLimit("1.2.3.4");
 
+    expect(intervalSpy).toHaveBeenCalledTimes(1);
+    const intervalCallback = intervalCallbacks[0];
+    expect(intervalCallback).toBeDefined();
+
     const callsBefore = deleteSpy.mock.calls.length;
-    intervalCallbacks[0]?.();
+    intervalCallback!();
     const callsAfterFirst = deleteSpy.mock.calls.length;
 
     vi.setSystemTime(new Date("2024-01-01T00:02:00Z"));
-    intervalCallbacks[0]?.();
+    intervalCallback!();
 
     stopCleanupInterval();
 
