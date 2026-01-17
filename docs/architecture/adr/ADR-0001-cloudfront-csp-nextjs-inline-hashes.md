@@ -47,7 +47,7 @@ hash allow-list did not match the currently deployed static export.
 
 ## Decision
 
-- CloudFront sets CSP via a `ResponseHeadersPolicy` in `StorageStack`.
+- CloudFront sets CSP via a **viewer-response CloudFront Function** in `StorageStack`.
 - CSP `script-src` uses:
   - `'self'` for external JS served from the same origin, and
   - a **SHA-256 hash allow-list** for required inline scripts.
@@ -153,7 +153,8 @@ strict CSP approach for CloudFront-served static content.
 ## Implementation Notes
 
 - CSP hash generation: `scripts/generate-next-inline-csp-hashes.mjs`
-- CloudFront CSP policy: `infrastructure/lib/stacks/storage-stack.ts`
+- CloudFront CSP policy: `infrastructure/lib/stacks/storage-stack.ts` (function) +
+  `infrastructure/lib/functions/cloudfront/next-csp-response.js`
 - Static upload helper: `scripts/deploy-static-site.mjs`
 
 ## Testing

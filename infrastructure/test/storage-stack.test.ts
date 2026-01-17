@@ -59,6 +59,7 @@ describe("StorageStack", () => {
         DefaultCacheBehavior: Match.objectLike({
           FunctionAssociations: Match.arrayWith([
             Match.objectLike({ EventType: "viewer-request", FunctionARN: Match.anyValue() }),
+            Match.objectLike({ EventType: "viewer-response", FunctionARN: Match.anyValue() }),
           ]),
         }),
         CustomErrorResponses: Match.arrayWith([
@@ -75,7 +76,7 @@ describe("StorageStack", () => {
         ]),
       }),
     });
-    template.resourceCountIs("AWS::CloudFront::Function", 1);
+    template.resourceCountIs("AWS::CloudFront::Function", 2);
 
     // OAC reference wired to origin
     template.hasResourceProperties("AWS::CloudFront::Distribution", {

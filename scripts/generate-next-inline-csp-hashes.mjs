@@ -50,6 +50,9 @@ const outDir = path.resolve(readArg("--out-dir") ?? "out");
 const target = path.resolve(
   readArg("--target") ?? "infrastructure/lib/generated/next-inline-script-hashes.ts",
 );
+const perPathTarget = path.resolve(
+  readArg("--per-path-target") ?? "infrastructure/lib/generated/next-inline-script-hashes.json",
+);
 
 if (!fs.existsSync(outDir)) {
   console.error(`out dir not found: ${outDir}`);
@@ -58,9 +61,13 @@ if (!fs.existsSync(outDir)) {
 }
 
 const allHashes = new Set();
+const perPathHashes = {};
 for (const htmlFile of walkHtmlFiles(outDir)) {
   const html = fs.readFileSync(htmlFile, "utf8");
-  for (const hash of computeInlineScriptHashes(html)) allHashes.add(hash);
+  const hashes = [...computeInlineScriptHashes(html)].sort();
+  for (const hash of hashes) allHashes.add(hash);
+  const relativePath = `/${path.relative(outDir, htmlFile).replaceAll(path.sep, "/")}`;
+  perPathHashes[relativePath] = hashes;
 }
 
 const hashes = [...allHashes].sort();
@@ -89,11 +96,14 @@ ${hashes.map((hash) => `  "${hash}",`).join("\n")}
   "utf8",
 );
 
+fs.writeFileSync(perPathTarget, `${JSON.stringify(perPathHashes, null, 2)}\n`, "utf8");
+
 process.stdout.write(
   JSON.stringify(
     {
       outDir,
       target,
+      perPathTarget,
       hashCount: hashes.length,
     },
     null,

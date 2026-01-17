@@ -9,18 +9,15 @@ import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import type { Construct } from "constructs";
 import { CACHE_DURATIONS } from "../constants/durations";
-import { NEXT_INLINE_SCRIPT_HASHES } from "../generated/next-inline-script-hashes";
 import type { StorageStackProps } from "../types/stack-props";
 import { applyStandardTags } from "../utils/tagging";
 
 export class StorageStack extends cdk.Stack {
   public readonly bucket: s3.IBucket;
   public readonly distribution: cloudfront.IDistribution;
-  private readonly props: StorageStackProps;
 
   constructor(scope: Construct, id: string, props: StorageStackProps) {
     super(scope, id, props);
-    this.props = props;
 
     // Website bucket
     this.bucket = new s3.Bucket(this, "WebsiteBucket", {
@@ -83,6 +80,7 @@ export class StorageStack extends cdk.Stack {
     }
 
     const staticSiteRewriteFunction = this.createStaticSiteRewriteFunction();
+    const cspResponseFunction = this.createCspResponseFunction();
 
     // CloudFront distribution
     this.distribution = new cloudfront.Distribution(this, "Distribution", {
@@ -100,6 +98,10 @@ export class StorageStack extends cdk.Stack {
           {
             function: staticSiteRewriteFunction,
             eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+          },
+          {
+            function: cspResponseFunction,
+            eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
           },
         ],
       },
@@ -206,6 +208,30 @@ export class StorageStack extends cdk.Stack {
     });
   }
 
+  private createCspResponseFunction(): cloudfront.Function {
+    const functionFileCandidates = [
+      // When running CDK from source (ts-node): infrastructure/lib/stacks -> ../functions
+      path.join(__dirname, "../functions/cloudfront/next-csp-response.js"),
+      // When running CDK from compiled JS: infrastructure/dist/lib/stacks -> ../../../lib/functions
+      path.join(__dirname, "../../../lib/functions/cloudfront/next-csp-response.js"),
+    ];
+
+    const functionFilePath = functionFileCandidates.find((candidate) => fs.existsSync(candidate));
+    if (!functionFilePath) {
+      throw new Error(
+        `CloudFront Function code not found. Looked for: ${functionFileCandidates.join(", ")}`,
+      );
+    }
+
+    return new cloudfront.Function(this, "CspResponseFunction", {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      comment: "Apply per-path CSP for static export without header length limits.",
+      code: cloudfront.FunctionCode.fromFile({
+        filePath: functionFilePath,
+      }),
+    });
+  }
+
   private createCachePolicy(): cloudfront.CachePolicy {
     return new cloudfront.CachePolicy(this, "CachePolicy", {
       queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
@@ -223,25 +249,6 @@ export class StorageStack extends cdk.Stack {
     return new cloudfront.ResponseHeadersPolicy(this, "SecurityHeaders", {
       responseHeadersPolicyName: `${this.stackName}-security-headers`,
       securityHeadersBehavior: {
-        contentSecurityPolicy: {
-          override: true,
-          contentSecurityPolicy: [
-            "default-src 'self'",
-            "img-src 'self' data: blob:",
-            // Next.js static export (App Router) requires inline bootstrap scripts (e.g. __next_f.push).
-            // Hash allow-listing keeps CSP strict without needing `unsafe-inline`.
-            //
-            // Regenerate by running `pnpm generate:csp-hashes` after `pnpm build` (so `out/` is fresh).
-            `script-src 'self' ${NEXT_INLINE_SCRIPT_HASHES.map((hash) => `'${hash}'`).join(" ")}`,
-            "style-src 'self' 'unsafe-inline'", // Keep for CSS-in-JS (lower risk than script)
-            "font-src 'self' data:",
-            `connect-src 'self' https://api.${this.props.domainName}`,
-            "frame-ancestors 'none'",
-            "base-uri 'self'",
-            "form-action 'self'",
-            "upgrade-insecure-requests",
-          ].join("; "),
-        },
         strictTransportSecurity: {
           override: true,
           accessControlMaxAge: CACHE_DURATIONS.HSTS_MAX_AGE,
