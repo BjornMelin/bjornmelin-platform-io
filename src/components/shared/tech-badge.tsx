@@ -9,8 +9,8 @@ interface TechBadgeProps {
 /**
  * Render a pill style tech badge with truncation support.
  *
- * @param {TechBadgeProps} props TechBadgeProps for name, size, and className.
- * @returns {JSX.Element} A styled tech badge element.
+ * @param props TechBadgeProps for name, size, and className.
+ * @returns A styled tech badge element.
  */
 export function TechBadge({ name, className, size = "md" }: TechBadgeProps) {
   const sizeClasses = {

@@ -15,9 +15,8 @@ const ToggleGroupContext = React.createContext<VariantProps<typeof toggleVariant
 /**
  * ToggleGroup root that provides variant and size context to items.
  *
- * @param {React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> & VariantProps<typeof toggleVariants>} props ToggleGroup props.
- * @param {React.ComponentRef<typeof ToggleGroupPrimitive.Root>} ref Forwarded ref to the root element.
- * @returns {JSX.Element} A toggle group container.
+ * @param props ToggleGroup props.
+ * @returns A toggle group container.
  */
 const ToggleGroup = React.forwardRef<
   React.ComponentRef<typeof ToggleGroupPrimitive.Root>,
@@ -38,9 +37,8 @@ ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName;
 /**
  * ToggleGroup item that inherits variant and size from the group.
  *
- * @param {React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item> & VariantProps<typeof toggleVariants>} props ToggleGroupItem props.
- * @param {React.ComponentRef<typeof ToggleGroupPrimitive.Item>} ref Forwarded ref to the item element.
- * @returns {JSX.Element} A toggle group item.
+ * @param props ToggleGroupItem props.
+ * @returns A toggle group item.
  */
 const ToggleGroupItem = React.forwardRef<
   React.ComponentRef<typeof ToggleGroupPrimitive.Item>,

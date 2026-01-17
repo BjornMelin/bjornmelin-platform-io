@@ -21,7 +21,6 @@ vi.mock("@/components/theme", () => ({
   ThemeScript: () => <script data-testid="theme-script" />,
 }));
 
-
 import RootLayout, { metadata, viewport } from "@/app/layout";
 import { AppShell } from "@/components/layout/app-shell";
 import StructuredData from "@/components/structured-data";

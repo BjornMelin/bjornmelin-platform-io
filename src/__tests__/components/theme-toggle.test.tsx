@@ -15,10 +15,7 @@ describe("<ThemeToggle />", () => {
       "data-theme-set",
       "light",
     );
-    expect(screen.getByRole("button", { name: /dark/i })).toHaveAttribute(
-      "data-theme-set",
-      "dark",
-    );
+    expect(screen.getByRole("button", { name: /dark/i })).toHaveAttribute("data-theme-set", "dark");
     expect(screen.getByRole("button", { name: /system/i })).toHaveAttribute(
       "data-theme-set",
       "system",

@@ -389,28 +389,29 @@ describe("ContactForm", () => {
     const user = userEvent.setup();
     const endpoint = buildContactEndpoint(apiBaseUrl);
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    try {
+      server.use(
+        http.post(endpoint, () => {
+          return HttpResponse.json(
+            {
+              details: [{ message: "Unexpected", path: ["unknown"] }],
+            },
+            { status: 400 },
+          );
+        }),
+      );
 
-    server.use(
-      http.post(endpoint, () => {
-        return HttpResponse.json(
-          {
-            details: [{ message: "Unexpected", path: ["unknown"] }],
-          },
-          { status: 400 },
-        );
-      }),
-    );
+      render(<ContactForm />);
+      await fillContactForm(user);
 
-    render(<ContactForm />);
-    await fillContactForm(user);
+      await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    await user.click(screen.getByRole("button", { name: /send message/i }));
-
-    await waitFor(() => {
-      expect(warnSpy).toHaveBeenCalledWith("contact-form: unexpected field error", "unknown");
-    });
-
-    warnSpy.mockRestore();
+      await waitFor(() => {
+        expect(warnSpy).toHaveBeenCalledWith("contact-form: unexpected field error", "unknown");
+      });
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 
   it("surfaces invalid JSON responses from the API", async () => {

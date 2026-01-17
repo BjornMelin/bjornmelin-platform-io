@@ -59,13 +59,13 @@ export function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <details className="md:hidden">
+          <details className="group md:hidden">
             <summary
               className="list-none rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
               aria-label="Toggle menu"
             >
-              <Menu size={24} aria-hidden="true" className="block" />
-              <X size={24} aria-hidden="true" className="hidden" />
+              <Menu size={24} aria-hidden="true" className="block group-open:hidden" />
+              <X size={24} aria-hidden="true" className="hidden group-open:block" />
             </summary>
             <div className="py-4" data-testid="mobile-nav">
               <div className="flex flex-col space-y-4">

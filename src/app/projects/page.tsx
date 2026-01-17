@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 /**
  * Projects page listing portfolio items.
  *
- * @returns {JSX.Element} Projects page element.
+ * @returns Projects page element.
  */
 export default function ProjectsPage() {
   return (

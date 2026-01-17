@@ -17,9 +17,9 @@ const DialogClose = DialogPrimitive.Close;
 /**
  * Modal overlay element that dims the page.
  *
- * @param {React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>} props Overlay props.
- * @param {React.ComponentRef<typeof DialogPrimitive.Overlay>} ref Forwarded ref to the overlay element.
- * @returns {JSX.Element} Dialog overlay element.
+ * @param props Overlay props.
+ * @param ref Forwarded ref to the overlay element.
+ * @returns Dialog overlay element.
  */
 const DialogOverlay = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Overlay>,
@@ -39,9 +39,9 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 /**
  * Main content container for the dialog.
  *
- * @param {React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>} props Content props.
- * @param {React.ComponentRef<typeof DialogPrimitive.Content>} ref Forwarded ref to the content element.
- * @returns {JSX.Element} Dialog content element.
+ * @param props Content props.
+ * @param ref Forwarded ref to the content element.
+ * @returns Dialog content element.
  */
 const DialogContent = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Content>,
@@ -83,9 +83,9 @@ DialogFooter.displayName = "DialogFooter";
 /**
  * Heading element for the dialog.
  *
- * @param {React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>} props Title props.
- * @param {React.ComponentRef<typeof DialogPrimitive.Title>} ref Forwarded ref to the title element.
- * @returns {JSX.Element} Dialog title element.
+ * @param props Title props.
+ * @param ref Forwarded ref to the title element.
+ * @returns Dialog title element.
  */
 const DialogTitle = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Title>,
@@ -102,9 +102,9 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
 /**
  * Explanatory text element for the dialog.
  *
- * @param {React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>} props Description props.
- * @param {React.ComponentRef<typeof DialogPrimitive.Description>} ref Forwarded ref to the description element.
- * @returns {JSX.Element} Dialog description element.
+ * @param props Description props.
+ * @param ref Forwarded ref to the description element.
+ * @returns Dialog description element.
  */
 const DialogDescription = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Description>,

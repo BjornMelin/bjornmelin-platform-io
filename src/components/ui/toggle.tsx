@@ -31,9 +31,8 @@ const toggleVariants = cva(
 /**
  * Toggle button component with variant and size styling.
  *
- * @param {React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> & VariantProps<typeof toggleVariants>} props Toggle props and variant options.
- * @param {React.ComponentRef<typeof TogglePrimitive.Root>} ref Forwarded ref to the toggle element.
- * @returns {JSX.Element} A toggle button element.
+ * @param props Toggle props and variant options.
+ * @returns A toggle button element.
  */
 const Toggle = React.forwardRef<
   React.ComponentRef<typeof TogglePrimitive.Root>,

@@ -1,14 +1,54 @@
 import { render } from "@testing-library/react";
+import * as React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+// We mock react to make useState spayable/mockable, as ESM exports are typically read-only.
+vi.mock("react", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("react")>();
+  return {
+    ...actual,
+    useState: vi.fn(actual.useState),
+  };
+});
 
 describe("useToast cleanup", () => {
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
-  it("removes listener from internal array on unmount", async () => {
+  it("stops notifying the component after it unmounts", async () => {
+    // Reset modules to ensure a fresh internal listeners array in the hook
     vi.resetModules();
-    const spliceSpy = vi.spyOn(Array.prototype, "splice");
+    const { useToast, toast } = await import("@/hooks/use-toast");
+
+    // Capture the mock setter that our mocked useState will return
+    const stateSetter = vi.fn();
+    (React.useState as any).mockReturnValue([{}, stateSetter]);
+
+    function ToastProbe() {
+      useToast();
+      return null;
+    }
+
+    const { unmount } = render(<ToastProbe />);
+    expect(React.useState).toHaveBeenCalled();
+    stateSetter.mockClear();
+
+    // Trigger an initial update - the setter should be called
+    toast({ title: "First update" });
+    expect(stateSetter).toHaveBeenCalled();
+    stateSetter.mockClear();
+
+    // Unmount - should trigger cleanup
+    unmount();
+
+    // Trigger another update - the setter should NOT be called
+    toast({ title: "Second update" });
+    expect(stateSetter).not.toHaveBeenCalled();
+  });
+
+  it("gracefully handles unmounts", async () => {
+    vi.resetModules();
     const { useToast } = await import("@/hooks/use-toast");
 
     function ToastProbe() {
@@ -17,26 +57,6 @@ describe("useToast cleanup", () => {
     }
 
     const { unmount } = render(<ToastProbe />);
-    unmount();
-
-    expect(spliceSpy).toHaveBeenCalled();
-  });
-
-  it("gracefully handles unmount if listener index is not found", async () => {
-    vi.resetModules();
-    const indexOfSpy = vi.spyOn(Array.prototype, "indexOf").mockReturnValue(-1);
-    const spliceSpy = vi.spyOn(Array.prototype, "splice");
-    const { useToast } = await import("@/hooks/use-toast");
-
-    function ToastProbe() {
-      useToast();
-      return null;
-    }
-
-    const { unmount } = render(<ToastProbe />);
-    unmount();
-
-    expect(indexOfSpy).toHaveBeenCalled();
-    expect(spliceSpy).not.toHaveBeenCalled();
+    expect(() => unmount()).not.toThrow();
   });
 });

@@ -79,6 +79,7 @@ describe("Project components", () => {
 
     expect(await screen.findByText(/technologies/i)).toBeInTheDocument();
     expect(screen.getByText("Radix")).toBeInTheDocument();
+    expect(screen.getByText("Vite")).toBeInTheDocument();
   });
 
   it("ProjectGrid filters by category and sorts by featured", () => {

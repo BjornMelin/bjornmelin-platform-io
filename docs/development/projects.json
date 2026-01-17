@@ -1272,14 +1272,14 @@
     "topRepositories": [
       "docmind-ai-llm (76 stars)",
       "github-copilot-proxy (29 stars)",
-      "bjornmelin-platform-io (22 stars)",
       "tripsage-ai (22 stars)",
+      "bjornmelin-platform-io (22 stars)",
       "crawl4ai-mcp-server (19 stars)"
     ],
     "languageDistribution": {
       "python": 8,
       "typescript": 6,
-      "other": 3
+      "unspecified": 3
     },
     "licenseDistribution": {
       "mit": 16,
@@ -1292,7 +1292,7 @@
         "tripsage-ai",
         "polyagent-research-intelligence"
       ],
-      "raG": [
+      "rag": [
         "ai-docs-vector-db-hybrid-scraper",
         "docmind-ai-llm",
         "mcp-search-hub",

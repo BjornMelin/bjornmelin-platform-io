@@ -21,11 +21,11 @@ const PopoverTrigger = PopoverPrimitive.Trigger;
 const PopoverAnchor = PopoverPrimitive.Anchor;
 
 /**
- * Main content container for the popover.
+ * Renders popover content inside a portal.
  *
- * @param {React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>} props Popover content props including alignment and offset.
- * @param {React.ComponentRef<typeof PopoverPrimitive.Content>} ref Forwarded ref to the content element.
- * @returns {JSX.Element} Popover content element.
+ * @param props Popover content props including alignment and offset.
+ * @param ref Forwarded ref to the content element.
+ * @returns Popover content element.
  */
 const PopoverContent = React.forwardRef<
   React.ComponentRef<typeof PopoverPrimitive.Content>,
