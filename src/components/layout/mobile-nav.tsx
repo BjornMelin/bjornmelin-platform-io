@@ -40,28 +40,15 @@ export function MobileNav({
       className="group md:hidden"
       onToggle={() => setIsOpen(detailsRef.current?.open ?? false)}
     >
-      <summary className="list-none [&::-webkit-details-marker]:hidden">
-        <button
-          type="button"
-          className="rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          aria-label="Toggle menu"
-          aria-expanded={isOpen}
-          aria-controls="mobile-nav-panel"
-          onClick={() => {
-            const details = detailsRef.current;
-            if (!details) return;
-            if (details.open) {
-              details.removeAttribute("open");
-              setIsOpen(false);
-              return;
-            }
-            details.setAttribute("open", "");
-            setIsOpen(true);
-          }}
-        >
-          <Menu size={24} aria-hidden="true" className="block group-open:hidden" />
-          <X size={24} aria-hidden="true" className="hidden group-open:block" />
-        </button>
+      {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: summary needs explicit expanded state */}
+      <summary
+        className="list-none rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
+        aria-label="Toggle menu"
+        aria-expanded={isOpen}
+        aria-controls="mobile-nav-panel"
+      >
+        <Menu size={24} aria-hidden="true" className="block group-open:hidden" />
+        <X size={24} aria-hidden="true" className="hidden group-open:block" />
       </summary>
       <div id="mobile-nav-panel" className="py-4" data-testid="mobile-nav">
         <div className="flex flex-col space-y-4">
