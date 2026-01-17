@@ -232,8 +232,75 @@ describe("ContactForm", () => {
     });
   });
 
+  it("falls back to same-origin API when local contact is allowed", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_ALLOW_LOCAL_CONTACT", "true");
+    const endpoint = buildContactEndpoint(window.location.origin);
+
+    server.use(
+      http.post(endpoint, () => {
+        return HttpResponse.json({ success: true });
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
+    });
+  });
+
+  it("uses runtime API URL when env is missing", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "");
+
+    (window as typeof window & { __CONTACT_API_URL__?: string }).__CONTACT_API_URL__ =
+      "https://runtime.example.com";
+    const endpoint = buildContactEndpoint("https://runtime.example.com");
+
+    server.use(
+      http.post(endpoint, () => {
+        return HttpResponse.json({ success: true });
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/message sent successfully/i)).toBeInTheDocument();
+    });
+
+    delete (window as typeof window & { __CONTACT_API_URL__?: string }).__CONTACT_API_URL__;
+  });
+
   it("shows error when NEXT_PUBLIC_API_URL is invalid", async () => {
     const user = userEvent.setup();
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "not a url");
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringContaining("Invalid NEXT_PUBLIC_API_URL"),
+        }),
+      );
+    });
+  });
+
+  it("handles invalid NEXT_PUBLIC_API_URL in development before URL checks", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("NEXT_PUBLIC_API_URL", "not a url");
 
     render(<ContactForm />);
@@ -314,6 +381,34 @@ describe("ContactForm", () => {
     await waitFor(() => {
       expect(screen.getByText(/name is required/i)).toBeInTheDocument();
     });
+  });
+
+  it("logs unexpected field errors from a 400 response", async () => {
+    const user = userEvent.setup();
+    const endpoint = buildContactEndpoint(apiBaseUrl);
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    server.use(
+      http.post(endpoint, () => {
+        return HttpResponse.json(
+          {
+            details: [{ message: "Unexpected", path: ["unknown"] }],
+          },
+          { status: 400 },
+        );
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user);
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(warnSpy).toHaveBeenCalledWith("contact-form: unexpected field error", "unknown");
+    });
+
+    warnSpy.mockRestore();
   });
 
   it("surfaces invalid JSON responses from the API", async () => {

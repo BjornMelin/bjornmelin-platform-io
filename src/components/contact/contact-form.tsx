@@ -67,15 +67,25 @@ export function ContactForm() {
     setFormStatus("idle");
 
     try {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+      const allowLocalContact = process.env.NEXT_PUBLIC_ALLOW_LOCAL_CONTACT === "true";
+      const runtimeApiUrl = (
+        globalThis as typeof globalThis & {
+          __CONTACT_API_URL__?: string;
+        }
+      ).__CONTACT_API_URL__;
+      let apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || runtimeApiUrl;
 
       if (!apiBaseUrl) {
-        throw new Error(
-          "Contact form is not configured. Set NEXT_PUBLIC_API_URL in your environment (see .env.example).",
-        );
+        if (allowLocalContact) {
+          apiBaseUrl = window.location.origin;
+        } else {
+          throw new Error(
+            "Contact form is not configured. Set NEXT_PUBLIC_API_URL in your environment (see .env.example).",
+          );
+        }
       }
 
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === "development" && !allowLocalContact) {
         const url = safeParseUrl(apiBaseUrl);
         if (url) {
           const normalizedPath = url.pathname.replace(/\/$/, "");

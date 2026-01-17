@@ -1,5 +1,5 @@
 /* @vitest-environment node */
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   createContactEmailHtml,
   createContactEmailText,
@@ -35,6 +35,23 @@ describe("createContactEmailText", () => {
     });
 
     expect(text).toContain("Submitted at: 2024-01-01T12:00:00.000Z");
+  });
+
+  it("uses the current time when submittedAt is missing", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-02-01T09:30:00Z"));
+
+    const text = createContactEmailText({
+      data: {
+        name: "Test",
+        email: "test@example.com",
+        message: "Test message",
+      },
+    });
+
+    expect(text).toContain("Submitted at: 2024-02-01T09:30:00.000Z");
+
+    vi.useRealTimers();
   });
 
   it("preserves multiline messages", () => {
@@ -151,6 +168,23 @@ describe("createContactEmailHtml", () => {
     expect(html).toContain("Submitted at: 2024-01-01T12:00:00.000Z");
   });
 
+  it("uses the current time when submittedAt is missing", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-02-01T09:30:00Z"));
+
+    const html = createContactEmailHtml({
+      data: {
+        name: "Test",
+        email: "test@example.com",
+        message: "Test",
+      },
+    });
+
+    expect(html).toContain("Submitted at: 2024-02-01T09:30:00.000Z");
+
+    vi.useRealTimers();
+  });
+
   it("uses the provided domain when supplied", () => {
     const html = createContactEmailHtml({
       data: {
@@ -236,6 +270,19 @@ describe("validateContactForm", () => {
       valid: false,
       error: "Invalid name",
       field: "name",
+    });
+  });
+
+  it("rejects missing email", () => {
+    const result = validateContactForm({
+      name: "John",
+      message: "Hello world!!",
+    });
+
+    expect(result).toEqual({
+      valid: false,
+      error: "Invalid email address",
+      field: "email",
     });
   });
 

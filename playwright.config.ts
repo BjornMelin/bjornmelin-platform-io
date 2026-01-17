@@ -79,6 +79,7 @@ export default defineConfig({
       NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL ?? baseURL,
       // Default to same-origin and rely on Playwright request routing for determinism.
       NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? baseURL,
+      NEXT_PUBLIC_ALLOW_LOCAL_CONTACT: "true",
       CONTACT_EMAIL: process.env.CONTACT_EMAIL ?? "test@example.com",
     },
   },
