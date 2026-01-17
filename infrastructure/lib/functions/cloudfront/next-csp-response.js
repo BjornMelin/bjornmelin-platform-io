@@ -33,7 +33,7 @@ var PATH_HASHES = {
     "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
     "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0="
   ],
   "/404.html": [
     "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
@@ -55,7 +55,7 @@ var PATH_HASHES = {
     "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
     "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0="
   ],
   "/_not-found/index.html": [
     "sha256-0FkH1DaJnEydO6QK9qoqTU+VWUWwewF6ZY9q1Y1SBhc=",
@@ -77,7 +77,7 @@ var PATH_HASHES = {
     "sha256-qJhJQhEbUaI5vbAv6bm9LufH9dHUZMsgj4wZ9XMkXtY=",
     "sha256-t0VVnHGFyn0fpIEiPGwtM5cFH11EZ/wXsKQE3ckYVl8=",
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0="
   ],
   "/about/index.html": [
     "sha256-/+GwKS8RMmXJVFHx50WyGF6HDz90wmJRJ5EMh3lkWmc=",
@@ -123,7 +123,7 @@ var PATH_HASHES = {
     "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
     "sha256-vIPipsxmr60TknbtaJQzqCfQw8q+YstbpRawFt++INo=",
     "sha256-wPfYv1zWHlX1qw6lUtFLmo1yPMJ3F1+lrhpuyAamviE=",
-    "sha256-wRApOBxr5vFX6uQTqfswlKwh2VXAJjvawPY0WRzNBNg=",
+    "sha256-wRApOBxr5vFX6uQTqfswlKwh2VXAJjvawPY0WRzNBNg="
   ],
   "/contact/index.html": [
     "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
@@ -143,7 +143,7 @@ var PATH_HASHES = {
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
     "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
     "sha256-vc9sy5Xlp8TenqTC07oPbxAblg1YVItiKWrRo3ecnlU=",
-    "sha256-xQRNT7X+66On4F8vAdPE5PVMYbD1IKhZeHyO/PDZQiY=",
+    "sha256-xQRNT7X+66On4F8vAdPE5PVMYbD1IKhZeHyO/PDZQiY="
   ],
   "/index.html": [
     "sha256-1CPUIJH+j8ghN5fWzmIpPpyBp+VzKiERFMaf5W4o244=",
@@ -184,7 +184,7 @@ var PATH_HASHES = {
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
     "sha256-uwWchwmpZRGdYCdQPYxYIYykz9VzdBCr4X+OQEAs4ck=",
     "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
-    "sha256-yEGaRrYGpaxm7ARgPhiBntsg5AEev3cCwpB5XsXLJf4=",
+    "sha256-yEGaRrYGpaxm7ARgPhiBntsg5AEev3cCwpB5XsXLJf4="
   ],
   "/projects/index.html": [
     "sha256-2Nv8B8plWChepM+0S72+HX+E4Uo7ccnjeNtw0sC7xvU=",
@@ -205,8 +205,8 @@ var PATH_HASHES = {
     "sha256-uBUah6fsUdxasVWcVr4IxPzP+umuzSthhRwIWhvoiFE=",
     "sha256-uOGa22LXtMShbqChSljN0r7M5GHUvuB45SbH5pu9ywA=",
     "sha256-uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=",
-    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=",
-  ],
+    "sha256-vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0="
+  ]
 };
 
 var BASE_DIRECTIVES = [
@@ -217,7 +217,7 @@ var BASE_DIRECTIVES = [
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "upgrade-insecure-requests",
+  "upgrade-insecure-requests"
 ];
 
 var SCRIPT_PREFIX = "script-src 'self'";
@@ -227,7 +227,7 @@ var CONNECT_SRC_BY_HOST = {
   "bjornmelin.io": "https://api.bjornmelin.io",
   "www.bjornmelin.io": "https://api.bjornmelin.io",
   "example.com": "https://api.example.com",
-  "www.example.com": "https://api.example.com",
+  "www.example.com": "https://api.example.com"
 };
 
 function normalizePath(uri) {
@@ -242,8 +242,12 @@ function normalizePath(uri) {
 function buildCsp(host, hashes) {
   var normalizedHost = (host || "").toLowerCase().split(":")[0];
   var connectSrc = CONNECT_SRC_BY_HOST[normalizedHost];
-  var script = SCRIPT_PREFIX + " " + hashes.map((hash) => "'" + hash + "'").join(" ");
-  var connectDirective = connectSrc ? "connect-src 'self' " + connectSrc : "connect-src 'self'";
+  var script = SCRIPT_PREFIX + " " + hashes.map(function (hash) {
+    return "'" + hash + "'";
+  }).join(" ");
+  var connectDirective = connectSrc
+    ? "connect-src 'self' " + connectSrc
+    : "connect-src 'self'";
   return BASE_DIRECTIVES.concat([script, connectDirective]).join("; ");
 }
 
@@ -253,10 +257,15 @@ function handler(event) {
   var uri = request.uri || "/index.html";
   var normalized = normalizePath(uri);
   var hashes =
-    PATH_HASHES[normalized] || PATH_HASHES["/404.html"] || PATH_HASHES["/index.html"] || [];
-  var hostHeader = request.headers && request.headers.host && request.headers.host.value;
+    PATH_HASHES[normalized] ||
+    PATH_HASHES["/404.html"] ||
+    PATH_HASHES["/index.html"] ||
+    [];
+  var hostHeader =
+    request.headers && request.headers.host && request.headers.host.value;
   var csp = buildCsp(hostHeader || "", hashes);
   response.headers = response.headers || {};
   response.headers["content-security-policy"] = { value: csp };
   return response;
 }
+
