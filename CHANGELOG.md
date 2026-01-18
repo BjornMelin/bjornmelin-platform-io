@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.1.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.0.0...v3.1.0) (2026-01-18)
+
+
+### Features
+
+* add script and preflight checks for static deploy permissions for S3, CloudFront KVS, and invalidations ([b3d1ac4](https://github.com/BjornMelin/bjornmelin-platform-io/commit/b3d1ac479ff52fd576768841b2218f1b1c3e0894))
+* Add script and preflight checks for static deploy permissions for S3, CloudFront KVS, and invalidations. ([a01a0c3](https://github.com/BjornMelin/bjornmelin-platform-io/commit/a01a0c31ae2572b1362365addb8b74adc0ef0f66))
+* refine projects UI and contact fallback ([#231](https://github.com/BjornMelin/bjornmelin-platform-io/issues/231)) ([fd5e308](https://github.com/BjornMelin/bjornmelin-platform-io/commit/fd5e308110411cc9198b178e4c00d3af745cd4c1))
+
+
+### Bug Fixes
+
+* **csp:** move CSP to response function ([#233](https://github.com/BjornMelin/bjornmelin-platform-io/issues/233)) ([30d3e75](https://github.com/BjornMelin/bjornmelin-platform-io/commit/30d3e7520f48ac5ff58f47561070d86c0c9d0db5))
+* **deploy:** address PR review comments ([c4ec7b6](https://github.com/BjornMelin/bjornmelin-platform-io/commit/c4ec7b6dd8d370b29602284ecc8f232b524418b3))
+
 ## [3.0.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v2.1.0...v3.0.0) (2026-01-17)
 
 
