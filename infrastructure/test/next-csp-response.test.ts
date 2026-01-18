@@ -15,7 +15,9 @@ type CloudFrontResponse = { headers?: CloudFrontHeaders };
  * @returns The handler function extracted from the CloudFront Function file
  * @throws Error if the file doesn't define a global `handler` function
  */
-function loadCspResponseHandler(): (event: {
+function loadCspResponseHandler(
+  getStub: (key: string) => Promise<string | null> = vi.fn(async (_key: string) => "0"),
+): (event: {
   request: CloudFrontRequest;
   response: CloudFrontResponse;
 }) => Promise<CloudFrontResponse> {
@@ -23,8 +25,7 @@ function loadCspResponseHandler(): (event: {
   const rawCode = fs.readFileSync(filePath, "utf8");
   const code = rawCode.replace(/^import\s+cf\s+from\s+['"]cloudfront['"];\s*$/m, "");
 
-  const get = vi.fn(async (_key: string) => "0");
-  const context: Record<string, unknown> = { cf: { kvs: () => ({ get }) } };
+  const context: Record<string, unknown> = { cf: { kvs: () => ({ get: getStub }) } };
   vm.createContext(context);
   vm.runInContext(`${code}\nthis.__handler = handler;`, context, { filename: filePath });
 
@@ -54,21 +55,11 @@ describe("next-csp-response CloudFront Function", () => {
   });
 
   it("falls back to 404 hashes when path is unknown", async () => {
-    const filePath = path.join(__dirname, "../lib/functions/cloudfront/next-csp-response.js");
-    const rawCode = fs.readFileSync(filePath, "utf8");
-    const code = rawCode.replace(/^import\s+cf\s+from\s+['"]cloudfront['"];\s*$/m, "");
-
     const get = vi.fn(async (key: string) => {
       if (key === "/404.html") return "0";
       return null;
     });
-    const context: Record<string, unknown> = { cf: { kvs: () => ({ get }) } };
-    vm.createContext(context);
-    vm.runInContext(`${code}\nthis.__handler = handler;`, context, { filename: filePath });
-    const localHandler = context.__handler as (event: {
-      request: CloudFrontRequest;
-      response: CloudFrontResponse;
-    }) => Promise<CloudFrontResponse>;
+    const localHandler = loadCspResponseHandler(get);
 
     const response = await localHandler({
       request: { uri: "/missing/path", headers: { host: { value: "example.com" } } },
@@ -148,18 +139,8 @@ describe("next-csp-response CloudFront Function", () => {
   });
 
   it("fails soft when KVS has no keys yet (does not set CSP)", async () => {
-    const filePath = path.join(__dirname, "../lib/functions/cloudfront/next-csp-response.js");
-    const rawCode = fs.readFileSync(filePath, "utf8");
-    const code = rawCode.replace(/^import\s+cf\s+from\s+['"]cloudfront['"];\s*$/m, "");
-
     const get = vi.fn(async (_key: string) => null);
-    const context: Record<string, unknown> = { cf: { kvs: () => ({ get }) } };
-    vm.createContext(context);
-    vm.runInContext(`${code}\nthis.__handler = handler;`, context, { filename: filePath });
-    const localHandler = context.__handler as (event: {
-      request: CloudFrontRequest;
-      response: CloudFrontResponse;
-    }) => Promise<CloudFrontResponse>;
+    const localHandler = loadCspResponseHandler(get);
 
     const response = await localHandler({
       request: { uri: "/about", headers: { host: { value: "example.com" } } },
@@ -171,20 +152,8 @@ describe("next-csp-response CloudFront Function", () => {
   });
 
   it("skips KVS lookups for non-HTML requests", async () => {
-    const filePath = path.join(__dirname, "../lib/functions/cloudfront/next-csp-response.js");
-    const rawCode = fs.readFileSync(filePath, "utf8");
-    const code = rawCode.replace(/^import\s+cf\s+from\s+['"]cloudfront['"];\s*$/m, "");
-
     const get = vi.fn(async (_key: string) => "0");
-    const context: Record<string, unknown> = {
-      cf: { kvs: () => ({ get }) },
-    };
-    vm.createContext(context);
-    vm.runInContext(`${code}\nthis.__handler = handler;`, context, { filename: filePath });
-    const localHandler = context.__handler as (event: {
-      request: CloudFrontRequest;
-      response: CloudFrontResponse;
-    }) => Promise<CloudFrontResponse>;
+    const localHandler = loadCspResponseHandler(get);
 
     const response = await localHandler({
       request: { uri: "/_next/static/chunks/app.js", headers: { host: { value: "example.com" } } },
