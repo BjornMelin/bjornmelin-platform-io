@@ -169,6 +169,8 @@ fs.writeFileSync(kvsTarget, kvsPayload, "utf8");
 const perPathFunctionSource = `/* biome-ignore-all lint/style/useTemplate: CloudFront Functions require ES5.1. */
 /* biome-ignore-all lint/correctness/noUnusedVariables: CloudFront Functions require globals. */
 /* biome-ignore-all lint/style/useConst: CloudFront Functions require ES5.1. */
+/* biome-ignore-all lint/suspicious/noGlobalIsNan: CloudFront Functions require ES5.1. */
+/* biome-ignore-all lint/correctness/noInnerDeclarations: CloudFront Functions require ES5.1. */
 /**
  * Generated file -- do not edit by hand.
  *
@@ -188,6 +190,8 @@ const functionSource = `/* biome-ignore-all lint/style/useTemplate: CloudFront F
 /* biome-ignore-all lint/complexity/useOptionalChain: CloudFront Functions require ES5.1. */
 /* biome-ignore-all lint/correctness/noUnusedVariables: CloudFront handler is invoked by AWS. */
 /* biome-ignore-all lint/style/useConst: CloudFront Functions require ES5.1. */
+/* biome-ignore-all lint/suspicious/noGlobalIsNan: CloudFront Functions require ES5.1. */
+/* biome-ignore-all lint/correctness/noInnerDeclarations: CloudFront Functions require ES5.1. */
 /**
  * Generated file -- do not edit by hand.
  *

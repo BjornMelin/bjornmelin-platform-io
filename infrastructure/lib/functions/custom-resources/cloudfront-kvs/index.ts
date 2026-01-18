@@ -4,7 +4,10 @@ import {
   DeleteKeyValueStoreCommand,
   DescribeKeyValueStoreCommand,
 } from "@aws-sdk/client-cloudfront";
-import type { CloudFormationCustomResourceEvent, CloudFormationCustomResourceHandler } from "aws-lambda";
+import type {
+  CloudFormationCustomResourceEvent,
+  CloudFormationCustomResourceHandler,
+} from "aws-lambda";
 
 type ResourceProps = {
   Name?: string;

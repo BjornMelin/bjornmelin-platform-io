@@ -6,10 +6,10 @@ import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambdaCore from "aws-cdk-lib/aws-lambda";
 import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
-import * as customResources from "aws-cdk-lib/custom-resources";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as customResources from "aws-cdk-lib/custom-resources";
 import type { Construct } from "constructs";
 import { CACHE_DURATIONS } from "../constants/durations";
 import type { StorageStackProps } from "../types/stack-props";
@@ -98,7 +98,11 @@ export class StorageStack extends cdk.Stack {
     kvsProviderFn.addToRolePolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
-        actions: ["cloudfront:CreateKeyValueStore", "cloudfront:DescribeKeyValueStore", "cloudfront:DeleteKeyValueStore"],
+        actions: [
+          "cloudfront:CreateKeyValueStore",
+          "cloudfront:DescribeKeyValueStore",
+          "cloudfront:DeleteKeyValueStore",
+        ],
         resources: ["*"],
       }),
     );
@@ -111,7 +115,8 @@ export class StorageStack extends cdk.Stack {
       serviceToken: kvsProvider.serviceToken,
       properties: {
         Name: kvsName,
-        Comment: "Per-path CSP hash indices for the Next.js static export (generated at build time).",
+        Comment:
+          "Per-path CSP hash indices for the Next.js static export (generated at build time).",
         RetainOnDelete: true,
       },
     });
@@ -258,9 +263,7 @@ export class StorageStack extends cdk.Stack {
     });
   }
 
-  private createCspResponseFunction(
-    keyValueStore: cloudfront.IKeyValueStore,
-  ): cloudfront.Function {
+  private createCspResponseFunction(keyValueStore: cloudfront.IKeyValueStore): cloudfront.Function {
     const functionFileCandidates = [
       // When running CDK from source (ts-node): infrastructure/lib/stacks -> ../functions
       path.join(__dirname, "../functions/cloudfront/next-csp-response.js"),
