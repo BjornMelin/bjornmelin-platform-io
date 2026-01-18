@@ -15,7 +15,7 @@ runs:
       run: |
         set -euo pipefail
         corepack enable
-        # Read exact packageManager (e.g., pnpm@10.18.3) from package.json and activate it
+        # Read exact packageManager (e.g., pnpm@10.28.0) from package.json and activate it
         PM=$(node -p "require('./package.json').packageManager")
         if [[ -z "$PM" ]]; then
           echo "package.json:packageManager is empty; expected an exact pnpm version" >&2
