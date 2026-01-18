@@ -111,4 +111,3 @@ Chosen option: CloudFront Function + KVS (indices encoding)
 | Architectural adaptability | 0.10 | 9.1 | 0.91 |
 
 **Total:** 9.34 / 10.0
-

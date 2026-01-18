@@ -42,8 +42,8 @@ The workflow sequence is:
 ## Why ordering matters
 
 The CloudFront `Content-Security-Policy` includes a script hash allow-list generated from the
-static export HTML output. Deploying CSP configuration (CloudFront Function + KVS wiring) without uploading the matching `out/` artifacts can
-cause a blank page due to CSP violations (ADR-0001).
+static export HTML output. Deploying CSP configuration (CloudFront Function + KVS wiring) without uploading the
+matching `out/` artifacts can cause a blank page due to CSP violations (ADR-0001).
 
 ## Manual deployment (break-glass)
 

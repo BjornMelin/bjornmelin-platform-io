@@ -6,6 +6,9 @@ Before deploying, ensure you have completed:
 
 - [ ] AWS account with OIDC provider configured (see [infrastructure/README.md](../../infrastructure/README.md))
 - [ ] IAM role `prod-portfolio-deploy` created with GitHub OIDC trust policy
+  - [ ] CDK bootstrap access attached (helper: `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name prod-portfolio-deploy`)
+  - [ ] Static deploy access attached (helper:
+    - [ ] `bash scripts/ops/fix-gh-oidc-static-deploy-policy.sh --role-name prod-portfolio-deploy --env prod`)
 - [ ] Domain in Route 53 (or DNS delegated to Route 53)
 - [ ] GitHub Environment **production** secrets configured:
   - [ ] `AWS_DEPLOY_ROLE_ARN` - IAM role ARN for OIDC authentication (e.g., `arn:aws:iam::123456789012:role/prod-portfolio-deploy`)

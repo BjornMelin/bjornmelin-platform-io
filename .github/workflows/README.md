@@ -139,6 +139,9 @@ These workflows use GitHub OIDC for keyless AWS authentication, eliminating long
    (`/cdk-bootstrap/hnb659fds/version`) and (recommended) assume the CDK bootstrap roles.
    The deploy workflow also requires static deploy permissions (CloudFormation exports, S3 sync,
    CloudFront invalidation, and KVS sync) as documented in `infrastructure/README.md`.
+   Helper scripts:
+   - `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name prod-portfolio-deploy`
+   - `bash scripts/ops/fix-gh-oidc-static-deploy-policy.sh --role-name prod-portfolio-deploy --env prod`
 
 3. **Add Role ARN to GitHub Environment `production` secret** as `AWS_DEPLOY_ROLE_ARN`
 

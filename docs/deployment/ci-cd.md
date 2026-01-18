@@ -151,6 +151,8 @@ Production uses GitHub Environment "production" variables and secrets:
 
 At runtime (Lambda), use AWS SSM Parameter Store / Secrets Manager rather than `.env` files.
 
+See `docs/specs/SPEC-0007-deploy-workflow-permissions-drift.md` for the deploy role permission set and drift remediation.
+
 ## Deployment Environments
 
 ### Development (local only)

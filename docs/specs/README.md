@@ -11,6 +11,7 @@ criteria, file-level contracts, and operational details.
 - SPEC-0004: Static image pipeline (build-time variants + loader)
 - SPEC-0005: Static export deployment pipeline (CSP + S3/CloudFront)
 - SPEC-0006: CSP hashes via CloudFront Function + KeyValueStore (KVS)
+- SPEC-0007: Deploy workflow permissions drift (ListExports + CSP KVS)
 
 ## Conventions
 

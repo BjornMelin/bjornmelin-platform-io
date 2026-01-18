@@ -179,6 +179,49 @@ jobs:
             exit 1
           fi
 
+      - name: Preflight - verify static deploy permissions (S3 + CSP KVS)
+        shell: bash
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+        run: |
+          set -euo pipefail
+
+          STACK_ENV="prod"
+          bucket="$(aws cloudformation list-exports --region "${AWS_REGION}" --query "Exports[?Name=='${STACK_ENV}-website-bucket-name'].Value | [0]" --output text)"
+          distribution_id="$(aws cloudformation list-exports --region "${AWS_REGION}" --query "Exports[?Name=='${STACK_ENV}-distribution-id'].Value | [0]" --output text)"
+          kvs_arn="$(aws cloudformation list-exports --region "${AWS_REGION}" --query "Exports[?Name=='${STACK_ENV}-csp-hashes-kvs-arn'].Value | [0]" --output text)"
+
+          if [[ -z "${bucket}" || "${bucket}" == "None" ]]; then
+            echo "ERROR: Unable to resolve export: ${STACK_ENV}-website-bucket-name" >&2
+            exit 1
+          fi
+          if [[ -z "${distribution_id}" || "${distribution_id}" == "None" ]]; then
+            echo "ERROR: Unable to resolve export: ${STACK_ENV}-distribution-id" >&2
+            exit 1
+          fi
+          if [[ -z "${kvs_arn}" || "${kvs_arn}" == "None" ]]; then
+            echo "ERROR: Unable to resolve export: ${STACK_ENV}-csp-hashes-kvs-arn" >&2
+            exit 1
+          fi
+
+          if ! aws s3 ls "s3://${bucket}" >/dev/null 2>&1; then
+            echo "ERROR: Unable to list S3 bucket s3://${bucket} (required by deploy-static-site.mjs)." >&2
+            echo "Fix (IAM): allow s3:ListBucket on arn:aws:s3:::${bucket} (and object write permissions)." >&2
+            exit 1
+          fi
+
+          if ! aws cloudfront-keyvaluestore describe-key-value-store --kvs-arn "${kvs_arn}" >/dev/null 2>&1; then
+            echo "ERROR: Unable to describe CloudFront KeyValueStore ${kvs_arn} (required by deploy-static-site.mjs)." >&2
+            echo "Fix (IAM): allow cloudfront-keyvaluestore:DescribeKeyValueStore/ListKeys/UpdateKeys on ${kvs_arn}." >&2
+            exit 1
+          fi
+
+          if ! aws cloudfront list-invalidations --distribution-id "${distribution_id}" --max-items 1 >/dev/null 2>&1; then
+            echo "ERROR: Unable to list CloudFront invalidations for distribution ${distribution_id} (required by deploy-static-site.mjs)." >&2
+            echo "Fix (IAM): allow cloudfront:ListInvalidations/GetInvalidation/CreateInvalidation on the distribution ARN." >&2
+            exit 1
+          fi
+
       - name: Deploy Storage Stack (CloudFront Functions + CSP KVS)
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
         working-directory: infrastructure
