@@ -19,6 +19,8 @@ This section guides you through setting up AWS infrastructure from scratch for a
 > - The IAM role is needed to run CDK itself (chicken-and-egg problem)
 > - GitHub secrets must be configured in the repository settings
 >
+> Decision rationale: see `docs/architecture/adr/ADR-0008-oidc-bootstrap-manual.md`.
+>
 > After completing these prerequisites, CDK handles all other infrastructure (DNS, storage, email, monitoring). The CDK code in `lib/` is configured to only manage DNS, storage, email, and monitoring stacks—it explicitly does not attempt to create the OIDC provider or GitHub Actions IAM role. See the [Stack Architecture section](#stack-architecture) below for details on what each CDK stack provisions.
 
 Run once per AWS account to enable keyless GitHub Actions authentication:
@@ -115,20 +117,60 @@ The production workflow also runs `pnpm deploy:static:prod`, which uses the AWS 
 - sync the CloudFront KeyValueStore used by the CSP Function (`cloudfront-keyvaluestore list-keys/describe-key-value-store/update-keys`)
 - invalidate CloudFront (`cloudfront create-invalidation`)
 
-At minimum, ensure the role has these KeyValueStore permissions (service prefix `cloudfront-keyvaluestore`):
+At minimum, ensure the role can list CloudFormation exports and has permissions for S3 sync,
+CloudFront invalidation, and the CSP KeyValueStore (service prefix `cloudfront-keyvaluestore`):
 
 ```json
 {
-  "Sid": "CloudFrontKeyValueStoreSync",
-  "Effect": "Allow",
-  "Action": [
-    "cloudfront-keyvaluestore:DescribeKeyValueStore",
-    "cloudfront-keyvaluestore:ListKeys",
-    "cloudfront-keyvaluestore:UpdateKeys"
-  ],
-  "Resource": "arn:aws:cloudfront::ACCOUNT_ID:key-value-store/*"
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CloudFormationExportsRead",
+      "Effect": "Allow",
+      "Action": "cloudformation:ListExports",
+      "Resource": "*"
+    },
+    {
+      "Sid": "StaticSiteBucketList",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME"
+    },
+    {
+      "Sid": "StaticSiteBucketWrite",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:AbortMultipartUpload",
+        "s3:ListMultipartUploadParts"
+      ],
+      "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME/*"
+    },
+    {
+      "Sid": "CloudFrontInvalidation",
+      "Effect": "Allow",
+      "Action": "cloudfront:CreateInvalidation",
+      "Resource": "arn:aws:cloudfront::ACCOUNT_ID:distribution/DISTRIBUTION_ID"
+    },
+    {
+      "Sid": "CloudFrontKeyValueStoreSync",
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront-keyvaluestore:DescribeKeyValueStore",
+        "cloudfront-keyvaluestore:ListKeys",
+        "cloudfront-keyvaluestore:UpdateKeys"
+      ],
+      "Resource": "arn:aws:cloudfront::ACCOUNT_ID:key-value-store/*"
+    }
+  ]
 }
 ```
+
+The placeholders `YOUR_BUCKET_NAME` and `DISTRIBUTION_ID` can be resolved from CloudFormation exports
+named `${env}-website-bucket-name` and `${env}-distribution-id` respectively (see
+`scripts/deploy-static-site.mjs`).
 
 Helper script (requires AWS CLI auth): `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name prod-portfolio-deploy`
 
