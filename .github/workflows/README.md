@@ -31,7 +31,8 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 5. **manual-deploy.yml** - Manual deployment workflow
    - Runs on: Workflow dispatch
-  - Features: Environment selection, test skipping option, stack-output-based S3/KVS/CloudFront deploy,
+
+- Features: Environment selection, test skipping option, stack-output-based S3/KVS/CloudFront deploy,
      deployment tracking, concurrency control
 
 ### Security & Quality

@@ -14,14 +14,20 @@ This section guides you through setting up AWS infrastructure from scratch for a
 
 ### Step 1: Create GitHub OIDC Provider in AWS
 
-> **Note:** Steps 1-3 are **manual prerequisites** that must be completed before running CDK. The CDK stacks do not provision these resources because:
+> **Note:** Steps 1-3 are **manual prerequisites** that must be completed before running CDK.
+> The CDK stacks do not provision these resources because:
+>
 > - The OIDC provider is account-wide (one per AWS account, not per project)
 > - The IAM role is needed to run CDK itself (chicken-and-egg problem)
 > - GitHub secrets must be configured in the repository settings
 >
 > Decision rationale: see `docs/architecture/adr/ADR-0008-oidc-bootstrap-manual.md`.
 >
-> After completing these prerequisites, CDK handles all other infrastructure (DNS, storage, email, monitoring). The CDK code in `lib/` is configured to only manage DNS, storage, email, and monitoring stacks—it explicitly does not attempt to create the OIDC provider or GitHub Actions IAM role. See the [Stack Architecture section](#stack-architecture) below for details on what each CDK stack provisions.
+> After completing these prerequisites, CDK handles all other infrastructure (DNS, storage,
+> email, monitoring). The CDK code in `lib/` is configured to only manage DNS, storage,
+> email, and monitoring stacks—it explicitly does not attempt to create the OIDC provider
+> or GitHub Actions IAM role. See the [Stack Architecture section](#stack-architecture)
+> below for details on what each CDK stack provisions.
 
 Run once per AWS account to enable keyless GitHub Actions authentication:
 
@@ -41,6 +47,7 @@ aws iam create-open-id-connect-provider \
 Create a role named `prod-portfolio-deploy` with the following trust policy:
 
 > **Placeholders to replace:**
+>
 > - `YOUR_ACCOUNT_ID`: Your 12-digit AWS account ID
 > - `YOUR_ORG/YOUR_REPO`: Your GitHub username or organization name, followed by the repository name (e.g., `BjornMelin/bjornmelin-platform-io`)
 
@@ -65,12 +72,16 @@ Create a role named `prod-portfolio-deploy` with the following trust policy:
 }
 ```
 
-**Attach IAM policy:** Use scoped CDK/S3/CloudFront permissions (recommended for production). For initial setup/testing only, `AdministratorAccess` may be used temporarily but should be replaced with least-privilege permissions before production use.
+**Attach IAM policy:** Use scoped CDK/S3/CloudFront permissions (recommended for production).
+For initial setup/testing only, `AdministratorAccess` may be used temporarily but should be
+replaced with least-privilege permissions before production use.
 
 <details>
 <summary>Example least-privilege policy for CDK deployments</summary>
 
-In addition to your stack-specific permissions (CloudFormation, S3, Route 53, ACM, etc.), the GitHub Actions role must be able to validate the CDK bootstrap template version during `cdk deploy`.
+In addition to your stack-specific permissions (CloudFormation, S3, Route 53, ACM, etc.),
+the GitHub Actions role must be able to validate the CDK bootstrap template version during
+`cdk deploy`.
 
 Minimum additions for **CDK v2 modern bootstrap** (default qualifier `hnb659fds`):
 
@@ -174,10 +185,13 @@ named `${env}-website-bucket-name` and `${env}-distribution-id` respectively (se
 
 Helper scripts (require AWS CLI auth):
 
-- CDK bootstrap permissions: `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name prod-portfolio-deploy`
-- Static deploy permissions (S3 + KVS + invalidation): `bash scripts/ops/fix-gh-oidc-static-deploy-policy.sh --role-name prod-portfolio-deploy --env prod`
+- CDK bootstrap permissions: `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name
+  prod-portfolio-deploy`
+- Static deploy permissions (S3 + KVS + invalidation):
+  `bash scripts/ops/fix-gh-oidc-static-deploy-policy.sh --role-name prod-portfolio-deploy --env prod`
 
-See [AWS CDK bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping-env.html) for background and template versioning.
+See [AWS CDK bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping-env.html)
+for background and template versioning.
 </details>
 
 ### Step 3: Configure GitHub Repository
@@ -186,19 +200,19 @@ Navigate to your repository Settings → Environments → **production**.
 
 **Environment secrets** (required):
 
-| Secret | Value |
-|--------|-------|
+| Secret               | Value                                                    |
+| -------------------- | -------------------------------------------------------- |
 | `AWS_DEPLOY_ROLE_ARN` | `arn:aws:iam::YOUR_ACCOUNT_ID:role/prod-portfolio-deploy` |
-| `OPENAI_API_KEY` | OpenAI key for auto-release (optional) |
+| `OPENAI_API_KEY`     | OpenAI key for auto-release (optional)                  |
 
 **Environment variables** (required):
 
-| Variable | Value |
-|----------|-------|
-| `NEXT_PUBLIC_BASE_URL` | `https://your-domain.com` |
-| `NEXT_PUBLIC_API_URL` | `https://api.your-domain.com` |
-| `NEXT_PUBLIC_APP_URL` | `https://your-domain.com` |
-| `CONTACT_EMAIL` | `contact@your-domain.com` (build-time validation) |
+| Variable              | Value                                              |
+| --------------------- | -------------------------------------------------- |
+| `NEXT_PUBLIC_BASE_URL` | `https://your-domain.com`                         |
+| `NEXT_PUBLIC_API_URL` | `https://api.your-domain.com`                     |
+| `NEXT_PUBLIC_APP_URL` | `https://your-domain.com`                         |
+| `CONTACT_EMAIL`       | `contact@your-domain.com` (build-time validation) |
 
 ### Step 4: Create AWS SSM Parameter for Contact Email
 
@@ -224,7 +238,10 @@ Create a **Sending Access** key in the Resend dashboard, then store it in SSM us
 bash scripts/ops/rotate-resend-sending-key.sh
 ```
 
-> Tip: The SSM value is a JSON blob (SecureString) containing `{"apiKey":"re_xxx", "version":N, "rotatedAt":"..."}`. The Lambda parses this JSON and extracts the `apiKey` field. For backwards compatibility, plain API key strings are also accepted.
+> Tip: The SSM value is a JSON blob (SecureString) containing
+> `{"apiKey":"re_xxx", "version":N, "rotatedAt":"..."}`. The Lambda parses this JSON and
+> extracts the `apiKey` field. For backwards compatibility, plain API key strings are also
+> accepted.
 
 ### Step 5: Deploy Infrastructure
 
@@ -237,8 +254,11 @@ pnpm cdk deploy prod-portfolio-email --require-approval never
 pnpm cdk deploy prod-portfolio-monitoring --require-approval never
 ```
 
-> **Tip:** The `--require-approval never` flag bypasses CDK's change review prompts. For first-time deployments, consider running `pnpm cdk diff <stack-name>` first to review changes, or omit the flag to get interactive approval prompts. Keep `--require-approval never` primarily for automated CI/CD pipelines.
-
+> **Tip:** The `--require-approval never` flag bypasses CDK's change review prompts. For
+> first-time deployments, consider running `pnpm cdk diff <stack-name>` first to review
+> changes, or omit the flag to get interactive approval prompts. Keep `--require-approval
+> never` primarily for automated CI/CD pipelines.
+>
 > **Note (CSP hashes KVS):** The Storage stack provisions the CloudFront KeyValueStore used for CSP hashes (ADR-0001).
 > The KVS contents are build artifacts and are synced during the static deploy step (`pnpm deploy:static:prod`).
 
