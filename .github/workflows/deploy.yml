@@ -164,6 +164,21 @@ jobs:
 
           echo "Bootstrap template version: ${BOOTSTRAP_VERSION}"
 
+      - name: Preflight - verify CloudFormation exports access
+        shell: bash
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+        run: |
+          set -euo pipefail
+
+          if ! OUTPUT="$(aws cloudformation list-exports --max-items 1 --region "${AWS_REGION}" 2>&1)"; then
+            echo "ERROR: Unable to call CloudFormation ListExports (required by deploy-static-site.mjs)." >&2
+            echo "${OUTPUT}" >&2
+            echo "" >&2
+            echo "Fix (IAM): allow cloudformation:ListExports on Resource \"*\" for the deploy role." >&2
+            exit 1
+          fi
+
       - name: Deploy Storage Stack (CloudFront Functions + CSP KVS)
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
         working-directory: infrastructure

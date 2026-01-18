@@ -12,6 +12,7 @@ its context, constraints, and operational implications.
 - ADR-0005: Static export constraints
 - ADR-0006: Static image optimization for Next.js static export
 - ADR-0007: External API boundary for static export (contact form)
+- ADR-0008: OIDC bootstrap remains manual (GitHub deploy role not managed by CDK)
 
 ## Conventions
 

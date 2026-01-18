@@ -131,6 +131,29 @@ jobs:
         with:
           install: "true"
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          role-session-name: github-actions-manual-deploy
+          aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: true
+
+      - name: Preflight - verify CloudFormation exports access
+        shell: bash
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+        run: |
+          set -euo pipefail
+
+          if ! OUTPUT="$(aws cloudformation list-exports --max-items 1 --region "${AWS_REGION}" 2>&1)"; then
+            echo "ERROR: Unable to call CloudFormation ListExports (required by deploy-static-site.mjs)." >&2
+            echo "${OUTPUT}" >&2
+            echo "" >&2
+            echo "Fix (IAM): allow cloudformation:ListExports on Resource \"*\" for the deploy role." >&2
+            exit 1
+          fi
+
       - name: Build application
         run: pnpm build
         env:
@@ -141,14 +164,6 @@ jobs:
           NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
           CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
           AWS_REGION: ${{ env.AWS_REGION }}
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5
-        with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-          role-session-name: github-actions-manual-deploy
-          aws-region: ${{ env.AWS_REGION }}
-          mask-aws-account-id: true
 
       - name: Deploy to environment
         env:

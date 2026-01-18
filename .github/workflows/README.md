@@ -137,6 +137,8 @@ These workflows use GitHub OIDC for keyless AWS authentication, eliminating long
 2. **Create IAM Role** with OIDC trust policy (see [infrastructure/README.md](../../infrastructure/README.md)).
    For CDK workflows, the role must be able to read the CDK bootstrap version SSM parameter
    (`/cdk-bootstrap/hnb659fds/version`) and (recommended) assume the CDK bootstrap roles.
+   The deploy workflow also requires static deploy permissions (CloudFormation exports, S3 sync,
+   CloudFront invalidation, and KVS sync) as documented in `infrastructure/README.md`.
 
 3. **Add Role ARN to GitHub Environment `production` secret** as `AWS_DEPLOY_ROLE_ARN`
 
