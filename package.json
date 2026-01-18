@@ -86,7 +86,7 @@
     "@vitest/ui": "^4.0.17",
     "aws-cdk-lib": "^2.235.0",
     "commander": "^14.0.2",
-    "constructs": "^10.4.4",
+    "constructs": "^10.4.5",
     "happy-dom": "^20.3.1",
     "husky": "^9.1.7",
     "jsdom": "^27.4.0",

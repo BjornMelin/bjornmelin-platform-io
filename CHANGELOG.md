@@ -249,7 +249,7 @@ All notable changes to this project are documented in this file.
 ### Changed
 
 - Runtime upgraded to Node 24 LTS; pin to `v24.10.0` via `.nvmrc` and `"engines": { "node": ">=24 <25" }` in `package.json`.
-- Standardize pnpm activation through Corepack using the exact `packageManager` version (currently `pnpm@10.18.3`).
+- Standardize pnpm activation through Corepack using the exact `packageManager` version (currently `pnpm@10.28.0`).
 - Consolidate GitHub Actions to read Node version from `.nvmrc` and pnpm from `package.json`;
   remove per-workflow Node/pnpm env pins.
 - Update all CI jobs to cache the pnpm store and run `pnpm install --frozen-lockfile` deterministically.
@@ -286,7 +286,7 @@ All notable changes to this project are documented in this file.
 
 - Upgraded Next.js to `14.2.33`, React to `18.3.1`, and aligned
   `eslint-config-next`, TypeScript, and Vite to patched releases.
-- Standardized pnpm/Node versions (pnpm `10.18.1`, Node `>=20.11 <21`) in all
+- Standardized pnpm/Node versions (pnpm `10.28.0`, Node `>=20.11 <21`) in all
   workflows via the new composite action.
 - Updated CodeQL workflow to use `github/codeql-action@v3` and documented the
   advanced-only configuration.

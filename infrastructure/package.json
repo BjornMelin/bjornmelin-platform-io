@@ -1,6 +1,7 @@
 {
   "name": "infrastructure",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.28.0",
   "bin": "bin/app.js",
   "scripts": {
     "build": "tsc",
@@ -33,10 +34,10 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-cloudfront": "3.970.0",
-    "@aws-sdk/client-ssm": "3.970.0",
+    "@aws-sdk/client-cloudfront": "3.971.0",
+    "@aws-sdk/client-ssm": "3.971.0",
     "aws-cdk-lib": "2.235.0",
-    "constructs": "^10.4.4",
+    "constructs": "^10.4.5",
     "resend": "^6.7.0",
     "source-map-support": "^0.5.21"
   }
