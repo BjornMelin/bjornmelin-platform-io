@@ -45,6 +45,7 @@ jobs:
             --exclude ^https://www\.conventionalcommits\.org/?$
             --exclude https://bjornmelin.io
             --exclude https://www.bjornmelin.io
+            --exclude ^https://github\.com/BjornMelin/bjornmelin-platform-io/compare/
             --timeout 30
             --max-retries 3
             --user-agent "Mozilla/5.0 (compatible; LinkChecker/1.0)"

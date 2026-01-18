@@ -15,6 +15,8 @@
     "build": "next build && pnpm generate:csp-hashes",
     "start": "npx serve@latest out",
     "lint": "biome check . --write --error-on-warnings",
+    "lint:md": "markdownlint '**/*.md' --dot --ignore-path .gitignore --ignore CHANGELOG.md",
+    "lint:md:fix": "markdownlint '**/*.md' --dot --ignore-path .gitignore --ignore CHANGELOG.md --fix",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "type-check": "tsc --noEmit",

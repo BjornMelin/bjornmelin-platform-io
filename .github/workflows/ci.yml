@@ -25,6 +25,26 @@ jobs:
       run-e2e: true
       run-unit-tests: true
 
+  markdown-lint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run markdownlint
+        run: pnpm lint:md
+
   actionlint:
     name: Actionlint
     runs-on: ubuntu-latest
@@ -40,12 +60,13 @@ jobs:
   all-checks-passed:
     name: All CI Checks Passed
     runs-on: ubuntu-latest
-    needs: [ci, actionlint]
+    needs: [ci, markdown-lint, actionlint]
     if: always()
     steps:
       - name: Check all job statuses
         run: |
           good() { case "$1" in success|skipped) return 0;; *) return 1;; esac; }
           if ! good "${{ needs.ci.result }}"; then echo "CI failed"; exit 1; fi
+          if ! good "${{ needs.markdown-lint.result }}"; then echo "Markdown linting failed"; exit 1; fi
           if ! good "${{ needs.actionlint.result }}"; then echo "Actionlint failed"; exit 1; fi
           echo "All CI checks passed successfully!"
