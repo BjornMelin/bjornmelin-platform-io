@@ -117,6 +117,7 @@ const perPathHashesSha = Object.fromEntries(
   ]),
 );
 
+fs.mkdirSync(path.dirname(perPathTarget), { recursive: true });
 fs.writeFileSync(perPathTarget, `${JSON.stringify(perPathHashesSha, null, 2)}\n`, "utf8");
 
 const hashIndexByDigest = new Map(hashes.map((hash, idx) => [hash, idx]));
@@ -184,6 +185,7 @@ var HASH_B64 = ${JSON.stringify(hashes)};
 var PATH_HASH_INDEXES = ${JSON.stringify(perPathHashIndexes)};
 `;
 
+fs.mkdirSync(path.dirname(perPathJsTarget), { recursive: true });
 fs.writeFileSync(perPathJsTarget, `${perPathFunctionSource}\n`, "utf8");
 
 const functionSource = `/* biome-ignore-all lint/style/useTemplate: CloudFront Functions require ES5.1. */
@@ -341,6 +343,7 @@ if (functionOutputBytes > cloudFrontFunctionLimitBytes) {
   process.exit(1);
 }
 
+fs.mkdirSync(path.dirname(functionTarget), { recursive: true });
 fs.writeFileSync(functionTarget, functionOutput, "utf8");
 
 	process.stdout.write(

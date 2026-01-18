@@ -182,4 +182,4 @@ strict CSP approach for CloudFront-served static content.
 
 - **1.0 (2025-12-27)**: Initial decision and production rollout.
 - **1.1 (2026-01-18)**: Moved per-path hash indices into CloudFront KeyValueStore and added size guardrails.
-- **1.2 (2026-01-18)**: Added fail-soft behavior when KVS is unpopulated to prevent roll-out outages.
+- **1.2 (2026-01-18)**: Added fail-soft behavior when KVS is unpopulated to prevent rollout outages.

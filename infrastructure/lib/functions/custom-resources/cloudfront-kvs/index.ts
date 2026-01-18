@@ -90,6 +90,13 @@ async function deleteKeyValueStore(client: CloudFrontClient, name: string) {
   }
 }
 
+/**
+ * CloudFormation custom resource handler that creates, updates, or deletes a CloudFront
+ * KeyValueStore and returns the PhysicalResourceId plus KeyValueStoreArn in the response data.
+ * @param event - CloudFormation custom resource event for create/update/delete lifecycle actions.
+ * @returns Promise resolving to a CloudFormationCustomResourceResponse object with
+ * PhysicalResourceId and Data.KeyValueStoreArn.
+ */
 export const handler: CloudFormationCustomResourceHandler = async (
   event: CloudFormationCustomResourceEvent,
 ) => {

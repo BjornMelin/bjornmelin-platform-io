@@ -15,10 +15,21 @@ import { CACHE_DURATIONS } from "../constants/durations";
 import type { StorageStackProps } from "../types/stack-props";
 import { applyStandardTags } from "../utils/tagging";
 
+/**
+ * Storage stack that provisions the S3 website bucket, CloudFront distribution,
+ * and supporting resources required for static hosting and logging.
+ */
 export class StorageStack extends cdk.Stack {
   public readonly bucket: s3.IBucket;
   public readonly distribution: cloudfront.IDistribution;
 
+  /**
+   * Creates a StorageStack with the given scope, id, and props and initializes
+   * the public `bucket` and `distribution` properties.
+   * @param scope - CDK construct scope.
+   * @param id - Stack identifier.
+   * @param props - StorageStack configuration props.
+   */
   constructor(scope: Construct, id: string, props: StorageStackProps) {
     super(scope, id, props);
 
