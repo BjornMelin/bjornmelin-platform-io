@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.2.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.1.0...v3.2.0) (2026-01-18)
+
+
+### Features
+
+* Add markdown linting to CI pipeline and configure rules for documentation files. ([b87b323](https://github.com/BjornMelin/bjornmelin-platform-io/commit/b87b32348067307cb8bfcfa8bfcd82d0d1d1bd16))
+
+
+### Bug Fixes
+
+* **ci:** exclude GitHub compare URLs from link checking ([cfedebc](https://github.com/BjornMelin/bjornmelin-platform-io/commit/cfedebc892ec9e0cd9bbcea9b8ed792922d8ee06))
+* resolve PR review comments on workflows documentation and CI config ([3e38047](https://github.com/BjornMelin/bjornmelin-platform-io/commit/3e38047d4cc3bfb3cb41092b26fcade3b2c1d641))
+
 ## [3.1.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.0.0...v3.1.0) (2026-01-18)
 
 
