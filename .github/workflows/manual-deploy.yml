@@ -4,12 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to deploy to'
+        description: 'Environment to deploy to (production only)'
         required: true
-        default: 'dev'
+        default: 'production'
         type: choice
         options:
-          - dev
           - production
       skip_tests:
         description: 'Skip running tests'
@@ -157,52 +156,22 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Map GitHub environment name -> stack env prefix used by CDK stacks.
-          # Current convention: dev => dev-portfolio-*, production => prod-portfolio-*.
-          if [[ "$DEPLOY_ENV" == "production" ]]; then
-            STACK_ENV="prod"
-          else
-            STACK_ENV="$DEPLOY_ENV"
-          fi
+          STACK_ENV="prod"
 
-          STACK_NAME="${STACK_ENV}-portfolio-storage"
-          echo "Deploying static export using stack: ${STACK_NAME}"
-
-          # shellcheck disable=SC2016 # Backticks are JMESPath syntax, not command substitution
-          BUCKET_NAME=$(aws cloudformation describe-stacks \
-            --stack-name "${STACK_NAME}" \
-            --query 'Stacks[0].Outputs[?OutputKey==`WebsiteBucketName`].OutputValue' \
-            --output text --region "${AWS_REGION}")
-
-          # shellcheck disable=SC2016
-          DIST_ID=$(aws cloudformation describe-stacks \
-            --stack-name "${STACK_NAME}" \
-            --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' \
-            --output text --region "${AWS_REGION}")
-
-          if [[ -z "$BUCKET_NAME" || -z "$DIST_ID" ]]; then
-            echo "Failed to resolve required outputs from ${STACK_NAME}. Ensure the stack exists and has WebsiteBucketName + DistributionId outputs." >&2
-            exit 1
-          fi
-
-          echo "Uploading to s3://${BUCKET_NAME}"
-          aws s3 sync out/ "s3://${BUCKET_NAME}" --delete
-
-          echo "Invalidating CloudFront distribution ${DIST_ID}"
-          aws cloudfront create-invalidation \
-            --distribution-id "${DIST_ID}" \
-            --paths "/*"
+          echo "Deploying static export using environment prefix: ${STACK_ENV}"
+          node scripts/deploy-static-site.mjs --env "${STACK_ENV}"
 
       - name: Set deployment URL
         id: deployment-url
         env:
-          DEPLOY_ENV: ${{ inputs.environment }}
+          APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
         run: |
-          if [[ "$DEPLOY_ENV" == "production" ]]; then
-            echo "url=https://bjornmelin.io" >> "$GITHUB_OUTPUT"
-          else
-            echo "url=https://$DEPLOY_ENV.bjornmelin.io" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          if [[ -z "${APP_URL}" ]]; then
+            echo "Missing required variable: NEXT_PUBLIC_APP_URL" >&2
+            exit 1
           fi
+          echo "url=${APP_URL}" >> "$GITHUB_OUTPUT"
 
       - name: Create deployment record
         uses: actions/github-script@v8

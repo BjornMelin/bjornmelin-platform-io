@@ -8,8 +8,8 @@ portfolio site without maintaining a full runbook.
 - Trigger GitHub Action `Deploy Portfolio` on `main` (push or manual dispatch).
 - For manual runs, ensure the latest code is on `main`, then use **Run workflow**
   in the Actions tab.
-- The workflow builds the static export (`out/`), deploys the Storage stack (CSP headers),
-  then uploads `out/` to the `bjornmelin.io-prod-website` S3 bucket and invalidates CloudFront.
+- The workflow builds the static export (`out/`), deploys the Storage stack (CloudFront Functions + CSP KVS),
+  then uploads `out/` to S3, syncs the CSP hashes KeyValueStore, and invalidates CloudFront.
 
 ## Smoke Check
 

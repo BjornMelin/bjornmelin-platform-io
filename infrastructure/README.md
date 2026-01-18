@@ -9,7 +9,7 @@ This section guides you through setting up AWS infrastructure from scratch for a
 - AWS account with admin access
 - Domain registered in Route 53 (or DNS delegated to Route 53)
 - AWS CLI installed and configured (`aws configure`)
-- Node.js 20+ and pnpm installed
+- Node.js 24.x LTS (pinned via `.nvmrc`) and pnpm (via Corepack)
 - GitHub repository with this code
 
 ### Step 1: Create GitHub OIDC Provider in AWS
@@ -106,6 +106,30 @@ Example inline policy (replace placeholders):
 }
 ```
 
+#### Additional permissions for the static deploy step (S3 + CloudFront + CSP KVS)
+
+The production workflow also runs `pnpm deploy:static:prod`, which uses the AWS CLI to:
+
+- read CloudFormation exports (`cloudformation list-exports`)
+- upload the `out/` directory to S3 (`aws s3 sync ...`)
+- sync the CloudFront KeyValueStore used by the CSP Function (`cloudfront-keyvaluestore list-keys/describe-key-value-store/update-keys`)
+- invalidate CloudFront (`cloudfront create-invalidation`)
+
+At minimum, ensure the role has these KeyValueStore permissions (service prefix `cloudfront-keyvaluestore`):
+
+```json
+{
+  "Sid": "CloudFrontKeyValueStoreSync",
+  "Effect": "Allow",
+  "Action": [
+    "cloudfront-keyvaluestore:DescribeKeyValueStore",
+    "cloudfront-keyvaluestore:ListKeys",
+    "cloudfront-keyvaluestore:UpdateKeys"
+  ],
+  "Resource": "arn:aws:cloudfront::ACCOUNT_ID:key-value-store/*"
+}
+```
+
 Helper script (requires AWS CLI auth): `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name prod-portfolio-deploy`
 
 See [AWS CDK bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping-env.html) for background and template versioning.
@@ -170,6 +194,9 @@ pnpm cdk deploy prod-portfolio-monitoring --require-approval never
 
 > **Tip:** The `--require-approval never` flag bypasses CDK's change review prompts. For first-time deployments, consider running `pnpm cdk diff <stack-name>` first to review changes, or omit the flag to get interactive approval prompts. Keep `--require-approval never` primarily for automated CI/CD pipelines.
 
+> **Note (CSP hashes KVS):** The Storage stack provisions the CloudFront KeyValueStore used for CSP hashes (ADR-0001).
+> The KVS contents are build artifacts and are synced during the static deploy step (`pnpm deploy:static:prod`).
+
 ### Step 6: Deploy Application
 
 Push to `main` branch or run manually:
@@ -187,7 +214,7 @@ gh workflow run deploy.yml
 The infrastructure is organized into four main stacks:
 
 - **DNS Stack:** Manages domain and SSL certificates
-- **Storage Stack:** Handles S3 and CloudFront configuration
+- **Storage Stack:** Handles S3, CloudFront, CloudFront Functions, and the CSP hashes KeyValueStore (KVS)
 - **Deployment Stack:** Manages IAM and deployment credentials
 - **Monitoring Stack:** Configures CloudWatch alarms
 
@@ -202,7 +229,7 @@ graph TD
 
 ### Configuration Details
 
-- **Domain:** bjornmelin.io
+- **Domain:** configured in `infrastructure/lib/constants.ts` (`PROD_DOMAIN` / `DEV_DOMAIN`)
 - **Environment:** Production
 - **Region:** us-east-1 (primary)
 - **CDK Version:** 2.99.1

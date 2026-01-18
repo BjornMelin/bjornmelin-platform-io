@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Validate build + AWS auth/outputs only (no S3 upload / no CloudFront invalidation)"
+        description: "Validate build + AWS auth/outputs only (no S3 upload / KVS sync / CloudFront invalidation)"
         required: false
         type: boolean
         default: false
@@ -164,7 +164,7 @@ jobs:
 
           echo "Bootstrap template version: ${BOOTSTRAP_VERSION}"
 
-      - name: Deploy Storage Stack (CSP policy)
+      - name: Deploy Storage Stack (CloudFront Functions + CSP KVS)
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
         working-directory: infrastructure
         env:
@@ -185,57 +185,13 @@ jobs:
           DOCKER_DEFAULT_PLATFORM: linux/amd64
         run: pnpm cdk deploy prod-portfolio-monitoring --require-approval never
 
-      - name: Get Stack Outputs
-        id: stack-outputs
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          # shellcheck disable=SC2016 # Backticks are JMESPath syntax, not command substitution
-          BUCKET_NAME=$(aws cloudformation describe-stacks \
-            --stack-name prod-portfolio-storage \
-            --query 'Stacks[0].Outputs[?OutputKey==`WebsiteBucketName`].OutputValue' \
-            --output text --region ${{ env.AWS_REGION }})
-
-          # shellcheck disable=SC2016
-          DIST_ID=$(aws cloudformation describe-stacks \
-            --stack-name prod-portfolio-storage \
-            --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' \
-            --output text --region ${{ env.AWS_REGION }})
-
-          echo "bucket=$BUCKET_NAME" >> "$GITHUB_OUTPUT"
-          echo "distribution=$DIST_ID" >> "$GITHUB_OUTPUT"
-
-      - name: Check if Stack Outputs were retrieved
-        if: steps.stack-outputs.outcome != 'success'
-        run: |
-          echo "Failed to retrieve stack outputs. Check your user permissions and make sure 'prod-portfolio-storage' stack exists."
-          exit 1
-
-      - name: Upload to S3
+      - name: Deploy static export (S3 + KVS + invalidation)
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "Uploading static files to s3://${{ steps.stack-outputs.outputs.bucket }}"
-          aws s3 sync out/ s3://${{ steps.stack-outputs.outputs.bucket }} --delete
+        run: pnpm deploy:static:prod
 
-      - name: Upload to S3 (dry-run)
+      - name: Deploy static export (dry-run)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "DRY RUN: validating S3 sync permissions for s3://${{ steps.stack-outputs.outputs.bucket }}"
-          aws s3 sync out/ s3://${{ steps.stack-outputs.outputs.bucket }} --delete --dryrun
-
-      - name: Invalidate CloudFront
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ steps.stack-outputs.outputs.distribution }} \
-            --paths "/*"
+        run: node scripts/deploy-static-site.mjs --env prod --dry-run
 
   smoke-check:
     name: Post-Deploy Smoke Check

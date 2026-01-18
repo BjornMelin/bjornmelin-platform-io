@@ -37,12 +37,12 @@ The workflow sequence is:
 
 1. `pnpm build`
 2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage`
-3. `aws s3 sync out/ ...` + CloudFront invalidation
+3. `pnpm deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
 
 ## Why ordering matters
 
 The CloudFront `Content-Security-Policy` includes a script hash allow-list generated from the
-static export HTML output. Deploying CSP headers without uploading the matching `out/` artifacts can
+static export HTML output. Deploying CSP configuration (CloudFront Function + KVS wiring) without uploading the matching `out/` artifacts can
 cause a blank page due to CSP violations (ADR-0001).
 
 ## Manual deployment (break-glass)
@@ -60,7 +60,9 @@ pnpm deploy:static:prod
 - `pnpm build` produces:
   - `out/` containing fully static HTML/CSS/JS/assets
   - updated `infrastructure/lib/generated/next-inline-script-hashes.ts`
-- `deploy.yml` uploads the matching `out/` directory and invalidates CloudFront.
+  - updated `infrastructure/lib/generated/next-inline-script-hashes.kvs.json`
+  - updated `infrastructure/lib/functions/cloudfront/next-csp-response.js`
+- `deploy.yml` deploys the matching `out/` directory, syncs the CSP hashes KVS, and invalidates CloudFront.
 - Post-deploy smoke check passes (`curl $NEXT_PUBLIC_APP_URL` returns 2xx/3xx).
 
 ## Operational guardrails

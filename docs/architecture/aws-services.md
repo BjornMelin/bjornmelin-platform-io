@@ -46,7 +46,7 @@ Environment-specific configurations are managed through:
 
 - GitHub Environment `production` variables for public client config
 - AWS SSM Parameter Store / Secrets Manager for server-only values
-- `cdk.context.json` for CDK context values
+- `infrastructure/cdk.json` for CDK app configuration and CDK context
 - IAM OIDC + region for AWS credentials (no long-lived keys)
 
 ### Reading SSM Parameters (Node.js)

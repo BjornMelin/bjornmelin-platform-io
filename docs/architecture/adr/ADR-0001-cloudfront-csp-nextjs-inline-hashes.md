@@ -2,8 +2,8 @@
 ADR: 0001
 Title: CloudFront CSP for Next.js static export uses hash allow-list
 Status: Accepted
-Version: 1.0
-Date: 2025-12-27
+Version: 1.2
+Date: 2026-01-18
 Supersedes: []
 Superseded-by: []
 Related: ["ADR-0005"]
@@ -47,12 +47,16 @@ hash allow-list did not match the currently deployed static export.
 
 ## Decision
 
-- CloudFront sets CSP via a `ResponseHeadersPolicy` in `StorageStack`.
+- CloudFront sets CSP via a **viewer-response CloudFront Function** in `StorageStack`.
 - CSP `script-src` uses:
   - `'self'` for external JS served from the same origin, and
   - a **SHA-256 hash allow-list** for required inline scripts.
-- The allow-list is generated from the static export (`out/**/*.html`) by `pnpm generate:csp-hashes`,
-  which writes `infrastructure/lib/generated/next-inline-script-hashes.ts`.
+- The allow-list is generated from the static export (`out/**/*.html`) by `pnpm generate:csp-hashes`, which writes:
+  - `infrastructure/lib/generated/next-inline-script-hashes.ts` (global hash allow-list)
+  - `infrastructure/lib/generated/next-inline-script-hashes.kvs.json` (per-path hash index payload for KVS)
+  - `infrastructure/lib/functions/cloudfront/next-csp-response.js` (viewer-response CloudFront Function)
+- Per-path hash indices are stored in a **CloudFront KeyValueStore (KVS)** to keep the CloudFront Function source
+  under the 10 KB limit while supporting large sites.
 
 ## Decision Framework Score (must be ≥ 9.0)
 
@@ -69,6 +73,11 @@ hash allow-list did not match the currently deployed static export.
 
 - Static export prevents request-time injection of CSP nonces.
 - CSP hashes and the deployed `out/` artifacts must be produced by the same build.
+- CloudFront Functions have a strict size limit (10,240 bytes). The build must fail if the generated function exceeds it.
+- CloudFront KeyValueStore limits (enforced by build-time validation):
+  - key ≤ 512 bytes
+  - value ≤ 1,024 bytes
+  - import payload ≤ 5 MB
 
 ## Security Model
 
@@ -102,9 +111,9 @@ strict CSP approach for CloudFront-served static content.
 
 ## High-Level Architecture
 
-- Build step generates `out/` and CSP script hashes.
-- CDK `StorageStack` deploys CSP headers (including inline script hash allow-list).
-- Static assets are uploaded to S3 and CloudFront is invalidated.
+- Build step generates `out/` and CSP artifacts (hash allow-list + KVS payload + CloudFront Function source).
+- CDK `StorageStack` provisions S3 + CloudFront, the viewer-response CSP Function, and its KeyValueStore.
+- Static deploy uploads `out/` to S3, syncs the CSP hashes KeyValueStore, and invalidates CloudFront.
 
 ## Related Requirements
 
@@ -123,8 +132,11 @@ strict CSP approach for CloudFront-served static content.
   The CSP hashes and the contents of `out/` must be produced by the same build.
 - Production deployments should follow this order:
   1. Build/export (`pnpm build`) to refresh `out/` and regenerate CSP hashes.
-  2. Deploy storage stack (`pnpm -C infrastructure deploy:storage`) to apply the CSP.
-  3. Upload `out/` to S3 and invalidate CloudFront (see `pnpm deploy:static:prod`).
+  2. Deploy storage stack (`pnpm -C infrastructure deploy:storage`) to apply the CSP Function + KVS wiring.
+  3. Upload `out/` to S3 + sync CSP hashes KVS + invalidate CloudFront (see `pnpm deploy:static:prod`).
+- **Fail-soft behavior:** If the CSP KVS is unavailable/unpopulated (initial rollout), the CSP CloudFront Function
+  must not set `Content-Security-Policy` (to avoid a hard outage). The deploy pipeline invalidates CloudFront after
+  syncing KVS so responses are recached with the strict CSP.
 
 ## Consequences
 
@@ -144,6 +156,7 @@ strict CSP approach for CloudFront-served static content.
 
 - Treat `pnpm build` as the single source of truth for `out/` + CSP hashes.
 - Never manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
+- Never manually edit `infrastructure/lib/functions/cloudfront/next-csp-response.js`.
 
 ### Dependencies
 
@@ -153,8 +166,12 @@ strict CSP approach for CloudFront-served static content.
 ## Implementation Notes
 
 - CSP hash generation: `scripts/generate-next-inline-csp-hashes.mjs`
-- CloudFront CSP policy: `infrastructure/lib/stacks/storage-stack.ts`
+- CloudFront CSP function + KVS association: `infrastructure/lib/stacks/storage-stack.ts`
+- CloudFront CSP function source (generated): `infrastructure/lib/functions/cloudfront/next-csp-response.js`
 - Static upload helper: `scripts/deploy-static-site.mjs`
+- Guardrails:
+  - Build fails if the generated CloudFront Function source exceeds 10,240 bytes.
+  - Build fails if the KVS key/value/import payload exceeds CloudFront limits.
 
 ## Testing
 
@@ -164,3 +181,5 @@ strict CSP approach for CloudFront-served static content.
 ## Changelog
 
 - **1.0 (2025-12-27)**: Initial decision and production rollout.
+- **1.1 (2026-01-18)**: Moved per-path hash indices into CloudFront KeyValueStore and added size guardrails.
+- **1.2 (2026-01-18)**: Added fail-soft behavior when KVS is unpopulated to prevent roll-out outages.
