@@ -179,6 +179,27 @@ jobs:
             exit 1
           fi
 
+      - name: Deploy Storage Stack (CloudFront Functions + CSP KVS)
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
+        working-directory: infrastructure
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
+        run: pnpm cdk deploy prod-portfolio-storage --require-approval never
+
+      - name: Deploy Email Stack (infra changes only)
+        if: ${{ (github.event_name != 'workflow_dispatch' || inputs.dry_run != true) && steps.changes.outputs.infra_changed == 'true' }}
+        working-directory: infrastructure
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
+        run: pnpm cdk deploy prod-portfolio-email --require-approval never
+
+      - name: Deploy Monitoring Stack (infra changes only)
+        if: ${{ (github.event_name != 'workflow_dispatch' || inputs.dry_run != true) && steps.changes.outputs.infra_changed == 'true' }}
+        working-directory: infrastructure
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
+        run: pnpm cdk deploy prod-portfolio-monitoring --require-approval never
+
       - name: Preflight - verify static deploy permissions (S3 + CSP KVS)
         shell: bash
         env:
@@ -221,27 +242,6 @@ jobs:
             echo "Fix (IAM): allow cloudfront:ListInvalidations/GetInvalidation/CreateInvalidation on the distribution ARN." >&2
             exit 1
           fi
-
-      - name: Deploy Storage Stack (CloudFront Functions + CSP KVS)
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
-        working-directory: infrastructure
-        env:
-          DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-storage --require-approval never
-
-      - name: Deploy Email Stack (infra changes only)
-        if: ${{ (github.event_name != 'workflow_dispatch' || inputs.dry_run != true) && steps.changes.outputs.infra_changed == 'true' }}
-        working-directory: infrastructure
-        env:
-          DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-email --require-approval never
-
-      - name: Deploy Monitoring Stack (infra changes only)
-        if: ${{ (github.event_name != 'workflow_dispatch' || inputs.dry_run != true) && steps.changes.outputs.infra_changed == 'true' }}
-        working-directory: infrastructure
-        env:
-          DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-monitoring --require-approval never
 
       - name: Deploy static export (S3 + KVS + invalidation)
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}

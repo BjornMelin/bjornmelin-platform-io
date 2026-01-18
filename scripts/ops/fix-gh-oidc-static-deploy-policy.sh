@@ -35,22 +35,37 @@ AWS_REGION="us-east-1"
 POLICY_NAME="StaticDeployAccess"
 DRY_RUN="false"
 
+require_arg() {
+  local opt="$1"
+  local val="${2:-}"
+  if [[ -z "${val}" || "${val}" == -* ]]; then
+    echo "Missing value for ${opt}" >&2
+    echo "" >&2
+    show_help >&2
+    exit 2
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --role-name)
-      ROLE_NAME="${2:-}"
+      require_arg "$1" "${2:-}"
+      ROLE_NAME="$2"
       shift 2
       ;;
     --env)
-      STACK_ENV="${2:-}"
+      require_arg "$1" "${2:-}"
+      STACK_ENV="$2"
       shift 2
       ;;
     --region)
-      AWS_REGION="${2:-}"
+      require_arg "$1" "${2:-}"
+      AWS_REGION="$2"
       shift 2
       ;;
     --policy-name)
-      POLICY_NAME="${2:-}"
+      require_arg "$1" "${2:-}"
+      POLICY_NAME="$2"
       shift 2
       ;;
     --dry-run)
