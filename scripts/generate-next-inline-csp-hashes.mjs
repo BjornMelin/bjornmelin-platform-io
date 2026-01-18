@@ -291,6 +291,7 @@ function buildCsp(host, hashes) {
   return BASE_DIRECTIVES.concat([script, connectDirective]).join("; ");
 }
 
+// lgtm [js/unused-local-variable]
 async function handler(event) {
   var request = event.request || {};
   var response = event.response || {};
