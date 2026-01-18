@@ -53,6 +53,8 @@ docs/
 │   ├── SPEC-0003-*.md
 │   ├── SPEC-0004-*.md
 │   ├── SPEC-0005-*.md
+│   ├── SPEC-0006-*.md
+│   ├── SPEC-0007-*.md
 │   └── README.md
 │
 └── README.md                  # This documentation index

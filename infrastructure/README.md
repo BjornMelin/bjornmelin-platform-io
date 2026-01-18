@@ -172,7 +172,10 @@ The placeholders `YOUR_BUCKET_NAME` and `DISTRIBUTION_ID` can be resolved from C
 named `${env}-website-bucket-name` and `${env}-distribution-id` respectively (see
 `scripts/deploy-static-site.mjs`).
 
-Helper script (requires AWS CLI auth): `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name prod-portfolio-deploy`
+Helper scripts (require AWS CLI auth):
+
+- CDK bootstrap permissions: `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name prod-portfolio-deploy`
+- Static deploy permissions (S3 + KVS + invalidation): `bash scripts/ops/fix-gh-oidc-static-deploy-policy.sh --role-name prod-portfolio-deploy --env prod`
 
 See [AWS CDK bootstrapping](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping-env.html) for background and template versioning.
 </details>

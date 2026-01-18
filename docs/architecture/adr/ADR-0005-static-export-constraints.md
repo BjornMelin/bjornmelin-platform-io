@@ -119,7 +119,8 @@ To ensure CSP/static-export sync and prevent hash drift, follow this repeatable 
 
 1. **Build the static export**: Run `pnpm build` (generates `out/` and CSP hashes).
 2. **Deploy infrastructure**: Run `pnpm -C infrastructure deploy:storage` (deploys S3, CloudFront, and Lambda via CDK).
-3. **Deploy static assets**: Run `pnpm deploy:static:prod` (uploads static assets to S3, syncs CSP hashes KVS, and invalidates CloudFront).
+3. **Deploy static assets**: Run `pnpm deploy:static:prod`
+   (uploads static assets to S3, syncs CSP hashes KVS, and invalidates CloudFront).
 
 ### Dependencies
 
