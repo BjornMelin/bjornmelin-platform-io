@@ -39,13 +39,13 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
       </div>
       <div className="p-6 space-y-4">
         <div>
-          <h3 className="text-balance break-words text-xl font-semibold mb-2">{project.title}</h3>
+          <h3 className="text-balance wrap-break-word text-xl font-semibold mb-2">{project.title}</h3>
           {project.featured && (
             <div className="inline-block rounded-full bg-primary/10 px-2 py-1 text-xs text-primary mb-2">
               Featured Project
             </div>
           )}
-          <p className="text-muted-foreground break-words">{project.description}</p>
+          <p className="text-muted-foreground wrap-break-word">{project.description}</p>
         </div>
         <div className="flex items-center gap-2 overflow-hidden">
           <div className="flex min-w-0 items-center gap-2 overflow-hidden">
@@ -58,7 +58,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex items-center rounded-full border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className="inline-flex items-center rounded-full border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   aria-label={`Show ${hiddenCount} more technologies`}
                   title="Show all technologies"
                 >

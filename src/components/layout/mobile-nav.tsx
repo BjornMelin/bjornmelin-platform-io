@@ -42,7 +42,7 @@ export function MobileNav({
     >
       {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: summary needs explicit expanded state */}
       <summary
-        className="list-none rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
+        className="list-none rounded-md p-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
         aria-label="Toggle menu"
         aria-expanded={isOpen}
         aria-controls="mobile-nav-panel"

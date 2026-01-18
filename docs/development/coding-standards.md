@@ -113,7 +113,7 @@ feature/
 import { cn } from "@/lib/utils";
 
 interface ButtonProps {
-  variant?: "default" | "outline";
+  variant?: "default" | "outline-solid";
   className?: string;
 }
 
@@ -122,7 +122,7 @@ export function Button({ variant = "default", className }: ButtonProps) {
     <button
       className={cn(
         "base-styles",
-        variant === "outline" && "outline-styles",
+        variant === "outline-solid" && "outline-styles",
         className
       )}
     />

@@ -8,7 +8,7 @@ export function About() {
   return (
     <section
       aria-labelledby="about-heading"
-      className="py-24 relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-background"
+      className="py-24 relative overflow-hidden bg-linear-to-br from-background via-primary/5 to-background"
     >
       <div className="absolute inset-0 w-full h-full">
         <div className="absolute right-0 top-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
@@ -74,7 +74,7 @@ export function About() {
         <div className="text-center relative z-10">
           <Link
             href="/about"
-            className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors group pointer-events-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors group pointer-events-auto focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Learn More About Me
             <ArrowRight

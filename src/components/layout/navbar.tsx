@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 const NavSeparator = () => <span className="text-muted-foreground/30">|</span>;
 const navLinkClassName =
-  "rounded-sm text-foreground/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "rounded-sm text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 /**
  * Top navigation with links and a mobile menu toggle.
@@ -19,13 +19,13 @@ export function Navbar() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b border-border"
+      className="fixed top-0 w-full bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60 z-50 border-b border-border"
     >
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link
             href="/"
-            className="rounded-sm text-xl font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="rounded-sm text-xl font-bold focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Bjorn Melin | Portfolio
           </Link>

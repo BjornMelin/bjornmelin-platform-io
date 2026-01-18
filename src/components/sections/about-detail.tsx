@@ -10,7 +10,7 @@ import { skillCategories } from "@/data/skills";
 
 export function AboutDetail() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
+    <div className="min-h-screen bg-linear-to-br from-background via-primary/5 to-background">
       <div className="container mx-auto px-4 py-24">
         <div className="mb-20">
           <div className="flex flex-col md:flex-row items-center gap-8">
@@ -197,7 +197,7 @@ export function AboutDetail() {
                       href={cert.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-start gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                      className="flex items-start gap-4 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                       <Image
                         src={cert.image}
@@ -220,7 +220,7 @@ export function AboutDetail() {
                           href={cert.earlyAdopterBadge.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                          className="flex items-center gap-3 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                         >
                           <Image
                             src={cert.earlyAdopterBadge.image}
