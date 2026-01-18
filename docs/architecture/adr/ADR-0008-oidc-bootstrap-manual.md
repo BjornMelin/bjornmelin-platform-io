@@ -23,7 +23,7 @@ Accepted (2026-01-18).
 ## Description
 
 Keep GitHub Actions OIDC provider and deploy role creation as a manual, one-time prerequisite
-outside of CDK; document required permissions and add workflow preflight checks.
+outside CDK; document required permissions and add workflow preflight checks.
 
 ## Context
 

@@ -140,6 +140,7 @@ CloudFront invalidation, and the CSP KeyValueStore (service prefix `cloudfront-k
       "Sid": "StaticSiteBucketWrite",
       "Effect": "Allow",
       "Action": [
+        "s3:GetObject",
         "s3:PutObject",
         "s3:DeleteObject",
         "s3:AbortMultipartUpload",
@@ -167,8 +168,9 @@ CloudFront invalidation, and the CSP KeyValueStore (service prefix `cloudfront-k
 }
 ```
 
-`YOUR_BUCKET_NAME` and `DISTRIBUTION_ID` are available via CloudFormation exports
-`${env}-website-bucket-name` and `${env}-distribution-id` (see `scripts/deploy-static-site.mjs`).
+The placeholders `YOUR_BUCKET_NAME` and `DISTRIBUTION_ID` can be resolved from CloudFormation exports
+named `${env}-website-bucket-name` and `${env}-distribution-id` respectively (see
+`scripts/deploy-static-site.mjs`).
 
 Helper script (requires AWS CLI auth): `bash scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh --role-name prod-portfolio-deploy`
 
