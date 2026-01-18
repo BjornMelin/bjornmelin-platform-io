@@ -50,9 +50,9 @@ CDK stacks do **not** create IAM users or access keys.
 Production is deployed automatically by `.github/workflows/deploy.yml` on merges to `main`. The
 workflow performs the safe sequence to keep the static export and CSP hashes in sync:
 
-1. `pnpm build` (generates `out/` and refreshes `infrastructure/lib/generated/next-inline-script-hashes.ts`)
-2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage` (updates CSP headers in CloudFront)
-3. Upload `out/` to S3 + invalidate CloudFront
+1. `pnpm build` (generates `out/` and refreshes CSP artifacts under `infrastructure/lib/generated/`)
+2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage` (deploys CloudFront Functions + CSP hashes KVS)
+3. `pnpm deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
 
 ### Production Build
 
@@ -153,11 +153,10 @@ At runtime (Lambda), use AWS SSM Parameter Store / Secrets Manager rather than `
 
 ## Deployment Environments
 
-### Development
+### Development (local only)
 
-- Ad hoc deployments via CDK or branch workflows
-- Shares infrastructure code with production
-- Uses the `dev-portfolio-deploy` OIDC role for automation
+- Local development runs via `pnpm dev` and `.env.local`.
+- No separate `dev-portfolio-*` CDK stacks are synthesized by default (see `infrastructure/bin/app.ts`).
 
 ### Production
 

@@ -20,8 +20,9 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
    - Runs on: Push to main (excludes `**.md`)
    - Calls: _reusable-ci.yml for testing
    - Features: AWS OIDC authentication, preflight config validation, static build,
-     **CDK Storage deploy (CSP headers)**, S3 sync, CloudFront invalidation, smoke check, job summary
-   - workflow_dispatch inputs: `dry_run` (skip upload/invalidation) and `skip_smoke_check`
+     **CDK Storage deploy (CloudFront Functions + CSP KVS)**, static deploy (`pnpm deploy:static:prod`),
+     CloudFront invalidation, smoke check, job summary
+   - workflow_dispatch inputs: `dry_run` (skip S3 upload / KVS sync / invalidation) and `skip_smoke_check`
 
 4. **release-please.yml** - Automated semantic versioning and releases
    - Runs on: Push to main
@@ -30,7 +31,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 5. **manual-deploy.yml** - Manual deployment workflow
    - Runs on: Workflow dispatch
-   - Features: Environment selection, test skipping option, stack-output based S3/CloudFront deploy,
+   - Features: Environment selection, test skipping option, stack-output based S3/KVS/CloudFront deploy,
      deployment tracking, concurrency control
 
 ### Security & Quality

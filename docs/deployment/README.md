@@ -15,6 +15,7 @@ Before deploying, ensure you have completed:
   - [ ] `NEXT_PUBLIC_APP_URL` - Application URL
   - [ ] `CONTACT_EMAIL` - Build-time validation email
 - [ ] SSM parameter `/portfolio/prod/CONTACT_EMAIL` created (SecureString)
+  - Note: The CloudFront CSP hashes KeyValueStore (KVS) is provisioned by CDK; no manual KVS setup is required.
 
 For step-by-step setup instructions, see the **First-Time Deployment Setup** section in [infrastructure/README.md](../../infrastructure/README.md).
 
@@ -40,6 +41,7 @@ the `prod-portfolio-deploy` IAM role. The complete rollout includes:
 
 - Infrastructure deployment (CDK stacks)
 - Static asset deployment (S3)
+- CSP hashes KeyValueStore (KVS) sync
 - CloudFront cache invalidation
 - Monitoring configuration
 
@@ -88,8 +90,8 @@ pnpm cdk deploy --all
 ### 3. Upload Static Assets
 
 GitHub Actions deploys production automatically on merges to `main` via `deploy.yml`:
-it builds the static export, deploys the Storage stack (CSP headers), then uploads the matching
-`out/` directory to S3 and invalidates CloudFront.
+it builds the static export, deploys the Storage stack (CloudFront Functions + CSP KVS), then deploys
+the matching `out/` directory to S3, syncs the CSP hashes KeyValueStore, and invalidates CloudFront.
 
 Note: `deploy.yml` ignores documentation-only changes (`**.md`). Use `manual-deploy.yml` if you
 intentionally need to redeploy the site for a docs-only commit.
@@ -111,10 +113,10 @@ NEXT_PUBLIC_BASE_URL=https://bjornmelin.io \
 NEXT_PUBLIC_API_URL=https://api.bjornmelin.io \
 pnpm build
 
-# 2) Deploy the storage stack (updates CloudFront CSP headers)
+# 2) Deploy the storage stack (CloudFront Functions + KVS)
 pnpm -C infrastructure deploy:storage
 
-# 3) Upload static assets + invalidate CloudFront
+# 3) Upload static assets + sync CSP hashes KVS + invalidate CloudFront
 pnpm deploy:static:prod
 ```
 

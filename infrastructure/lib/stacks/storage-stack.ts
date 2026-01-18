@@ -4,6 +4,9 @@ import * as cdk from "aws-cdk-lib";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as iam from "aws-cdk-lib/aws-iam";
+import * as lambdaCore from "aws-cdk-lib/aws-lambda";
+import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
+import * as customResources from "aws-cdk-lib/custom-resources";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as s3 from "aws-cdk-lib/aws-s3";
@@ -79,8 +82,49 @@ export class StorageStack extends cdk.Stack {
       oacChild.overrideLogicalId("WebsiteOAC");
     }
 
+    const kvsName = `${props.environment}-portfolio-csp-hashes`;
+    const kvsProviderFn = new lambda.NodejsFunction(this, "CspHashesKvsProviderFunction", {
+      runtime: lambdaCore.Runtime.NODEJS_20_X,
+      entry: path.join(__dirname, "../functions/custom-resources/cloudfront-kvs/index.ts"),
+      handler: "handler",
+      memorySize: 128,
+      timeout: cdk.Duration.seconds(30),
+      bundling: {
+        minify: true,
+        sourceMap: true,
+      },
+    });
+
+    kvsProviderFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["cloudfront:CreateKeyValueStore", "cloudfront:DescribeKeyValueStore", "cloudfront:DeleteKeyValueStore"],
+        resources: ["*"],
+      }),
+    );
+
+    const kvsProvider = new customResources.Provider(this, "CspHashesKvsProvider", {
+      onEventHandler: kvsProviderFn,
+    });
+
+    const kvsResource = new cdk.CustomResource(this, "CspHashesKeyValueStore", {
+      serviceToken: kvsProvider.serviceToken,
+      properties: {
+        Name: kvsName,
+        Comment: "Per-path CSP hash indices for the Next.js static export (generated at build time).",
+        RetainOnDelete: true,
+      },
+    });
+
+    const cspHashesKvsArn = kvsResource.getAttString("KeyValueStoreArn");
+    const cspHashesKeyValueStore = cloudfront.KeyValueStore.fromKeyValueStoreArn(
+      this,
+      "CspHashesKeyValueStoreRef",
+      cspHashesKvsArn,
+    );
+
     const staticSiteRewriteFunction = this.createStaticSiteRewriteFunction();
-    const cspResponseFunction = this.createCspResponseFunction();
+    const cspResponseFunction = this.createCspResponseFunction(cspHashesKeyValueStore);
 
     // CloudFront distribution
     this.distribution = new cloudfront.Distribution(this, "Distribution", {
@@ -179,6 +223,12 @@ export class StorageStack extends cdk.Stack {
       description: "CloudFront domain name",
       exportName: `${props.environment}-distribution-domain`,
     });
+
+    new cdk.CfnOutput(this, "CspHashesKeyValueStoreArn", {
+      value: cspHashesKeyValueStore.keyValueStoreArn,
+      description: "CloudFront KeyValueStore ARN for CSP hashes",
+      exportName: `${props.environment}-csp-hashes-kvs-arn`,
+    });
   }
 
   private createStaticSiteRewriteFunction(): cloudfront.Function {
@@ -208,7 +258,9 @@ export class StorageStack extends cdk.Stack {
     });
   }
 
-  private createCspResponseFunction(): cloudfront.Function {
+  private createCspResponseFunction(
+    keyValueStore: cloudfront.IKeyValueStore,
+  ): cloudfront.Function {
     const functionFileCandidates = [
       // When running CDK from source (ts-node): infrastructure/lib/stacks -> ../functions
       path.join(__dirname, "../functions/cloudfront/next-csp-response.js"),
@@ -226,6 +278,7 @@ export class StorageStack extends cdk.Stack {
     return new cloudfront.Function(this, "CspResponseFunction", {
       runtime: cloudfront.FunctionRuntime.JS_2_0,
       comment: "Apply per-path CSP for static export without header length limits.",
+      keyValueStore,
       code: cloudfront.FunctionCode.fromFile({
         filePath: functionFilePath,
       }),
