@@ -23,7 +23,7 @@ export const githubProjectSchema = z.looseObject({
   // Optional fields used for UI enrichment.
   description: z.string().optional(),
   summary: z.string().optional(),
-  homepage: z.url().optional(),
+  homepage: z.preprocess((value) => (value === "" ? undefined : value), z.url().optional()),
   license: z.string().nullable().optional(),
   language: z.string().nullable().optional(),
 
