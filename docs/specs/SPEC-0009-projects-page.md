@@ -4,7 +4,7 @@ title: Projects page
 version: 1.0.0
 date: 2026-01-19
 owners: ["ai-arch"]
-status: Implemented
+status: Proposed
 related_requirements: ["FR-202", "FR-203", "NFR-001", "NFR-202"]
 related_adrs: ["ADR-0010", "ADR-0011"]
 notes: "Defines the Projects page UX, data contract, and URL state semantics."
