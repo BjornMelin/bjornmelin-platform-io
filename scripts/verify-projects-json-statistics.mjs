@@ -46,7 +46,13 @@ function computeStatistics(projects) {
 
 async function main() {
   const root = process.cwd();
-  const projectsJsonPath = path.join(root, "docs", "development", "projects.json");
+  const projectsJsonPath = path.join(
+    root,
+    "src",
+    "content",
+    "projects",
+    "projects.generated.json",
+  );
 
   const raw = await readFile(projectsJsonPath, "utf8");
   const parsed = JSON.parse(raw);
@@ -66,7 +72,7 @@ async function main() {
   }
 
   if (mismatches.length > 0) {
-    console.error("projects.json statistics mismatch:");
+    console.error("projects.generated.json statistics mismatch:");
     for (const mismatch of mismatches) {
       console.error(`- ${mismatch.key}`);
       console.error(`  expected: ${JSON.stringify(mismatch.expected)}`);
@@ -76,7 +82,7 @@ async function main() {
     return;
   }
 
-  console.log("projects.json statistics OK");
+  console.log("projects.generated.json statistics OK");
 }
 
 await main();

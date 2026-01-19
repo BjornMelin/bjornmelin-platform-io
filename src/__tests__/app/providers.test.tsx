@@ -3,6 +3,12 @@ import { describe, expect, it, vi } from "vitest";
 
 let capturedThemeProviderProps: Record<string, unknown> = {};
 
+vi.mock("nuqs/adapters/next/app", () => ({
+  NuqsAdapter: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="nuqs-adapter">{children}</div>
+  ),
+}));
+
 vi.mock("next-themes", () => ({
   ThemeProvider: ({
     children,
@@ -32,6 +38,17 @@ describe("<Providers />", () => {
 
     expect(screen.getByTestId("child")).toBeInTheDocument();
     expect(screen.getByText("Test Child")).toBeInTheDocument();
+  });
+
+  it("wraps children with NuqsAdapter", () => {
+    render(
+      <Providers>
+        <div data-testid="child">Content</div>
+      </Providers>,
+    );
+
+    expect(screen.getByTestId("nuqs-adapter")).toBeInTheDocument();
+    expect(screen.getByTestId("nuqs-adapter")).toContainElement(screen.getByTestId("child"));
   });
 
   it("wraps children with ThemeProvider", () => {

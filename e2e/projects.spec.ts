@@ -1,6 +1,6 @@
 import { expect, test } from "./test";
 
-test("projects page lists projects and allows filtering", async ({ page }) => {
+test("projects page lists projects and supports URL-synced filtering", async ({ page }) => {
   await page.goto("/projects");
 
   await expect(page.getByRole("heading", { level: 1, name: "Projects" })).toBeVisible();
@@ -9,25 +9,36 @@ test("projects page lists projects and allows filtering", async ({ page }) => {
   await expect(projectCards.first()).toBeVisible();
 
   const beforeCount = await projectCards.count();
+  expect(beforeCount).toBeGreaterThan(0);
 
-  // Filter by a category chip when present (category names are data-driven).
-  const aiCategoryChip = page.getByRole("radio", { name: "AI & Machine Learning" });
-  if (await aiCategoryChip.isVisible()) {
-    await aiCategoryChip.click();
+  // Project cards should not render images.
+  await expect(projectCards.first().locator("img")).toHaveCount(0);
 
-    // Use a more robust wait than timeout if possible, e.g., waiting for the first card to contain specific text
-    // but for now a small wait or just asserting the count is enough if the filtering is fast.
-    await expect(async () => {
-      const afterCount = await projectCards.count();
-      expect(afterCount).toBeLessThanOrEqual(beforeCount);
-    }).toPass();
+  // Search updates URL state (history replace is fine for keystrokes).
+  const searchBox = page.getByRole("searchbox", { name: "Search projects" });
+  await searchBox.fill("stardex");
+  await expect(page).toHaveURL(/\\?(.+&)?q=stardex(&|$)/);
 
-    await expect(projectCards.first()).toBeVisible();
+  // Changing category should push history entries and be back/forward safe.
+  const categoryCombobox = page.getByRole("combobox", { name: "Filter by category" });
+  await categoryCombobox.click();
+  const ragOption = page.getByRole("option", { name: "RAG" });
+  if (await ragOption.isVisible()) {
+    await ragOption.click();
+    await expect(page).toHaveURL(/category=RAG/);
+    await page.goBack();
+    await expect(page).not.toHaveURL(/category=/);
+    await page.goForward();
+    await expect(page).toHaveURL(/category=RAG/);
+  } else {
+    // Close dropdown if option isn't present
+    await page.keyboard.press("Escape");
   }
 
-  const overflowTrigger = page.getByRole("button", { name: /show .* more technologies/i }).first();
+  // Tags overflow popover (data-dependent).
+  const overflowTrigger = page.getByRole("button", { name: /show .* more tags/i }).first();
   if (await overflowTrigger.isVisible()) {
     await overflowTrigger.click();
-    await expect(page.getByText("Technologies")).toBeVisible();
+    await expect(page.getByText("Tags")).toBeVisible();
   }
 });

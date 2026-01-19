@@ -4,7 +4,10 @@ import { ProjectCard } from "../projects/project-card";
 import { SectionHeader } from "../shared/section-header";
 
 export function FeaturedProjects() {
-  const featuredProjects = projectsData.filter((project) => project.featured);
+  const featuredProjects = projectsData
+    .filter((project) => project.featured)
+    .sort((a, b) => b.stars - a.stars)
+    .slice(0, 3);
 
   return (
     <section className="py-20">

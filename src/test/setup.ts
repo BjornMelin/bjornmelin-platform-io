@@ -157,6 +157,27 @@ if (typeof window !== "undefined" && !("matchMedia" in window)) {
   });
 }
 
+// Radix UI (Select/Popover) relies on Pointer Events APIs in some environments.
+if (typeof window !== "undefined") {
+  const proto = window.HTMLElement?.prototype as unknown as Record<string, unknown> | undefined;
+  if (proto && typeof proto.hasPointerCapture !== "function") {
+    proto.hasPointerCapture = () => false;
+  }
+  if (proto && typeof proto.setPointerCapture !== "function") {
+    proto.setPointerCapture = () => {};
+  }
+  if (proto && typeof proto.releasePointerCapture !== "function") {
+    proto.releasePointerCapture = () => {};
+  }
+}
+
+if (typeof window !== "undefined") {
+  const proto = window.Element?.prototype as unknown as Record<string, unknown> | undefined;
+  if (proto && typeof proto.scrollIntoView !== "function") {
+    proto.scrollIntoView = () => {};
+  }
+}
+
 /**
  * Start MSW server before all tests
  * Use 'error' to catch any missing handlers

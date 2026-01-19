@@ -14,6 +14,8 @@ its context, constraints, and operational implications.
 - ADR-0007: External API boundary for static export (contact form)
 - ADR-0008: OIDC bootstrap remains manual (GitHub deploy role not managed by CDK)
 - ADR-0009: Tailwind CSS v4 with CSS-first configuration
+- ADR-0010: Projects canonical content source
+- ADR-0011: URL-as-state for Projects filters via nuqs
 
 ## Conventions
 

@@ -47,9 +47,15 @@ function computeStatistics(
   };
 }
 
-describe("docs/development/projects.json statistics", () => {
+describe("src/content/projects/projects.generated.json statistics", () => {
   it("matches computed aggregates from projects list", async () => {
-    const projectsJsonPath = path.join(process.cwd(), "docs", "development", "projects.json");
+    const projectsJsonPath = path.join(
+      process.cwd(),
+      "src",
+      "content",
+      "projects",
+      "projects.generated.json",
+    );
     const raw = await readFile(projectsJsonPath, "utf8");
     const parsed = JSON.parse(raw) as { projects: unknown[]; statistics: unknown };
 

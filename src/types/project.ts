@@ -1,8 +1,25 @@
-import type { Project as ProjectType } from "@/lib/schemas/project";
+export type ProjectCardModel = {
+  id: string;
+  title: string;
+  description: string;
+  repoUrl: string;
+  primaryUrl: string;
+  liveUrl?: string;
+  docsUrl?: string;
 
-export type Project = ProjectType;
+  stars: number;
+  forks: number;
+  language?: string;
+  license?: string;
 
-export interface ProjectFilterState {
+  updatedAt: string;
+  updatedLabel: string;
+
+  topics: string[];
+  tags: string[];
+
   category: string;
-  sortBy: "featured" | "alphabetical";
-}
+  featured: boolean;
+
+  highlights?: string[];
+};
