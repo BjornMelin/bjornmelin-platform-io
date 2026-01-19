@@ -18,7 +18,7 @@ canonical registry of requirement IDs and their definitions.
 - **FR-202**: Projects page provides filtering (category, language, min stars)
   and sorting (stars, updated, name) with correct semantics.
 - **FR-203**: Projects page persists UI state to URL for deep-linking and refresh-safety.
-- **FR-301**: Tailwind CSS v4 integration uses CSS-first configuration via `@theme` and `@plugin` directives in globals.css.
+- **FR-301**: Tailwind CSS v4 integration uses CSS-first configuration via `@theme` and `@plugin` directives in `src/app/globals.css`.
 - **FR-302**: PostCSS pipeline integrates Tailwind v4 using the `@tailwindcss/postcss` plugin to process CSS-first
   configuration via `@theme` and `@plugin` directives in the Next.js build pipeline.
 - **FR-401**: All pages render with responsive images in a static export.
