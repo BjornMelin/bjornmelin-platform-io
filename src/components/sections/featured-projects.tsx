@@ -6,7 +6,6 @@ import { SectionHeader } from "../shared/section-header";
 export function FeaturedProjects() {
   const featuredProjects = projectsData
     .filter((project) => project.featured)
-    .slice()
     .sort((a, b) => b.stars - a.stars)
     .slice(0, 3);
 

@@ -6,7 +6,7 @@ date: 2026-01-19
 owners: ["ai-arch"]
 status: Implemented
 related_requirements: ["FR-001", "NFR-001"]
-related_adrs: ["ADR-0010"]
+related_adrs: ["ADR-0010", "ADR-0011"]
 notes: "Defines the Projects page UX, data contract, and URL state semantics."
 ---
 

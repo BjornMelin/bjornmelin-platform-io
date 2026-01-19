@@ -9,9 +9,9 @@ The Projects page is built from a generated dataset checked into the repo.
 
 ## Overrides (curation layer)
 
-- Overrides live in `src/content/projects/overrides.ts`.
-- Overrides are keyed by project `id` from the generated dataset.
-- Use overrides for presentation-only tweaks (featured flags, primary URL, links, highlights, hiding).
+- Location: `src/content/projects/overrides.ts`
+- Keyed by project `id` from the generated dataset.
+- Use for presentation-only tweaks (featured flags, primary URL, links, highlights, hiding).
 
 ## Validation (statistics)
 

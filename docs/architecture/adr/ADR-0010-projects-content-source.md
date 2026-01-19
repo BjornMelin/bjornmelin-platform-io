@@ -16,6 +16,17 @@ References:
 
 Implemented (2026-01-19)
 
+## Decision Framework Score (must be ≥ 9.0)
+
+| Criterion | Weight | Score | Weighted |
+| --- | --- | --- | --- |
+| Solution leverage | 0.35 | 9.0 | 3.15 |
+| Application value | 0.30 | 9.5 | 2.85 |
+| Maintenance & cognitive load | 0.25 | 9.2 | 2.30 |
+| Architectural adaptability | 0.10 | 9.0 | 0.90 |
+
+**Total:** 9.2 / 10.0
+
 ## Context
 
 The Projects page must work under strict static export (`output: "export"`) and deploy to S3/CloudFront.

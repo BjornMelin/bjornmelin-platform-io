@@ -48,6 +48,7 @@ vi.mock("@/data/projects", () => ({
       topics: ["test"],
       tags: ["test"],
       category: "Test",
+      featured: false,
     },
     {
       id: "3",
@@ -63,6 +64,7 @@ vi.mock("@/data/projects", () => ({
       topics: ["test"],
       tags: ["test"],
       category: "Test",
+      featured: false,
     },
   ],
   projectCategories: ["Test"],

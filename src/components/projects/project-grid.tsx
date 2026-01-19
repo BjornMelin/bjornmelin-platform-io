@@ -32,8 +32,10 @@ interface ProjectGridProps {
 /**
  * Render a grid of projects with URL-synced search, filters, and sorting.
  *
- * @param projects Collection of projects to render.
- * @param className Optional additional class names for outer container.
+ * @param projects - Collection of projects to render.
+ * @param categories - Category labels for the category filter.
+ * @param languages - Language labels for the language filter.
+ * @param className - Optional additional class names for outer container.
  * @returns Filterable/sortable projects grid.
  */
 export function ProjectGrid({ projects, categories, languages, className }: ProjectGridProps) {

@@ -12,6 +12,12 @@ export const categoryLabelByKey = {
 
 type TopicClusters = Record<string, string[]>;
 
+/**
+ * Normalizes text for case-insensitive, diacritic-insensitive matching.
+ *
+ * @param value - The string to normalize.
+ * @returns The normalized string (trimmed, lowercased, diacritics removed).
+ */
 export function normalizeText(value: string): string {
   return value
     .trim()
@@ -20,6 +26,13 @@ export function normalizeText(value: string): string {
     .replace(/\p{Diacritic}/gu, "");
 }
 
+/**
+ * Derives a mapping of project IDs to category labels from topic clusters.
+ * First cluster containing a project ID determines its category.
+ *
+ * @param topicClusters - Record of cluster keys to arrays of project IDs.
+ * @returns Map of project ID to category label.
+ */
 export function deriveCategoryMap(topicClusters: TopicClusters | undefined): Map<string, string> {
   const map = new Map<string, string>();
   if (!topicClusters) return map;
@@ -46,6 +59,13 @@ export type ProjectFilters = {
   minStars: number;
 };
 
+/**
+ * Filters projects by category, language, minimum stars, and text query.
+ *
+ * @param projects - Array of projects to filter.
+ * @param filters - Filter criteria including q, category, lang, and minStars.
+ * @returns Filtered array of projects matching all criteria.
+ */
 export function filterProjects(projects: ProjectCardModel[], filters: ProjectFilters) {
   const q = normalizeText(filters.q);
   const hasQuery = q.length > 0;
@@ -83,7 +103,14 @@ export function filterProjects(projects: ProjectCardModel[], filters: ProjectFil
   });
 }
 
-export function sortProjects(projects: ProjectCardModel[], sort: ProjectsSort) {
+/**
+ * Sorts projects by the specified criterion.
+ *
+ * @param projects - Array of projects to sort.
+ * @param sort - Sort criterion: "stars", "updated", or "name".
+ * @returns New sorted array (does not mutate original).
+ */
+export function sortProjects(projects: ProjectCardModel[], sort: ProjectsSort): ProjectCardModel[] {
   const sorted = [...projects];
   sorted.sort((a, b) => {
     if (sort === "stars") {
@@ -93,7 +120,9 @@ export function sortProjects(projects: ProjectCardModel[], sort: ProjectsSort) {
     }
 
     if (sort === "updated") {
-      const delta = Date.parse(b.updatedAt) - Date.parse(a.updatedAt);
+      const aTime = Date.parse(a.updatedAt) || 0;
+      const bTime = Date.parse(b.updatedAt) || 0;
+      const delta = bTime - aTime;
       if (delta !== 0) return delta;
       return b.stars - a.stars;
     }

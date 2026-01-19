@@ -5,8 +5,10 @@ import { githubProjectsFileSchema } from "@/lib/schemas/github-projects";
 import type { ProjectCardModel } from "@/types/project";
 
 function formatDateLabelUtc(isoDate: string) {
-  const [year, month, day] = isoDate.split("-").map((value) => Number(value));
-  const dateUtc = new Date(Date.UTC(year ?? 1970, (month ?? 1) - 1, day ?? 1));
+  const dateUtc = new Date(isoDate);
+  if (Number.isNaN(dateUtc.getTime())) {
+    return isoDate;
+  }
   return new Intl.DateTimeFormat("en-US", {
     timeZone: "UTC",
     year: "numeric",

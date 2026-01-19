@@ -34,6 +34,7 @@ export type ProjectCardModel = {
   primaryUrl: string;
   category: string;
   featured: boolean;
+  // ... other fields (this is a partial example)
 };
 
 // Use type imports
