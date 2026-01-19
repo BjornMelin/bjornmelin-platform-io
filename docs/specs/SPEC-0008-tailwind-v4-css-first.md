@@ -23,6 +23,8 @@ This project uses **PostCSS** for Tailwind integration (Next.js build pipeline):
 - PostCSS integration: `@tailwindcss/postcss` (pinned)
 - PostCSS runtime: `postcss` (pinned via lockfile)
 
+**Requires Node.js 20+** for full v4 compatibility and CSS-first configuration support.
+
 ## File-level contracts
 
 - `src/app/globals.css`
@@ -36,6 +38,10 @@ This project uses **PostCSS** for Tailwind integration (Next.js build pipeline):
   - Exists only for tooling compatibility; Tailwind does not load it unless `@config` is used.
 
 ## Migration checklist (v3 → v4)
+
+> **Tip:** Before applying manual steps, run the
+> [official Tailwind v4 upgrade tool](https://tailwindcss.com/docs/upgrade-guide#automated-migration)
+> to automatically handle many common migration patterns.
 
 ### Utility renames
 
@@ -82,6 +88,7 @@ Replace `*-opacity-*` with slash modifiers:
 ```bash
 pnpm install
 pnpm build
+pnpm test
 pnpm serve
 ```
 
