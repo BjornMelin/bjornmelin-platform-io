@@ -31,7 +31,7 @@ This project uses **PostCSS** for Tailwind integration (Next.js build pipeline):
   - Register any needed plugins via `@plugin ...`.
   - Prefer `@utility` (not `@layer utilities`) for custom utilities.
 - `postcss.config.mjs`
-  - Must include only `@tailwindcss/postcss` for Tailwind.
+  - Must include `@tailwindcss/postcss` as the Tailwind processor; other PostCSS plugins may coexist.
 - `tailwind.config.ts`
   - Exists only for tooling compatibility; Tailwind does not load it unless `@config` is used.
 
@@ -45,6 +45,9 @@ This project uses **PostCSS** for Tailwind integration (Next.js build pipeline):
 - Same pattern for `drop-shadow-*` and `backdrop-blur-*`
 - `ring` → `ring-3` (explicit default width)
 - `outline-none` (old behavior) → `outline-hidden`
+- `flex-grow-*` / `flex-shrink-*` → `grow-*` / `shrink-*`
+- `overflow-ellipsis` → `text-ellipsis`
+- `decoration-*` → `box-decoration-*`
 
 ### Removed opacity utilities
 
@@ -60,6 +63,19 @@ Replace `*-opacity-*` with slash modifiers:
 ### Defaults changed
 
 - `border-*` and `ring-*` defaults now use `currentColor`; prefer explicit border and ring colors.
+
+### Build / Setup changes
+
+- Config now uses CSS `@theme` directives.
+- Requires the `@tailwindcss/postcss` plugin and `Node 20+`.
+
+### Preflight changes
+
+- Altered base styles and updated image `max-width` / `max-height` rules (potential layout shifts).
+
+### Plugin registration
+
+- Now uses CSS `@plugin` directives instead of JS config.
 
 ## Build + verification
 

@@ -11,7 +11,7 @@ import { skillCategories } from "@/data/skills";
 /**
  * Render the About Detail page content.
  *
- * @returns About detail layout.
+ * @returns {JSX.Element} About detail layout.
  */
 export function AboutDetail() {
   return (
