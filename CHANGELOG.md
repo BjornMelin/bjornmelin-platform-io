@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.4.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.3.0...v3.4.0) (2026-01-19)
+
+
+### Features
+
+* **projects:** revamp projects data pipeline ([844359d](https://github.com/BjornMelin/bjornmelin-platform-io/commit/844359da108727f5d289b756e70f2e463c231925))
+* **projects:** revamp projects data pipeline ([5e40735](https://github.com/BjornMelin/bjornmelin-platform-io/commit/5e40735e7133c6f437ccdcaf22f76b2b4814cdbf))
+* refactor project data sourcing, validation, and filtering with new URL state management ([ff77449](https://github.com/BjornMelin/bjornmelin-platform-io/commit/ff7744960876ad7446013d96ce6ec80dab4c3eb1))
+
+
+### Bug Fixes
+
+* **pr:** address review comments in projects ([087a373](https://github.com/BjornMelin/bjornmelin-platform-io/commit/087a3737ef0e0dd7c9caaac16a4b110b12c55728))
+* resolve 16 PR review comments across code and docs ([6c5ea8d](https://github.com/BjornMelin/bjornmelin-platform-io/commit/6c5ea8d947fbf7bae361bff738e1635b2f71e1f0))
+* **schemas:** allow empty homepage strings ([d78cd43](https://github.com/BjornMelin/bjornmelin-platform-io/commit/d78cd432dfabf48bb4be703841d17f24ced66bff))
+* **schemas:** enforce ISO dates in projects ([bbbee81](https://github.com/BjornMelin/bjornmelin-platform-io/commit/bbbee8144255b5b7691137c089c006217388df2e))
+
 ## [3.3.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.2.0...v3.3.0) (2026-01-19)
 
 
