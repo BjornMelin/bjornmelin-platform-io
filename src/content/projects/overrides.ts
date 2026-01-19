@@ -1,3 +1,6 @@
+/**
+ * Per-project override flags for featured status, URLs, and visibility.
+ */
 export type ProjectOverride = {
   featured?: boolean;
   rank?: number;
@@ -9,6 +12,7 @@ export type ProjectOverride = {
   hide?: boolean;
 };
 
+/** Manual overrides keyed by project id. */
 export const projectOverrides: Record<string, ProjectOverride> = {
   "bjornmelin-platform-io": {
     featured: true,

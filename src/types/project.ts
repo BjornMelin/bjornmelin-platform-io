@@ -1,3 +1,4 @@
+/** UI-ready project card data derived from the generated projects source. */
 export type ProjectCardModel = {
   id: string;
   title: string;
