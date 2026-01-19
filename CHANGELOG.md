@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.3.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.2.0...v3.3.0) (2026-01-19)
+
+
+### Features
+
+* tailwindcss v4 upgrade ([9b31f3d](https://github.com/BjornMelin/bjornmelin-platform-io/commit/9b31f3dbaabafb4b950d9b030b3b30509f896f62))
+
+
+### Bug Fixes
+
+* **pr-review:** address tailwind v4 feedback ([0df13cd](https://github.com/BjornMelin/bjornmelin-platform-io/commit/0df13cdd969e6c04d069526027231fc39beb3e80))
+* **tailwind:** finish v4 migration cleanup ([84b87a6](https://github.com/BjornMelin/bjornmelin-platform-io/commit/84b87a6ed7616f463df8c454d1b8f1852d373d8f))
+
 ## [3.2.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.1.0...v3.2.0) (2026-01-18)
 
 
