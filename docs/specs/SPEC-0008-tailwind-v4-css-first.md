@@ -38,12 +38,14 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 ### Functional requirements
 
 - **FR-301:** Tailwind CSS v4 integration uses CSS-first configuration via `@theme` and `@plugin` directives in globals.css.
-- **FR-302:** PostCSS pipeline integrates Tailwind v4 using the `@tailwindcss/postcss` plugin to process CSS-first configuration via `@theme` and `@plugin` directives in the Next.js build pipeline.
+- **FR-302:** PostCSS pipeline integrates Tailwind v4 using the `@tailwindcss/postcss` plugin to process CSS-first
+  configuration via `@theme` and `@plugin` directives in the Next.js build pipeline.
 
 ### Non-functional requirements
 
 - **NFR-001:** Maintain compatibility with Next.js 16 and React 19 static export.
-- **NFR-301:** CSS output must be deterministic and reproducible across local development, CI environments, and production deployments.
+- **NFR-301:** CSS output must be deterministic and reproducible across local development, CI environments,
+  and production deployments (no non-determinism from file ordering, hashing, or environment variables).
 
 ## Constraints
 
