@@ -5,7 +5,7 @@ version: 1.0.0
 date: 2026-01-19
 owners: ["ai-arch"]
 status: Implemented
-related_requirements: ["FR-001", "NFR-001"]
+related_requirements: ["FR-202", "FR-203", "NFR-001", "NFR-202"]
 related_adrs: ["ADR-0010", "ADR-0011"]
 notes: "Defines the Projects page UX, data contract, and URL state semantics."
 ---
@@ -37,11 +37,13 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### Functional requirements
 
-- **FR-001:** Document dependency versions and compatibility constraints.
+- **FR-202:** Projects page provides filtering (category, language, min stars) and sorting (stars, updated, name) with correct semantics.
+- **FR-203:** Projects page persists UI state to URL for deep-linking and refresh-safety.
 
 ### Non-functional requirements
 
 - **NFR-001:** Maintain compatibility with Next.js 16 and React 19 static export.
+- **NFR-202:** Projects page remains accessible (WCAG 2.1 Level AA) with keyboard nav and ARIA labels.
 
 ## Constraints
 

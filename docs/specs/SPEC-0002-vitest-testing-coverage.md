@@ -65,6 +65,7 @@ Async Server Components are covered by Playwright E2E per ADR-0004.
 
 ### Conventions
 
+- **Test location and naming:** Unit and integration tests live under `src/__tests__/` and must follow the `*.test.ts` or `*.test.tsx` naming pattern. Infrastructure tests live in `infrastructure/` and follow the same naming convention with their own Vitest config.
 - Use behavior-driven assertions (Testing Library queries by role).
 - Reset mocks after each test to prevent leakage.
 - Avoid network calls and uncontrolled timers.

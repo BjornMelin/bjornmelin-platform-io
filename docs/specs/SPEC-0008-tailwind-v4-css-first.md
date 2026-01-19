@@ -5,7 +5,7 @@ version: 1.0.0
 date: 2026-01-19
 owners: ["ai-arch"]
 status: Implemented
-related_requirements: ["FR-001", "NFR-001"]
+related_requirements: ["FR-301", "FR-302", "NFR-001", "NFR-301"]
 related_adrs: ["ADR-0005", "ADR-0009"]
 notes: "Defines the Tailwind v4 integration, file contracts, and migration checklist."
 ---
@@ -37,11 +37,13 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### Functional requirements
 
-- **FR-001:** Document dependency versions and compatibility constraints.
+- **FR-301:** Tailwind CSS v4 integration uses CSS-first configuration via `@theme` and `@plugin` directives in globals.css.
+- **FR-302:** PostCSS pipeline processes Tailwind v4 with @tailwindcss/postcss and generates deterministic CSS output.
 
 ### Non-functional requirements
 
 - **NFR-001:** Maintain compatibility with Next.js 16 and React 19 static export.
+- **NFR-301:** Tailwind CSS output is deterministic and consistent across builds.
 
 ## Constraints
 
