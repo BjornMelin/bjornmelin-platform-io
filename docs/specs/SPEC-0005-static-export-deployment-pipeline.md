@@ -5,9 +5,7 @@ version: 1.0.0
 date: 2026-01-16
 owners: ["ai-arch"]
 status: Implemented
-related_requirements:
-  - FR-501: Production deploys are fully automated via GitHub Actions
-  - NFR-501: CSP headers and static export artifacts never drift
+related_requirements: ["FR-501", "NFR-501"]
 related_adrs: ["ADR-0001", "ADR-0005"]
 notes: "Defines the required build/deploy sequencing for static export + CSP hash allow-list."
 ---

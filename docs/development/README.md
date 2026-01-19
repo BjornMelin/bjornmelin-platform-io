@@ -24,10 +24,10 @@ Development documentation for the bjornmelin-platform-io project.
 
 #### Frontend
 
-- Next.js 16.1.2 (App Router, static export)
+- Next.js 16.1.3 (App Router, static export)
 - React 19.2.3
 - TypeScript 5.9.3
-- Tailwind CSS
+- Tailwind CSS 4.1.18 (CSS-first config)
 - shadcn/ui components
 
 #### Build Optimization

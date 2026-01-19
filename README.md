@@ -8,7 +8,7 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 [![Security Audit](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml)
 [![CodeQL](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml)
 [![React](https://img.shields.io/badge/React-19.2.3-blue?logo=react)](https://react.dev)
-[![Next.js](https://img.shields.io/badge/Next.js-16.1.2-black?logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.1.3-black?logo=next.js)](https://nextjs.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-BjornMelin-181717?logo=github)](https://github.com/BjornMelin)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin)
 [![Medium](https://img.shields.io/badge/Medium-000000?logo=medium&logoColor=white)](https://medium.com/@bjornmelin)
@@ -43,7 +43,8 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 - **Next.js 16 App Router**: Server Components (build-time), static export (`output: 'export'`)
 - **React 19**: Modern React features with smaller client bundles
 - **TypeScript**: Strict mode with Zod runtime validation
-- **Tailwind CSS**: Utility-first styling with shadcn/ui components
+- **Tailwind CSS v4**: CSS-first config in `src/app/globals.css` (`@theme`, `@plugin`,
+  `@import "tailwindcss"`) via PostCSS (`@tailwindcss/postcss`)
 
 ### Performance Optimization
 
@@ -52,6 +53,8 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 - **Modern Targets**: Browserslist configured for ES6 module support
 
 ## Documentation
+
+- [Docs index](docs/docs-index.md)
 
 ### Development
 
@@ -70,6 +73,9 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 
 - [Overview](docs/architecture/README.md)
 - [Frontend](docs/architecture/frontend.md)
+- [ADRs](docs/architecture/adr/README.md)
+- [Specs](docs/specs/README.md)
+- [Requirements registry](docs/specs/requirements.md)
 
 ## Architecture
 
@@ -237,7 +243,7 @@ pnpm dev
 Frontend:
   Core:
     - React 19.2.3
-    - Next.js 16.1.2
+    - Next.js 16.1.3
     - TypeScript 5.9.3
 
   UI:

@@ -25,7 +25,7 @@ export function TechBadge({ name, className, size = "md" }: TechBadgeProps) {
         "inline-flex items-center rounded-full font-medium",
         "border border-border/60 bg-muted/70 text-foreground/80",
         "transition-colors hover:bg-muted/80 dark:bg-muted/40 dark:text-foreground/90 dark:hover:bg-muted/60",
-        "max-w-[10rem]",
+        "max-w-40",
         sizeClasses[size],
         className,
       )}

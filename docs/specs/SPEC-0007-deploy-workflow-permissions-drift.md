@@ -1,7 +1,14 @@
-# SPEC-0007: Deploy workflow permissions drift (ListExports + CSP KVS)
-
-Status: Final
-Date: 2026-01-18
+---
+spec: SPEC-0007
+title: Deploy workflow permissions drift (ListExports + CSP KVS)
+version: 1.0.0
+date: 2026-01-18
+owners: ["ai-arch"]
+status: Implemented
+related_requirements: ["FR-501", "NFR-501"]
+related_adrs: ["ADR-0001", "ADR-0005", "ADR-0008"]
+notes: "Defines the minimum IAM permissions and guardrails to prevent deploy failures from role drift."
+---
 
 ## Summary
 
@@ -141,21 +148,21 @@ aws cloudfront-keyvaluestore describe-key-value-store --kvs-arn <kvs-from-export
 aws cloudfront list-invalidations --distribution-id <distribution-id-from-exports> --max-items 1
 ```
 
-## Decision Framework
+## Decision Framework Score (must be ≥ 9.0)
 
 Option selected: manual OIDC role + documented/automated remediation scripts + workflow preflights.
 
 | Criterion | Weight | Score | Weighted |
 | --- | --- | --- | --- |
-| Solution leverage | 0.35 | 9.5 | 3.325 |
+| Solution leverage | 0.35 | 9.5 | 3.33 |
 | Application value | 0.30 | 9.6 | 2.88 |
 | Maintenance & cognitive load | 0.25 | 9.2 | 2.30 |
 | Architectural adaptability | 0.10 | 9.0 | 0.90 |
 
-Total: **9.405 / 10.0**
+**Total:** 9.41 / 10.0
 
 ## References
 
-- AWS Security Blog: Use IAM roles to connect GitHub Actions to actions in AWS
-- AWS CLI: `cloudformation list-exports`
-- AWS Service Authorization Reference: Amazon CloudFront KeyValueStore (`cloudfront-keyvaluestore`)
+- [AWS Security Blog: Use IAM roles to connect GitHub Actions to actions in AWS](https://aws.amazon.com/blogs/security/use-iam-roles-to-connect-github-actions-to-actions-in-aws/)
+- [AWS CLI: `cloudformation list-exports`](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/list-exports.html)
+- [AWS Service Authorization Reference: Amazon CloudFront KeyValueStore](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudfrontkeyvaluestore.html)

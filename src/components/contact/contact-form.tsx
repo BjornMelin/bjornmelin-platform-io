@@ -182,7 +182,7 @@ export function ContactForm() {
         <Alert
           role="status"
           aria-live="polite"
-          className="border-emerald-200/70 bg-emerald-50/90 text-emerald-950 shadow-sm dark:border-emerald-900/60 dark:bg-emerald-950/35 dark:text-emerald-50"
+          className="border-emerald-200/70 bg-emerald-50/90 text-emerald-950 shadow-xs dark:border-emerald-900/60 dark:bg-emerald-950/35 dark:text-emerald-50"
         >
           <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />
           <AlertTitle>Message Sent Successfully!</AlertTitle>
@@ -203,7 +203,7 @@ export function ContactForm() {
               href="https://www.linkedin.com/in/bjornmelin/"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-sm underline hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="rounded-xs underline hover:text-red-400 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               LinkedIn
             </a>

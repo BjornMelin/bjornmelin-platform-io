@@ -42,7 +42,7 @@ export function MobileNav({
     >
       {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: summary needs explicit expanded state */}
       <summary
-        className="list-none rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
+        className="list-none rounded-md p-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
         aria-label="Toggle menu"
         aria-expanded={isOpen}
         aria-controls="mobile-nav-panel"
@@ -51,7 +51,7 @@ export function MobileNav({
         <X size={24} aria-hidden="true" className="hidden group-open:block" />
       </summary>
       <div id="mobile-nav-panel" className="py-4" data-testid="mobile-nav">
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col gap-4">
           <Link href="/" className={linkClassName} onClick={closeMenu}>
             Home
           </Link>

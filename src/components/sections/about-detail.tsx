@@ -8,6 +8,11 @@ import { experiences, previousExperiences } from "@/data/experience";
 import { hobbies } from "@/data/hobbies";
 import { skillCategories } from "@/data/skills";
 
+/**
+ * Render the About Detail page content.
+ *
+ * @returns {JSX.Element} About detail layout.
+ */
 export function AboutDetail() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
@@ -197,7 +202,7 @@ export function AboutDetail() {
                       href={cert.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-start gap-4 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                      className="flex items-start gap-4 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                       <Image
                         src={cert.image}
@@ -220,7 +225,7 @@ export function AboutDetail() {
                           href={cert.earlyAdopterBadge.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                          className="flex items-center gap-3 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                         >
                           <Image
                             src={cert.earlyAdopterBadge.image}

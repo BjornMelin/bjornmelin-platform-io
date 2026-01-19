@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   return (
     <div className="container mx-auto px-4 py-12">
-      <div className="mx-auto max-w-[58rem] space-y-6">
+      <div className="mx-auto max-w-4xl space-y-6">
         <h1 className="text-balance font-heading text-4xl font-bold md:text-6xl">Projects</h1>
         <p className="text-balance text-xl text-muted-foreground">
           A collection of projects showcasing my work in machine learning and AI, cloud

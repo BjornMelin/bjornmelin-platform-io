@@ -5,10 +5,7 @@ version: 1.0.0
 date: 2026-01-18
 owners: ["ai-arch"]
 status: Implemented
-related_requirements:
-  - NFR-601: CSP stays strict without Server Actions/nonces
-  - NFR-602: No CloudFront Function 10 KB outages
-  - NFR-603: Fully IaC deployable on forks
+related_requirements: ["NFR-601", "NFR-602", "NFR-603"]
 related_adrs: ["ADR-0001", "ADR-0005"]
 notes: "Defines the end-to-end implementation for per-path CSP hashes without exceeding CloudFront Function size limits."
 ---
@@ -37,6 +34,9 @@ Generated artifacts:
 - `infrastructure/lib/generated/next-inline-script-hashes.kvs.json` (KVS sync payload)
   - Format: `{ "data": [ { "key": "/about/index.html", "value": "0.1.2.k.10" }, ... ] }`
 - `infrastructure/lib/functions/cloudfront/next-csp-response.js` (CSP CloudFront Function source)
+
+Note: The generated JS artifacts are intentionally compact to preserve CloudFront Function size limits.
+Biome excludes them from formatting checks via negated patterns in `biome.json`.
 
 ## Guardrails (hard failures)
 

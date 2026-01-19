@@ -5,9 +5,7 @@ version: 1.0.0
 date: 2026-01-16
 owners: ["ai-arch"]
 status: Implemented
-related_requirements:
-  - FR-201: E2E tests cover primary routes and core user flows
-  - NFR-201: E2E tests remain stable and fast with minimal flake risk
+related_requirements: ["FR-201", "NFR-201"]
 related_adrs: ["ADR-0004"]
 notes: "Defines Playwright scope, browser targets, and runtime configuration."
 ---

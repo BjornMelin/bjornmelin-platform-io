@@ -1,14 +1,12 @@
 ---
 spec: SPEC-0001
 title: Dependency upgrades
-version: 1.0.0
-date: 2026-01-16
+version: 1.1.0
+date: 2026-01-18
 owners: ["ai-arch"]
 status: Implemented
-related_requirements:
-  - FR-001: Document dependency versions and compatibility constraints
-  - NFR-001: Maintain compatibility with Next.js 16 and React 19 static export
-related_adrs: ["ADR-0002", "ADR-0003", "ADR-0004", "ADR-0005"]
+related_requirements: ["FR-001", "NFR-001"]
+related_adrs: ["ADR-0002", "ADR-0003", "ADR-0004", "ADR-0005", "ADR-0009"]
 notes: "Tracks dependency versions and upgrade rationale for the current release."
 ---
 
@@ -26,9 +24,11 @@ constraints following the recent upgrade pass.
 
 ## Version baseline (pinned)
 
-- Next.js 16.1.2
+- Next.js 16.1.3
 - React 19.2.3
 - TypeScript 5.9.3
+- Tailwind CSS 4.1.18
+- @tailwindcss/postcss 4.1.18
 - pnpm 10.28.0 (Corepack)
 - Zod 4.3.5
 - Vitest 4.0.17

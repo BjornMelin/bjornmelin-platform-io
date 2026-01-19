@@ -58,7 +58,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex items-center rounded-full border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className="inline-flex items-center rounded-full border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   aria-label={`Show ${hiddenCount} more technologies`}
                   title="Show all technologies"
                 >
@@ -109,7 +109,3 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
     </div>
   );
 }
-/**
- * @fileoverview Presentation of a single project, including image, tech stack,
- * and external links.
- */

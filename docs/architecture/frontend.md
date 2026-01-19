@@ -31,7 +31,7 @@ src/
 | Technology | Purpose |
 | ------------ | --------- |
 | React 19.2.3 | UI library (RSC + Client Components) |
-| Next.js 16.1.2 | React framework with App Router |
+| Next.js 16.1.3 | React framework with App Router |
 | TypeScript 5.9.3 | Type-safe JavaScript |
 | Tailwind CSS | Utility-first CSS |
 | shadcn/ui | UI component library |

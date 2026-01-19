@@ -50,6 +50,8 @@ Infrastructure:
 ## Security, Configuration, and Deployment Notes
 
 - Keep secrets out of git. Use `.env.local` for local overrides (start from `.env.example`).
+- Tailwind CSS uses v4 "CSS-first" config in `src/app/globals.css`.
+  `tailwind.config.ts` exists only for tooling unless explicitly loaded via `@config`.
 - Static export is mandatory (`output: "export"`). Do not introduce Server Actions, ISR, Draft Mode,
   request-dependent Route Handlers, or other features that require a server runtime.
 - CSP inline script hashes are generated and are **not secrets** (they appear in public CSP headers).

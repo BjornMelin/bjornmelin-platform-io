@@ -86,6 +86,24 @@ feature/
 
 ## Tailwind CSS
 
+### Tailwind v4 (CSS-first)
+
+- Tailwind config lives in `src/app/globals.css` using `@import "tailwindcss"`, `@theme`, `@plugin`, and `@custom-variant`.
+- `tailwind.config.ts` exists only for tooling that expects a Tailwind config path
+  (Tailwind does not load it unless `@config` is used).
+- Class scanning is limited to `src/` via `@import "tailwindcss" source("../")` for faster builds.
+- Border colors are no longer implicit; prefer explicit utilities (e.g. `border border-border`, `border border-input`).
+
+### Migration Checklist (v3 → v4)
+
+- Prefer `outline-hidden` where you previously used `outline-none` for accessible focus styles.
+- Updated scale names:
+  - `shadow-sm` → `shadow-xs`, `shadow` → `shadow-sm`
+  - `rounded-sm` → `rounded-xs`, `rounded` → `rounded-sm`
+  - `blur-sm` → `blur-xs`, `blur` → `blur-sm` (same pattern for `drop-shadow-*`, `backdrop-blur-*`)
+- Arbitrary CSS variables now use parentheses: `h-(--var)` / `bg-(--brand-color)`.
+- Variant stacking is left-to-right; keep `hover:`/`focus:`/`group-[]:` in the intended order.
+
 ### Class Organization
 
 ```typescript
@@ -113,7 +131,7 @@ feature/
 import { cn } from "@/lib/utils";
 
 interface ButtonProps {
-  variant?: "default" | "outline";
+  variant?: "default" | "outline-solid";
   className?: string;
 }
 
@@ -122,7 +140,7 @@ export function Button({ variant = "default", className }: ButtonProps) {
     <button
       className={cn(
         "base-styles",
-        variant === "outline" && "outline-styles",
+        variant === "outline-solid" && "outline-styles",
         className
       )}
     />
