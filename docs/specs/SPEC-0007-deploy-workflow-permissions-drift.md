@@ -23,7 +23,7 @@ This spec defines the minimum required IAM permissions for the deploy role, adds
 catch drift early, and provides a repeatable remediation path without introducing long-lived AWS
 credentials.
 
-## Problem Statement
+## Context
 
 ### Observed failure
 
@@ -44,6 +44,18 @@ OIDC deploy role policies drifted from documented minimum permissions:
 - Missing `cloudformation:ListExports` (required).
 - Missing `cloudfront-keyvaluestore:*` actions (required for CSP KVS sync).
 - Potentially incomplete S3 permissions for `aws s3 sync` (multipart edge cases).
+
+## Requirements
+
+Requirement IDs are defined in `docs/specs/requirements.md`.
+
+### Functional requirements
+
+- **FR-501:** Production deploys are fully automated via GitHub Actions.
+
+### Non-functional requirements
+
+- **NFR-501:** CSP headers and static export artifacts never drift.
 
 ## Goals / Non-goals
 
@@ -109,9 +121,18 @@ Add explicit preflight checks before attempting deployments to surface IAM drift
   - `aws cloudfront-keyvaluestore describe-key-value-store --kvs-arn <arn>` succeeds
   - `aws cloudfront list-invalidations --distribution-id <id>` succeeds
 
-## Implementation
+## Acceptance criteria
 
-### Repo changes
+- Preflight checks fail fast on IAM drift.
+- Deploy role has minimum required permissions for export + CSP KVS sync.
+
+## Testing
+
+- Validate with AWS CLI checks listed in the validation checklist.
+
+### Implementation
+
+#### Repo changes
 
 - Add preflight checks:
   - `.github/workflows/deploy.yml`
@@ -122,6 +143,8 @@ Add explicit preflight checks before attempting deployments to surface IAM drift
   - `infrastructure/README.md`
   - `docs/deployment/README.md`
   - `.github/workflows/README.md`
+
+## Operational notes
 
 ### Operational procedure (AWS admin, when drift occurs)
 
@@ -148,6 +171,10 @@ aws cloudfront-keyvaluestore describe-key-value-store --kvs-arn <kvs-from-export
 aws cloudfront list-invalidations --distribution-id <distribution-id-from-exports> --max-items 1
 ```
 
+## Failure modes and mitigation
+
+- IAM drift → run the remediation scripts and re-run preflight checks.
+
 ## Decision Framework Score (must be ≥ 9.0)
 
 Option selected: manual OIDC role + documented/automated remediation scripts + workflow preflights.
@@ -166,3 +193,14 @@ Option selected: manual OIDC role + documented/automated remediation scripts + w
 - [AWS Security Blog: Use IAM roles to connect GitHub Actions to actions in AWS](https://aws.amazon.com/blogs/security/use-iam-roles-to-connect-github-actions-to-actions-in-aws/)
 - [AWS CLI: `cloudformation list-exports`](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/list-exports.html)
 - [AWS Service Authorization Reference: Amazon CloudFront KeyValueStore](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudfrontkeyvaluestore.html)
+
+## Key files
+
+- `.github/workflows/deploy.yml`
+- `.github/workflows/manual-deploy.yml`
+- `scripts/ops/fix-gh-oidc-static-deploy-policy.sh`
+- `scripts/ops/fix-gh-oidc-cdk-bootstrap-policy.sh`
+
+## Changelog
+
+- **1.0 (2026-01-18)**: Initial version.

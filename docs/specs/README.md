@@ -5,6 +5,7 @@ criteria, file-level contracts, and operational details.
 
 ## Index
 
+- SPEC-0000: Template
 - SPEC-0001: Dependency upgrades
 - SPEC-0002: Vitest testing coverage and practices
 - SPEC-0003: Playwright E2E coverage and practices
@@ -13,6 +14,7 @@ criteria, file-level contracts, and operational details.
 - SPEC-0006: CSP hashes via CloudFront Function + KeyValueStore (KVS)
 - SPEC-0007: Deploy workflow permissions drift (ListExports + CSP KVS)
 - SPEC-0008: Tailwind CSS v4 (CSS-first config) integration
+- SPEC-0009: Projects page
 
 ## Conventions
 

@@ -15,6 +15,39 @@ notes: "Defines how images are generated, named, and served in a strict static e
 This spec defines the build-time image variant pipeline and `next/image` loader behavior used to
 keep image performance high while preserving `output: \"export\"`.
 
+## Context
+
+Static export requires pre-generated image variants and a deterministic loader.
+
+## Goals / Non-goals
+
+### Goals
+
+- Generate image variants at build time for raster assets.
+- Provide a deterministic `next/image` loader compatible with static export.
+- Keep output structure stable for deployment.
+
+### Non-goals
+
+- Runtime image optimization services.
+
+## Requirements
+
+Requirement IDs are defined in `docs/specs/requirements.md`.
+
+### Functional requirements
+
+- **FR-401:** All pages render with responsive images in a static export.
+
+### Non-functional requirements
+
+- **NFR-401:** No runtime image optimization service required.
+
+## Constraints
+
+- Static export (`output: "export"`) must remain enabled.
+- Only local raster assets are converted to WebP.
+
 ## Decision Framework Score (must be ≥ 9.0)
 
 | Criterion | Weight | Score | Weighted |
@@ -26,19 +59,21 @@ keep image performance high while preserving `output: \"export\"`.
 
 **Total:** 9.19 / 10.0
 
-## Inputs
+## Design
+
+### Inputs
 
 - Source assets live in `public/` (e.g. `public/projects/*.png`).
 - The pipeline targets local raster images:
   - supported: `png`, `jpg`, `jpeg`
   - passthrough: `svg`, `gif` (do not convert)
 
-## Outputs
+### Outputs
 
 - Generated variants live in `public/_images/` and are copied into `out/_images/` during export.
 - Output format: WebP (`.webp`).
 
-## Variant naming
+### Variant naming
 
 For a source `/<dir>/<name>.<ext>` and width `<w>`:
 
@@ -49,7 +84,7 @@ Examples:
 - `/projects/demo.png` @ 640 → `public/_images/projects/demo_640.webp`
 - `/headshot/profile.jpg` @ 1080 → `public/_images/headshot/profile_1080.webp`
 
-## Width set
+### Width set
 
 Variant widths are derived from Next.js configuration:
 
@@ -58,7 +93,7 @@ Variant widths are derived from Next.js configuration:
 
 These values must remain in sync with `scripts/generate-static-image-variants.mjs` and `next.config.mjs`.
 
-## Loader contract
+### Loader contract
 
 `image-loader.ts` implements a deterministic mapping for static export:
 
@@ -68,7 +103,7 @@ These values must remain in sync with `scripts/generate-static-image-variants.mj
 
 The loader must remain compatible with `next/image` and the static export runtime.
 
-## Build integration
+### Build integration
 
 Required scripts:
 
@@ -82,6 +117,14 @@ Required scripts:
   - `out/_images/**.webp` present for referenced raster images
   - no missing image references in rendered pages
 - `pnpm dev` renders pages with images without requiring manual generation.
+
+## Testing
+
+- Covered by `pnpm build` and Playwright smoke checks.
+
+## Operational notes
+
+- Run `pnpm images:generate` when adding or resizing local raster assets.
 
 ## Failure modes and mitigation
 
@@ -97,3 +140,12 @@ Required scripts:
 - `scripts/generate-static-image-variants.mjs`
 - `image-loader.ts`
 - `next.config.mjs`
+
+## References
+
+- ADR-0005 (static export constraints)
+- ADR-0006 (image pipeline)
+
+## Changelog
+
+- **1.0 (2026-01-16)**: Initial version.

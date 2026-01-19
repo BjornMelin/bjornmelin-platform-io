@@ -15,7 +15,42 @@ notes: "Defines the Tailwind v4 integration, file contracts, and migration check
 This spec defines the Tailwind CSS v4 integration used by this repository and documents the “CSS-first”
 configuration contract to keep styling deterministic and compatible with Next.js static export.
 
-## Integration mode
+## Context
+
+Tailwind v4 requires CSS-first configuration and updated integration patterns.
+
+## Goals / Non-goals
+
+### Goals
+
+- Define the Tailwind v4 integration contract used by the repo.
+- Ensure CSS-first configuration is applied consistently.
+- Provide a migration checklist for v3 → v4.
+
+### Non-goals
+
+- Supporting Tailwind v3 in parallel.
+
+## Requirements
+
+Requirement IDs are defined in `docs/specs/requirements.md`.
+
+### Functional requirements
+
+- **FR-001:** Document dependency versions and compatibility constraints.
+
+### Non-functional requirements
+
+- **NFR-001:** Maintain compatibility with Next.js 16 and React 19 static export.
+
+## Constraints
+
+- Node.js 20+ required for Tailwind v4 compatibility.
+- Tailwind config must remain CSS-first.
+
+## Design
+
+### Integration mode
 
 This project uses **PostCSS** for Tailwind integration (Next.js build pipeline):
 
@@ -25,7 +60,7 @@ This project uses **PostCSS** for Tailwind integration (Next.js build pipeline):
 
 **Requires Node.js 20+** for full v4 compatibility and CSS-first configuration support.
 
-## File-level contracts
+### File-level contracts
 
 - `src/app/globals.css`
   - Include `@import "tailwindcss" source("../");` as the entry point.
@@ -37,7 +72,7 @@ This project uses **PostCSS** for Tailwind integration (Next.js build pipeline):
 - `tailwind.config.ts`
   - Exists only for tooling compatibility; Tailwind does not load it unless `@config` is used.
 
-## Migration checklist (v3 → v4)
+### Migration checklist (v3 → v4)
 
 > **Tip:** Before applying manual steps, run the
 > [official Tailwind v4 upgrade tool](https://tailwindcss.com/docs/upgrade-guide#automated-migration)
@@ -83,7 +118,14 @@ Replace `*-opacity-*` with slash modifiers:
 
 - Now uses CSS `@plugin` directives instead of JS config.
 
-## Build + verification
+## Acceptance criteria
+
+- CSS-first config is defined in `src/app/globals.css`.
+- Tailwind v4 builds succeed under static export constraints.
+
+## Testing
+
+### Build + verification
 
 ```bash
 pnpm install
@@ -102,3 +144,26 @@ pnpm serve
 | Architectural adaptability | 0.10 | 9.0 | 0.90 |
 
 **Total:** 9.24 / 10.0
+
+## Operational notes
+
+- Use the official migration tool before manual edits when upgrading.
+
+## Failure modes and mitigation
+
+- CSS-first config missing → Tailwind utilities not generated; verify `globals.css` entry point.
+
+## Key files
+
+- `src/app/globals.css`
+- `postcss.config.mjs`
+- `tailwind.config.ts`
+
+## References
+
+- ADR-0005 (static export constraints)
+- ADR-0009 (Tailwind v4 strategy)
+
+## Changelog
+
+- **1.0 (2026-01-19)**: Initial version.

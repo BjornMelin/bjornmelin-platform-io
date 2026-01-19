@@ -15,6 +15,39 @@ notes: "Defines the required build/deploy sequencing for static export + CSP has
 This spec defines the required production deployment sequence for a strict static export hosted on
 S3/CloudFront with a CSP hash allow-list for Next.js inline scripts.
 
+## Context
+
+Static export artifacts and CSP hashes must remain in sync to avoid production CSP failures.
+
+## Goals / Non-goals
+
+### Goals
+
+- Define the authoritative deploy sequence for production.
+- Ensure CSP hashes always match the published `out/` artifacts.
+- Provide a break-glass manual deploy procedure.
+
+### Non-goals
+
+- Redesigning the deployment platform or hosting model.
+
+## Requirements
+
+Requirement IDs are defined in `docs/specs/requirements.md`.
+
+### Functional requirements
+
+- **FR-501:** Production deploys are fully automated via GitHub Actions.
+
+### Non-functional requirements
+
+- **NFR-501:** CSP headers and static export artifacts never drift.
+
+## Constraints
+
+- Deployment must remain compatible with static export (`output: "export"`).
+- CSP hashes are generated from the `out/` HTML output.
+
 ## Decision Framework Score (must be ≥ 9.0)
 
 | Criterion | Weight | Score | Weighted |
@@ -26,7 +59,9 @@ S3/CloudFront with a CSP hash allow-list for Next.js inline scripts.
 
 **Total:** 9.12 / 10.0
 
-## Production pipeline (authoritative)
+## Design
+
+### Production pipeline (authoritative)
 
 Production deploys are performed by GitHub Actions (`.github/workflows/deploy.yml`) on merges to
 `main` (docs-only changes are ignored by that workflow).
@@ -37,21 +72,11 @@ The workflow sequence is:
 2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage`
 3. `pnpm deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
 
-## Why ordering matters
+### Why ordering matters
 
 The CloudFront `Content-Security-Policy` includes a script hash allow-list generated from the
 static export HTML output. Deploying CSP configuration (CloudFront Function + KVS wiring) without uploading the
 matching `out/` artifacts can cause a blank page due to CSP violations (ADR-0001).
-
-## Manual deployment (break-glass)
-
-Manual deployments must follow:
-
-```bash
-pnpm build
-pnpm -C infrastructure deploy:storage
-pnpm deploy:static:prod
-```
 
 ## Acceptance criteria
 
@@ -63,12 +88,33 @@ pnpm deploy:static:prod
 - `deploy.yml` deploys the matching `out/` directory, syncs the CSP hashes KVS, and invalidates CloudFront.
 - Post-deploy smoke check passes (`curl $NEXT_PUBLIC_APP_URL` returns 2xx/3xx).
 
-## Operational guardrails
+## Testing
+
+- `pnpm build`
+- `pnpm -C infrastructure test`
+
+## Operational notes
+
+### Manual deployment (break-glass)
+
+Manual deployments must follow:
+
+```bash
+pnpm build
+pnpm -C infrastructure deploy:storage
+pnpm deploy:static:prod
+```
+
+### Operational guardrails
 
 - Never manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
 - Do not deploy `prod-portfolio-storage` without a preceding successful build from the same commit.
 - If `deploy.yml` is skipped (docs-only changes), use `manual-deploy.yml` when a site deploy is
   intentionally required.
+
+## Failure modes and mitigation
+
+- CSP/hash mismatch → follow the authoritative pipeline and redeploy `out/` + KVS in order.
 
 ## Key files
 
@@ -76,3 +122,12 @@ pnpm deploy:static:prod
 - `scripts/generate-next-inline-csp-hashes.mjs`
 - `scripts/deploy-static-site.mjs`
 - `infrastructure/lib/stacks/storage-stack.ts`
+
+## References
+
+- ADR-0001 (CSP hash requirements)
+- ADR-0005 (static export constraints)
+
+## Changelog
+
+- **1.0 (2026-01-16)**: Initial version.
