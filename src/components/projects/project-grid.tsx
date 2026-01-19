@@ -209,14 +209,14 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
 
       {sorted.length === 0 ? (
         <div className="text-center py-12">
-              <p className="text-muted-foreground">No projects match the current filters.</p>
-              {isDirty ? (
-                <div className="mt-4">
-                  <Button variant="outline" onClick={() => setQuery(null)}>
-                    Clear Filters
-                  </Button>
-                </div>
-              ) : null}
+          <p className="text-muted-foreground">No projects match the current filters.</p>
+          {isDirty ? (
+            <div className="mt-4">
+              <Button variant="outline" onClick={() => setQuery(null)}>
+                Clear Filters
+              </Button>
+            </div>
+          ) : null}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

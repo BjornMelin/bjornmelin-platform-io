@@ -85,7 +85,9 @@ describe("projects data featured fallback", () => {
       },
     });
 
-    const featuredIds = projectsData.filter((project) => project.featured).map((project) => project.id);
+    const featuredIds = projectsData
+      .filter((project) => project.featured)
+      .map((project) => project.id);
     expect(featuredIds).toEqual(["project-alpha", "project-beta", "project-gamma"]);
   });
 
@@ -97,7 +99,9 @@ describe("projects data featured fallback", () => {
       },
     });
 
-    const featuredIds = projectsData.filter((project) => project.featured).map((project) => project.id);
+    const featuredIds = projectsData
+      .filter((project) => project.featured)
+      .map((project) => project.id);
     expect(featuredIds).toEqual(["project-beta"]);
   });
 });
