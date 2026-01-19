@@ -40,12 +40,17 @@ interface ProjectGridProps {
  */
 export function ProjectGrid({ projects, categories, languages, className }: ProjectGridProps) {
   const [{ q, category, lang, minStars, sort }, setQuery] = useQueryStates(projectsQueryParsers);
+  const normalizedLang = lang.toLowerCase();
 
-  const filtered = filterProjects(projects, { q, category, lang, minStars });
+  const filtered = filterProjects(projects, { q, category, lang: normalizedLang, minStars });
   const sorted = sortProjects(filtered, sort);
 
   const isDirty =
-    q !== "" || category !== "all" || lang !== "all" || minStars !== 0 || sort !== "stars";
+    q !== "" ||
+    category !== "all" ||
+    normalizedLang !== "all" ||
+    minStars !== 0 ||
+    sort !== "stars";
 
   return (
     <div className={cn("space-y-8", className)}>
@@ -113,7 +118,7 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
               Language
             </label>
             <Select
-              value={lang}
+              value={normalizedLang}
               onValueChange={(value) => {
                 setQuery({ lang: value });
               }}
