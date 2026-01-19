@@ -16,7 +16,40 @@ This spec defines the final implementation for a strict `Content-Security-Policy
 S3/CloudFront. It keeps CSP strict (no `unsafe-inline`) while avoiding CloudFront Function size limits by storing
 per-path hash selections in CloudFront KeyValueStore (KVS).
 
-## Target architecture (AWS best practice, scales)
+## Context
+
+CloudFront Function size limits require compact CSP hash selection data at runtime.
+
+## Goals / Non-goals
+
+### Goals
+
+- Keep CSP strict without `unsafe-inline`.
+- Avoid CloudFront Function size limit failures.
+- Keep per-path hash selection data manageable and deployable.
+
+### Non-goals
+
+- Switching away from CloudFront Functions or KVS.
+
+## Requirements
+
+Requirement IDs are defined in `docs/specs/requirements.md`.
+
+### Non-functional requirements
+
+- **NFR-601:** CSP stays strict without Server Actions/nonces.
+- **NFR-602:** No CloudFront Function 10 KB outages.
+- **NFR-603:** Fully IaC deployable on forks.
+
+## Constraints
+
+- CloudFront Function source size limit: 10,240 bytes.
+- KVS value size limit: 1,024 bytes.
+
+## Design
+
+### Target architecture (AWS best practice, scales)
 
 - A **viewer-response CloudFront Function** (JS runtime 2.0) sets `Content-Security-Policy` for HTML responses.
 - Per-path “which hashes apply” data is stored in **CloudFront KeyValueStore (KVS)** (CloudFront Function code is capped
@@ -25,7 +58,7 @@ per-path hash selections in CloudFront KeyValueStore (KVS).
   - Function code contains a global array of base64 digests: `HASH_B64[]` (no `sha256-` prefix).
   - KVS stores per-path values as dot-delimited base36 indices: `0.1.2.k.10`.
 
-## Data formats
+### Data formats
 
 Generated artifacts:
 
@@ -38,7 +71,7 @@ Generated artifacts:
 Note: The generated JS artifacts are intentionally compact to preserve CloudFront Function size limits.
 Biome excludes them from formatting checks via negated patterns in `biome.json`.
 
-## Guardrails (hard failures)
+### Guardrails (hard failures)
 
 Build-time validation in `scripts/generate-next-inline-csp-hashes.mjs` must fail the build if:
 
@@ -47,7 +80,7 @@ Build-time validation in `scripts/generate-next-inline-csp-hashes.mjs` must fail
 - Any KVS value exceeds **1,024 bytes**.
 - Total KVS payload exceeds **5 MB**.
 
-## CloudFront Function behavior
+### CloudFront Function behavior
 
 Implementation lives in `infrastructure/lib/functions/cloudfront/next-csp-response.js` (generated).
 
@@ -67,7 +100,7 @@ Implementation lives in `infrastructure/lib/functions/cloudfront/next-csp-respon
     unchanged (does not set `Content-Security-Policy`) to avoid a hard outage during rollout. The deploy pipeline invalidates
     CloudFront after syncing KVS so responses are recached with the strict CSP.
 
-## Infrastructure (CDK)
+### Infrastructure (CDK)
 
 Storage stack wiring is in `infrastructure/lib/stacks/storage-stack.ts`:
 
@@ -76,7 +109,26 @@ Storage stack wiring is in `infrastructure/lib/stacks/storage-stack.ts`:
 - KVS provisioning is fully IaC via a Lambda-backed Custom Resource (`infrastructure/lib/functions/custom-resources/cloudfront-kvs/index.ts`)
   to avoid CloudFormation limitations creating KVS directly.
 
-## Deployment workflow
+## Acceptance criteria
+
+- CSP hashes are applied per path without `unsafe-inline`.
+- KVS payload sizes stay within AWS limits.
+- Build fails on size limit violations.
+
+## Testing
+
+Infra tests validate CloudFront Function behavior by executing the generated JS in a VM context:
+
+- File: `infrastructure/test/next-csp-response.test.ts`
+- Coverage:
+  - known path sets CSP with hashes
+  - unknown path falls back to `"/404.html"`
+  - **fail-soft** when KVS is unpopulated (no CSP header)
+  - non-HTML requests skip KVS reads
+
+## Operational notes
+
+### Deployment workflow
 
 The authoritative pipeline is in `.github/workflows/deploy.yml` and uses:
 
@@ -88,18 +140,11 @@ The authoritative pipeline is in `.github/workflows/deploy.yml` and uses:
    - uploads `out/` to S3
    - invalidates CloudFront
 
-## Tests
+## Failure modes and mitigation
 
-Infra tests validate CloudFront Function behavior by executing the generated JS in a VM context:
+- KVS missing entries → fail-soft (no CSP header) until KVS sync completes.
 
-- File: `infrastructure/test/next-csp-response.test.ts`
-- Coverage:
-  - known path sets CSP with hashes
-  - unknown path falls back to `"/404.html"`
-  - **fail-soft** when KVS is unpopulated (no CSP header)
-  - non-HTML requests skip KVS reads
-
-## Decision framework (final)
+## Decision Framework Score (must be ≥ 9.0)
 
 Chosen option: CloudFront Function + KVS (indices encoding)
 
@@ -111,3 +156,19 @@ Chosen option: CloudFront Function + KVS (indices encoding)
 | Architectural adaptability | 0.10 | 9.1 | 0.91 |
 
 **Total:** 9.34 / 10.0
+
+## Key files
+
+- `infrastructure/lib/generated/next-inline-script-hashes.ts`
+- `infrastructure/lib/generated/next-inline-script-hashes.kvs.json`
+- `infrastructure/lib/functions/cloudfront/next-csp-response.js`
+- `scripts/generate-next-inline-csp-hashes.mjs`
+
+## References
+
+- ADR-0001 (CSP hash requirements)
+- ADR-0005 (static export constraints)
+
+## Changelog
+
+- **1.0 (2026-01-18)**: Initial version.

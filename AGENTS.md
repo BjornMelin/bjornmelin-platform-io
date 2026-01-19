@@ -47,6 +47,11 @@ Infrastructure:
 - PRs: include a clear description, link issues/ADRs when relevant, and add screenshots for UI changes.
 - Before committing/opening a PR, run: `pnpm lint && pnpm test` (plus `pnpm type-check` / `pnpm test:e2e` when applicable).
 
+## Documentation Guidelines
+
+- New ADRs must use `docs/architecture/adr/ADR-0000-template.md`.
+- New specs must use `docs/specs/SPEC-0000-template.md`.
+
 ## Security, Configuration, and Deployment Notes
 
 - Keep secrets out of git. Use `.env.local` for local overrides (start from `.env.example`).
