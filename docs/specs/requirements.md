@@ -19,7 +19,7 @@ canonical registry of requirement IDs and their definitions.
   and sorting (stars, updated, name) with correct semantics.
 - **FR-203**: Projects page persists UI state to URL for deep-linking and refresh-safety.
 - **FR-301**: Tailwind CSS v4 integration uses CSS-first configuration via `@theme` and `@plugin` directives in globals.css.
-- **FR-302**: PostCSS pipeline processes Tailwind v4 with @tailwindcss/postcss and generates deterministic CSS output.
+- **FR-302**: PostCSS pipeline integrates Tailwind v4 using the `@tailwindcss/postcss` plugin to process CSS-first configuration via `@theme` and `@plugin` directives in the Next.js build pipeline.
 - **FR-401**: All pages render with responsive images in a static export.
 - **FR-501**: Production deploys are fully automated via GitHub Actions.
 
@@ -29,7 +29,7 @@ canonical registry of requirement IDs and their definitions.
 - **NFR-101**: Tests are deterministic and CI-friendly.
 - **NFR-201**: E2E tests remain stable and fast with minimal flake risk.
 - **NFR-202**: Projects page remains accessible (WCAG 2.1 Level AA) with keyboard nav and ARIA labels.
-- **NFR-301**: Tailwind CSS output is deterministic and consistent across builds.
+- **NFR-301**: CSS output must be deterministic and reproducible across local development, CI environments, and production deployments (no non-determinism from file ordering, hashing, or environment variables).
 - **NFR-401**: No runtime image optimization service required.
 - **NFR-501**: CSP headers and static export artifacts never drift.
 - **NFR-601**: CSP stays strict without Server Actions/nonces.
