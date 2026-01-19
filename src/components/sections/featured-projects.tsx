@@ -3,6 +3,11 @@ import { projectsData } from "@/data/projects";
 import { ProjectCard } from "../projects/project-card";
 import { SectionHeader } from "../shared/section-header";
 
+/**
+ * Renders the top three featured projects section sourced from projectsData.
+ *
+ * @returns {JSX.Element} Featured projects section markup.
+ */
 export function FeaturedProjects() {
   const featuredProjects = projectsData
     .filter((project) => project.featured)

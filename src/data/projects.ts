@@ -103,10 +103,12 @@ const featuredFallback = anyExplicitFeatured
         .map((project) => project.id),
     );
 
+/** Array of ProjectCardModel entries with featured fallback applied when needed. */
 export const projectsData: ProjectCardModel[] = generatedProjects.map((project) =>
   featuredFallback.has(project.id) ? { ...project, featured: true } : project,
 );
 
+/** Sorted list of unique category labels from all projects. */
 export const projectCategories = dedupeAndSort(projectsData.map((project) => project.category));
 
 const languageDisplayByKey = new Map<string, string>();
@@ -118,8 +120,10 @@ for (const project of projectsData) {
   }
 }
 
+/** Sorted list of unique programming language display names across projects. */
 export const projectLanguages = dedupeAndSort([...languageDisplayByKey.values()]);
 
+/** Metadata about the projects collection including generation timestamp and counts. */
 export const projectsMetadata = {
   generated: parsed.metadata.generated,
   total: projectsData.length,

@@ -1,6 +1,7 @@
 import type { ProjectCardModel } from "@/types/project";
 import type { ProjectsSort } from "./query-state";
 
+/** Maps topic cluster keys to human-readable category labels for UI display. */
 export const categoryLabelByKey = {
   aiAgents: "AI Agents",
   rag: "RAG",
@@ -52,6 +53,13 @@ export function deriveCategoryMap(topicClusters: TopicClusters | undefined): Map
   return map;
 }
 
+/**
+ * Filter criteria for project queries.
+ * `@property` q - Search query string (normalized before matching).
+ * `@property` category - Category filter ("all" disables).
+ * `@property` lang - Language filter ("all" disables).
+ * `@property` minStars - Minimum stars threshold.
+ */
 export type ProjectFilters = {
   q: string;
   category: string;
