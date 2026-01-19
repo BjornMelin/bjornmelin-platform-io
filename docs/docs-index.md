@@ -30,6 +30,8 @@ docs/
 │       ├── ADR-0007-*.md
 │       ├── ADR-0008-*.md
 │       ├── ADR-0009-*.md
+│       ├── ADR-0010-*.md
+│       ├── ADR-0011-*.md
 │       └── README.md
 │
 ├── development/
@@ -58,6 +60,7 @@ docs/
 │   ├── SPEC-0006-*.md
 │   ├── SPEC-0007-*.md
 │   ├── SPEC-0008-*.md
+│   ├── SPEC-0009-*.md
 │   ├── requirements.md        # Canonical requirement IDs referenced by specs
 │   └── README.md
 │

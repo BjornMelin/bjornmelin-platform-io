@@ -1,4 +1,4 @@
-import type { Project, ProjectFilterState } from "@/types/project";
+import type { ProjectCardModel } from "@/types/project";
 
 let projectIdCounter = 0;
 
@@ -6,19 +6,25 @@ let projectIdCounter = 0;
  * Build a valid project for tests.
  * Uses auto-incrementing IDs to ensure uniqueness.
  */
-export function buildProject(overrides: Partial<Project> = {}): Project {
+export function buildProjectCardModel(overrides: Partial<ProjectCardModel> = {}): ProjectCardModel {
   const id = `project-${++projectIdCounter}`;
   return {
     id,
     title: `Test Project ${projectIdCounter}`,
     description: "A test project description that provides enough detail for display.",
-    technologies: ["TypeScript", "React", "Next.js"],
+    repoUrl: `https://github.com/test/${id}`,
+    primaryUrl: `https://example.com/${id}`,
+    liveUrl: "https://test-project.com",
+    docsUrl: "https://example.com/docs",
+    stars: 42,
+    forks: 7,
+    language: "TypeScript",
+    license: "MIT",
+    updatedAt: "2026-01-01",
+    updatedLabel: "Jan 01, 2026",
+    topics: ["nextjs", "typescript"],
+    tags: ["nextjs", "typescript", "react"],
     category: "Web Development",
-    image: "/images/projects/test-project.png",
-    links: {
-      github: "https://github.com/test/project",
-      live: "https://test-project.com",
-    },
     featured: false,
     ...overrides,
   };
@@ -27,28 +33,20 @@ export function buildProject(overrides: Partial<Project> = {}): Project {
 /**
  * Build a featured project.
  */
-export function buildFeaturedProject(overrides: Partial<Project> = {}): Project {
-  return buildProject({ ...overrides, featured: true });
+export function buildFeaturedProjectCardModel(
+  overrides: Partial<ProjectCardModel> = {},
+): ProjectCardModel {
+  return buildProjectCardModel({ ...overrides, featured: true });
 }
 
 /**
  * Build multiple projects for list testing.
  */
-export function buildProjectList(count: number, overrides: Partial<Project> = {}): Project[] {
-  return Array.from({ length: count }, () => buildProject(overrides));
-}
-
-/**
- * Build project filter state for testing.
- */
-export function buildProjectFilterState(
-  overrides: Partial<ProjectFilterState> = {},
-): ProjectFilterState {
-  return {
-    category: "All",
-    sortBy: "featured",
-    ...overrides,
-  };
+export function buildProjectCardModelList(
+  count: number,
+  overrides: Partial<ProjectCardModel> = {},
+): ProjectCardModel[] {
+  return Array.from({ length: count }, () => buildProjectCardModel(overrides));
 }
 
 /**

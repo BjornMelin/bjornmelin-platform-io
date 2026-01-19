@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 
 import { contactFormSchema } from "@/lib/schemas/contact";
 
@@ -24,10 +25,10 @@ describe("contactFormSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      const issues = result.error.format();
-      expect(issues.name?._errors[0]).toContain("at least 2");
-      expect(issues.email?._errors[0]).toContain("valid email");
-      expect(issues.message?._errors[0]).toContain("at least 10");
+      const tree = z.treeifyError(result.error);
+      expect(tree.properties?.name?.errors?.[0]).toContain("at least 2");
+      expect(tree.properties?.email?.errors?.[0]).toContain("valid email");
+      expect(tree.properties?.message?.errors?.[0]).toContain("at least 10");
     }
   });
 });
