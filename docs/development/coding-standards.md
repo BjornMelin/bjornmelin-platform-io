@@ -26,18 +26,18 @@ async function sendEmail(data: ContactForm): Promise<{ success: boolean }> {
 ```typescript
 // Place types in dedicated files
 // src/types/project.ts
-export interface Project {
+export type ProjectCardModel = {
   id: string;
   title: string;
   description: string;
-  image: string;
-  link?: string;
-  github?: string;
-  tags: string[];
-}
+  repoUrl: string;
+  primaryUrl: string;
+  category: string;
+  featured: boolean;
+};
 
 // Use type imports
-import type { Project } from "@/types/project";
+import type { ProjectCardModel } from "@/types/project";
 ```
 
 ## Next.js Components
@@ -47,11 +47,16 @@ import type { Project } from "@/types/project";
 ```typescript
 // app/projects/page.tsx
 import { ProjectGrid } from "@/components/projects/project-grid";
+import { projectCategories, projectLanguages, projectsData } from "@/data/projects";
 
-export default async function ProjectsPage() {
+export default function ProjectsPage() {
   return (
     <main className="container py-8">
-      <ProjectGrid />
+      <ProjectGrid
+        projects={projectsData}
+        categories={projectCategories}
+        languages={projectLanguages}
+      />
     </main>
   );
 }
@@ -206,7 +211,7 @@ Reference: `https://github.com/airbnb/javascript?tab=readme-ov-file#comments`.
 /**
  * ProjectCard component displays a project with its details
  *
- * @param {Project} project - Project data to display
+ * @param {ProjectCardModel} project - Project data to display
  * @param {string} className - Optional additional classes
  * @returns {JSX.Element} Project card component
  */
@@ -221,7 +226,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
 /**
  * Represents project data structure
  */
-export interface Project {
+export type ProjectCardModel = {
   /** Unique identifier */
   id: string;
   /** Project title */
@@ -229,7 +234,7 @@ export interface Project {
   /** Project description */
   description: string;
   // ... other fields
-}
+};
 ```
 
 ## Best Practices

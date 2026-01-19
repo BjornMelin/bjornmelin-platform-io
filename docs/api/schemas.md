@@ -26,7 +26,7 @@ export const contactFormWithSecuritySchema = z.strictObject({
   email: z.email(),
   message: z.string().min(10).max(1000),
   honeypot: z.string().length(0).optional(),
-  formLoadTime: z.number().int().optional(),
+  formLoadTime: z.int().optional(),
 });
 ```
 
@@ -38,47 +38,58 @@ export const contactFormWithSecuritySchema = z.strictObject({
 
 ## Data Models
 
-### Project Type
+### Project card model
 
 Located in `src/types/project.ts`:
 
 ```typescript
-type Project = {
+export type ProjectCardModel = {
   id: string;
   title: string;
   description: string;
-  technologies: string[];
+  repoUrl: string;
+  primaryUrl: string;
+  liveUrl?: string;
+  docsUrl?: string;
+  stars: number;
+  forks: number;
+  language?: string;
+  license?: string;
+  updatedAt: string;
+  updatedLabel: string;
+  topics: string[];
+  tags: string[];
   category: string;
-  image: string;
-  links: {
-    github?: string;
-    live?: string;
-    demo?: string;
-  };
-  featured?: boolean;
+  featured: boolean;
+  highlights?: string[];
 };
 ```
 
-### Project Schema (runtime validation)
+### GitHub projects dataset schema (runtime validation)
 
-Located in `src/lib/schemas/project.ts`:
+Located in `src/lib/schemas/github-projects.ts`:
 
 ```typescript
 import { z } from "zod";
 
-export const projectSchema = z.strictObject({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  description: z.string().min(1),
-  technologies: z.array(z.string().min(1)).min(1),
-  category: z.string().min(1),
-  image: z.string().min(1),
-  links: z.strictObject({
-    github: z.url().optional(),
-    live: z.url().optional(),
-    demo: z.url().optional(),
-  }),
-  featured: z.boolean().optional(),
+export const githubProjectsFileSchema = z.looseObject({
+  metadata: z.looseObject({ generated: z.string() }),
+  projects: z.array(
+    z.looseObject({
+      id: z.string(),
+      name: z.string(),
+      url: z.url(),
+      stars: z.int().nonnegative(),
+      forks: z.int().nonnegative(),
+      updated: z.string(),
+      topics: z.array(z.string()).default([]),
+    }),
+  ),
+  statistics: z
+    .looseObject({
+      topicClusters: z.record(z.string(), z.array(z.string())).optional(),
+    })
+    .optional(),
 });
 ```
 
