@@ -51,7 +51,7 @@ export function MobileNav({
         <X size={24} aria-hidden="true" className="hidden group-open:block" />
       </summary>
       <div id="mobile-nav-panel" className="py-4" data-testid="mobile-nav">
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col gap-4">
           <Link href="/" className={linkClassName} onClick={closeMenu}>
             Home
           </Link>

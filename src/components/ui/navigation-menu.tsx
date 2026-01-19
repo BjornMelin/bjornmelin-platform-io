@@ -40,7 +40,7 @@ const NavigationMenuList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <NavigationMenuPrimitive.List
     ref={ref}
-    className={cn("group flex flex-1 list-none items-center justify-center space-x-1", className)}
+    className={cn("group flex flex-1 list-none items-center justify-center gap-1", className)}
     {...props}
   />
 ));
@@ -115,7 +115,7 @@ const NavigationMenuViewport = React.forwardRef<
   <div className={cn("absolute left-0 top-full flex justify-center")}>
     <NavigationMenuPrimitive.Viewport
       className={cn(
-        "origin-top-center relative mt-1.5 h-(--radix-navigation-menu-viewport-height) w-full overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-(--radix-navigation-menu-viewport-width)",
+        "origin-top-center relative mt-1.5 h-(--radix-navigation-menu-viewport-height) w-full overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-xs data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-(--radix-navigation-menu-viewport-width)",
         className,
       )}
       ref={ref}
