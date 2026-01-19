@@ -15,6 +15,35 @@ notes: "Tracks dependency versions and upgrade rationale for the current release
 This specification documents the current dependency baseline and compatibility
 constraints following the recent upgrade pass.
 
+## Context
+
+This baseline reflects the latest completed upgrade cycle and the constraints
+required to keep the static export pipeline stable.
+
+## Goals / Non-goals
+
+### Goals
+
+- Document the core dependency baseline used by the repo.
+- Preserve compatibility with the Next.js App Router static export.
+- Reduce operational surface area by removing unused dependencies.
+
+### Non-goals
+
+- Defining future upgrade timelines or release policies.
+
+## Requirements
+
+Requirement IDs are defined in `docs/specs/requirements.md`.
+
+### Functional requirements
+
+- **FR-001:** Document dependency versions and compatibility constraints.
+
+### Non-functional requirements
+
+- **NFR-001:** Maintain compatibility with Next.js 16 and React 19 static export.
+
 ## Constraints
 
 - Next.js remains on 16.1.x
@@ -22,7 +51,9 @@ constraints following the recent upgrade pass.
 - Node.js engine remains `>=24 <25` (validated in CI for this repository)
 - Static export (`output: "export"`) remains required
 
-## Version baseline (pinned)
+## Design
+
+### Version baseline (pinned)
 
 - Next.js 16.1.3
 - React 19.2.3
@@ -38,6 +69,20 @@ constraints following the recent upgrade pass.
 *Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
 spec lists the intentional baseline versions for the core toolchain.*
 
+### Reproducibility note
+
+The lockfile is the source of truth for reproducible installs. Core runtime
+dependencies are pinned, while many non-core dependencies use ranges and are
+resolved via `pnpm-lock.yaml`.
+
+### Rationale
+
+Upgrades prioritize security fixes, compatibility with the Next.js 16.1.x App Router,
+and improved DX while preserving static export constraints.
+
+This baseline also removes unused dependencies to reduce the operational surface area (example:
+`framer-motion` was removed after it was no longer referenced in app code).
+
 ## Decision Framework Score (must be ≥ 9.0)
 
 | Criterion | Weight | Score | Weighted |
@@ -49,19 +94,27 @@ spec lists the intentional baseline versions for the core toolchain.*
 
 **Total:** 9.03 / 10.0
 
-## Reproducibility Note
+## Acceptance criteria
 
-The lockfile is the source of truth for reproducible installs. Core runtime
-dependencies are pinned, while many non-core dependencies use ranges and are
-resolved via `pnpm-lock.yaml`.
+- `package.json` and `pnpm-lock.yaml` reflect the intended core dependency baseline.
+- Static export remains compatible with the pinned toolchain.
 
-## Rationale
+## Testing
 
-Upgrades prioritize security fixes, compatibility with the Next.js 16.1.x App Router,
-and improved DX while preserving static export constraints.
+- Not applicable (documentation-only spec).
 
-This baseline also removes unused dependencies to reduce the operational surface area (example:
-`framer-motion` was removed after it was no longer referenced in app code).
+## Operational notes
+
+- Follow the standard upgrade workflow and re-run `pnpm install` before `pnpm build`.
+
+## Failure modes and mitigation
+
+- Dependency drift → Re-run `pnpm install` and validate lockfile changes in CI.
+
+## Key files
+
+- `package.json`
+- `pnpm-lock.yaml`
 
 ## References
 
@@ -70,3 +123,7 @@ This baseline also removes unused dependencies to reduce the operational surface
 - [Zod v4 migration guide](https://zod.dev/v4/changelog) / ADR-0002 (Zod v4 strategy)
 - [Vitest v4 migration notes](https://vitest.dev/guide/migration) / ADR-0003 (testing changes)
 - ADR-0004 (toolchain changes) / ADR-0005 (static export constraints)
+
+## Changelog
+
+- **1.1 (2026-01-18)**: Current baseline and constraints.
