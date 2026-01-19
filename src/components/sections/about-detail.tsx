@@ -8,9 +8,14 @@ import { experiences, previousExperiences } from "@/data/experience";
 import { hobbies } from "@/data/hobbies";
 import { skillCategories } from "@/data/skills";
 
+/**
+ * Render the About Detail page content.
+ *
+ * @returns About detail layout.
+ */
 export function AboutDetail() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-background via-primary/5 to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
       <div className="container mx-auto px-4 py-24">
         <div className="mb-20">
           <div className="flex flex-col md:flex-row items-center gap-8">

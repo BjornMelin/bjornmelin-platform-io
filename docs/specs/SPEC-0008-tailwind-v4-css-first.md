@@ -26,10 +26,10 @@ This project uses **PostCSS** for Tailwind integration (Next.js build pipeline):
 ## File-level contracts
 
 - `src/app/globals.css`
-  - Must include `@import "tailwindcss" source("../");` as the entry point.
-  - Must define theme tokens via `@theme { ... }` (Tailwind v4 CSS-first).
-  - Must register any needed plugins via `@plugin ...`.
-  - Should define custom utility classes with `@utility` (not `@layer utilities`).
+  - Include `@import "tailwindcss" source("../");` as the entry point.
+  - Define theme tokens via `@theme { ... }` (Tailwind v4 CSS-first).
+  - Register any needed plugins via `@plugin ...`.
+  - Prefer `@utility` (not `@layer utilities`) for custom utilities.
 - `postcss.config.mjs`
   - Must include only `@tailwindcss/postcss` for Tailwind.
 - `tailwind.config.ts`

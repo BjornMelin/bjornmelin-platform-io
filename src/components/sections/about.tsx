@@ -8,7 +8,7 @@ export function About() {
   return (
     <section
       aria-labelledby="about-heading"
-      className="py-24 relative overflow-hidden bg-linear-to-br from-background via-primary/5 to-background"
+      className="py-24 relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-background"
     >
       <div className="absolute inset-0 w-full h-full">
         <div className="absolute right-0 top-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />

@@ -52,7 +52,7 @@ describe("ContactForm", () => {
     expect(honeypotInput.value).toBe("bot");
   });
 
-  it("shows validation errors on blur-sm for invalid name", async () => {
+  it("shows validation errors on blur for invalid name", async () => {
     const user = userEvent.setup();
     render(<ContactForm />);
 
@@ -65,7 +65,7 @@ describe("ContactForm", () => {
     });
   });
 
-  it("shows validation errors on blur-sm for invalid email", async () => {
+  it("shows validation errors on blur for invalid email", async () => {
     const user = userEvent.setup();
     render(<ContactForm />);
 

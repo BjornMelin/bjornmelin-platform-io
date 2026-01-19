@@ -7,7 +7,7 @@
 
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,6 +49,10 @@ import {
 import { Toggle } from "@/components/ui/toggle";
 
 describe("Tailwind v4 UI primitives", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   it("renders non-portal primitives", async () => {
     const user = userEvent.setup();
 
@@ -99,7 +103,6 @@ describe("Tailwind v4 UI primitives", () => {
       );
       expect(screen.getByText("Dialog title")).toBeInTheDocument();
       unmount();
-      cleanup();
     }
 
     {
@@ -113,7 +116,6 @@ describe("Tailwind v4 UI primitives", () => {
       );
       expect(screen.getByText("Sheet title")).toBeInTheDocument();
       unmount();
-      cleanup();
     }
 
     {
@@ -131,7 +133,6 @@ describe("Tailwind v4 UI primitives", () => {
       expect(screen.getByRole("menu", { name: "Menu" })).toBeInTheDocument();
       expect(screen.getByRole("menuitem", { name: "Item" })).toBeInTheDocument();
       unmount();
-      cleanup();
     }
 
     {
@@ -145,7 +146,6 @@ describe("Tailwind v4 UI primitives", () => {
       );
       expect(screen.getByText("Popover content")).toBeInTheDocument();
       unmount();
-      cleanup();
     }
 
     {
@@ -161,7 +161,6 @@ describe("Tailwind v4 UI primitives", () => {
       );
       expect(screen.getByRole("option", { name: "Featured First" })).toBeInTheDocument();
       unmount();
-      cleanup();
     }
 
     {
@@ -177,7 +176,6 @@ describe("Tailwind v4 UI primitives", () => {
       expect(screen.getByText("Toast title")).toBeInTheDocument();
       await user.tab();
       unmount();
-      cleanup();
     }
   });
 
