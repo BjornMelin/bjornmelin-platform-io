@@ -89,6 +89,8 @@ feature/
 ### Tailwind v4 (CSS-first)
 
 - Tailwind config lives in `src/app/globals.css` using `@import "tailwindcss"`, `@theme`, `@plugin`, and `@custom-variant`.
+- `tailwind.config.ts` exists only for tooling that expects a Tailwind config path
+  (Tailwind does not load it unless `@config` is used).
 - Class scanning is limited to `src/` via `@import "tailwindcss" source("../")` for faster builds.
 - Border colors are no longer implicit; prefer explicit utilities (e.g. `border border-border`, `border border-input`).
 

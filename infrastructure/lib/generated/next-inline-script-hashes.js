@@ -1,3 +1,4 @@
+/* biome-ignore format: Keep output compact (CloudFront Function size limits). */
 /* biome-ignore-all lint/style/useTemplate: CloudFront Functions require ES5.1. */
 /* biome-ignore-all lint/correctness/noUnusedVariables: CloudFront Functions require globals. */
 /* biome-ignore-all lint/style/useConst: CloudFront Functions require ES5.1. */

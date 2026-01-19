@@ -12,6 +12,8 @@
       "!dist",
       "!coverage",
       "!infrastructure/cdk.out",
+      "!infrastructure/lib/functions/cloudfront/next-csp-response.js",
+      "!infrastructure/lib/generated/next-inline-script-hashes.js",
       "!.aws-sam",
       "!.taskmaster"
     ]

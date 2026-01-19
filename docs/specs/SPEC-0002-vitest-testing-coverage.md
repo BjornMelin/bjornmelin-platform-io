@@ -5,9 +5,7 @@ version: 1.0.0
 date: 2026-01-16
 owners: ["ai-arch"]
 status: Implemented
-related_requirements:
-  - FR-101: Unit and integration tests cover core modules and API contracts
-  - NFR-101: Tests are deterministic and CI-friendly
+related_requirements: ["FR-101", "NFR-101"]
 related_adrs: ["ADR-0003", "ADR-0004"]
 notes: "Defines Vitest scope, conventions, and execution practices."
 ---

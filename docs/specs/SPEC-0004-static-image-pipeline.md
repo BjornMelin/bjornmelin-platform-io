@@ -5,9 +5,7 @@ version: 1.0.0
 date: 2026-01-16
 owners: ["ai-arch"]
 status: Implemented
-related_requirements:
-  - FR-401: All pages render with responsive images in a static export
-  - NFR-401: No runtime image optimization service required
+related_requirements: ["FR-401", "NFR-401"]
 related_adrs: ["ADR-0005", "ADR-0006"]
 notes: "Defines how images are generated, named, and served in a strict static export."
 ---

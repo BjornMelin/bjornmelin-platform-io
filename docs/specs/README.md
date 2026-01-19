@@ -12,8 +12,10 @@ criteria, file-level contracts, and operational details.
 - SPEC-0005: Static export deployment pipeline (CSP + S3/CloudFront)
 - SPEC-0006: CSP hashes via CloudFront Function + KeyValueStore (KVS)
 - SPEC-0007: Deploy workflow permissions drift (ListExports + CSP KVS)
+- SPEC-0008: Tailwind CSS v4 (CSS-first config) integration
 
 ## Conventions
 
 - Filenames are `SPEC-XXXX-<kebab-title>.md`.
 - Specs include a decision framework score (must be **≥ 9.0 / 10.0** for finalized specs).
+- Requirement IDs referenced by specs are defined in `docs/specs/requirements.md`.
