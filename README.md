@@ -55,7 +55,6 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 ## Documentation
 
 - [Docs index](docs/docs-index.md)
-- [Product requirements (PRD)](docs/PRD.md)
 
 ### Development
 
