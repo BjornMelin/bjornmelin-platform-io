@@ -4,11 +4,14 @@ import "./globals.css";
 import { AppShell } from "@/components/layout/app-shell";
 import StructuredData from "@/components/structured-data";
 import { ThemeScript } from "@/components/theme";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
+/** Enforces static rendering for the root layout. */
 export const dynamic = "error";
 
+/** Default viewport configuration for the application. */
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -18,6 +21,7 @@ export const viewport: Viewport = {
   ],
 };
 
+/** Site-wide metadata for SEO and social sharing. */
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "https://bjornmelin.com"),
   title: {
@@ -98,6 +102,12 @@ export const metadata: Metadata = {
   creator: "Bjorn Melin",
 };
 
+/**
+ * Root layout wrapper with providers and shared shell.
+ *
+ * @param children - Page content to render inside the app shell.
+ * @returns Root layout element.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -105,7 +115,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeScript />
       </head>
       <body className={inter.className}>
-        <AppShell>{children}</AppShell>
+        <Providers>
+          <AppShell>{children}</AppShell>
+        </Providers>
         <StructuredData type="both" />
       </body>
     </html>

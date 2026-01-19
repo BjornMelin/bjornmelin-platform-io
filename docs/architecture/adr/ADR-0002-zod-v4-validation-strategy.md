@@ -103,7 +103,7 @@ Adopt Zod v4 conventions consistently:
 
 - Contact schemas: `contactFormSchema` uses `z.looseObject`, and
   `contactFormWithSecuritySchema` uses `z.strictObject`.
-- Static project data is validated with `projectsSchema` at load time.
+- Projects dataset is validated at the boundary with `githubProjectsFileSchema` at load time.
 
 ## Testing
 

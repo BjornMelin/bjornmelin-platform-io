@@ -1,11 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Project } from "@/types/project";
+import type { ProjectCardModel } from "@/types/project";
 
 // Mock ProjectGrid component
 const mockProjectGrid = vi.fn();
 vi.mock("@/components/projects/project-grid", () => ({
-  ProjectGrid: (props: { projects: Project[] }) => {
+  ProjectGrid: (props: {
+    projects: ProjectCardModel[];
+    categories: string[];
+    languages: string[];
+  }) => {
     mockProjectGrid(props);
     return <div data-testid="project-grid">{props.projects.length} projects</div>;
   },
@@ -18,31 +22,53 @@ vi.mock("@/data/projects", () => ({
       id: "1",
       title: "Project 1",
       description: "Test project 1 description",
-      technologies: ["TypeScript"],
-      category: "test",
-      image: "/test/project-1.png",
-      links: { github: "https://example.com/project-1" },
+      repoUrl: "https://github.com/example/project-1",
+      primaryUrl: "https://example.com/project-1",
+      stars: 10,
+      forks: 1,
+      language: "TypeScript",
+      updatedAt: "2026-01-01",
+      updatedLabel: "Jan 01, 2026",
+      topics: ["test"],
+      tags: ["test"],
+      category: "Test",
       featured: true,
     },
     {
       id: "2",
       title: "Project 2",
       description: "Test project 2 description",
-      technologies: ["React"],
-      category: "test",
-      image: "/test/project-2.png",
-      links: { github: "https://example.com/project-2" },
+      repoUrl: "https://github.com/example/project-2",
+      primaryUrl: "https://example.com/project-2",
+      stars: 5,
+      forks: 0,
+      language: "TypeScript",
+      updatedAt: "2026-01-01",
+      updatedLabel: "Jan 01, 2026",
+      topics: ["test"],
+      tags: ["test"],
+      category: "Test",
+      featured: false,
     },
     {
       id: "3",
       title: "Project 3",
       description: "Test project 3 description",
-      technologies: ["Node.js"],
-      category: "test",
-      image: "/test/project-3.png",
-      links: { github: "https://example.com/project-3" },
+      repoUrl: "https://github.com/example/project-3",
+      primaryUrl: "https://example.com/project-3",
+      stars: 3,
+      forks: 0,
+      language: "TypeScript",
+      updatedAt: "2026-01-01",
+      updatedLabel: "Jan 01, 2026",
+      topics: ["test"],
+      tags: ["test"],
+      category: "Test",
+      featured: false,
     },
   ],
+  projectCategories: ["Test"],
+  projectLanguages: ["TypeScript"],
 }));
 
 // Import after mocks
@@ -82,6 +108,8 @@ describe("ProjectsPage", () => {
           expect.objectContaining({ id: "2", title: "Project 2" }),
           expect.objectContaining({ id: "3", title: "Project 3" }),
         ]),
+        categories: ["Test"],
+        languages: ["TypeScript"],
       }),
     );
   });

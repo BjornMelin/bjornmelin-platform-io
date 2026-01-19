@@ -1,138 +1,132 @@
-import { projectsSchema } from "@/lib/schemas/project";
+import { projectOverrides } from "@/content/projects/overrides";
+import projectsGenerated from "@/content/projects/projects.generated.json";
+import { deriveCategoryMap } from "@/lib/projects/filtering";
+import { githubProjectsFileSchema } from "@/lib/schemas/github-projects";
+import type { ProjectCardModel } from "@/types/project";
 
-export const projectsData = projectsSchema.parse([
-  {
-    id: "1",
-    title: "Stardex - Explore GitHub Stars Intelligently",
-    description:
-      "🌟 Stardex: Explore GitHub Stars Intelligently. Stardex is a powerful web app that lets you search, " +
-      "filter, and cluster any GitHub user's starred repositories. Discover hidden patterns and find your next " +
-      "favorite project with intelligent, AI-powered exploration.",
-    image: "/projects/stardex.png",
-    technologies: [
-      "Next.js",
-      "Python",
-      "FastAPI",
-      "Machine Learning",
-      "AWS Lambda",
-      "Clustering",
-      "AWS S3",
-      "Sklearn",
-      "PCA",
-      "Hierarchical Clustering",
-      "K-means Clusering",
-      "AWS API Gateway",
-      "tailwindcss",
-      "AWS CDK",
-      "Text Embeddings",
-    ],
-    category: "AI & Machine Learning",
-    links: {
-      github: "https://github.com/BjornMelin/stardex",
-      live: "https://stardex.bjornmelin.io",
-    },
-    featured: true,
-  },
-  {
-    id: "2",
-    title: "PolyAgent Research Intelligence",
-    description:
-      "A modular, multi-agent AI research and report generation platform. Enter any topic, and " +
-      "PolyAgent Research Intelligence orchestrates multiple AI agents to retrieve literature, " +
-      "analyze data, and generate a polished report. Built for researchers and AI/ML engineers, " +
-      "leveraging LangChain, FastAPI, PostgreSQL, advanced LLMs, and a Next.js front-end.",
-    image: "/projects/polyagent-research.png",
-    technologies: [
-      "Machine Learning",
-      "AI",
-      "Next.js",
-      "Grafana",
-      "Prometheus",
-      "Multi-Agent Systems",
-      "AI Research",
-      "Agentic AI",
-      "LangChain",
-      "FastAPI",
-      "Large Language Models",
-      "AI Engineering",
-      "OpenRouter",
-      "FAISS Vector Database",
-      "tailwindcss",
-    ],
-    category: "AI & Machine Learning",
-    links: {
-      github: "https://github.com/BjornMelin/polyagent-research-intelligence",
-    },
-    featured: true,
-  },
-  {
-    id: "3",
-    title: "AIScout",
-    description:
-      "Real-time AI/ML content aggregator and discovery platform. Automatically curates cutting-edge research papers, repositories, articles, and discussions about artificial intelligence, machine learning, and LLMs. Built with React, Python, and AWS.",
-    image: "/projects/ai-scout.png",
-    technologies: [
-      "React",
-      "Real-Time",
-      "AI",
-      "ML",
-      "Technology",
-      "AI-Research",
-      "Content-Discovery",
-      "Postcss",
-      "Zod",
-      "Zustand",
-      "TailwindCSS",
-      "Shadcn",
-      "Next.js",
-    ],
-    category: "Web Development",
-    links: {
-      github: "https://github.com/BjornMelin/aiscout-frontend",
-      //   demo: 'https://demo.example.com',
-    },
-    featured: true,
-  },
-  {
-    id: "4",
-    title: "Portfolio Website",
-    description: "A modern portfolio website built with Next.js and AWS services.",
-    image: "/projects/portfolio.png",
-    technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "AWS"],
-    category: "Web Development",
-    links: {
-      github: "https://github.com/bjornmelin/bjornmelin-platform-io",
-      live: "https://bjornmelin.io",
-    },
-    featured: false,
-  },
-  {
-    id: "5",
-    title: "PDFusion",
-    description:
-      "A lightweight Python utility for effortlessly merging multiple PDF files into a single document.",
-    image: "/projects/pdfusion.png",
-    technologies: [
-      "Python",
-      "CLI",
-      "PDF",
-      "Automation",
-      "Utilities",
-      "Python-Library",
-      "File-Management",
-      "Command-Line-Tool",
-      "Document-Management",
-      "Batch-Processing",
-      "Pypdf2",
-      "PDF-Manipulation",
-      "PDF-Merger",
-      "Document-Processing",
-      "PDF-Tools",
-    ],
-    category: "AI & Machine Learning",
-    links: {
-      github: "https://github.com/BjornMelin/pdfusion",
-    },
-    featured: false,
-  },
-]);
+function formatDateLabelUtc(isoDate: string) {
+  const dateUtc = new Date(isoDate);
+  if (Number.isNaN(dateUtc.getTime())) {
+    return isoDate;
+  }
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  }).format(dateUtc);
+}
+
+function dedupeAndSort(values: string[]) {
+  const seen = new Set<string>();
+  const unique = values.filter((value) => {
+    const key = value.trim();
+    if (!key) return false;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  return unique.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+}
+
+function extractStringArrays(value: unknown): string[] {
+  if (!value || typeof value !== "object") return [];
+  const record = value as Record<string, unknown>;
+  const collected: string[] = [];
+  for (const entry of Object.values(record)) {
+    if (Array.isArray(entry) && entry.every((item) => typeof item === "string")) {
+      collected.push(...entry);
+    }
+  }
+  return collected;
+}
+
+const parsed = githubProjectsFileSchema.parse(projectsGenerated);
+const categoryByProjectId = deriveCategoryMap(parsed.statistics?.topicClusters);
+
+const anyExplicitFeatured = Object.values(projectOverrides).some(
+  (override) => override.featured === true,
+);
+
+const generatedProjects = parsed.projects
+  .map((project) => {
+    const override = projectOverrides[project.id];
+    if (override?.hide) return null;
+
+    const repoUrl = project.url;
+    const summary = project.summary ?? project.description ?? "";
+
+    const primaryUrl = override?.primaryUrlOverride ?? project.homepage ?? project.url;
+
+    const category = override?.categoryOverride ?? categoryByProjectId.get(project.id) ?? "Other";
+
+    const baseTags = [...project.topics, ...extractStringArrays(project.techStack)];
+    const tags = dedupeAndSort(baseTags);
+
+    const model: ProjectCardModel = {
+      id: project.id,
+      title: project.name,
+      description: summary,
+      repoUrl,
+      primaryUrl,
+      liveUrl: override?.liveUrl,
+      docsUrl: override?.docsUrl,
+
+      stars: project.stars,
+      forks: project.forks,
+      language: project.language ?? undefined,
+      license: project.license ?? undefined,
+
+      updatedAt: project.updated,
+      updatedLabel: formatDateLabelUtc(project.updated),
+
+      topics: project.topics,
+      tags,
+
+      category,
+      featured: override?.featured ?? false,
+
+      highlights: override?.highlights,
+    };
+
+    return model;
+  })
+  .filter((value): value is ProjectCardModel => Boolean(value));
+
+const featuredFallback = anyExplicitFeatured
+  ? new Set<string>()
+  : new Set(
+      generatedProjects
+        .slice()
+        .sort((a, b) => b.stars - a.stars)
+        .slice(0, 3)
+        .map((project) => project.id),
+    );
+
+/** Array of ProjectCardModel entries with featured fallback applied when needed. */
+export const projectsData: ProjectCardModel[] = generatedProjects.map((project) =>
+  featuredFallback.has(project.id) ? { ...project, featured: true } : project,
+);
+
+/** Sorted list of unique category labels from all projects. */
+export const projectCategories = dedupeAndSort(projectsData.map((project) => project.category));
+
+const languageDisplayByKey = new Map<string, string>();
+for (const project of projectsData) {
+  if (!project.language) continue;
+  const key = project.language.toLowerCase();
+  if (!languageDisplayByKey.has(key)) {
+    languageDisplayByKey.set(key, project.language);
+  }
+}
+
+/** Sorted list of unique programming language display names across projects. */
+export const projectLanguages = dedupeAndSort([...languageDisplayByKey.values()]);
+
+/** Metadata about the projects collection including generation timestamp and counts. */
+export const projectsMetadata = {
+  generated: parsed.metadata.generated,
+  total: projectsData.length,
+  totalRepositories: parsed.metadata.totalRepositories,
+  description: parsed.metadata.description,
+} as const;
