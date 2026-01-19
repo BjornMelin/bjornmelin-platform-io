@@ -203,7 +203,7 @@ export function ContactForm() {
               href="https://www.linkedin.com/in/bjornmelin/"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-sm underline hover:text-red-400 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="rounded-xs underline hover:text-red-400 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               LinkedIn
             </a>

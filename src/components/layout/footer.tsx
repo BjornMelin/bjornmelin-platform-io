@@ -50,7 +50,7 @@ export function Footer() {
                 href="https://github.com/bjornmelin"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 aria-label="GitHub"
               >
                 <GitHubLogoIcon className="w-5 h-5" aria-hidden="true" />
@@ -59,7 +59,7 @@ export function Footer() {
                 href="https://linkedin.com/in/bjorn-melin"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 aria-label="LinkedIn"
               >
                 <LinkedInLogoIcon className="w-5 h-5" aria-hidden="true" />
@@ -68,7 +68,7 @@ export function Footer() {
                 href="https://medium.com/@bjornmelin"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 aria-label="Medium"
               >
                 <BookText size={20} aria-hidden="true" />
@@ -77,14 +77,14 @@ export function Footer() {
                 href="https://orcid.org/0009-0004-1978-3356"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 aria-label="ORCID"
               >
                 <BookOpenCheck size={20} aria-hidden="true" />
               </a>
               <Link
                 href="/contact"
-                className="rounded-sm text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 aria-label="Contact form"
               >
                 <Mail size={20} aria-hidden="true" />

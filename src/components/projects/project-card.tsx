@@ -39,7 +39,9 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
       </div>
       <div className="p-6 space-y-4">
         <div>
-          <h3 className="text-balance wrap-break-word text-xl font-semibold mb-2">{project.title}</h3>
+          <h3 className="text-balance wrap-break-word text-xl font-semibold mb-2">
+            {project.title}
+          </h3>
           {project.featured && (
             <div className="inline-block rounded-full bg-primary/10 px-2 py-1 text-xs text-primary mb-2">
               Featured Project
@@ -109,7 +111,3 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
     </div>
   );
 }
-/**
- * @fileoverview Presentation of a single project, including image, tech stack,
- * and external links.
- */

@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
 import type { Project } from "@/types/project";
 import { ProjectCard } from "./project-card";
 
@@ -98,7 +99,7 @@ export function ProjectGrid({ projects, className }: ProjectGridProps) {
 
   return (
     <div
-      className={`space-y-8 ${isPending ? "opacity-70 transition-opacity" : ""} ${className || ""}`}
+      className={cn("space-y-8", isPending && "opacity-70 transition-opacity", className)}
       aria-busy={isPending}
     >
       <div className="flex flex-wrap items-center justify-between gap-4">

@@ -43,7 +43,7 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 - **Next.js 16 App Router**: Server Components (build-time), static export (`output: 'export'`)
 - **React 19**: Modern React features with smaller client bundles
 - **TypeScript**: Strict mode with Zod runtime validation
-- **Tailwind CSS**: Utility-first styling with shadcn/ui components
+- **Tailwind CSS v4**: CSS-first config in `src/app/globals.css` (`@theme`, `@plugin`, `@import "tailwindcss"`) via PostCSS (`@tailwindcss/postcss`)
 
 ### Performance Optimization
 

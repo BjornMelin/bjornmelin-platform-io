@@ -1,7 +1,8 @@
-/* biome-ignore lint/suspicious/noUnknownAtRules: Tailwind CSS base directives */
-@import 'tailwindcss';
+@import "tailwindcss" source("../");
 
 @custom-variant dark (&:is(.dark *));
+
+@plugin "tailwindcss-animate";
 
 @theme {
   --color-background: hsl(var(--background));
@@ -43,30 +44,9 @@
   --radius-sm: calc(var(--radius) - 4px);
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
-}
-
 @utility text-balance {
   text-wrap: balance;
 }
-
-/* biome-ignore lint/suspicious/noUnknownAtRules: Tailwind CSS component directives */
-/* biome-ignore lint/suspicious/noUnknownAtRules: Tailwind CSS utility directives */
 
 @layer base {
   :root {
@@ -118,9 +98,6 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
     @apply bg-background text-foreground;
   }

@@ -23,25 +23,25 @@ export function ThemeToggle() {
         />
         <span className="sr-only">Toggle theme</span>
       </summary>
-      <div className="absolute right-0 mt-2 w-36 rounded-md border bg-popover p-1 text-popover-foreground shadow-md">
+      <div className="absolute right-0 mt-2 w-36 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md">
         <button
           type="button"
           data-theme-set="light"
-          className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-xs px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
         >
           Light
         </button>
         <button
           type="button"
           data-theme-set="dark"
-          className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-xs px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
         >
           Dark
         </button>
         <button
           type="button"
           data-theme-set="system"
-          className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-xs px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
         >
           System
         </button>
