@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /** Schema for repository metadata in the generated projects JSON. */
 export const githubProjectsMetadataSchema = z.looseObject({
-  generated: z.string(),
+  generated: z.iso.date(),
   totalRepositories: z.int().nonnegative(),
   description: z.string().optional(),
   author: z.string().optional(),
@@ -17,8 +17,8 @@ export const githubProjectSchema = z.looseObject({
   url: z.url(),
   stars: z.int().nonnegative(),
   forks: z.int().nonnegative(),
-  updated: z.string(),
-  topics: z.array(z.string()).default([]),
+  updated: z.iso.date(),
+  topics: z.array(z.string()).default(() => []),
 
   // Optional fields used for UI enrichment.
   description: z.string().optional(),
