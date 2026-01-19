@@ -51,7 +51,7 @@ const baseProjects: TestProject[] = [
 
 const buildGeneratedProjects = (projects: TestProject[]) => ({
   metadata: {
-    generated: "2024-01-05T00:00:00Z",
+    generated: "2024-01-05",
     totalRepositories: projects.length,
     description: "Test projects",
   },
