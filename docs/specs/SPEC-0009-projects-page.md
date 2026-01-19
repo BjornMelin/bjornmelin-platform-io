@@ -37,7 +37,8 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### Functional requirements
 
-- **FR-202:** Projects page provides filtering (category, language, min stars) and sorting (stars, updated, name) with correct semantics.
+- **FR-202:** Projects page provides filtering (category, language, min stars)
+  and sorting (stars, updated, name) with correct semantics.
 - **FR-203:** Projects page persists UI state to URL for deep-linking and refresh-safety.
 
 ### Non-functional requirements

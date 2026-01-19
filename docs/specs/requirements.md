@@ -15,7 +15,8 @@ canonical registry of requirement IDs and their definitions.
 - **FR-001**: Document dependency versions and compatibility constraints.
 - **FR-101**: Unit and integration tests cover core modules and API contracts.
 - **FR-201**: E2E tests cover primary routes and core user flows.
-- **FR-202**: Projects page provides filtering (category, language, min stars) and sorting (stars, updated, name) with correct semantics.
+- **FR-202**: Projects page provides filtering (category, language, min stars)
+  and sorting (stars, updated, name) with correct semantics.
 - **FR-203**: Projects page persists UI state to URL for deep-linking and refresh-safety.
 - **FR-301**: Tailwind CSS v4 integration uses CSS-first configuration via `@theme` and `@plugin` directives in globals.css.
 - **FR-302**: PostCSS pipeline processes Tailwind v4 with @tailwindcss/postcss and generates deterministic CSS output.
