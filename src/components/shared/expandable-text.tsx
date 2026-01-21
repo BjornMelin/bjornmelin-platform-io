@@ -7,9 +7,6 @@ import { cn } from "@/lib/utils";
 
 /**
  * Props for the {@link ExpandableText} component.
- */
-/**
- * Props for the {@link ExpandableText} component.
  *
  * @remarks
  * `children` provides the text content to render, and `className` is optional.
@@ -74,7 +71,7 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
         <CollapsibleTrigger asChild>
           <button
             type="button"
-            className="mt-1 inline-flex h-6 items-center gap-0.5 text-xs font-medium text-primary hover:text-primary/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="mt-1 inline-flex h-11 items-center gap-0.5 text-xs font-medium text-primary hover:text-primary/80 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring md:h-6"
           >
             {isOpen ? "Show less" : "Show more"}
             <ChevronDown
