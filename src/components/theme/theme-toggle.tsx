@@ -14,7 +14,7 @@ export function ThemeToggle() {
     <details className="relative">
       <summary
         aria-label="Toggle theme"
-        className="list-none rounded-md p-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
+        className="relative list-none rounded-md p-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden"
       >
         <Sun
           aria-hidden="true"
@@ -22,7 +22,7 @@ export function ThemeToggle() {
         />
         <Moon
           aria-hidden="true"
-          className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100"
+          className="absolute left-2 top-2 h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100"
         />
         <span className="sr-only">Toggle theme</span>
       </summary>
