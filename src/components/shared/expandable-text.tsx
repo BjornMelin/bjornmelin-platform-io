@@ -13,6 +13,11 @@ interface ExpandableTextProps {
 /**
  * Text component that truncates to 3 lines with a "Show more" toggle.
  * Only shows the toggle when the text is actually truncated.
+ *
+ * @param props - The {@link ExpandableTextProps} for {@link ExpandableText}.
+ * @param props.children - ReactNode text content to be displayed.
+ * @param props.className - Optional CSS class string for styling.
+ * @returns A JSX.Element representing the truncatable text component.
  */
 export function ExpandableText({ children, className }: ExpandableTextProps) {
   const [isOpen, setIsOpen] = React.useState(false);
