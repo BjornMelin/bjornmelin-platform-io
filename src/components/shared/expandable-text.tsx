@@ -15,7 +15,7 @@ interface ExpandableTextProps {
  * Only shows the toggle when the text is actually truncated.
  *
  * @param props - The {@link ExpandableTextProps} for {@link ExpandableText}.
- * @param props.children - ReactNode text content to be displayed.
+ * @param props.children - String text content to be displayed.
  * @param props.className - Optional CSS class string for styling.
  * @returns A JSX.Element representing the truncatable text component.
  */
