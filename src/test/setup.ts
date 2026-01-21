@@ -176,6 +176,25 @@ if (typeof window !== "undefined") {
   if (proto && typeof proto.scrollIntoView !== "function") {
     proto.scrollIntoView = () => {};
   }
+
+  if (!("ResizeObserver" in (window as unknown as Record<string, unknown>))) {
+    // Vitest/jsdom polyfill so components relying on ResizeObserver can measure layout.
+    class ResizeObserverPolyfill {
+      private callback?: ResizeObserverCallback;
+
+      constructor(callback?: ResizeObserverCallback) {
+        this.callback = callback;
+      }
+
+      observe = vi.fn(() => {
+        this.callback?.([], this as unknown as ResizeObserver);
+      });
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    }
+
+    window.ResizeObserver = ResizeObserverPolyfill as unknown as typeof ResizeObserver;
+  }
 }
 
 /**
