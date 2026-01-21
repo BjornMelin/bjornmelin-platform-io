@@ -5,6 +5,9 @@ import * as React from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
+/**
+ * Props for the {@link ExpandableText} component.
+ */
 interface ExpandableTextProps {
   children: string;
   className?: string;
