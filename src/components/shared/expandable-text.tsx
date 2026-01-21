@@ -8,6 +8,15 @@ import { cn } from "@/lib/utils";
 /**
  * Props for the {@link ExpandableText} component.
  */
+/**
+ * Props for the {@link ExpandableText} component.
+ *
+ * @remarks
+ * `children` provides the text content to render, and `className` is optional.
+ *
+ * @property children - Text content to render inside the component.
+ * @property className - Optional additional CSS classes for styling.
+ */
 interface ExpandableTextProps {
   children: string;
   className?: string;
