@@ -81,4 +81,19 @@ describe("ExpandableText", () => {
     }
     expect(screen.getByRole("button", { name: /show less/i })).toBeInTheDocument();
   });
+
+  it("toggles via keyboard interaction (Enter and Space)", async () => {
+    const user = userEvent.setup();
+    setElementHeights(200, 100);
+
+    render(<ExpandableText>Keyboard toggle text</ExpandableText>);
+
+    const toggle = screen.getByRole("button", { name: /show more/i });
+    toggle.focus();
+    await user.keyboard("{Enter}");
+    expect(screen.getByRole("button", { name: /show less/i })).toBeInTheDocument();
+
+    await user.keyboard(" ");
+    expect(screen.getByRole("button", { name: /show more/i })).toBeInTheDocument();
+  });
 });

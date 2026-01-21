@@ -24,16 +24,19 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
   const [isTruncated, setIsTruncated] = React.useState(false);
   const textRef = React.useRef<HTMLParagraphElement>(null);
 
+  const checkTruncation = React.useCallback(() => {
+    const el = textRef.current;
+    if (!el || isOpen) return;
+    const isOverflowing = el.scrollHeight > el.clientHeight + 1;
+    React.startTransition(() => {
+      setIsTruncated(isOverflowing);
+    });
+  }, [isOpen]);
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: children updates should re-measure truncation.
   React.useEffect(() => {
     const el = textRef.current;
     if (!el) return;
-
-    const checkTruncation = () => {
-      if (isOpen) return;
-      const isOverflowing = el.scrollHeight > el.clientHeight + 1;
-      setIsTruncated(isOverflowing);
-    };
 
     checkTruncation();
 
@@ -59,7 +62,7 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
         <CollapsibleTrigger asChild>
           <button
             type="button"
-            className="mt-1 inline-flex items-center gap-0.5 text-xs font-medium text-primary hover:text-primary/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="mt-1 inline-flex h-6 items-center gap-0.5 text-xs font-medium text-primary hover:text-primary/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           >
             {isOpen ? "Show less" : "Show more"}
             <ChevronDown
