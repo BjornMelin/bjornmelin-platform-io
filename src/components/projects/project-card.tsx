@@ -1,5 +1,6 @@
 import { BookOpenText, ExternalLink, GitFork, Github, Star } from "lucide-react";
 import Link from "next/link";
+import { ExpandableText } from "@/components/shared/expandable-text";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -63,31 +64,20 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
           </Link>
         </CardTitle>
 
-        <p className="relative mt-2 text-sm text-muted-foreground line-clamp-3">
+        <ExpandableText className="relative mt-2 text-sm text-foreground/80">
           {project.description}
-        </p>
+        </ExpandableText>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-1 tabular-nums">
-            <Star className="h-4 w-4" aria-hidden="true" />
-            {project.stars.toLocaleString("en-US")}
-          </span>
-          <span className="inline-flex items-center gap-1 tabular-nums">
-            <GitFork className="h-4 w-4" aria-hidden="true" />
-            {project.forks.toLocaleString("en-US")}
-          </span>
-          <span className="tabular-nums">Updated {project.updatedLabel}</span>
-        </div>
-
+        {/* Highlights first */}
         {project.highlights?.length ? (
           <ul className="space-y-1 text-sm text-foreground/90">
             {project.highlights.slice(0, 2).map((highlight) => (
               <li key={highlight} className="flex gap-2">
                 <span
                   aria-hidden="true"
-                  className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary/70"
+                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary/70"
                 />
                 <span className="min-w-0">{highlight}</span>
               </li>
@@ -95,6 +85,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
           </ul>
         ) : null}
 
+        {/* Tags middle */}
         <div className="flex items-center gap-2 overflow-hidden">
           <div className="flex min-w-0 items-center gap-2 overflow-hidden">
             {visibleTags.map((tag) => (
@@ -129,6 +120,19 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               </PopoverContent>
             </Popover>
           ) : null}
+        </div>
+
+        {/* Metadata last (smaller) */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1 tabular-nums">
+            <Star className="h-3.5 w-3.5" aria-hidden="true" />
+            {project.stars.toLocaleString("en-US")}
+          </span>
+          <span className="inline-flex items-center gap-1 tabular-nums">
+            <GitFork className="h-3.5 w-3.5" aria-hidden="true" />
+            {project.forks.toLocaleString("en-US")}
+          </span>
+          <span className="tabular-nums">Updated {project.updatedLabel}</span>
         </div>
       </CardContent>
 

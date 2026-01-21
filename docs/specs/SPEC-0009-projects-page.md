@@ -84,14 +84,24 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 - No images.
 - Category and language badges.
 - Title is a link to `primaryUrl`.
-- Stats row: stars, forks, updated label.
-- Footer CTAs:
+- **Description** (improved):
+  - Truncated to 3 lines by default with improved contrast (`text-foreground/80`).
+  - "Show more" / "Show less" toggle appears for truncated content using `Collapsible` component.
+  - Expandable via `ExpandableText` component for accessible reveal/collapse.
+- **Highlights** (bullet points):
+  - Up to 2 key highlights displayed as a bulleted list.
+  - Appears before tags in the visual hierarchy.
+- **Tags**:
+  - First N tags rendered inline.
+  - Remaining tags shown via Popover with "+X more" button.
+- **Metadata section** (repositioned to bottom):
+  - Stars count with icon, forks count with icon, "Updated" label.
+  - Smaller text size (`text-xs`) and compact spacing.
+  - Positioned last for visual hierarchy clarity.
+- **Footer CTAs**:
   - GitHub repo icon-only button (with `aria-label`)
-  - “Open” button to `primaryUrl`
-  - Optional “Live” and “Docs” buttons when provided
-- Tags overflow:
-  - Render first N tags inline.
-  - Remaining tags are shown via Popover.
+  - "Open" button to `primaryUrl`
+  - Optional "Live" and "Docs" buttons when provided
 
 ### URL state contract
 
@@ -170,9 +180,13 @@ UNVERIFIED (score not recorded in original spec).
 
 ## Key files
 
-- `src/app/projects/page.tsx`
-- `src/data/projects.ts`
-- `src/content/projects/projects.generated.json`
+- `src/app/projects/page.tsx` - Projects page
+- `src/components/projects/project-card.tsx` - Project card component
+- `src/components/projects/project-grid.tsx` - Project grid with filtering/sorting
+- `src/components/shared/expandable-text.tsx` - Expandable text component (description toggle)
+- `src/components/ui/collapsible.tsx` - shadcn Collapsible primitive
+- `src/data/projects.ts` - Project data exports
+- `src/content/projects/projects.generated.json` - Canonical project dataset
 
 ## References
 
@@ -181,4 +195,11 @@ UNVERIFIED (score not recorded in original spec).
 
 ## Changelog
 
+- **1.1 (2026-01-20)**: Enhance project card UI:
+  - Add expandable description with "Show more"/"Show less" toggle via `ExpandableText` component
+  - Improve description text contrast using `text-foreground/80` for readability
+  - Add highlights section (up to 2 bullet points) before tags
+  - Reposition metadata (stars/forks) to bottom for improved visual hierarchy
+  - Reduce metadata text size to `text-xs` and icon size to `h-3.5 w-3.5`
+  - Add `Collapsible` component from shadcn/ui for accessible expand/collapse interaction
 - **1.0 (2026-01-19)**: Initial version.
