@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.5.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.4.1...v3.5.0) (2026-01-21)
+
+
+### Features
+
+* **project-card:** enhance project card UI with expandable description and highlights ([451da59](https://github.com/BjornMelin/bjornmelin-platform-io/commit/451da59afa49714e1be7b0a4455f24f25d43a3d2))
+* **project-card:** enhance project card UI with expandable description and highlights ([c5b6241](https://github.com/BjornMelin/bjornmelin-platform-io/commit/c5b62418e60adc4fa62df4f9b9d971991e6f637a))
+
+
+### Bug Fixes
+
+* address PR review comments for project cards and expandable text ([ed68065](https://github.com/BjornMelin/bjornmelin-platform-io/commit/ed6806592bd7ccfd389e00580d1210c3445b3727))
+* **pr:** resolve review feedback for project cards ([fa7f753](https://github.com/BjornMelin/bjornmelin-platform-io/commit/fa7f75317d9e8f37ab6742a961700ef6b894f1e0))
+* **test:** refine ResizeObserver polyfill ([aa9c509](https://github.com/BjornMelin/bjornmelin-platform-io/commit/aa9c5091f95462e207f7051178da38fb3b957950))
+* **test:** suppress biome lint error for ResizeObserver polyfill ([b3cc413](https://github.com/BjornMelin/bjornmelin-platform-io/commit/b3cc413a9a7842bb8d524601731e84d728f9a91f))
+* **ui:** stabilize expandable text interactions ([6ed1731](https://github.com/BjornMelin/bjornmelin-platform-io/commit/6ed17317f494225dcb90c17406ad6f14c9eac936))
+
 ## [3.4.1](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.4.0...v3.4.1) (2026-01-21)
 
 
