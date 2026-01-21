@@ -1,8 +1,8 @@
 ---
 spec: SPEC-0009
 title: Projects page
-version: 1.0.0
-date: 2026-01-19
+version: 1.1.0
+date: 2026-01-20
 owners: ["ai-arch"]
 status: Implemented
 related_requirements: ["FR-202", "FR-203", "NFR-001", "NFR-202"]

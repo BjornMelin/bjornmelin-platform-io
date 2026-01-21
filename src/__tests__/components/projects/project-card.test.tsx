@@ -49,6 +49,27 @@ describe("<ProjectCard />", () => {
     expect(screen.getByText(/updated jan 01, 2026/i)).toBeInTheDocument();
   });
 
+  it("renders up to two highlights when present", () => {
+    const project = buildProjectCardModel({
+      highlights: ["First highlight", "Second highlight", "Third highlight"],
+    });
+
+    render(<ProjectCard project={project} />);
+
+    expect(screen.getByText("First highlight")).toBeInTheDocument();
+    expect(screen.getByText("Second highlight")).toBeInTheDocument();
+    expect(screen.queryByText("Third highlight")).toBeNull();
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+  });
+
+  it("does not render highlights when absent", () => {
+    const project = buildProjectCardModel({ highlights: undefined });
+
+    render(<ProjectCard project={project} />);
+
+    expect(screen.queryByRole("list")).toBeNull();
+  });
+
   it("shows a +N trigger when tags overflow and reveals hidden tags", async () => {
     const user = userEvent.setup();
     const project = buildProjectCardModel({

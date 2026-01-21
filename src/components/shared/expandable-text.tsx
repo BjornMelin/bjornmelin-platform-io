@@ -2,7 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
-import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
 interface ExpandableTextProps {
@@ -19,28 +19,34 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
   const [isTruncated, setIsTruncated] = React.useState(false);
   const textRef = React.useRef<HTMLParagraphElement>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: children is needed to re-measure truncation when text changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: children updates should re-measure truncation.
   React.useEffect(() => {
     const el = textRef.current;
     if (!el) return;
 
     const checkTruncation = () => {
-      setIsTruncated(el.scrollHeight > el.clientHeight + 1);
+      if (isOpen) return;
+      const isOverflowing = el.scrollHeight > el.clientHeight + 1;
+      setIsTruncated(isOverflowing);
     };
 
     checkTruncation();
 
-    const observer = new ResizeObserver(checkTruncation);
+    const observer = new ResizeObserver(() => {
+      checkTruncation();
+    });
     observer.observe(el);
 
     return () => observer.disconnect();
-  }, [children]);
+  }, [children, isOpen]);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <p ref={textRef} className={cn(className, !isOpen && "line-clamp-3")}>
-        {children}
-      </p>
+      <CollapsibleContent asChild forceMount>
+        <p ref={textRef} className={cn(className, !isOpen && "line-clamp-3")}>
+          {children}
+        </p>
+      </CollapsibleContent>
       {isTruncated && (
         <CollapsibleTrigger asChild>
           <button

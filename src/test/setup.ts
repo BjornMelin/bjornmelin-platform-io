@@ -178,8 +178,11 @@ if (typeof window !== "undefined") {
   }
 
   if (!("ResizeObserver" in window)) {
+    // Vitest/jsdom polyfill so components relying on ResizeObserver can measure layout.
     // biome-ignore lint/suspicious/noExplicitAny: polyfill for jsdom
     (window as any).ResizeObserver = class ResizeObserver {
+      // biome-ignore lint/complexity/noUselessConstructor: align with ResizeObserver signature.
+      constructor(_callback?: ResizeObserverCallback) {}
       observe = vi.fn();
       unobserve = vi.fn();
       disconnect = vi.fn();
