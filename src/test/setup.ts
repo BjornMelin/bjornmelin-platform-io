@@ -178,6 +178,7 @@ if (typeof window !== "undefined") {
   }
 
   if (!("ResizeObserver" in window)) {
+    // biome-ignore lint/suspicious/noExplicitAny: polyfill for jsdom
     (window as any).ResizeObserver = class ResizeObserver {
       observe = vi.fn();
       unobserve = vi.fn();
