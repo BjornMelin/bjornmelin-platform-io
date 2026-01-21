@@ -43,7 +43,10 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleContent asChild forceMount>
-        <p ref={textRef} className={cn(className, !isOpen && "line-clamp-3")}>
+        <p
+          ref={textRef}
+          className={cn("min-w-0 break-words", className, !isOpen && "line-clamp-3")}
+        >
           {children}
         </p>
       </CollapsibleContent>

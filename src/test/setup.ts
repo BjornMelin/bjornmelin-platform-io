@@ -177,7 +177,7 @@ if (typeof window !== "undefined") {
     proto.scrollIntoView = () => {};
   }
 
-  if (!("ResizeObserver" in window)) {
+  if (!("ResizeObserver" in (window as unknown as Record<string, unknown>))) {
     // Vitest/jsdom polyfill so components relying on ResizeObserver can measure layout.
     class ResizeObserverPolyfill {
       private callback?: ResizeObserverCallback;
