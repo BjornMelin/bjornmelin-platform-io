@@ -22,9 +22,18 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: children is needed to re-measure truncation when text changes
   React.useEffect(() => {
     const el = textRef.current;
-    if (el) {
+    if (!el) return;
+
+    const checkTruncation = () => {
       setIsTruncated(el.scrollHeight > el.clientHeight + 1);
-    }
+    };
+
+    checkTruncation();
+
+    const observer = new ResizeObserver(checkTruncation);
+    observer.observe(el);
+
+    return () => observer.disconnect();
   }, [children]);
 
   return (

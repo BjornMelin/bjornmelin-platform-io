@@ -99,9 +99,9 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
   - Smaller text size (`text-xs`) and compact spacing.
   - Positioned last for visual hierarchy clarity.
 - **Footer CTAs**:
-  - GitHub repo icon-only button (with `aria-label`)
-  - "Open" button to `primaryUrl`
-  - Optional "Live" and "Docs" buttons when provided
+  - GitHub repo icon-only button (with `aria-label`).
+  - "Open" button to `primaryUrl`.
+  - Optional "Live" and "Docs" buttons when provided.
 
 ### URL state contract
 

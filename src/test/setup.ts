@@ -176,6 +176,14 @@ if (typeof window !== "undefined") {
   if (proto && typeof proto.scrollIntoView !== "function") {
     proto.scrollIntoView = () => {};
   }
+
+  if (!("ResizeObserver" in window)) {
+    (window as any).ResizeObserver = class ResizeObserver {
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    };
+  }
 }
 
 /**
