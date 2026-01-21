@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.4.1](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.4.0...v3.4.1) (2026-01-21)
+
+
+### Bug Fixes
+
+* **ui:** contain theme toggle moon icon within button ([80ff13d](https://github.com/BjornMelin/bjornmelin-platform-io/commit/80ff13d1f1a037999fa38d513e6e963423faa520))
+* **ui:** contain theme toggle moon icon within button ([fa172bb](https://github.com/BjornMelin/bjornmelin-platform-io/commit/fa172bba0b43793ce7ed0c93e372651ce3564837))
+
 ## [3.4.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.3.0...v3.4.0) (2026-01-19)
 
 
