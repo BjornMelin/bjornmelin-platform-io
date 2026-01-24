@@ -24,8 +24,7 @@ export function Hero() {
               Hi, I&apos;m Bjorn Melin
             </h1>
             <p className="mt-6 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl">
-              Senior Data Scientist | Cloud Solutions Architect | 6x AWS Certified | AI/ML & GenAI
-              Innovator
+              Senior Data Scientist | AI Engineer | UC Berkeley MIDS | Researcher | 6x AWS Certified
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link

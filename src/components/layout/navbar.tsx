@@ -3,6 +3,10 @@
  */
 
 import Link from "next/link";
+import * as React from "react";
+
+type MobileNavIcon = "home" | "user" | "briefcase" | "mail";
+
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
@@ -13,6 +17,33 @@ const NavSeparator = () => (
 );
 const navLinkClassName =
   "rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const navItems = [
+  {
+    href: "/",
+    label: "Home",
+    description: "Overview and highlights",
+    icon: "home" as MobileNavIcon,
+  },
+  {
+    href: "/about",
+    label: "About",
+    description: "Bio and expertise",
+    icon: "user" as MobileNavIcon,
+  },
+  {
+    href: "/projects",
+    label: "Projects",
+    description: "GitHub repos, open-source, and experiments",
+    icon: "briefcase" as MobileNavIcon,
+  },
+  {
+    href: "/contact",
+    label: "Contact",
+    description: "Let's build together",
+    icon: "mail" as MobileNavIcon,
+  },
+];
 
 /**
  * Top navigation with links and a mobile menu toggle.
@@ -36,17 +67,14 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-4 md:flex">
-            <Link href="/" className={navLinkClassName}>
-              Home
-            </Link>
-            <NavSeparator />
-            <Link href="/about" className={navLinkClassName}>
-              About
-            </Link>
-            <NavSeparator />
-            <Link href="/projects" className={navLinkClassName}>
-              Projects
-            </Link>
+            {navItems.map((item, index) => (
+              <React.Fragment key={item.href}>
+                <Link href={item.href} className={navLinkClassName}>
+                  {item.label}
+                </Link>
+                {index < navItems.length - 1 ? <NavSeparator /> : null}
+              </React.Fragment>
+            ))}
             {/* <NavSeparator />
             <Link
               href="/blog"
@@ -55,14 +83,10 @@ export function Navbar() {
               Blog
             </Link> */}
             <NavSeparator />
-            <Link href="/contact" className={navLinkClassName}>
-              Contact
-            </Link>
-            <NavSeparator />
             <ThemeToggle />
           </div>
 
-          <MobileNav linkClassName={navLinkClassName}>
+          <MobileNav linkClassName={navLinkClassName} items={navItems}>
             <ThemeToggle />
           </MobileNav>
         </div>

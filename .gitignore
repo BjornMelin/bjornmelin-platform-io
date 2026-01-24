@@ -116,6 +116,7 @@ test-results/
 agent-logs/
 .archive/
 .codex/
+.firecrawl/
 
 # opensrc - source code for packages
 opensrc/
