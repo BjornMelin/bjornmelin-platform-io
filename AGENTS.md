@@ -33,6 +33,13 @@ Infrastructure:
 - TypeScript-first; strict typing preferred. Prefer existing patterns over new abstractions.
 - Formatting/linting: Biome (2 spaces, double quotes, semicolons; see `biome.json`).
 - Naming: React components `PascalCase.tsx`, hooks `useThing.ts`, tests `*.test.ts(x)`.
+- **Characters**: no Unicode em dash U+2014; use `--`. Detect with `rg -n --pcre2 "\\x{2014}" .`.
+- **Promises**: no floating promises; use `await`/`return`/`.catch`/`.then(..., onRejected)`.
+  Detect with `rg -n --pcre2 "Promise\\.resolve\\(\\)" .`.
+- **TSDoc** (TS/TSX): every changed/added export gets `/** ... */` (no blank line).
+  One-sentence summary ending with `.`. Allowed tags only:
+  `@remarks @param @typeParam @returns @throws @example @see @deprecated` (order matters).
+  Use `@param name - desc` and no brace typing. If you add/modify a `throw` in an exported function, add `@throws`.
 
 ## Testing Guidelines
 
