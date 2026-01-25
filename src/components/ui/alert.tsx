@@ -19,6 +19,12 @@ const alertVariants = cva(
   },
 );
 
+/**
+ * Alert container component for displaying important messages.
+ * @param props - Alert props.
+ * @param ref - Forwarded ref to the alert element.
+ * @returns Alert container element.
+ */
 const Alert = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
@@ -27,6 +33,12 @@ const Alert = React.forwardRef<
 ));
 Alert.displayName = "Alert";
 
+/**
+ * Title component for Alert, styled with balanced text.
+ * @param props - Title props.
+ * @param ref - Forwarded ref to the title element.
+ * @returns Alert title element.
+ */
 const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
     <h5
@@ -38,6 +50,12 @@ const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<H
 );
 AlertTitle.displayName = "AlertTitle";
 
+/**
+ * Description component for Alert content.
+ * @param props - Description props.
+ * @param ref - Forwarded ref to the description element.
+ * @returns Alert description element.
+ */
 const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>

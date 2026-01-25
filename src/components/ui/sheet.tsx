@@ -18,8 +18,8 @@ const SheetPortal = SheetPrimitive.Portal;
 /**
  * Backdrop overlay for the sheet.
  *
- * @param props Overlay props.
- * @param ref Forwarded ref to the overlay element.
+ * @param props - Overlay props.
+ * @param ref - Forwarded ref to the overlay element.
  * @returns The overlay element.
  */
 const SheetOverlay = React.forwardRef<
@@ -63,8 +63,8 @@ interface SheetContentProps
 /**
  * Main content container for the sheet.
  *
- * @param props Content props including side and className.
- * @param ref Forwarded ref to the content element.
+ * @param props - Content props including side and className.
+ * @param ref - Forwarded ref to the content element.
  * @returns The content element.
  */
 const SheetContent = React.forwardRef<
@@ -87,11 +87,21 @@ const SheetContent = React.forwardRef<
 ));
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 
+/**
+ * Header container for sheet content.
+ * @param props - HTML div props.
+ * @returns Header element.
+ */
 const SheetHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={cn("flex flex-col gap-2 text-center sm:text-left", className)} {...props} />
 );
 SheetHeader.displayName = "SheetHeader";
 
+/**
+ * Footer container for sheet actions.
+ * @param props - HTML div props.
+ * @returns Footer element.
+ */
 const SheetFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
@@ -103,8 +113,8 @@ SheetFooter.displayName = "SheetFooter";
 /**
  * Heading element for the sheet.
  *
- * @param props Title props.
- * @param ref Forwarded ref to the title element.
+ * @param props - Title props.
+ * @param ref - Forwarded ref to the title element.
  * @returns The title element.
  */
 const SheetTitle = React.forwardRef<
@@ -122,8 +132,8 @@ SheetTitle.displayName = SheetPrimitive.Title.displayName;
 /**
  * Explanatory text element for the sheet.
  *
- * @param props Description props.
- * @param ref Forwarded ref to the description element.
+ * @param props - Description props.
+ * @param ref - Forwarded ref to the description element.
  * @returns The description element.
  */
 const SheetDescription = React.forwardRef<

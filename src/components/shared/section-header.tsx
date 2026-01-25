@@ -1,9 +1,20 @@
+/**
+ * Props for the SectionHeader component.
+ */
 interface SectionHeaderProps {
   title: string;
   description?: string;
   alignment?: "left" | "center" | "right";
 }
 
+/**
+ * Renders a section header with a title and optional description.
+ * @param props - The component props.
+ * @param props.title - The section title text.
+ * @param props.description - Optional description text below the title.
+ * @param props.alignment - Text alignment, defaults to "center".
+ * @returns The rendered section header element.
+ */
 export function SectionHeader({ title, description, alignment = "center" }: SectionHeaderProps) {
   const alignmentClasses = {
     left: "text-left",

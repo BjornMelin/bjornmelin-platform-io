@@ -1,5 +1,9 @@
 import Loader2 from "lucide-react/dist/esm/icons/loader-2";
 
+/**
+ * Full-screen loading spinner displayed during route transitions.
+ * @returns Loading indicator element.
+ */
 export default function Loading() {
   return (
     // biome-ignore lint/a11y/useSemanticElements: role="status" is appropriate for loading feedback.

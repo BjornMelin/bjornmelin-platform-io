@@ -2,6 +2,10 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
+/**
+ * Renders the 404 Not Found page with navigation options.
+ * @returns The JSX element for the not found page.
+ */
 export default function NotFound() {
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-4 text-center">
