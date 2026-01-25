@@ -39,7 +39,7 @@ export function generateMetadata({
       title: fullTitle,
       description: finalDescription,
       url: `${baseUrl}${path}`,
-      siteName: "Bjorn Melin",
+      siteName: PROFILE.name,
       type: "website",
       ...(image && { images: [{ url: image }] }),
     },
