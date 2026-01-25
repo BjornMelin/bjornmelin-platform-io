@@ -4,7 +4,8 @@
  * @fileoverview Interactive projects grid: URL-synced search/filter/sort via nuqs.
  */
 
-import { Search, X } from "lucide-react";
+import Search from "lucide-react/dist/esm/icons/search";
+import X from "lucide-react/dist/esm/icons/x";
 import { useQueryStates } from "nuqs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

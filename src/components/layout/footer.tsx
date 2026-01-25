@@ -1,5 +1,7 @@
 import { GitHubLogoIcon, LinkedInLogoIcon } from "@radix-ui/react-icons";
-import { BookOpenCheck, BookText, Mail } from "lucide-react";
+import BookOpenCheck from "lucide-react/dist/esm/icons/book-open-check";
+import BookText from "lucide-react/dist/esm/icons/book-text";
+import Mail from "lucide-react/dist/esm/icons/mail";
 import Link from "next/link";
 
 /**

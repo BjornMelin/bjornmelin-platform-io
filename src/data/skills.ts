@@ -1,4 +1,7 @@
-import { Brain, Cloud, Code, Terminal } from "lucide-react";
+import Brain from "lucide-react/dist/esm/icons/brain";
+import Cloud from "lucide-react/dist/esm/icons/cloud";
+import Code from "lucide-react/dist/esm/icons/code";
+import Terminal from "lucide-react/dist/esm/icons/terminal";
 import type { ElementType } from "react";
 
 export interface SkillCategory {

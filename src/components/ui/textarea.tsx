@@ -2,6 +2,11 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/** Textarea component that forwards a ref to the underlying element.
+ * @param props - Textarea props.
+ * @param ref - Forwarded textarea ref.
+ * @returns Textarea element.
+ */
 const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"textarea">>(
   ({ className, ...props }, ref) => {
     return (

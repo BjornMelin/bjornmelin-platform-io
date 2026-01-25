@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { PROFILE } from "@/lib/profile";
 
-/** Renders the Hero component. */
+/** Renders the Hero component.
+ * @returns The JSX element for the rendered hero section.
+ */
 export function Hero() {
   return (
     <section className="relative min-h-[90vh] flex items-center">

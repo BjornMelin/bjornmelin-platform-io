@@ -1,11 +1,15 @@
-import { ArrowRight, GraduationCap, Sparkles } from "lucide-react";
+import ArrowRight from "lucide-react/dist/esm/icons/arrow-right";
+import GraduationCap from "lucide-react/dist/esm/icons/graduation-cap";
+import Sparkles from "lucide-react/dist/esm/icons/sparkles";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { skillCategories } from "@/data/skills";
 import { PROFILE } from "@/lib/profile";
 
-/** Renders the About component. */
+/** Renders the About component.
+ * @returns The JSX element for the rendered about section.
+ */
 export function About() {
   return (
     <section

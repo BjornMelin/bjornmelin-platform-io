@@ -1,4 +1,10 @@
-import { Award, Brain, Building2, Cloud, Code, GraduationCap, Sparkles } from "lucide-react";
+import Award from "lucide-react/dist/esm/icons/award";
+import Brain from "lucide-react/dist/esm/icons/brain";
+import Building2 from "lucide-react/dist/esm/icons/building-2";
+import Cloud from "lucide-react/dist/esm/icons/cloud";
+import Code from "lucide-react/dist/esm/icons/code";
+import GraduationCap from "lucide-react/dist/esm/icons/graduation-cap";
+import Sparkles from "lucide-react/dist/esm/icons/sparkles";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -8,7 +14,10 @@ import { experiences, previousExperiences } from "@/data/experience";
 import { hobbies } from "@/data/hobbies";
 import { skillCategories } from "@/data/skills";
 
-/** Renders the AboutDetail component. */
+/** Renders the AboutDetail component.
+ * @remarks No parameters.
+ * @returns The JSX element for the rendered about detail section.
+ */
 export function AboutDetail() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">

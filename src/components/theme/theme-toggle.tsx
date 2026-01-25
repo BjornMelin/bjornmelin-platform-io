@@ -3,7 +3,8 @@
  * Theme changes are handled by ThemeScript via data-theme-set attributes.
  */
 
-import { Moon, Sun } from "lucide-react";
+import Moon from "lucide-react/dist/esm/icons/moon";
+import Sun from "lucide-react/dist/esm/icons/sun";
 
 /**
  * Renders a native details-based theme chooser wired via data-theme-set.

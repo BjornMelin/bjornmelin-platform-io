@@ -24,17 +24,18 @@ export function generateMetadata({
 }: GenerateMetadataProps): Metadata {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bjornmelin.com";
   const fullTitle = title ? `${title} | Bjorn Melin` : `${PROFILE.name} - ${PROFILE.shortTitle}`;
+  const finalDescription = description || PROFILE.summary;
 
   return {
     title: fullTitle,
-    description: description || PROFILE.summary,
+    description: finalDescription,
     metadataBase: new URL(baseUrl),
     alternates: {
       canonical: `${baseUrl}${path}`,
     },
     openGraph: {
       title: fullTitle,
-      description,
+      description: finalDescription,
       url: `${baseUrl}${path}`,
       siteName: "Bjorn Melin",
       type: "website",
@@ -43,7 +44,7 @@ export function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
-      description,
+      description: finalDescription,
       ...(image && { images: [image] }),
     },
     robots: {
