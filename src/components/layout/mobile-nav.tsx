@@ -121,7 +121,7 @@ export function MobileNav({
               >
                 <span
                   className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-md border border-border/60 bg-muted/40 text-muted-foreground transition-colors",
+                    "flex h-11 w-11 items-center justify-center rounded-md border border-border/60 bg-muted/40 text-muted-foreground transition-colors md:h-9 md:w-9",
                     isActive
                       ? "border-border bg-background text-foreground"
                       : "group-hover:text-foreground",

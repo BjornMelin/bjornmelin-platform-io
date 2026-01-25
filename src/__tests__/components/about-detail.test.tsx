@@ -111,7 +111,8 @@ describe("AboutDetail", () => {
     // Text appears multiple times (header + experience section), use getAllByText
     const seniorDataScientistMatches = screen.getAllByText(/senior data scientist/i);
     expect(seniorDataScientistMatches.length).toBeGreaterThan(0);
-    expect(screen.getByText(/cloud solutions architect/i)).toBeInTheDocument();
+    const cloudArchitectMatches = screen.getAllByText(/cloud architect/i);
+    expect(cloudArchitectMatches.length).toBeGreaterThan(0);
   });
 
   it("renders profile image", () => {

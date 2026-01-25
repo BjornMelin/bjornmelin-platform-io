@@ -40,7 +40,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
       <CardHeader className="relative">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"
+          className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-transparent"
         />
         <div className="relative flex flex-wrap items-center gap-2">
           <Badge variant="secondary">{project.category}</Badge>
@@ -59,7 +59,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               "hover:underline underline-offset-4 motion-reduce:transition-none",
             )}
           >
-            <span className="break-words">{project.title}</span>
+            <span className="wrap-break-word">{project.title}</span>
             <ExternalLink className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           </Link>
         </CardTitle>
@@ -97,7 +97,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex h-11 items-center rounded-full border border-border/60 bg-muted/70 px-3 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-8 md:px-2 md:py-0.5"
+                  className="inline-flex h-11 items-center rounded-full border border-border/60 bg-muted/70 px-3 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-8 md:px-2 md:py-0.5"
                   aria-label={`Show ${hiddenCount} more tags`}
                   title="Show all tags"
                 >

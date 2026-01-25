@@ -62,7 +62,7 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
       <CollapsibleContent asChild forceMount>
         <p
           ref={textRef}
-          className={cn("min-w-0 break-words", className, !isOpen && "line-clamp-3")}
+          className={cn("min-w-0 wrap-break-word", className, !isOpen && "line-clamp-3")}
         >
           {children}
         </p>
@@ -71,7 +71,7 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
         <CollapsibleTrigger asChild>
           <button
             type="button"
-            className="mt-1 inline-flex h-11 items-center gap-0.5 text-xs font-medium text-primary hover:text-primary/80 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring md:h-6"
+            className="mt-1 inline-flex h-11 items-center gap-0.5 text-xs font-medium text-primary hover:text-primary/80 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-6"
           >
             {isOpen ? "Show less" : "Show more"}
             <ChevronDown

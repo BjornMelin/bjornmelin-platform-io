@@ -53,14 +53,15 @@ describe("About", () => {
     // Use getAllByText since the text appears in multiple places (header + background card)
     const seniorDataScientistMatches = screen.getAllByText(/senior data scientist/i);
     expect(seniorDataScientistMatches.length).toBeGreaterThan(0);
-    expect(screen.getByText(/aws solutions architect/i)).toBeInTheDocument();
+    const cloudArchitectureMatches = screen.getAllByText(/cloud architecture/i);
+    expect(cloudArchitectureMatches.length).toBeGreaterThan(0);
   });
 
   it("renders the Background card", () => {
     render(<About />);
 
     expect(screen.getByText("Background")).toBeInTheDocument();
-    expect(screen.getByText(/6 aws certifications/i)).toBeInTheDocument();
+    expect(screen.getByText(/6x aws certified/i)).toBeInTheDocument();
   });
 
   it("renders skill categories from data", () => {

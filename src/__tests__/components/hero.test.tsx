@@ -14,7 +14,7 @@ describe("Hero", () => {
     render(<Hero />);
 
     expect(screen.getByText(/senior data scientist/i)).toBeInTheDocument();
-    expect(screen.getByText(/cloud solutions architect/i)).toBeInTheDocument();
+    expect(screen.getByText(/ai engineer/i)).toBeInTheDocument();
     expect(screen.getByText(/6x aws certified/i)).toBeInTheDocument();
   });
 
