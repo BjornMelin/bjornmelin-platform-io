@@ -2,6 +2,27 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.6.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.5.0...v3.6.0) (2026-01-25)
+
+
+### Features
+
+* mobile menu toggle overlay fix ([9826094](https://github.com/BjornMelin/bjornmelin-platform-io/commit/9826094c97b99de958da199e61db5b8259b46457))
+* **navbar:** refactor mobile navigation to use a sheet overlay and update navigation items with icons ([b47efbb](https://github.com/BjornMelin/bjornmelin-platform-io/commit/b47efbb514474b39a3fe5064b4736fbe8da950bf))
+* **profile:** centralize profile data and update metadata across the application ([fcc2954](https://github.com/BjornMelin/bjornmelin-platform-io/commit/fcc29549f00a4477a2df90e46e31bc14a0f405f2))
+
+
+### Bug Fixes
+
+* **pr:** address review comments ([7b28fcf](https://github.com/BjornMelin/bjornmelin-platform-io/commit/7b28fcf21ff5d8881d7f2b6ac98f93a2db56c638))
+* **types:** use public lucide icon type ([51ad77f](https://github.com/BjornMelin/bjornmelin-platform-io/commit/51ad77f3dd405c953033a9cc6d58a2e8216c0c13))
+* **ui:** add missing JSDoc and metadata updates ([4cef3eb](https://github.com/BjornMelin/bjornmelin-platform-io/commit/4cef3eba899861ef5c9eb09e7a0d4ce2f9158065))
+* **ui:** address audit accessibility issues ([51a79e6](https://github.com/BjornMelin/bjornmelin-platform-io/commit/51a79e6c4fdb4d50b35ad190796ba65ef4e8b547))
+* **ui:** address PR review comments ([#257](https://github.com/BjornMelin/bjornmelin-platform-io/issues/257)) ([d8ae67e](https://github.com/BjornMelin/bjornmelin-platform-io/commit/d8ae67e86ff8ad8d1815ea5707d82c9ec4fed447))
+* **ui:** align JSDoc and lucide imports ([5d58d93](https://github.com/BjornMelin/bjornmelin-platform-io/commit/5d58d93d8cf1ea37408fcc7020daaae82730f175))
+* **ui:** close theme menu on outside click ([1dc5614](https://github.com/BjornMelin/bjornmelin-platform-io/commit/1dc5614ee28e9f970d6a7a836afd19fc005ab472))
+* **ui:** prevent theme menu scroll lock ([a631f8d](https://github.com/BjornMelin/bjornmelin-platform-io/commit/a631f8d763282d0650a97ab6def09c431984c8a0))
+
 ## [3.5.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.4.1...v3.5.0) (2026-01-21)
 
 
