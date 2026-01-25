@@ -35,7 +35,9 @@ Infrastructure:
 - Naming: React components `PascalCase.tsx`, hooks `useThing.ts`, tests `*.test.ts(x)`.
 - **Characters**: no Unicode em dash U+2014; use `--`. Detect with `rg -n --pcre2 "\\x{2014}" .`.
 - **Promises**: no floating promises; use `await`/`return`/`.catch`/`.then(..., onRejected)`.
-  Prefer lint rule enforcement (e.g., `@typescript-eslint/no-floating-promises`) for reliable detection. If using `rg`, note that `rg -n --pcre2 "Promise\\.resolve\\(\\)" .` is a narrow heuristic and will miss common cases like `fooAsync();`.
+  Prefer lint rule enforcement (e.g., `@typescript-eslint/no-floating-promises`) for reliable
+  detection. If using `rg`, note that `rg -n --pcre2 "Promise\\.resolve\\(\\)" .` is a narrow
+  heuristic and will miss common cases like `fooAsync();`.
 - **TSDoc** (TS/TSX): every changed/added export gets `/** ... */` (no blank line).
   One-sentence summary ending with `.`. Allowed tags only:
   `@remarks @param @typeParam @returns @throws @example @see @deprecated` (order matters).
