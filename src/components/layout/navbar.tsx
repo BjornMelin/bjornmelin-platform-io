@@ -5,10 +5,10 @@
 import Link from "next/link";
 import * as React from "react";
 
-type MobileNavIcon = "home" | "user" | "briefcase" | "mail";
-
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+
+type MobileNavIcon = "home" | "user" | "briefcase" | "mail";
 
 const NavSeparator = () => (
   <span aria-hidden="true" className="text-muted-foreground/30">

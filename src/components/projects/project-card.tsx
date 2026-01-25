@@ -40,7 +40,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
       <CardHeader className="relative">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-transparent"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"
         />
         <div className="relative flex flex-wrap items-center gap-2">
           <Badge variant="secondary">{project.category}</Badge>
@@ -59,7 +59,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               "hover:underline underline-offset-4 motion-reduce:transition-none",
             )}
           >
-            <span className="wrap-break-word">{project.title}</span>
+            <span className="break-words">{project.title}</span>
             <ExternalLink className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           </Link>
         </CardTitle>
