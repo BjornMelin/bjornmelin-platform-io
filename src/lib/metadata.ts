@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PROFILE } from "@/lib/profile";
 
 interface GenerateMetadataProps {
   title?: string;
@@ -7,6 +8,14 @@ interface GenerateMetadataProps {
   image?: string;
 }
 
+/**
+ * Builds metadata defaults with optional overrides.
+ * @param title - Page title override.
+ * @param description - Page description override.
+ * @param path - Canonical path suffix.
+ * @param image - Social preview image path.
+ * @returns Metadata object for Next.js.
+ */
 export function generateMetadata({
   title,
   description,
@@ -14,15 +23,11 @@ export function generateMetadata({
   image,
 }: GenerateMetadataProps): Metadata {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bjornmelin.com";
-  const fullTitle = title
-    ? `${title} | Bjorn Melin`
-    : "Bjorn Melin - AWS Solutions Architect & Full Stack Developer";
+  const fullTitle = title ? `${title} | Bjorn Melin` : `${PROFILE.name} - ${PROFILE.shortTitle}`;
 
   return {
     title: fullTitle,
-    description:
-      description ||
-      "AWS Solutions Architect and Full Stack Developer specializing in cloud architecture, serverless computing, and modern web development.",
+    description: description || PROFILE.summary,
     metadataBase: new URL(baseUrl),
     alternates: {
       canonical: `${baseUrl}${path}`,

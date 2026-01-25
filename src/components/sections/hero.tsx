@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { PROFILE } from "@/lib/profile";
 
+/** Renders the Hero component. */
 export function Hero() {
   return (
     <section className="relative min-h-[90vh] flex items-center">
@@ -24,7 +26,7 @@ export function Hero() {
               Hi, I&apos;m Bjorn Melin
             </h1>
             <p className="mt-6 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl">
-              Senior Data Scientist | AI Engineer | UC Berkeley MIDS | Researcher | 6x AWS Certified
+              {PROFILE.heroTagline}
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link

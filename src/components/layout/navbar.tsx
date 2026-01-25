@@ -46,9 +46,8 @@ const navItems = [
 ];
 
 /**
- * Top navigation with links and a mobile menu toggle.
- *
- * @returns The site navigation bar.
+ * Renders the site navigation bar.
+ * @returns Navigation bar element.
  */
 export function Navbar() {
   return (

@@ -16,13 +16,11 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Mobile navigation menu using a sheet overlay.
- * Automatically closes on route changes and link clicks.
- *
- * @param props.linkClassName - CSS classes to apply to navigation links.
- * @param props.items - Navigation items to render in the mobile menu.
- * @param props.children - Additional content to render in the menu (e.g., ThemeToggle).
- * @returns The mobile navigation component.
+ * Renders the mobile navigation sheet.
+ * @param linkClassName - CSS classes to apply to navigation links.
+ * @param items - Navigation items to render in the mobile menu.
+ * @param children - Additional content to render in the menu.
+ * @returns Mobile navigation element.
  */
 export function MobileNav({
   linkClassName,

@@ -3,6 +3,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { generateMetadata } from "@/lib/metadata";
+import { PROFILE } from "@/lib/profile";
 
 const toImageUrl = (input: unknown): string | undefined => {
   if (typeof input === "string") {
@@ -34,8 +35,8 @@ describe("generateMetadata", () => {
   it("returns default metadata when optional fields are omitted", () => {
     const metadata = generateMetadata({});
 
-    expect(metadata.title).toBe("Bjorn Melin - AWS Solutions Architect & Full Stack Developer");
-    expect(metadata.description).toContain("AWS Solutions Architect");
+    expect(metadata.title).toBe(`${PROFILE.name} - ${PROFILE.shortTitle}`);
+    expect(metadata.description).toBe(PROFILE.summary);
     expect(metadata.metadataBase?.toString()).toBe("https://bjornmelin.com/");
     expect(metadata.alternates?.canonical).toBe("https://bjornmelin.com");
   });

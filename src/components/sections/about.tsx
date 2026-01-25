@@ -3,12 +3,14 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { skillCategories } from "@/data/skills";
+import { PROFILE } from "@/lib/profile";
 
+/** Renders the About component. */
 export function About() {
   return (
     <section
       aria-labelledby="about-heading"
-      className="py-24 relative overflow-hidden bg-gradient-to-br from-background via-primary/5 to-background"
+      className="py-24 relative overflow-hidden bg-linear-to-br from-background via-primary/5 to-background"
     >
       <div className="absolute inset-0 w-full h-full">
         <div className="absolute right-0 top-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
@@ -24,10 +26,7 @@ export function About() {
           <h2 id="about-heading" className="text-4xl md:text-5xl font-bold mb-6">
             Crafting AI Solutions & <span className="text-primary">Cloud Architecture</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Senior Data Scientist and AWS Solutions Architect specializing in AI/ML innovations and
-            scalable cloud architecture
-          </p>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{PROFILE.aboutLead}</p>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8 items-start mb-16">
@@ -38,12 +37,7 @@ export function About() {
               </div>
               <h3 className="text-2xl font-semibold">Background</h3>
             </div>
-            <p className="text-muted-foreground leading-relaxed">
-              As a Senior Data Scientist and Cloud Solutions Architect with 6 AWS certifications, I
-              specialize in developing cutting-edge AI/ML solutions and GenAI innovations. My
-              expertise spans cloud architecture, machine learning, and building scalable AI
-              solutions that drive business value.
-            </p>
+            <p className="text-muted-foreground leading-relaxed">{PROFILE.aboutBody}</p>
           </Card>
 
           <div className="lg:col-span-3 grid sm:grid-cols-2 gap-6">
