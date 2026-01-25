@@ -40,6 +40,11 @@ Infrastructure:
   One-sentence summary ending with `.`. Allowed tags only:
   `@remarks @param @typeParam @returns @throws @example @see @deprecated` (order matters).
   Use `@param name - desc` and no brace typing. If you add/modify a `throw` in an exported function, add `@throws`.
+- **NEVER use barrel imports.** Don’t import from package entrypoints or `index` re-exports (e.g., `from 'lucide-react'`
+  , `from '@mui/material'`).
+- **Use direct paths only.** Import the specific module/file you need (e.g., `lucide-react/dist/esm/icons/x`, `@mui/material/Button`).
+- **Exception (Next.js):** Barrel imports are allowed only for packages listed in `experimental.optimizePackageImports`
+  (Next rewrites them to direct imports).
 
 ## Testing Guidelines
 
