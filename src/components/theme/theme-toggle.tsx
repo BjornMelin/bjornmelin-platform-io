@@ -20,7 +20,7 @@ import {
  */
 export function ThemeToggle() {
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
