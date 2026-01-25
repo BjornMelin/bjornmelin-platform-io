@@ -27,7 +27,10 @@ export function About() {
             <Sparkles className="w-3 h-3 mr-2 text-primary" aria-hidden="true" />
             About Me
           </Badge>
-          <h2 id="about-heading" className="text-4xl md:text-5xl font-bold mb-6">
+          <h2
+            id="about-heading"
+            className="scroll-mt-24 text-balance text-4xl font-bold md:text-5xl mb-6"
+          >
             Crafting AI Solutions & <span className="text-primary">Cloud Architecture</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{PROFILE.aboutLead}</p>
@@ -39,7 +42,7 @@ export function About() {
               <div className={`p-2 rounded-lg bg-primary/10`}>
                 <GraduationCap className="w-6 h-6 text-primary" aria-hidden="true" />
               </div>
-              <h3 className="text-2xl font-semibold">Background</h3>
+              <h3 className="text-balance text-2xl font-semibold">Background</h3>
             </div>
             <p className="text-muted-foreground leading-relaxed">{PROFILE.aboutBody}</p>
           </Card>
@@ -51,7 +54,7 @@ export function About() {
                   <div className={`p-2 rounded-lg ${category.color}`}>
                     <category.Icon className="w-6 h-6" aria-hidden="true" />
                   </div>
-                  <h3 className="text-xl font-semibold">{category.name}</h3>
+                  <h3 className="text-balance text-xl font-semibold">{category.name}</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {category.skills.map((skill) => (

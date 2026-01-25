@@ -25,7 +25,7 @@ export default function ProjectsPage() {
         </p>
       </div>
       <div className="mt-16 mx-auto max-w-6xl">
-        <h2 className="sr-only">Project List</h2>
+        <h2 className="sr-only text-balance">Project List</h2>
         <ProjectGrid
           projects={projectsData}
           categories={projectCategories}

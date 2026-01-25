@@ -16,7 +16,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand and Copyright */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Portfolio</h2>
+            <h2 className="text-balance text-lg font-semibold">Portfolio</h2>
             <p className="text-sm text-foreground/60">
               © {new Date().getFullYear()} Bjorn Melin. All rights reserved.
             </p>
@@ -24,7 +24,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Quick Links</h2>
+            <h2 className="text-balance text-lg font-semibold">Quick Links</h2>
             <nav aria-label="Footer" className="flex flex-col gap-2">
               <Link href="/about" className="text-sm text-foreground/60 hover:text-foreground">
                 About
@@ -46,7 +46,7 @@ export function Footer() {
 
           {/* Social Links */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Connect</h2>
+            <h2 className="text-balance text-lg font-semibold">Connect</h2>
             <div className="flex gap-4">
               <a
                 href="https://github.com/bjornmelin"

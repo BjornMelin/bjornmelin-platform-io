@@ -24,7 +24,7 @@ export function Hero() {
           </div>
 
           <div className="flex flex-col items-center">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+            <h1 className="text-balance text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
               Hi, I&apos;m Bjorn Melin
             </h1>
             <p className="mt-6 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl">

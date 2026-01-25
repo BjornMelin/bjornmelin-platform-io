@@ -36,11 +36,11 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-          <h2 className="text-2xl font-bold">Something went wrong</h2>
+          <h2 className="text-balance text-2xl font-bold">Something Went Wrong</h2>
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Refresh Page
           </button>
