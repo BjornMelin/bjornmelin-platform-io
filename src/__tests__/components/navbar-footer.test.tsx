@@ -21,14 +21,14 @@ describe("Navbar/Footer", () => {
     render(<Navbar />);
 
     const toggle = screen.getByLabelText(/toggle menu/i);
-    const details = toggle.closest("details");
-    expect(details).not.toHaveAttribute("open");
+    expect(screen.queryByTestId("mobile-nav")).not.toBeInTheDocument();
 
     await user.click(toggle);
-    expect(details).toHaveAttribute("open");
+    expect(await screen.findByTestId("mobile-nav")).toBeInTheDocument();
 
-    await user.click(toggle);
-    expect(details).not.toHaveAttribute("open");
+    const close = screen.getByRole("button", { name: /close/i });
+    await user.click(close);
+    expect(screen.queryByTestId("mobile-nav")).not.toBeInTheDocument();
   });
 
   it("renders Footer with copyright text", () => {

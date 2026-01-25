@@ -1,4 +1,8 @@
-import { BookOpenText, ExternalLink, GitFork, Github, Star } from "lucide-react";
+import BookOpenText from "lucide-react/dist/esm/icons/book-open-text";
+import ExternalLink from "lucide-react/dist/esm/icons/external-link";
+import GitFork from "lucide-react/dist/esm/icons/git-fork";
+import Github from "lucide-react/dist/esm/icons/github";
+import Star from "lucide-react/dist/esm/icons/star";
 import Link from "next/link";
 import { ExpandableText } from "@/components/shared/expandable-text";
 import { TechBadge } from "@/components/shared/tech-badge";
@@ -97,7 +101,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex h-11 items-center rounded-full border border-border/60 bg-muted/70 px-3 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-8 md:px-2 md:py-0.5"
+                  className="inline-flex h-11 items-center rounded-full border border-border/60 bg-muted/70 px-3 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-8 md:px-2 md:py-0.5"
                   aria-label={`Show ${hiddenCount} more tags`}
                   title="Show all tags"
                 >

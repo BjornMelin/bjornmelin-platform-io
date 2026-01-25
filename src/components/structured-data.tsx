@@ -1,24 +1,20 @@
-/**
- * @fileoverview Structured data helpers and component for rendering JSON-LD
- * schemas for Person and WebSite entities.
- */
+/** Structured data helpers and component for JSON-LD schemas. */
 import { createHash } from "node:crypto";
 import type React from "react";
+import { PROFILE } from "@/lib/profile";
 
 /**
  * Builds a JSON-LD Person schema for the portfolio owner.
- *
  * @returns JSON-LD compliant schema object with basic person details.
  */
 export function generatePersonSchema(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Bjorn Melin",
+    name: PROFILE.name,
     url: "https://bjornmelin.com",
-    jobTitle: "Senior Data Scientist & Cloud Solutions Architect",
-    description:
-      "Senior Data Scientist and Cloud Solutions Architect specializing in neuro-symbolic AI, deep learning, and MLOps. AWS Machine Learning Engineer and 6x AWS Certified professional with expertise in cloud architecture, AI engineering, and modern development practices.",
+    jobTitle: PROFILE.shortTitle,
+    description: PROFILE.summary,
     sameAs: [
       "https://github.com/bjornmelin",
       "https://linkedin.com/in/bjornmelin",
@@ -51,36 +47,30 @@ export function generatePersonSchema(): Record<string, unknown> {
 
 /**
  * Builds a JSON-LD WebSite schema for the portfolio.
- *
  * @returns JSON-LD compliant WebSite schema object.
  */
 export function generateWebsiteSchema(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Bjorn Melin - Portfolio",
+    name: `${PROFILE.name} - Portfolio`,
     url: "https://bjornmelin.com",
-    description:
-      "Personal portfolio of Bjorn Melin, Senior Data Scientist and AWS Machine Learning Engineer specializing in neuro-symbolic AI, deep learning, and cloud architecture.",
+    description: PROFILE.websiteSummary,
     author: {
       "@type": "Person",
-      name: "Bjorn Melin",
+      name: PROFILE.name,
     },
   };
 }
 
-/**
- * Props for the StructuredData component.
- */
+/** Props for the StructuredData component. */
 interface StructuredDataProps {
   type: "person" | "website" | "both";
 }
 
 /**
- * Creates a stable React key from a JSON-LD schema by hashing its contents and
- * prefixing with the schema's @type and name when present.
- *
- * @param schema Arbitrary JSON-LD schema.
+ * Creates a stable React key for a JSON-LD schema.
+ * @param schema - JSON-LD schema object.
  * @returns Stable key string safe for React keys.
  */
 export const createSchemaKey = (schema: Record<string, unknown>): string => {
@@ -93,10 +83,9 @@ export const createSchemaKey = (schema: Record<string, unknown>): string => {
 };
 
 /**
- * Renders one or both JSON-LD schemas as <script type="application/ld+json">.
- *
- * @param type Controls which schemas are emitted.
- * @returns React fragment containing the JSON-LD script elements.
+ * Renders JSON-LD schemas based on the requested type.
+ * @param type - Controls which schemas are emitted.
+ * @returns React fragment containing JSON-LD script elements.
  */
 export default function StructuredData({ type }: StructuredDataProps): React.ReactElement {
   const schemas = [];

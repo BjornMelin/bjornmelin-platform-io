@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppShell } from "@/components/layout/app-shell";
 import StructuredData from "@/components/structured-data";
 import { ThemeScript } from "@/components/theme";
+import { PROFILE } from "@/lib/profile";
 import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -11,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 /** Enforces static rendering for the root layout. */
 export const dynamic = "error";
 
-/** Default viewport configuration for the application. */
+/** Defines the default viewport configuration. */
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -21,24 +22,22 @@ export const viewport: Viewport = {
   ],
 };
 
-/** Site-wide metadata for SEO and social sharing. */
+/** Defines site-wide metadata for SEO and social sharing. */
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "https://bjornmelin.com"),
   title: {
-    template: "%s | Bjorn Melin",
-    default: "Bjorn Melin - Senior Data Scientist & Cloud Solutions Architect",
+    template: `%s | ${PROFILE.name}`,
+    default: `${PROFILE.name} - ${PROFILE.shortTitle}`,
   },
-  description:
-    "Senior Data Scientist and Cloud Solutions Architect specializing in AI/ML, GenAI innovation, cloud architecture, and modern development.",
+  description: PROFILE.summary,
   icons: {
     icon: "/headshot/headshot-2024.jpg",
     apple: "/headshot/headshot-2024.jpg",
   },
   openGraph: {
     type: "website",
-    title: "Bjorn Melin - Senior Data Scientist & Cloud Solutions Architect",
-    description:
-      "Senior Data Scientist and Cloud Solutions Architect specializing in AI/ML, GenAI innovation, cloud architecture, and modern development.",
+    title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
+    description: PROFILE.summary,
     images: [
       {
         url: "/screenshots/hero-preview.png",
@@ -50,61 +49,17 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bjorn Melin - Senior Data Scientist & Cloud Solutions Architect",
-    description:
-      "Senior Data Scientist and Cloud Solutions Architect specializing in AI/ML, GenAI innovation, cloud architecture, and modern development.",
+    title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
+    description: PROFILE.summary,
     images: ["/screenshots/hero-preview.png"],
   },
-  keywords: [
-    "Neuro-symbolic AI",
-    "Deep Learning",
-    "Reinforcement Learning",
-    "Machine Learning",
-    "AWS Machine Learning Engineer",
-    "AWS Solutions Architect",
-    "AWS SysOps Administrator",
-    "AWS Developer",
-    "AWS AI Practitioner",
-    "Cloud Architecture",
-    "MLOps",
-    "Data Science",
-    "Python",
-    "Java",
-    "TypeScript",
-    "FastAPI",
-    "Next.js",
-    "React",
-    "Neural Networks",
-    "TensorFlow",
-    "PyTorch",
-    "LangChain",
-    "CloudFormation",
-    "Kubernetes",
-    "Docker",
-    "CI/CD",
-    "GitHub Actions",
-    "Vector Databases",
-    "Statistical Modeling",
-    "Clustering Algorithms",
-    "PCA",
-    "Feature Engineering",
-    "Databricks",
-    "AWS SageMaker",
-    "Generative AI",
-    "Large Language Models",
-    "Serverless",
-    "Innovation",
-    "Node.js",
-    "Full-Stack Development",
-    "Cloud Computing",
-  ],
+  keywords: PROFILE.keywords,
   authors: [{ name: "Bjorn Melin" }],
   creator: "Bjorn Melin",
 };
 
 /**
- * Root layout wrapper with providers and shared shell.
- *
+ * Renders the root layout with providers and shell.
  * @param children - Page content to render inside the app shell.
  * @returns Root layout element.
  */

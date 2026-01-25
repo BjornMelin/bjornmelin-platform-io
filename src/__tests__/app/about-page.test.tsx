@@ -13,6 +13,7 @@ vi.mock("@/components/sections/about-detail", () => ({
 
 // Import after mocks
 import AboutPage, { metadata } from "@/app/about/page";
+import { PROFILE } from "@/lib/profile";
 
 describe("AboutPage", () => {
   it("renders AboutDetail component", () => {
@@ -24,11 +25,10 @@ describe("AboutPage", () => {
 
 describe("AboutPage metadata", () => {
   it("exports metadata with correct title", () => {
-    expect(metadata.title).toBe("About - Bjorn Melin | Senior Data Scientist & Cloud Architect");
+    expect(metadata.title).toBe(`About - ${PROFILE.name} | ${PROFILE.shortTitle}`);
   });
 
   it("exports metadata with description mentioning credentials", () => {
-    expect(metadata.description).toContain("Senior Data Scientist");
-    expect(metadata.description).toContain("AWS certifications");
+    expect(metadata.description).toBe(PROFILE.summary);
   });
 });

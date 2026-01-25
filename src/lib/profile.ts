@@ -1,0 +1,63 @@
+import { type Profile, ProfileSchema } from "@/lib/schemas/profile";
+
+/** Canonical profile content used across metadata and UI copy. */
+export const PROFILE: Profile = ProfileSchema.parse({
+  name: "Bjorn Melin",
+  heroTagline:
+    "Senior Data Scientist | AI Engineer | UC Berkeley MIDS | Researcher | 6x AWS Certified",
+  shortTitle: "Senior Data Scientist & AI Engineer",
+  summary:
+    "Senior Data Scientist and AI Engineer, current UC Berkeley MIDS student and researcher. 6x AWS Certified with experience in cloud architecture and MLOps.",
+  aboutLead:
+    "Senior Data Scientist and AI Engineer focused on AI/ML, GenAI systems, and applied research.",
+  aboutBody:
+    "Senior Data Scientist and AI Engineer, current UC Berkeley MIDS student, specializing in AI/ML, GenAI, and applied research. 6x AWS Certified with experience building scalable AI systems, cloud architecture, and MLOps workflows.",
+  websiteSummary:
+    "Personal portfolio of Bjorn Melin, Senior Data Scientist and AI Engineer, current UC Berkeley MIDS student and researcher with experience in cloud architecture and MLOps.",
+  keywords: [
+    "Neuro-symbolic AI",
+    "Deep Learning",
+    "Reinforcement Learning",
+    "Machine Learning",
+    "AI Engineer",
+    "Researcher",
+    "UC Berkeley MIDS",
+    "AWS Machine Learning Engineer",
+    "AWS Solutions Architect",
+    "AWS SysOps Administrator",
+    "AWS Developer",
+    "AWS AI Practitioner",
+    "Cloud Architecture",
+    "MLOps",
+    "Data Science",
+    "Python",
+    "Java",
+    "TypeScript",
+    "FastAPI",
+    "Next.js",
+    "React",
+    "Neural Networks",
+    "TensorFlow",
+    "PyTorch",
+    "LangChain",
+    "CloudFormation",
+    "Kubernetes",
+    "Docker",
+    "CI/CD",
+    "GitHub Actions",
+    "Vector Databases",
+    "Statistical Modeling",
+    "Clustering Algorithms",
+    "PCA",
+    "Feature Engineering",
+    "Databricks",
+    "AWS SageMaker",
+    "Generative AI",
+    "Large Language Models",
+    "Serverless",
+    "Innovation",
+    "Node.js",
+    "Full-Stack Development",
+    "Cloud Computing",
+  ],
+});

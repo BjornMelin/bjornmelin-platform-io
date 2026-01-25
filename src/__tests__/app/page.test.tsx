@@ -28,6 +28,7 @@ vi.mock("@/components/sections/featured-projects", () => ({
 
 // Import after mocks
 import Home, { metadata } from "@/app/page";
+import { PROFILE } from "@/lib/profile";
 
 describe("Home page", () => {
   it("renders Hero section", () => {
@@ -73,12 +74,11 @@ describe("Home page", () => {
 
 describe("Home page metadata", () => {
   it("exports metadata with correct title", () => {
-    expect(metadata.title).toBe("Bjorn Melin - Senior Data Scientist & Cloud Solutions Architect");
+    expect(metadata.title).toBe(`${PROFILE.name} - ${PROFILE.shortTitle}`);
   });
 
   it("exports metadata with description mentioning key skills", () => {
-    expect(metadata.description).toContain("AI/ML");
-    expect(metadata.description).toContain("AWS Certified");
+    expect(metadata.description).toBe(PROFILE.summary);
   });
 
   it("exports metadata with openGraph configuration", () => {

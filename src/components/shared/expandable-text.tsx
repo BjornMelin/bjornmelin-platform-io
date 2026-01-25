@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import ChevronDown from "lucide-react/dist/esm/icons/chevron-down";
 import * as React from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
@@ -71,9 +71,9 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
         <CollapsibleTrigger asChild>
           <button
             type="button"
-            className="mt-1 inline-flex h-11 items-center gap-0.5 text-xs font-medium text-primary hover:text-primary/80 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring md:h-6"
+            className="mt-1 inline-flex h-11 items-center gap-0.5 text-xs font-medium text-primary hover:text-primary/80 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-6"
           >
-            {isOpen ? "Show less" : "Show more"}
+            {isOpen ? "Show Less" : "Show More"}
             <ChevronDown
               className={cn(
                 "h-3 w-3 transition-transform motion-reduce:transition-none",

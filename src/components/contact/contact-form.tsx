@@ -9,7 +9,9 @@
  */
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
+import CheckCircle2 from "lucide-react/dist/esm/icons/check-circle-2";
+import Loader2 from "lucide-react/dist/esm/icons/loader-2";
 import { useId, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -184,7 +186,10 @@ export function ContactForm() {
           aria-live="polite"
           className="border-emerald-200/70 bg-emerald-50/90 text-emerald-950 shadow-xs dark:border-emerald-900/60 dark:bg-emerald-950/35 dark:text-emerald-50"
         >
-          <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />
+          <CheckCircle2
+            className="h-4 w-4 text-emerald-600 dark:text-emerald-300"
+            aria-hidden="true"
+          />
           <AlertTitle>Message Sent Successfully!</AlertTitle>
           <AlertDescription className="text-emerald-800/90 dark:text-emerald-200/90">
             Thank you for your message. I&apos;ll get back to you as soon as possible.
@@ -194,7 +199,7 @@ export function ContactForm() {
 
       {formStatus === "error" && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="h-4 w-4" aria-hidden="true" />
           <AlertTitle>Failed to Send Message</AlertTitle>
           <AlertDescription>
             Please try again. If the problem persists, reach out via the contact form later or send
@@ -248,7 +253,7 @@ export function ContactForm() {
             className={errors.name ? "border-red-500" : ""}
           />
           {errors.name && (
-            <p id={`${fieldIds.name}-error`} className="text-sm text-red-500">
+            <p id={`${fieldIds.name}-error`} className="text-sm text-red-500" aria-live="polite">
               {errors.name.message}
             </p>
           )}
@@ -270,7 +275,7 @@ export function ContactForm() {
             className={errors.email ? "border-red-500" : ""}
           />
           {errors.email && (
-            <p id={`${fieldIds.email}-error`} className="text-sm text-red-500">
+            <p id={`${fieldIds.email}-error`} className="text-sm text-red-500" aria-live="polite">
               {errors.email.message}
             </p>
           )}
@@ -290,7 +295,7 @@ export function ContactForm() {
             className={errors.message ? "border-red-500" : ""}
           />
           {errors.message && (
-            <p id={`${fieldIds.message}-error`} className="text-sm text-red-500">
+            <p id={`${fieldIds.message}-error`} className="text-sm text-red-500" aria-live="polite">
               {errors.message.message}
             </p>
           )}
@@ -299,7 +304,7 @@ export function ContactForm() {
         <Button type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
               Sending…
             </>
           ) : (

@@ -33,6 +33,24 @@ Infrastructure:
 - TypeScript-first; strict typing preferred. Prefer existing patterns over new abstractions.
 - Formatting/linting: Biome (2 spaces, double quotes, semicolons; see `biome.json`).
 - Naming: React components `PascalCase.tsx`, hooks `useThing.ts`, tests `*.test.ts(x)`.
+- **Characters**: no Unicode em dash U+2014; use `--`. Detect with `rg -n --pcre2 "\\x{2014}" .`.
+- **Promises**: no floating promises; use `await`/`return`/`.catch`/`.then(..., onRejected)`.
+  Prefer lint rule enforcement (e.g., `@typescript-eslint/no-floating-promises`) for reliable
+  detection. If using `rg`, note that `rg -n --pcre2 "Promise\\.resolve\\(\\)" .` is a narrow
+  heuristic and will miss common cases like `fooAsync();`.
+- **TSDoc** (TS/TSX): every changed/added export gets `/** ... */` (no blank line).
+  One-sentence summary ending with `.`. Allowed tags only:
+  `@remarks @param @typeParam @returns @throws @example @see @deprecated` (order matters).
+  Use `@param name - desc` and no brace typing. If you add/modify a `throw` in an exported function, add
+  `@throws ErrorType - condition` (e.g., `@throws Error - when ...`).
+- **NEVER use barrel imports** (importing from a package's main entrypoint or `index` file that re-exports many modules).
+  Don’t import from package entrypoints or `index` re-exports (e.g., `from 'lucide-react'`,
+  `from '@mui/material'`).
+- **Use direct paths only.** Import the specific module/file you need (e.g., `lucide-react/dist/esm/icons/x`, `@mui/material/Button`).
+- **Exception (Next.js):** Barrel imports are allowed only for packages listed in `experimental.optimizePackageImports`
+  (Next rewrites them to direct imports).
+- **Lucide icons:** use direct `lucide-react/dist/esm/icons/*` imports. A typings shim lives at `src/types/lucide-react-icons.d.ts`
+  to support these paths.
 
 ## Testing Guidelines
 

@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { About } from "@/components/sections/about";
 import { FeaturedProjects } from "@/components/sections/featured-projects";
 import { Hero } from "@/components/sections/hero";
+import { PROFILE } from "@/lib/profile";
 
+/** Page metadata definition. */
 export const metadata: Metadata = {
-  title: "Bjorn Melin - Senior Data Scientist & Cloud Solutions Architect",
-  description:
-    "Portfolio of Bjorn Melin, a Senior Data Scientist and Cloud Solutions Architect specializing in AI/ML solutions, GenAI innovation, and cloud-native architectures. 6x AWS Certified professional with expertise in machine learning and scalable cloud solutions.",
+  title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
+  description: PROFILE.summary,
   openGraph: {
     type: "website",
-    title: "Bjorn Melin - Senior Data Scientist & Cloud Solutions Architect",
-    description:
-      "Portfolio of Bjorn Melin, a Senior Data Scientist and Cloud Solutions Architect specializing in AI/ML solutions, GenAI innovation, and cloud-native architectures.",
+    title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
+    description: PROFILE.summary,
     images: [
       {
         url: "/screenshots/hero-preview.png",
@@ -23,13 +23,16 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bjorn Melin - Senior Data Scientist & Cloud Solutions Architect",
-    description:
-      "Portfolio of Bjorn Melin, a Senior Data Scientist and Cloud Solutions Architect specializing in AI/ML solutions, GenAI innovation, and cloud-native architectures.",
+    title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
+    description: PROFILE.summary,
     images: ["/screenshots/hero-preview.png"],
   },
 };
 
+/**
+ * Renders the home page.
+ * @returns Home page element.
+ */
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">

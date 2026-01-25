@@ -1,7 +1,7 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import X from "lucide-react/dist/esm/icons/x";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -17,8 +17,8 @@ const DialogClose = DialogPrimitive.Close;
 /**
  * Modal overlay element that dims the page.
  *
- * @param props Overlay props.
- * @param ref Forwarded ref to the overlay element.
+ * @param props - Overlay props.
+ * @param ref - Forwarded ref to the overlay element.
  * @returns Dialog overlay element.
  */
 const DialogOverlay = React.forwardRef<
@@ -39,8 +39,8 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 /**
  * Main content container for the dialog.
  *
- * @param props Content props.
- * @param ref Forwarded ref to the content element.
+ * @param props - Content props.
+ * @param ref - Forwarded ref to the content element.
  * @returns Dialog content element.
  */
 const DialogContent = React.forwardRef<
@@ -58,7 +58,10 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+      <DialogPrimitive.Close
+        aria-label="Close"
+        className="absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+      >
         <X className="h-4 w-4" aria-hidden="true" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
@@ -67,11 +70,21 @@ const DialogContent = React.forwardRef<
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
+/**
+ * Header container for dialog content.
+ * @param props - HTML div props.
+ * @returns Header element.
+ */
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={cn("flex flex-col gap-1.5 text-center sm:text-left", className)} {...props} />
 );
 DialogHeader.displayName = "DialogHeader";
 
+/**
+ * Footer container for dialog actions.
+ * @param props - HTML div props.
+ * @returns Footer element.
+ */
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
@@ -83,8 +96,8 @@ DialogFooter.displayName = "DialogFooter";
 /**
  * Heading element for the dialog.
  *
- * @param props Title props.
- * @param ref Forwarded ref to the title element.
+ * @param props - Title props.
+ * @param ref - Forwarded ref to the title element.
  * @returns Dialog title element.
  */
 const DialogTitle = React.forwardRef<
@@ -102,8 +115,8 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
 /**
  * Explanatory text element for the dialog.
  *
- * @param props Description props.
- * @param ref Forwarded ref to the description element.
+ * @param props - Description props.
+ * @param ref - Forwarded ref to the description element.
  * @returns Dialog description element.
  */
 const DialogDescription = React.forwardRef<

@@ -25,6 +25,7 @@ import RootLayout, { metadata, viewport } from "@/app/layout";
 import { AppShell } from "@/components/layout/app-shell";
 import StructuredData from "@/components/structured-data";
 import { ThemeScript } from "@/components/theme";
+import { PROFILE } from "@/lib/profile";
 import { walkReactTree } from "@/test/helpers";
 
 describe("<AppShell />", () => {
@@ -80,13 +81,12 @@ describe("RootLayout metadata", () => {
   it("has correct title template", () => {
     expect(metadata.title).toEqual({
       template: "%s | Bjorn Melin",
-      default: "Bjorn Melin - Senior Data Scientist & Cloud Solutions Architect",
+      default: `${PROFILE.name} - ${PROFILE.shortTitle}`,
     });
   });
 
   it("has description", () => {
-    expect(metadata.description).toContain("Senior Data Scientist");
-    expect(metadata.description).toContain("Cloud Solutions Architect");
+    expect(metadata.description).toBe(PROFILE.summary);
   });
 
   it("has openGraph configuration", () => {

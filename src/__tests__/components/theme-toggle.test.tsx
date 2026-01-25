@@ -10,14 +10,19 @@ describe("<ThemeToggle />", () => {
     expect(screen.getByText(/toggle theme/i)).toBeInTheDocument();
   });
 
-  it("renders theme options with data attributes", () => {
+  it("renders theme options with data attributes", async () => {
+    const user = userEvent.setup();
     render(<ThemeToggle />);
-    expect(screen.getByRole("button", { name: /light/i })).toHaveAttribute(
+    await user.click(screen.getByRole("button", { name: /toggle theme/i }));
+    expect(screen.getByRole("menuitem", { name: /light/i })).toHaveAttribute(
       "data-theme-set",
       "light",
     );
-    expect(screen.getByRole("button", { name: /dark/i })).toHaveAttribute("data-theme-set", "dark");
-    expect(screen.getByRole("button", { name: /system/i })).toHaveAttribute(
+    expect(screen.getByRole("menuitem", { name: /dark/i })).toHaveAttribute(
+      "data-theme-set",
+      "dark",
+    );
+    expect(screen.getByRole("menuitem", { name: /system/i })).toHaveAttribute(
       "data-theme-set",
       "system",
     );
@@ -27,14 +32,10 @@ describe("<ThemeToggle />", () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
 
-    const summary = screen.getByText(/toggle theme/i).closest("summary");
-    expect(summary).not.toBeNull();
+    const trigger = screen.getByRole("button", { name: /toggle theme/i });
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 
-    const details = summary?.closest("details");
-    expect(details).not.toBeNull();
-    expect(details).not.toHaveAttribute("open");
-
-    await user.click(summary as HTMLElement);
-    expect(details).toHaveAttribute("open");
+    await user.click(trigger);
+    expect(screen.getByRole("menu")).toBeInTheDocument();
   });
 });

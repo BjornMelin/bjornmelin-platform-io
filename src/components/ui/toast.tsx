@@ -2,13 +2,19 @@
 
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva, type VariantProps } from "class-variance-authority";
-import { X } from "lucide-react";
+import X from "lucide-react/dist/esm/icons/x";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/** Provider for toast state and configuration. */
 const ToastProvider = ToastPrimitives.Provider;
 
+/** Toast viewport container used to position notifications.
+ * @param props - Viewport props.
+ * @param ref - Forwarded viewport ref.
+ * @returns Toast viewport element.
+ */
 const ToastViewport = React.forwardRef<
   React.ComponentRef<typeof ToastPrimitives.Viewport>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
@@ -42,6 +48,11 @@ const toastVariants = cva(
   },
 );
 
+/** Toast root component for rendering a notification.
+ * @param props - Toast props.
+ * @param ref - Forwarded toast ref.
+ * @returns Toast element.
+ */
 const Toast = React.forwardRef<
   React.ComponentRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & VariantProps<typeof toastVariants>
@@ -56,6 +67,11 @@ const Toast = React.forwardRef<
 });
 Toast.displayName = ToastPrimitives.Root.displayName;
 
+/** Action element for a toast notification.
+ * @param props - Toast action props.
+ * @param ref - Forwarded action ref.
+ * @returns Toast action element.
+ */
 const ToastAction = React.forwardRef<
   React.ComponentRef<typeof ToastPrimitives.Action>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action>
@@ -63,7 +79,7 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-border bg-transparent px-3 text-sm font-medium transition-colors hover:bg-secondary focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 hover:group-[.destructive]:border-destructive/30 hover:group-[.destructive]:bg-destructive hover:group-[.destructive]:text-destructive-foreground focus-visible:group-[.destructive]:ring-destructive",
+      "inline-flex h-11 shrink-0 items-center justify-center rounded-md border border-border bg-transparent px-3 text-sm font-medium transition-colors hover:bg-secondary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 hover:group-[.destructive]:border-destructive/30 hover:group-[.destructive]:bg-destructive hover:group-[.destructive]:text-destructive-foreground focus-visible:group-[.destructive]:ring-destructive",
       className,
     )}
     {...props}
@@ -71,6 +87,11 @@ const ToastAction = React.forwardRef<
 ));
 ToastAction.displayName = ToastPrimitives.Action.displayName;
 
+/** Close button for a toast notification.
+ * @param props - Toast close props.
+ * @param ref - Forwarded close ref.
+ * @returns Toast close element.
+ */
 const ToastClose = React.forwardRef<
   React.ComponentRef<typeof ToastPrimitives.Close>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
@@ -79,7 +100,7 @@ const ToastClose = React.forwardRef<
     ref={ref}
     aria-label="Close notification"
     className={cn(
-      "absolute right-1 top-1 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:outline-hidden focus-visible:ring-1 group-hover:opacity-100 group-[.destructive]:text-red-300 hover:group-[.destructive]:text-red-50 focus-visible:group-[.destructive]:ring-red-400 focus-visible:group-[.destructive]:ring-offset-red-600",
+      "absolute right-1 top-1 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background group-hover:opacity-100 group-[.destructive]:text-red-300 hover:group-[.destructive]:text-red-50 focus-visible:group-[.destructive]:ring-red-400 focus-visible:group-[.destructive]:ring-offset-red-600",
       className,
     )}
     toast-close=""
@@ -90,6 +111,11 @@ const ToastClose = React.forwardRef<
 ));
 ToastClose.displayName = ToastPrimitives.Close.displayName;
 
+/** Title element for a toast notification.
+ * @param props - Toast title props.
+ * @param ref - Forwarded title ref.
+ * @returns Toast title element.
+ */
 const ToastTitle = React.forwardRef<
   React.ComponentRef<typeof ToastPrimitives.Title>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
@@ -102,6 +128,11 @@ const ToastTitle = React.forwardRef<
 ));
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
 
+/** Description element for a toast notification.
+ * @param props - Toast description props.
+ * @param ref - Forwarded description ref.
+ * @returns Toast description element.
+ */
 const ToastDescription = React.forwardRef<
   React.ComponentRef<typeof ToastPrimitives.Description>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
@@ -114,8 +145,10 @@ const ToastDescription = React.forwardRef<
 ));
 ToastDescription.displayName = ToastPrimitives.Description.displayName;
 
+/** Props for the Toast component. */
 type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
 
+/** Action element type for Toast components. */
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
 export {
