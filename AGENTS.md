@@ -47,6 +47,8 @@ Infrastructure:
 - **Use direct paths only.** Import the specific module/file you need (e.g., `lucide-react/dist/esm/icons/x`, `@mui/material/Button`).
 - **Exception (Next.js):** Barrel imports are allowed only for packages listed in `experimental.optimizePackageImports`
   (Next rewrites them to direct imports).
+- **Lucide icons:** use direct `lucide-react/dist/esm/icons/*` imports. A typings shim lives at `src/types/lucide-react-icons.d.ts`
+  to support these paths.
 
 ## Testing Guidelines
 
