@@ -38,7 +38,7 @@
     "@aws-sdk/client-ssm": "3.971.0",
     "aws-cdk-lib": "2.235.0",
     "constructs": "^10.4.5",
-    "resend": "^6.7.0",
+    "resend": "^6.8.0",
     "source-map-support": "^0.5.21"
   }
 }
