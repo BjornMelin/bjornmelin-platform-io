@@ -90,7 +90,7 @@
     "aws-cdk-lib": "^2.236.0",
     "commander": "^14.0.2",
     "constructs": "^10.4.5",
-    "happy-dom": "^20.3.7",
+    "happy-dom": "^20.3.9",
     "husky": "^9.1.7",
     "jsdom": "^27.4.0",
     "markdownlint-cli": "^0.47.0",
