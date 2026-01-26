@@ -87,7 +87,7 @@ importers:
         specifier: ^7.71.1
         version: 7.71.1(react@19.2.3)
       resend:
-        specifier: 6.8.0
+        specifier: ^6.8.0
         version: 6.8.0
       superjson:
         specifier: ^2.2.6
