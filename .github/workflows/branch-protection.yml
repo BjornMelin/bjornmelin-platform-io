@@ -91,7 +91,8 @@ jobs:
           xl_label: 'size/XL'
           fail_if_xl: false
           files_to_ignore: |
-            'pnpm-lock.yaml'
+            'bun.lock'
+            'infrastructure/bun.lock'
             '*.snap'
             '*.svg'
             '*.png'

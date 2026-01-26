@@ -43,7 +43,9 @@ dependencies:
   - changed-files:
     - any-glob-to-any-file:
       - 'package.json'
-      - 'pnpm-lock.yaml'
+      - '.bun-version'
+      - 'bun.lock'
+      - 'infrastructure/bun.lock'
       - 'yarn.lock'
       - 'package-lock.json'
 

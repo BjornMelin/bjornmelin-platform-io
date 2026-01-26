@@ -9,7 +9,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 1. **_reusable-ci.yml** - Reusable CI workflow (internal)
    - Called by: ci.yml, deploy.yml
    - Jobs: Lint, type check, unit tests, E2E tests, build
-   - Features: pnpm caching via composite action, parallel jobs, artifact uploads
+   - Features: Bun-based installs via composite action, parallel jobs, artifact uploads
 
 2. **ci.yml** - Main continuous integration workflow
    - Runs on: Push to main/develop, PRs
@@ -20,7 +20,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
    - Runs on: Push to main (excludes `**.md`)
    - Calls: _reusable-ci.yml for testing
    - Features: AWS OIDC authentication, preflight config validation, static build,
-     **CDK Storage deploy (CloudFront Functions + CSP KVS)**, static deploy (`pnpm deploy:static:prod`),
+     **CDK Storage deploy (CloudFront Functions + CSP KVS)**, static deploy (`bun run deploy:static:prod`),
      CloudFront invalidation, smoke check, job summary
    - workflow_dispatch inputs: `dry_run` (skip S3 upload / KVS sync / invalidation) and `skip_smoke_check`
 
@@ -42,7 +42,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 7. **security-audit.yml** - Dependency security audit
    - Runs on: Push, PRs, monthly schedule (22nd at 08:00 UTC)
-   - Features: pnpm audit, dependency review
+   - Features: bun audit, dependency review
 
 8. **dependency-update.yml** - Automated dependency updates
    - Runs on: Monthly schedule (1st at 09:00 UTC)
@@ -111,10 +111,8 @@ This eliminates duplicate test runs and ensures consistent CI behavior.
 
 ## Composite Actions
 
-- **setup-node-pnpm** - Sets up Node.js (from .nvmrc) and pnpm via Corepack
-  - Automatically caches pnpm store
-  - Activates exact pnpm version from package.json
-  - Optionally installs dependencies
+- **setup-bun** - Sets up Node.js (from .nvmrc) and Bun (from .bun-version)
+  - Optionally installs dependencies (`bun ci`)
 
 ## Configuration Files
 
@@ -200,8 +198,8 @@ Add these badges to your README:
 ## Best Practices
 
 1. **Reusable Workflows**: Common CI logic consolidated in `_reusable-ci.yml`
-2. **Composite Actions**: Node.js/pnpm setup via `.github/actions/setup-node-pnpm`
-3. **Caching**: pnpm store cached automatically by composite action
+2. **Composite Actions**: Node.js/Bun setup via `.github/actions/setup-bun`
+3. **Lockfiles**: Use `bun ci` in CI
 4. **Concurrency**: Workflows use concurrency groups to cancel redundant runs
 5. **Artifacts**: Test results and build artifacts uploaded for debugging
 6. **Workflow Linting**: CI runs actionlint to validate workflow expressions
@@ -234,7 +232,7 @@ If workflows fail:
 1. Check the workflow logs in the Actions tab
 2. Verify all required secrets and variables are set
 3. Ensure branch protection rules aren't blocking required checks
-4. Check for pnpm lockfile issues with `pnpm install --frozen-lockfile`
+4. Check for Bun lockfile issues with `bun ci`
 5. Verify Node.js version compatibility (requires 24.x LTS)
 
 ## Local Testing

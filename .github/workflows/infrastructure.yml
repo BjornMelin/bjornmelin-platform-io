@@ -34,8 +34,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: "false"
 
@@ -79,29 +79,29 @@ jobs:
 
       - name: Install CDK Dependencies
         working-directory: infrastructure
-        run: pnpm install --frozen-lockfile
+        run: bun ci
 
       - name: Deploy DNS Stack
         if: ${{ github.event_name == 'workflow_dispatch' }}
         working-directory: infrastructure
         env:
           DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-dns --require-approval never
+        run: bun --bun cdk deploy prod-portfolio-dns --require-approval never
 
       - name: Deploy Storage Stack
         working-directory: infrastructure
         env:
           DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-storage --require-approval never
+        run: bun --bun cdk deploy prod-portfolio-storage --require-approval never
 
       - name: Deploy Email Stack
         working-directory: infrastructure
         env:
           DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-email --require-approval never
+        run: bun --bun cdk deploy prod-portfolio-email --require-approval never
 
       - name: Deploy Monitoring Stack
         working-directory: infrastructure
         env:
           DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-monitoring --require-approval never
+        run: bun --bun cdk deploy prod-portfolio-monitoring --require-approval never

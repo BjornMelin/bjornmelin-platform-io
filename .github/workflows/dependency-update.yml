@@ -20,8 +20,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: "true"
 
@@ -30,14 +30,15 @@ jobs:
         id: check-updates
         run: |
           echo "Checking for outdated dependencies..."
-          OUTDATED=$(pnpm outdated --format json || echo '[]')
+          OUTDATED=$(bun outdated --no-summary || true)
           {
             echo 'outdated<<__OUTDATED_JSON__'
             echo "$OUTDATED"
             echo '__OUTDATED_JSON__'
           } >> "$GITHUB_OUTPUT"
-          
-          if [ "$(echo "$OUTDATED" | tr -d '[:space:]')" != "[]" ]; then
+
+          UPDATES=$(echo "$OUTDATED" | awk -F'|' 'NF>4 && $2 !~ /Package/ && $2 !~ /^-+$/ && $2 ~ /[A-Za-z0-9@]/ {print $0}')
+          if [ -n "$UPDATES" ]; then
             echo "has_updates=true" >> "$GITHUB_OUTPUT"
             echo "Found outdated dependencies"
           else
@@ -48,18 +49,18 @@ jobs:
       - name: Update dependencies
         if: steps.check-updates.outputs.has_updates == 'true'
         env:
-          # Provide safe defaults so `pnpm build` doesn't fail on required env vars.
+          # Provide safe defaults so `bun run build` doesn't fail on required env vars.
           # This workflow is only a dependency sanity check, not a production deploy.
           NEXT_PUBLIC_APP_URL: https://bjornmelin.io
           CONTACT_EMAIL: test@example.com
           SKIP_ENV_VALIDATION: "true"
         run: |
           # Update non-major versions
-          pnpm update
+          bun update
           
           # Run tests to ensure nothing is broken
-          pnpm test
-          pnpm build
+          bun run test
+          bun run build
 
       - name: Create Pull Request
         if: steps.check-updates.outputs.has_updates == 'true'
@@ -79,7 +80,7 @@ jobs:
             - No security vulnerabilities found
             
             ### 📋 Updated Dependencies
-            Please review the changes in `package.json` and `pnpm-lock.yaml`.
+            Please review the changes in `package.json`, `bun.lock`, and `infrastructure/bun.lock`.
             
             ---
             _This PR was automatically created by the dependency update workflow._

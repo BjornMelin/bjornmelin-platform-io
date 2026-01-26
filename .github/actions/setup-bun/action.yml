@@ -1,0 +1,36 @@
+name: setup-bun
+description: Set up Node.js (from .nvmrc) and Bun (from .bun-version), and optionally install deps.
+inputs:
+  install:
+    description: Run bun install after setup.
+    required: false
+    default: "true"
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js from .nvmrc
+      uses: actions/setup-node@v6
+      with:
+        node-version-file: .nvmrc
+
+    - name: Setup Bun from .bun-version
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version-file: .bun-version
+
+    - name: Show Bun version
+      shell: bash
+      run: bun --version
+
+    - name: Cache Bun install cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.bun/install/cache
+        key: bun-cache-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}
+        restore-keys: |
+          bun-cache-${{ runner.os }}-
+
+    - name: Install dependencies
+      if: ${{ inputs.install == 'true' }}
+      shell: bash
+      run: bun ci

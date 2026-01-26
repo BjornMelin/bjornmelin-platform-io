@@ -30,13 +30,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: "true"
 
       - name: Build application
-        run: pnpm build
+        run: bun run build
         env:
           NEXT_PUBLIC_BASE_URL: https://bjornmelin.io
           NEXT_PUBLIC_APP_URL: https://bjornmelin.io
@@ -54,32 +54,7 @@ jobs:
 
       - name: Write Lighthouse summary
         if: always()
-        run: |
-          node <<'NODE'
-          const fs = require('fs');
-          const summary = process.env.GITHUB_STEP_SUMMARY;
-          const resultPath = './lighthouse-results.json';
-          const lines = [];
-          lines.push('## Lighthouse Performance Report');
-          lines.push('');
-          if (fs.existsSync(resultPath)) {
-            try {
-              const results = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
-              lines.push('| Metric | Score |');
-              lines.push('|--------|-------|');
-              lines.push(`| Performance | ${results.performance}% |`);
-              lines.push(`| Accessibility | ${results.accessibility}% |`);
-              lines.push(`| Best Practices | ${results.bestPractices}% |`);
-              lines.push(`| SEO | ${results.seo}% |`);
-            } catch (err) {
-              lines.push(`⚠️ Error parsing Lighthouse results: ${err.message}`);
-            }
-          } else {
-            lines.push('⚠️ Lighthouse results not found. The performance check may have failed.');
-          }
-          lines.push('');
-          fs.appendFileSync(summary, lines.join('\n'));
-          NODE
+        run: bun .github/scripts/write-lighthouse-summary.mjs
 
       - name: Evaluate Lighthouse comment criteria
         id: lighthouse-comment
@@ -196,8 +171,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: "true"
 
@@ -208,7 +183,7 @@ jobs:
           AWS_REGION: us-east-1
           CONTACT_EMAIL: test@example.com
         run: |
-          pnpm build
+          bun run build
 
           # Generate bundle report
           {

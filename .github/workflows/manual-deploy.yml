@@ -102,16 +102,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: "true"
 
       - name: Run tests
         run: |
-          pnpm lint
-          pnpm type-check
-          pnpm test
+          bun run lint
+          bun run type-check
+          bun run test
 
   deploy:
     name: Deploy to ${{ inputs.environment }}
@@ -126,8 +126,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: "true"
 
@@ -198,7 +198,7 @@ jobs:
           fi
 
       - name: Build application
-        run: pnpm build
+        run: bun run build
         env:
           NODE_ENV: production
           NEXT_PUBLIC_ENVIRONMENT: ${{ inputs.environment }}
@@ -217,7 +217,7 @@ jobs:
           STACK_ENV="prod"
 
           echo "Deploying static export using environment prefix: ${STACK_ENV}"
-          node scripts/deploy-static-site.mjs --env "${STACK_ENV}"
+          bun scripts/deploy-static-site.mjs --env "${STACK_ENV}"
 
       - name: Set deployment URL
         id: deployment-url

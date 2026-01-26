@@ -111,6 +111,21 @@ node_modules/
 # Test artifacts
 playwright-report/
 test-results/
+.lighthouseci/
+
+# Benchmark artifacts
+benchmarks/lighthouse/**/.chrome-profile/
+benchmarks/lighthouse/**/lighthouserc.runtime.json
+benchmarks/_raw/
+benchmarks/load/**/autocannon.json
+benchmarks/baseline-node-pnpm.json
+benchmarks/post-bun.json
+benchmarks/benchmark-comparison.md
+benchmarks/baseline-node-pnpm.md
+benchmarks/post-bun.md
+
+# WSL/Windows path junk occasionally created by Lighthouse/Chrome user-data-dir mistakes
+C:\\Users\\*
 
 # Agent Logs
 agent-logs/

@@ -20,21 +20,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: "true"
 
-      - name: Run pnpm audit
+      - name: Run bun audit
         shell: bash
         run: |
-          pnpm audit --json > audit-report.json || true
+          bun audit --json > audit-report.json || true
 
       - name: Evaluate audit severity
-        run: node .github/scripts/evaluate-audit.mjs
+        run: bun .github/scripts/evaluate-audit.mjs
 
       - name: Check for outdated packages
-        run: pnpm outdated || true
+        run: bun outdated || true
 
   dependency-review:
     name: Dependency Review

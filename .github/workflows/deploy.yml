@@ -94,8 +94,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: 'true'
 
@@ -114,11 +114,11 @@ jobs:
           NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
           CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
           AWS_REGION: ${{ env.AWS_REGION }}
-        run: pnpm build
+        run: bun run build
 
       - name: Install CDK Dependencies
         working-directory: infrastructure
-        run: pnpm install --frozen-lockfile
+        run: bun ci
 
       - name: Detect infrastructure changes
         id: changes
@@ -184,21 +184,21 @@ jobs:
         working-directory: infrastructure
         env:
           DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-storage --require-approval never
+        run: bun --bun cdk deploy prod-portfolio-storage --require-approval never
 
       - name: Deploy Email Stack (infra changes only)
         if: ${{ (github.event_name != 'workflow_dispatch' || inputs.dry_run != true) && steps.changes.outputs.infra_changed == 'true' }}
         working-directory: infrastructure
         env:
           DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-email --require-approval never
+        run: bun --bun cdk deploy prod-portfolio-email --require-approval never
 
       - name: Deploy Monitoring Stack (infra changes only)
         if: ${{ (github.event_name != 'workflow_dispatch' || inputs.dry_run != true) && steps.changes.outputs.infra_changed == 'true' }}
         working-directory: infrastructure
         env:
           DOCKER_DEFAULT_PLATFORM: linux/amd64
-        run: pnpm cdk deploy prod-portfolio-monitoring --require-approval never
+        run: bun --bun cdk deploy prod-portfolio-monitoring --require-approval never
 
       - name: Preflight - verify static deploy permissions (S3 + CSP KVS)
         shell: bash
@@ -245,11 +245,11 @@ jobs:
 
       - name: Deploy static export (S3 + KVS + invalidation)
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != true }}
-        run: pnpm deploy:static:prod
+        run: bun run deploy:static:prod
 
       - name: Deploy static export (dry-run)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
-        run: node scripts/deploy-static-site.mjs --env prod --dry-run
+        run: bun scripts/deploy-static-site.mjs --env prod --dry-run
 
   smoke-check:
     name: Post-Deploy Smoke Check

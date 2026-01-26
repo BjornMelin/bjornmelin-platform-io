@@ -28,16 +28,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: 'true'
 
       - name: Run Biome linting
-        run: pnpm lint
+        run: bun run lint
 
       - name: Run type checking
-        run: pnpm type-check
+        run: bun run type-check
 
   unit-tests:
     name: Unit Tests
@@ -48,13 +48,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: 'true'
 
       - name: Run unit tests with coverage
-        run: pnpm test:coverage
+        run: bun run test:coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -75,15 +75,21 @@ jobs:
 
   e2e-tests:
     name: E2E Tests
-    if: ${{ inputs.run-e2e }}
-    needs: lint-and-type-check
+    if: ${{ inputs.run-e2e && needs.e2e-build.outputs.present == 'true' }}
+    needs:
+      - lint-and-type-check
+      - e2e-shards
+      - e2e-build
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.e2e-shards.outputs.matrix) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: 'true'
 
@@ -91,12 +97,84 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        run: bun --bun playwright install --with-deps chromium
+
+      - name: Detect E2E tests presence
+        id: detect
+        run: |
+          set -euo pipefail
+          if [ -n "${{ hashFiles('e2e/**','tests/e2e/**','playwright/tests/**') }}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download static export
+        if: steps.detect.outputs.present == 'true'
+        uses: actions/download-artifact@v6
+        with:
+          name: e2e-static-out
+          path: .
+
+      - name: Run E2E tests
+        if: steps.detect.outputs.present == 'true'
+        run: bun run test:e2e -- --shard=${{ matrix.shard }}/${{ needs.e2e-shards.outputs.total }}
+        env:
+          NODE_ENV: test
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v6
+        if: always() && steps.detect.outputs.present == 'true'
+        with:
+          name: playwright-report-${{ github.run_id }}-shard-${{ matrix.shard }}
+          path: playwright-report/
+          retention-days: 7
+
+  e2e-shards:
+    name: E2E Shard Plan
+    if: ${{ inputs.run-e2e }}
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      total: ${{ steps.plan.outputs.total }}
+    steps:
+      - name: Compute shard matrix
+        id: plan
+        run: |
+          set -euo pipefail
+          cores="$(nproc)"
+          max_shards=4
+          total="$cores"
+          if [ "$total" -gt "$max_shards" ]; then
+            total="$max_shards"
+          fi
+          if [ "$total" -lt 1 ]; then
+            total=1
+          fi
+          shards="$(seq 1 "$total" | paste -sd "," -)"
+          echo "total=$total" >> "$GITHUB_OUTPUT"
+          echo "matrix={\"shard\":[${shards}]}" >> "$GITHUB_OUTPUT"
+
+  e2e-build:
+    name: E2E Build Artifact
+    if: ${{ inputs.run-e2e }}
+    needs: lint-and-type-check
+    runs-on: ubuntu-latest
+    outputs:
+      present: ${{ steps.detect.outputs.present }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
+        with:
+          install: 'true'
 
       - name: Detect E2E tests presence
         id: detect
@@ -110,21 +188,21 @@ jobs:
 
       - name: Build application
         if: steps.detect.outputs.present == 'true'
-        run: pnpm build
-
-      - name: Run E2E tests
-        if: steps.detect.outputs.present == 'true'
-        run: pnpm test:e2e
+        run: bun run build
         env:
-          NODE_ENV: test
+          NEXT_PUBLIC_ALLOW_LOCAL_CONTACT: "true"
+          NEXT_PUBLIC_APP_URL: "http://localhost:3100"
+          NEXT_PUBLIC_BASE_URL: "http://localhost:3100"
+          NEXT_PUBLIC_API_URL: "http://localhost:3100/api"
+          SKIP_IMAGE_VARIANTS: "true"
 
-      - name: Upload test results
+      - name: Upload static export
+        if: steps.detect.outputs.present == 'true'
         uses: actions/upload-artifact@v6
-        if: always() && steps.detect.outputs.present == 'true'
         with:
-          name: playwright-report-${{ github.run_id }}
-          path: playwright-report/
-          retention-days: 7
+          name: e2e-static-out
+          path: out/
+          retention-days: 3
 
   build:
     name: Build Check
@@ -141,14 +219,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup Node.js and Bun
+        uses: ./.github/actions/setup-bun
         with:
           install: 'true'
 
       - name: Build production bundle
         id: build
-        run: pnpm build
+        run: bun run build
 
       - name: Check bundle size
         run: |

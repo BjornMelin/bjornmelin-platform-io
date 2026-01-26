@@ -13,20 +13,20 @@
 
 ## Build, Test, and Development Commands
 
-- `pnpm install`: install dependencies (Node version pinned via `.nvmrc`).
-- `pnpm dev`: run Next.js locally on `http://localhost:3000`.
-- `pnpm build`: production build; generates image variants, writes static `out/`, and updates CSP hashes.
-- `pnpm start` or `pnpm serve`: serve the `out/` static export.
-- `pnpm lint` / `pnpm format`: Biome lint+format (writes fixes).
-- `pnpm type-check`: TypeScript typecheck.
-- `pnpm test` / `pnpm test:coverage`: Vitest unit/integration tests + coverage.
-- `pnpm test:e2e`: Playwright (expects tests in `e2e/`).
+- `bun install`: install dependencies (Bun pinned via `.bun-version`; Node pinned via `.nvmrc` for tooling).
+- `bun run dev`: run Next.js locally on `http://localhost:3000`.
+- `bun run build`: production build; generates image variants, writes static `out/`, and updates CSP hashes.
+- `bun run start` or `bun run serve`: serve the `out/` static export.
+- `bun run lint` / `bun run format`: Biome lint+format (writes fixes).
+- `bun run type-check`: TypeScript typecheck.
+- `bun run test` / `bun run test:coverage`: Vitest unit/integration tests + coverage.
+- `bun run test:e2e`: Playwright (expects tests in `e2e/`).
 
 Infrastructure:
 
-- `pnpm -C infrastructure install`: install infra dependencies.
-- `pnpm -C infrastructure test`: infra Vitest suite (Node environment).
-- `pnpm -C infrastructure deploy:storage` (and other `deploy:*`): deploy CDK stacks.
+- `bun --cwd infrastructure install`: install infra dependencies.
+- `bun run --cwd infrastructure test`: infra Vitest suite.
+- `bun run --cwd infrastructure deploy:storage` (and other `deploy:*`): deploy CDK stacks.
 
 ## Coding Style & Naming Conventions
 
@@ -63,7 +63,8 @@ Infrastructure:
 - Commit messages follow Conventional Commits (examples from history: `feat(infra): ...`,
   `fix(csp): ...`, `chore(deps): ...`).
 - PRs: include a clear description, link issues/ADRs when relevant, and add screenshots for UI changes.
-- Before committing/opening a PR, run: `pnpm lint && pnpm test` (plus `pnpm type-check` / `pnpm test:e2e` when applicable).
+- Before committing/opening a PR, run: `bun run lint && bun run test`
+  (plus `bun run type-check` / `bun run test:e2e` when applicable).
 
 ## Documentation Guidelines
 
@@ -79,9 +80,9 @@ Infrastructure:
   request-dependent Route Handlers, or other features that require a server runtime.
 - CSP inline script hashes are generated and are **not secrets** (they appear in public CSP headers).
   Never delete or manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
-  Regenerate with `pnpm generate:csp-hashes` (usually via `pnpm build`).
+  Regenerate with `bun run generate:csp-hashes` (usually via `bun run build`).
   See `docs/architecture/adr/ADR-0001-cloudfront-csp-nextjs-inline-hashes.md`.
-- Static export + CSP must stay in sync: `pnpm build` → `pnpm -C infrastructure deploy:storage` → `pnpm deploy:static:prod`.
+- Static export + CSP must stay in sync: `bun run build` → `bun run --cwd infrastructure deploy:storage` → `bun run deploy:static:prod`.
 - GitHub Actions: merges to `main` run the same sequence automatically via `.github/workflows/deploy.yml`.
 
 ## Browser Automation
