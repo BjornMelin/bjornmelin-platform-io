@@ -86,7 +86,7 @@ deterministic and does not require a server.
 ### Build integration
 
 - `predev` and `prebuild` generate variants (developer-friendly and CI-safe).
-- `pnpm build` then runs `next build` (static export) and regenerates CSP hashes.
+- `bun run build` then runs `bun --bun next build` (static export) and regenerates CSP hashes.
 
 ## Consequences
 
@@ -109,7 +109,7 @@ deterministic and does not require a server.
 ## Testing
 
 - Unit: `src/__tests__/unit/image-loader.test.ts` covers loader mapping behavior.
-- Build: `pnpm build` produces `out/_images/**.webp` and pages reference those URLs.
+- Build: `bun run build` produces `out/_images/**.webp` and pages reference those URLs.
 
 ## Changelog
 

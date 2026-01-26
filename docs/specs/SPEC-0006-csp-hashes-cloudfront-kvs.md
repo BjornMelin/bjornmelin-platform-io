@@ -132,9 +132,9 @@ Infra tests validate CloudFront Function behavior by executing the generated JS 
 
 The authoritative pipeline is in `.github/workflows/deploy.yml` and uses:
 
-1. `pnpm build` (creates `out/` + regenerates CSP artifacts)
-2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage`
-3. `pnpm deploy:static:prod` (implemented by `scripts/deploy-static-site.mjs`):
+1. `bun run build` (creates `out/` + regenerates CSP artifacts)
+2. `bun run --cwd infrastructure deploy:storage`
+3. `bun run deploy:static:prod` (implemented by `scripts/deploy-static-site.mjs`):
    - reads CloudFormation exports (`cloudformation list-exports`)
    - syncs KVS from `infrastructure/lib/generated/next-inline-script-hashes.kvs.json`
    - uploads `out/` to S3

@@ -48,8 +48,8 @@ Use Vitest for unit and integration tests:
 ## Implementation notes
 
 - `vitest.config.ts` configures jsdom and path aliases.
-- `pnpm test` runs Vitest in watch mode when interactive.
-- Coverage is enforced in `pnpm test:coverage`.
+- `bun run test` runs Vitest in watch mode when interactive.
+- Coverage is enforced in `bun run test:coverage`.
 
 ## Status
 

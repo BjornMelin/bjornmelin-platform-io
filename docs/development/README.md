@@ -16,7 +16,7 @@ Development documentation for the bjornmelin-platform-io project.
 ### Prerequisites
 
 - Node.js 24.x LTS (pinned via `.nvmrc` and enforced by the `engines` field)
-- pnpm package manager (enable via `corepack enable pnpm`)
+- Bun (pinned via `.bun-version`)
 - AWS CLI configured with appropriate credentials
 - Git
 
@@ -33,7 +33,7 @@ Development documentation for the bjornmelin-platform-io project.
 #### Build Optimization
 
 - sharp (generate WebP variants)
-- Next.js built-in analyzer (`pnpm analyze`)
+- Next.js built-in analyzer (`bun run analyze`)
 - Browserslist (ES6 module targets)
 
 #### Infrastructure
@@ -71,7 +71,7 @@ graph LR
 
 - Component testing with Vitest
 - E2E testing with Playwright
-- Type checking with `pnpm type-check`
+- Type checking with `bun run type-check`
 
 ### 4. Static Export Constraints
 
@@ -95,7 +95,7 @@ src/
 - Server Components where applicable
 - Static generation (`output: 'export'`)
 - Image optimization (WebP via sharp-generated variants)
-- Bundle size monitoring (`pnpm analyze`)
+- Bundle size monitoring (`bun run analyze`)
 
 ## Type Safety
 
@@ -126,28 +126,28 @@ src/
 
 ```bash
 # Start development server
-pnpm dev
+bun run dev
 
 # Build for production (includes image optimization)
-pnpm build
+bun run build
 
 # Run type checking
-pnpm type-check
+bun run type-check
 
 # Run linting
-pnpm lint
+bun run lint
 
 # Run format checks
-pnpm format:check
+bun run format:check
 
 # Run unit tests
-pnpm test
+bun run test
 
 # Run E2E tests
-pnpm test:e2e
+bun run test:e2e
 
 # Analyze bundle size
-pnpm analyze
+bun run analyze
 ```
 
 ## Release Process

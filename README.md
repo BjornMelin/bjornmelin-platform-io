@@ -49,7 +49,7 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 ### Performance Optimization
 
 - **Image Optimization**: Pre-generated WebP variants via Sharp (static export compatible)
-- **Bundle Analysis**: Next.js built-in analyzer (`pnpm analyze`)
+- **Bundle Analysis**: Next.js built-in analyzer (`bun run analyze`)
 - **Modern Targets**: Browserslist configured for ES6 module support
 
 ## Documentation
@@ -192,16 +192,11 @@ bjornmelin-platform-io/
 
 ```bash
 Node.js >= 24.0.0 (LTS)
-pnpm (via Corepack)
+Bun (pinned via .bun-version)
 AWS CLI configured
 ```
 
-Enable Corepack and activate the pinned pnpm version from package.json:
-
-```bash
-corepack enable
-corepack use $(node -p "require('./package.json').packageManager")
-```
+Install Bun and ensure `bun --version` matches `.bun-version`.
 
 ### Initial Setup
 
@@ -211,7 +206,7 @@ git clone https://github.com/bjornmelin/bjornmelin-platform-io.git
 cd bjornmelin-platform-io
 
 # Install dependencies
-pnpm install
+bun install
 
 # Configure AWS credentials
 aws configure
@@ -226,15 +221,15 @@ cp .env.example .env.local
 
 ```bash
 # Deploy infrastructure (from repo root)
-pnpm -C infrastructure install
-pnpm -C infrastructure cdk deploy
+bun --cwd infrastructure install
+bun run --cwd infrastructure cdk -- deploy
 ```
 
 ### Local Development
 
 ```bash
 # Start development server
-pnpm dev
+bun run dev
 ```
 
 ## Tech Stack
@@ -253,7 +248,7 @@ Frontend:
 
   Build:
     - Sharp-based WebP variants (static export)
-    - Next.js built-in analyzer (`pnpm analyze`)
+    - Next.js built-in analyzer (`bun run analyze`)
     - Browserslist (ES6 module targets)
 
 Infrastructure:
@@ -269,7 +264,7 @@ Infrastructure:
 
 Development:
   Tools:
-    - pnpm 10.28.0 (Corepack)
+    - Bun (pinned via .bun-version)
     - Biome (lint + format)
     - Vitest (unit tests)
     - Playwright (E2E tests)
@@ -299,28 +294,28 @@ Development:
 
 ```bash
 # Development
-pnpm dev          # Start development server
-pnpm build        # Build and optimize images
-pnpm start        # Serve static export
-pnpm serve        # Serve static export (alternative)
+bun run dev          # Start development server
+bun run build        # Build and optimize images
+bun run start        # Serve static export
+bun run serve        # Serve static export (alternative)
 
 # Quality
-pnpm lint         # Run Biome lint/format checks
-pnpm format:check # Run Biome format check
-pnpm type-check   # TypeScript type checking
+bun run lint         # Run Biome lint/format checks
+bun run format:check # Run Biome format check
+bun run type-check   # TypeScript type checking
 
 # Testing
-pnpm test         # Run unit tests
-pnpm test:coverage # Run unit tests with coverage
-pnpm test:e2e     # Run E2E tests
-pnpm test:e2e:ui  # Run Playwright in UI mode
-pnpm test:e2e:report # Open Playwright HTML report
+bun run test           # Run unit tests
+bun run test:coverage  # Run unit tests with coverage
+bun run test:e2e       # Run E2E tests
+bun run test:e2e:ui    # Run Playwright in UI mode
+bun run test:e2e:report # Open Playwright HTML report
 
 # Analysis
-pnpm analyze      # Build with bundle analyzer
+bun run analyze      # Build with bundle analyzer
 
 # Infrastructure
-pnpm -C infrastructure cdk deploy   # Deploy AWS infrastructure
+bun run --cwd infrastructure cdk -- deploy   # Deploy AWS infrastructure
 ```
 
 ## Docker

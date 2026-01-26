@@ -15,8 +15,8 @@ notes: "Defines the minimum IAM permissions and guardrails to prevent deploy fai
 Production deploy (`.github/workflows/deploy.yml`) assumes an AWS IAM role via GitHub OIDC
 (`AWS_DEPLOY_ROLE_ARN`) and runs:
 
-1. CDK deployments (`pnpm -C infrastructure cdk deploy ...`)
-2. Static export deployment (`pnpm deploy:static:prod` → `scripts/deploy-static-site.mjs`)
+1. CDK deployments (`bun run --cwd infrastructure cdk -- deploy ...`)
+2. Static export deployment (`bun run deploy:static:prod` → `scripts/deploy-static-site.mjs`)
 
 On 2026-01-18, the deploy job failed because the assumed role lacked `cloudformation:ListExports`.
 This spec defines the minimum required IAM permissions for the deploy role, adds repo guardrails to

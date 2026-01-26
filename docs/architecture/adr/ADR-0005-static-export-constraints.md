@@ -73,7 +73,7 @@ in app code:
 
 ## High-Level Architecture
 
-- `pnpm build` produces `out/` for static hosting.
+- `bun run build` produces `out/` for static hosting.
 - CloudFront serves static content from S3.
 - CloudFront routes `/api/*` to Lambda for contact processing in production.
 
@@ -117,9 +117,10 @@ in app code:
 
 To ensure CSP/static-export sync and prevent hash drift, follow this repeatable sequence:
 
-1. **Build the static export**: Run `pnpm build` (generates `out/` and CSP hashes).
-2. **Deploy infrastructure**: Run `pnpm -C infrastructure deploy:storage` (deploys S3, CloudFront, and Lambda via CDK).
-3. **Deploy static assets**: Run `pnpm deploy:static:prod`
+1. **Build the static export**: Run `bun run build` (generates `out/` and CSP hashes).
+2. **Deploy infrastructure**: Run `bun run --cwd infrastructure deploy:storage`
+   (deploys S3, CloudFront, and Lambda via CDK).
+3. **Deploy static assets**: Run `bun run deploy:static:prod`
    (uploads static assets to S3, syncs CSP hashes KVS, and invalidates CloudFront).
 
 ### Dependencies
@@ -135,7 +136,7 @@ To ensure CSP/static-export sync and prevent hash drift, follow this repeatable 
 
 ## Testing
 
-- Validate static export with `pnpm build` and `pnpm serve`.
+- Validate static export with `bun run build` and `bun run serve`.
 - Ensure E2E coverage continues to pass against the dev server configuration.
 
 ## Changelog

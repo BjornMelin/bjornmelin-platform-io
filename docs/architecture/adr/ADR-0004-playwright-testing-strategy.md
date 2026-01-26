@@ -84,6 +84,8 @@ Use Playwright for E2E coverage:
 
 - E2E should run against a predictable base URL and port; default is 3100.
 - Tests must not depend on external network calls or third-party services.
+- When `PLAYWRIGHT_BASE_URL` points to a non-local host, Playwright skips starting the local web
+  server and runs against the provided URL.
 
 ## High-Level Architecture
 
@@ -113,17 +115,26 @@ Use Playwright for E2E coverage:
 ### Configuration
 
 - `playwright.config.ts` sets `testDir`, `use.baseURL`, `webServer`, and reporting.
+- `webServer` is only configured for local hosts (localhost, 127.0.0.1, ::1).
+- Local runs against the dev server pin Playwright workers to 1 to avoid Next dev flake under parallel load.
+- `PLAYWRIGHT_SERVER_MODE` selects the local server strategy: `dev` (default local), `static` (default on CI), or `none`.
+- `PLAYWRIGHT_WORKERS` overrides worker count; otherwise CI defaults to 50% workers when using a static server.
+- `PLAYWRIGHT_DEBUG_ARTIFACTS=true` enables traces/videos outside CI.
+- `PLAYWRIGHT_SKIP_IMAGE_VARIANTS` can skip image variant generation during Playwright dev runs.
+- CI shards Playwright runs across two jobs to reduce wall-clock time.
+- CI builds the static export once and reuses it across shards to avoid redundant builds.
+- Shard count is computed from CPU cores (capped at 4) to match available runner capacity.
 
 ## Implementation Notes
 
 - Tests live in `e2e/`.
-- `pnpm test:e2e` runs Playwright, `pnpm test:e2e:ui` opens the UI, and
-  `pnpm test:e2e:report` shows the HTML report.
+- `bun run test:e2e` runs Playwright, `bun run test:e2e:ui` opens the UI, and
+  `bun run test:e2e:report` shows the HTML report.
 
 ## Testing
 
-- Run locally: `pnpm test:e2e` (uses `webServer` to start Next dev).
-- In CI: run `pnpm test:e2e` in headless mode and upload the HTML report on failure.
+- Run locally: `bun run test:e2e` (uses `webServer` to start Next dev).
+- In CI: run `bun run test:e2e` in headless mode and upload the HTML report on failure.
 
 ### Dependencies
 

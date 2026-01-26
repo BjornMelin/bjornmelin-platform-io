@@ -51,7 +51,7 @@ hash allow-list did not match the currently deployed static export.
 - CSP `script-src` uses:
   - `'self'` for external JS served from the same origin, and
   - a **SHA-256 hash allow-list** for required inline scripts.
-- The allow-list is generated from the static export (`out/**/*.html`) by `pnpm generate:csp-hashes`, which writes:
+- The allow-list is generated from the static export (`out/**/*.html`) by `bun run generate:csp-hashes`, which writes:
   - `infrastructure/lib/generated/next-inline-script-hashes.ts` (global hash allow-list)
   - `infrastructure/lib/generated/next-inline-script-hashes.kvs.json` (per-path hash index payload for KVS)
   - `infrastructure/lib/functions/cloudfront/next-csp-response.js` (viewer-response CloudFront Function)
@@ -131,9 +131,9 @@ strict CSP approach for CloudFront-served static content.
 - **Never deploy `prod-portfolio-storage` (CSP) without also deploying the matching static export.**
   The CSP hashes and the contents of `out/` must be produced by the same build.
 - Production deployments should follow this order:
-  1. Build/export (`pnpm build`) to refresh `out/` and regenerate CSP hashes.
-  2. Deploy storage stack (`pnpm -C infrastructure deploy:storage`) to apply the CSP Function + KVS wiring.
-  3. Upload `out/` to S3 + sync CSP hashes KVS + invalidate CloudFront (see `pnpm deploy:static:prod`).
+  1. Build/export (`bun run build`) to refresh `out/` and regenerate CSP hashes.
+  2. Deploy storage stack (`bun run --cwd infrastructure deploy:storage`) to apply the CSP Function + KVS wiring.
+  3. Upload `out/` to S3 + sync CSP hashes KVS + invalidate CloudFront (see `bun run deploy:static:prod`).
 - **Fail-soft behavior:** If the CSP KVS is unavailable/unpopulated (initial rollout), the CSP CloudFront Function
   must not set `Content-Security-Policy` (to avoid a hard outage). The deploy pipeline invalidates CloudFront after
   syncing KVS so responses are recached with the strict CSP.
@@ -148,13 +148,13 @@ strict CSP approach for CloudFront-served static content.
 ### Negative Consequences / Trade-offs
 
 - Any change that affects inline bootstrap scripts will automatically regenerate the hash allow-list during
-  the build (via `pnpm generate:csp-hashes`). Ensure the full build completes successfully before deploying
+  the build (via `bun run generate:csp-hashes`). Ensure the full build completes successfully before deploying
   to production.
 - Deploy order matters; mismatched CSP and static export can break rendering.
 
 ### Ongoing Maintenance & Considerations
 
-- Treat `pnpm build` as the single source of truth for `out/` + CSP hashes.
+- Treat `bun run build` as the single source of truth for `out/` + CSP hashes.
 - Never manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
 - Never manually edit `infrastructure/lib/functions/cloudfront/next-csp-response.js`.
 
@@ -175,7 +175,7 @@ strict CSP approach for CloudFront-served static content.
 
 ## Testing
 
-- Validate locally with `pnpm build` and serving the export (`pnpm serve`) to confirm no CSP violations.
+- Validate locally with `bun run build` and serving the export (`bun run serve`) to confirm no CSP violations.
 - Production smoke checks validate that the deployed site renders (no blank page).
 
 ## Changelog

@@ -7,9 +7,9 @@ Deployment process for bjornmelin-platform-io.
 ### Prerequisites
 
 - AWS credentials provisioned for the target account
-- AWS CDK CLI via `pnpm dlx aws-cdk` (no global install required)
+- AWS CDK CLI via the infrastructure workspace (`bun run --cwd infrastructure cdk`)
 - Node.js 24.x LTS (pinned via `.nvmrc`)
-- pnpm 10.28.0 (activated via Corepack from `package.json#packageManager`)
+- Bun (pinned via `.bun-version`)
 
 ### CDK Deployment Process
 
@@ -17,30 +17,30 @@ Deployment process for bjornmelin-platform-io.
 
    ```bash
    cd infrastructure
-   pnpm install
+   bun install
    ```
 
 2. Build the CDK app:
 
    ```bash
-   pnpm build
+   bun run build
    ```
 
 3. Review changes prior to deployment:
 
    ```bash
-   pnpm cdk diff
+   bun run cdk -- diff
    ```
 
 4. Deploy the stacks that need to change:
 
    ```bash
-   pnpm cdk deploy prod-portfolio-storage
-   pnpm cdk deploy prod-portfolio-monitoring
-   pnpm cdk deploy prod-portfolio-deployment
+   bun run cdk -- deploy prod-portfolio-storage
+   bun run cdk -- deploy prod-portfolio-monitoring
+   bun run cdk -- deploy prod-portfolio-deployment
    ```
 
-   Use `pnpm cdk deploy --all` when a coordinated full rollout is required.
+   Use `bun run cdk -- deploy --all` when a coordinated full rollout is required.
 
 All environments assume AWS roles through GitHub's OpenID Connect provider. The
 CDK stacks do **not** create IAM users or access keys.
@@ -50,28 +50,28 @@ CDK stacks do **not** create IAM users or access keys.
 Production is deployed automatically by `.github/workflows/deploy.yml` on merges to `main`. The
 workflow performs the safe sequence to keep the static export and CSP hashes in sync:
 
-1. `pnpm build` (generates `out/` and refreshes CSP artifacts under `infrastructure/lib/generated/`)
-2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage` (deploys CloudFront Functions + CSP hashes KVS)
-3. `pnpm deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
+1. `bun run build` (generates `out/` and refreshes CSP artifacts under `infrastructure/lib/generated/`)
+2. `bun run --cwd infrastructure cdk -- deploy prod-portfolio-storage` (deploys CloudFront Functions + CSP hashes KVS)
+3. `bun run deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
 
 ### Production Build
 
 1. Install web application dependencies from the repository root:
 
    ```bash
-   pnpm install
+   bun install
    ```
 
 2. Produce an optimized build:
 
    ```bash
-   pnpm build
+   bun run build
    ```
 
    This command runs three steps (via npm lifecycle hooks):
    - `prebuild` - Generates WebP responsive variants into `public/_images/`
    - `next build` - Generates static HTML, JS, and CSS in `out/`
-   - `pnpm generate:csp-hashes` - Regenerates CSP inline script hashes for CDK
+   - `bun run generate:csp-hashes` - Regenerates CSP inline script hashes for CDK
 
 3. Verify the build output:
 
@@ -83,7 +83,7 @@ workflow performs the safe sequence to keep the static export and CSP hashes in 
 4. Run the production server locally (optional smoke test):
 
    ```bash
-   pnpm serve
+   bun run serve
    ```
 
 ### Image Optimization Pipeline
@@ -157,13 +157,13 @@ See `docs/specs/SPEC-0007-deploy-workflow-permissions-drift.md` for the deploy r
 
 ### Development (local only)
 
-- Local development runs via `pnpm dev` and `.env.local`.
+- Local development runs via `bun run dev` and `.env.local`.
 - No separate `dev-portfolio-*` CDK stacks are synthesized by default (see `infrastructure/bin/app.ts`).
 
 ### Production
 
 - Deployments run through GitHub Actions using the `prod-portfolio-deploy` role
-- Daily security audit workflow with pnpm audit severity gating
+- Daily security audit workflow with bun audit severity gating
 - CodeQL advanced workflow is the single SARIF publisher
 
 ## CI Workflows
@@ -172,7 +172,7 @@ See `docs/specs/SPEC-0007-deploy-workflow-permissions-drift.md` for the deploy r
 | :---------------------- | :-------------- | :-------------------------------------- |
 | `ci.yml`                | Push/PR         | Lint, type-check, test, build           |
 | `performance-check.yml` | Push/PR to main | Lighthouse CI, bundle analysis          |
-| `security-audit.yml`    | Daily/Push      | pnpm audit, dependency scanning         |
+| `security-audit.yml`    | Daily/Push      | bun audit, dependency scanning          |
 | `release-please.yml`    | Push to main    | Open/update Release PR, create releases |
 | `deploy.yml`            | Push to main    | Deploy to production                    |
 
@@ -185,12 +185,12 @@ See `docs/specs/SPEC-0007-deploy-workflow-permissions-drift.md` for the deploy r
 ## Rollback Procedures
 
 1. Review CloudWatch alarms and deployment logs.
-2. Identify the faulty change via `pnpm cdk diff` or git history.
+2. Identify the faulty change via `bun run --cwd infrastructure cdk -- diff` or git history.
 3. Revert the code changes and redeploy:
 
    ```bash
    git revert <commit>
-   pnpm cdk deploy --all
+   bun run --cwd infrastructure cdk -- deploy --all
    ```
 
 4. Re-run the CI pipeline to confirm the rollback.
@@ -199,5 +199,5 @@ See `docs/specs/SPEC-0007-deploy-workflow-permissions-drift.md` for the deploy r
 
 - GitHub OIDC federation is enforced across all workflows; no IAM access keys are provisioned.
 - Secrets are stored in AWS Secrets Manager and referenced via GitHub environment variables.
-- pnpm audit runs on every push/PR and fails the build on high or critical findings.
+- bun audit runs on every push/PR and fails the build on high or critical findings.
 - CodeQL default setup is disabled in repository settings; the advanced workflow manages scanning.

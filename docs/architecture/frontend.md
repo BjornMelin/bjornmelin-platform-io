@@ -51,7 +51,7 @@ The build uses a prebuild hook to ensure variants exist before the export is
 generated:
 
 ```bash
-pnpm build  # Runs: prebuild (sharp) → next build → CSP hash generation
+bun run build  # Runs: prebuild (sharp) → bun --bun next build → CSP hash generation
 ```
 
 ### Output
@@ -107,7 +107,7 @@ pnpm build  # Runs: prebuild (sharp) → next build → CSP hash generation
 | -------------- | ---------------- |
 | Static Export | `output: 'export'` in next.config.mjs |
 | Image Optimization | WebP conversion, responsive sizes |
-| Bundle Analysis | `pnpm analyze` |
+| Bundle Analysis | `bun run analyze` |
 | Modern Targets | Browserslist for ES6 modules |
 
 ## SEO

@@ -109,28 +109,28 @@ Required scripts:
 
 - `predev`: generate variants for local development
 - `prebuild`: generate variants before static export
-- `build`: `next build && pnpm generate:csp-hashes`
+- `build`: `bun --bun next build && bun run generate:csp-hashes`
 
 ## Acceptance criteria
 
-- `pnpm build` produces `out/` with:
+- `bun run build` produces `out/` with:
   - `out/_images/**.webp` present for referenced raster images
   - no missing image references in rendered pages
-- `pnpm dev` renders pages with images without requiring manual generation.
+- `bun run dev` renders pages with images without requiring manual generation.
 
 ## Testing
 
-- Covered by `pnpm build` and Playwright smoke checks.
+- Covered by `bun run build` and Playwright smoke checks.
 
 ## Operational notes
 
-- Run `pnpm images:generate` when adding or resizing local raster assets.
+- Run `bun run images:generate` when adding or resizing local raster assets.
 
 ## Failure modes and mitigation
 
 - Missing variant file:
   - Symptom: broken image request for `/_images/...`
-  - Fix: re-run `pnpm images:generate` or `pnpm build`
+  - Fix: re-run `bun run images:generate` or `bun run build`
 - New image sizes introduced:
   - Symptom: images render but variant set is incomplete
   - Fix: update `next.config.mjs` sizes and regenerate

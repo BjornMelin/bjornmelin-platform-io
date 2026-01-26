@@ -68,9 +68,9 @@ Production deploys are performed by GitHub Actions (`.github/workflows/deploy.ym
 
 The workflow sequence is:
 
-1. `pnpm build`
-2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage`
-3. `pnpm deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
+1. `bun run build`
+2. `bun run --cwd infrastructure deploy:storage`
+3. `bun run deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
 
 ### Why ordering matters
 
@@ -80,7 +80,7 @@ matching `out/` artifacts can cause a blank page due to CSP violations (ADR-0001
 
 ## Acceptance criteria
 
-- `pnpm build` produces:
+- `bun run build` produces:
   - `out/` containing fully static HTML/CSS/JS/assets
   - updated `infrastructure/lib/generated/next-inline-script-hashes.ts`
   - updated `infrastructure/lib/generated/next-inline-script-hashes.kvs.json`
@@ -90,8 +90,8 @@ matching `out/` artifacts can cause a blank page due to CSP violations (ADR-0001
 
 ## Testing
 
-- `pnpm build`
-- `pnpm -C infrastructure test`
+- `bun run build`
+- `bun run --cwd infrastructure test`
 
 ## Operational notes
 
@@ -100,9 +100,9 @@ matching `out/` artifacts can cause a blank page due to CSP violations (ADR-0001
 Manual deployments must follow:
 
 ```bash
-pnpm build
-pnpm -C infrastructure deploy:storage
-pnpm deploy:static:prod
+bun run build
+bun run --cwd infrastructure deploy:storage
+bun run deploy:static:prod
 ```
 
 ### Operational guardrails

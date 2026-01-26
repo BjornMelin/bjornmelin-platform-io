@@ -27,7 +27,7 @@ portfolio site without maintaining a full runbook.
 ## Notifications
 
 - Deployment workflow writes to the Actions job summary.
-- GitHub email notifications are sent for failure states by default—ensure
+- GitHub email notifications are sent for failure states by default -- ensure
   repository notifications are enabled.
 
 ## Quarterly Review

@@ -85,16 +85,16 @@ Use the Resend domain manager script to check and verify domain status:
 
 ```bash
 # Check current domain status
-pnpm resend:status
+bun run resend:status
 
 # Get required DNS records
-pnpm resend:records
+bun run resend:records
 
 # Trigger verification after adding DNS records
-pnpm resend:verify
+bun run resend:verify
 
 # Sync Route53 records from Resend requirements
-pnpm resend:sync-dns --dry-run
+bun run resend:sync-dns --dry-run
 ```
 
 ## Sender Addresses
@@ -121,14 +121,14 @@ This module is imported by both:
 
 ### Email not delivered
 
-1. Check domain verification: `pnpm resend:status`
+1. Check domain verification: `bun run resend:status`
 2. Verify DNS records are propagated: `dig TXT resend._domainkey.bjornmelin.io`
 3. Check Lambda logs in CloudWatch
 4. Verify SSM parameters exist and contain valid values
 
 ### DNS verification failing
 
-1. Get required records: `pnpm resend:records --json`
+1. Get required records: `bun run resend:records --json`
 2. Compare with Route53: `aws route53 list-resource-record-sets --hosted-zone-id <HOSTED_ZONE_ID>`
 3. Wait up to 72 hours for propagation (usually faster)
 

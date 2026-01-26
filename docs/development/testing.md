@@ -117,6 +117,16 @@ test("navigates to the about page", async ({ page }) => {
 });
 ```
 
+### E2E runtime modes
+
+- `PLAYWRIGHT_SERVER_MODE=dev` (default local) runs `next dev` with a single worker for stability.
+- `PLAYWRIGHT_SERVER_MODE=static` (default on CI) serves `out/` via `bun run start` for faster, production-like runs.
+- `PLAYWRIGHT_SERVER_MODE=none` skips the local server and uses `PLAYWRIGHT_BASE_URL`.
+
+When using `static`, run `bun run build` first (CI already does this). You can tune parallelism with
+`PLAYWRIGHT_WORKERS` and enable traces/videos locally with `PLAYWRIGHT_DEBUG_ARTIFACTS=true`.
+Set `PLAYWRIGHT_SKIP_IMAGE_VARIANTS=false` to regenerate image variants during Playwright dev runs.
+
 ## Test Organization
 
 ### Directory Structure
@@ -174,21 +184,28 @@ e2e/
 
 ```bash
 # Run all tests
-pnpm test
+bun run test
 
 # Run specific test file
-pnpm test -- ComponentName.test.tsx
+bun run test -- ComponentName.test.tsx
 
 # Run tests in watch mode
-pnpm test -- --watch
+bun run test -- --watch
 
 # Run tests with coverage
-pnpm test:coverage
+bun run test:coverage
 
-# Note: pnpm test -- --coverage is an equivalent alias for pnpm test:coverage.
+# Note: bun run test -- --coverage is an equivalent alias for bun run test:coverage.
 
 # Run E2E tests
-pnpm test:e2e
+bun run test:e2e
+
+# Run E2E tests fast (production-like build + static server)
+bun run test:e2e:fast
+
+# Run E2E tests against a static export (fast, production-like)
+bun run build
+PLAYWRIGHT_SERVER_MODE=static PLAYWRIGHT_WORKERS=50% bun run test:e2e
 ```
 
 ## Continuous Integration

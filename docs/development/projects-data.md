@@ -18,4 +18,4 @@ The Projects page is built from a generated dataset checked into the repo.
 - The generated JSON includes computed aggregates under `statistics`.
 - Verify statistics match the project list:
   - Script: `node scripts/verify-projects-json-statistics.mjs`
-  - Test: `pnpm test` (includes the statistics verification test)
+  - Test: `bun run test` (includes the statistics verification test)

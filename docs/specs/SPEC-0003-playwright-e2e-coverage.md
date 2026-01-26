@@ -71,7 +71,16 @@ Playwright covers:
 
 - Base URL is `http://localhost:3100` by default.
 - `PLAYWRIGHT_BASE_URL` overrides the base URL.
-- `webServer` starts `next dev` on the expected port with env injected for tests.
+- `webServer` starts `next dev` on the expected port with env injected for tests when the base URL is local.
+- For non-local `PLAYWRIGHT_BASE_URL`, Playwright skips starting the local server and runs against the provided URL.
+- Local runs against the dev server default to a single Playwright worker to avoid parallel dev-server flake.
+- `PLAYWRIGHT_SERVER_MODE` controls local server strategy: `dev` (default local), `static` (default on CI), or `none`.
+- `PLAYWRIGHT_WORKERS` overrides worker count; CI defaults to 50% workers when using a static server.
+- `PLAYWRIGHT_DEBUG_ARTIFACTS=true` enables traces/videos outside CI.
+- `PLAYWRIGHT_SKIP_IMAGE_VARIANTS` skips image variant generation during Playwright dev runs.
+- CI runs are sharded into two Playwright jobs (`--shard=1/2`, `--shard=2/2`) for faster feedback.
+- CI builds the static export once and shares the `out/` artifact with each shard.
+- CI shard count is computed from CPU cores (capped at 4) to align with runner capacity.
 
 ### Browser matrix
 
@@ -88,9 +97,9 @@ Playwright covers:
 ### Execution
 
 ```bash
-pnpm test:e2e
-pnpm test:e2e:ui
-pnpm test:e2e:report
+bun run test:e2e
+bun run test:e2e:ui
+bun run test:e2e:report
 ```
 
 ## Operational notes

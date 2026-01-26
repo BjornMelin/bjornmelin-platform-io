@@ -132,10 +132,10 @@ Replace `*-opacity-*` with slash modifiers:
 ### Build + verification
 
 ```bash
-pnpm install
-pnpm build
-pnpm test
-pnpm serve
+bun install
+bun run build
+bun run test
+bun run serve
 ```
 
 ## Decision Framework Score (must be ≥ 9.0)

@@ -5,7 +5,7 @@ This guide will help you set up your development environment for bjornmelin-plat
 ## Prerequisites
 
 - Node.js (24.x LTS; pinned via `.nvmrc`)
-- pnpm package manager (enable with `corepack enable pnpm`)
+- Bun (pinned via `.bun-version`)
 - AWS CLI configured with appropriate credentials
 - Git
 
@@ -21,7 +21,7 @@ This guide will help you set up your development environment for bjornmelin-plat
 2. **Install dependencies:**
 
     ```bash
-    pnpm install
+    bun install
     ```
 
 3. **Set up environment variables (local):**
@@ -40,7 +40,7 @@ This guide will help you set up your development environment for bjornmelin-plat
 Run the development server:
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 The site will be available at [http://localhost:3000](http://localhost:3000)
@@ -68,7 +68,7 @@ For working with AWS infrastructure:
 1. Use AWS CDK without global install:
 
     ```bash
-    pnpm dlx aws-cdk --version
+    bun run --cwd infrastructure cdk -- --version
     ```
 
 2. Navigate to infrastructure directory:
@@ -80,22 +80,22 @@ For working with AWS infrastructure:
 3. Install infrastructure dependencies:
 
     ```bash
-    pnpm install
+    bun install
     ```
 
 4. Deploy infrastructure:
 
     ```bash
-    pnpm cdk deploy
+    bun run deploy:all
     ```
 
 ## Available Scripts
 
-- `pnpm dev` - Start development server
-- `pnpm build` - Build production bundle
-- `pnpm start` - Start production server
-- `pnpm lint` - Run Biome lint with autofix
-- `pnpm type-check` - Run TypeScript checks
+- `bun run dev` - Start development server
+- `bun run build` - Build production bundle
+- `bun run start` - Serve static export
+- `bun run lint` - Run Biome lint with autofix
+- `bun run type-check` - Run TypeScript checks
 
 ## Project Structure
 
@@ -109,7 +109,7 @@ For working with AWS infrastructure:
 
 ## Code Style
 
-- Biome handles linting and formatting (`pnpm lint` / `pnpm format`)
+- Biome handles linting and formatting (`bun run lint` / `bun run format`)
 - TypeScript strict mode enabled
 
 ## Testing
@@ -117,14 +117,14 @@ For working with AWS infrastructure:
 Run tests:
 
 ```bash
-pnpm test
+bun run test
 ```
 
 Run coverage or E2E tests:
 
 ```bash
-pnpm test:coverage
-pnpm test:e2e
+bun run test:coverage
+bun run test:e2e
 ```
 
 ## Common Issues
@@ -145,7 +145,7 @@ export AWS_DEFAULT_REGION="your_region"
 If port 3000 is already in use, you can specify a different port:
 
 ```bash
-PORT=3001 pnpm dev
+PORT=3001 bun run dev
 ```
 
 ## Next Steps

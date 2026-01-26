@@ -56,7 +56,7 @@ Error response:
 The site can be run locally with:
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 ### API Testing Tools

@@ -60,20 +60,20 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 - TypeScript 5.9.3
 - Tailwind CSS 4.1.18
 - @tailwindcss/postcss 4.1.18
-- pnpm 10.28.0 (Corepack)
-- Zod 4.3.5
-- Vitest 4.0.17
-- Playwright 1.57.0
-- Biome 2.3.11
+- Bun 1.3.6
+- Zod 4.3.6
+- Vitest 4.0.18
+- Playwright 1.58.0
+- Biome 2.3.12
 
-*Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
-spec lists the intentional baseline versions for the core toolchain.*
+*Note: `bun.lock` is the source of truth for reproducible installs. This spec lists
+the intentional baseline versions for the core toolchain.*
 
 ### Reproducibility note
 
 The lockfile is the source of truth for reproducible installs. Core runtime
 dependencies are pinned, while many non-core dependencies use ranges and are
-resolved via `pnpm-lock.yaml`.
+resolved via `bun.lock` (and `infrastructure/bun.lock` for the CDK app).
 
 ### Rationale
 
@@ -96,7 +96,7 @@ This baseline also removes unused dependencies to reduce the operational surface
 
 ## Acceptance criteria
 
-- `package.json` and `pnpm-lock.yaml` reflect the intended core dependency baseline.
+- `package.json` and `bun.lock` reflect the intended core dependency baseline.
 - Static export remains compatible with the pinned toolchain.
 
 ## Testing
@@ -105,16 +105,17 @@ This baseline also removes unused dependencies to reduce the operational surface
 
 ## Operational notes
 
-- Follow the standard upgrade workflow and re-run `pnpm install` before `pnpm build`.
+- Follow the standard upgrade workflow and re-run `bun install` before `bun run build`.
 
 ## Failure modes and mitigation
 
-- Dependency drift → Re-run `pnpm install` and validate lockfile changes in CI.
+- Dependency drift → Re-run `bun install` and validate lockfile changes in CI.
 
 ## Key files
 
 - `package.json`
-- `pnpm-lock.yaml`
+- `bun.lock`
+- `infrastructure/bun.lock`
 
 ## References
 

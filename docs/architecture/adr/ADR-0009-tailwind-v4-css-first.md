@@ -47,9 +47,9 @@ framework integrations into dedicated packages (e.g. `@tailwindcss/postcss`).
 
 ## Alternatives
 
-- A: Keep Tailwind v3 + JS config — rejected: legacy, slower, higher config surface area.
-- B: Tailwind v4 with a legacy JS config (`@config ...`) — rejected: unnecessary for this repo.
-- C: Vite plugin integration — rejected: Next.js uses PostCSS in this repo.
+- A: Keep Tailwind v3 + JS config -- rejected: legacy, slower, higher config surface area.
+- B: Tailwind v4 with a legacy JS config (`@config ...`) -- rejected: unnecessary for this repo.
+- C: Vite plugin integration -- rejected: Next.js uses PostCSS in this repo.
 
 ### Decision Framework
 

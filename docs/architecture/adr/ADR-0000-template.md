@@ -31,9 +31,9 @@ References: <official docs and key sources as markdown links or []>
 
 ## Alternatives
 
-- A: [desc] — Pros / Cons
-- B: [desc] — Pros / Cons
-- C: [desc] — Pros / Cons
+- A: [desc] -- Pros / Cons
+- B: [desc] -- Pros / Cons
+- C: [desc] -- Pros / Cons
 
 ### Decision Framework
 
@@ -119,7 +119,7 @@ We will adopt **[Chosen Solution]** to address [the problem]. This involves usin
 
 ### Dependencies
 
-- **Added**: [pnpm packages, system tools, etc.]
+- **Added**: [bun packages, system tools, etc.]
 - **Removed**: [unused dependencies]
 
 ## Changelog

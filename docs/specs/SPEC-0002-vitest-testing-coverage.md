@@ -93,8 +93,8 @@ Async Server Components are covered by Playwright E2E per ADR-0004.
 ### Execution
 
 ```bash
-pnpm test           # Watch mode (interactive)
-pnpm test:coverage  # CI-friendly, single run with coverage
+bun run test           # Watch mode (interactive)
+bun run test:coverage  # CI-friendly, single run with coverage
 ```
 
 ## Operational notes

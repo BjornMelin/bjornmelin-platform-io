@@ -56,8 +56,8 @@ long-lived AWS credentials.
 
 Development deployments are used for testing:
 
-- Local development server (`pnpm dev`)
-- Local static build verification (`pnpm build && pnpm serve`)
+- Local development server (`bun run dev`)
+- Local static build verification (`bun run build && bun run serve`)
 - GitHub Actions jobs assume an environment-specific OIDC role
 
 ## Deployment Process
@@ -66,28 +66,28 @@ Development deployments are used for testing:
 
 ```bash
 # Install dependencies
-pnpm install
+bun install
 
 # Run tests and type checking
-pnpm type-check
-pnpm test
+bun run type-check
+bun run test
 
 # Build application (includes image optimization)
-pnpm build
+bun run build
 ```
 
 The build command executes:
 
 1. `prebuild` - Generates WebP responsive variants into `public/_images/`
 2. `next build` - Generates static HTML/JS/CSS in `out/`
-3. `pnpm generate:csp-hashes` - Regenerates CSP inline script hashes for CDK
+3. `bun run generate:csp-hashes` - Regenerates CSP inline script hashes for CDK
 
 ### 2. Deploy Infrastructure
 
 ```bash
 cd infrastructure
-pnpm install
-pnpm cdk deploy --all
+bun install
+bun run cdk -- deploy --all
 ```
 
 ### 3. Upload Static Assets
@@ -114,13 +114,13 @@ CONTACT_EMAIL=contact@bjornmelin.io \
 NEXT_PUBLIC_APP_URL=https://bjornmelin.io \
 NEXT_PUBLIC_BASE_URL=https://bjornmelin.io \
 NEXT_PUBLIC_API_URL=https://api.bjornmelin.io \
-pnpm build
+bun run build
 
 # 2) Deploy the storage stack (CloudFront Functions + KVS)
-pnpm -C infrastructure deploy:storage
+bun run --cwd infrastructure deploy:storage
 
 # 3) Upload static assets + sync CSP hashes KVS + invalidate CloudFront
-pnpm deploy:static:prod
+bun run deploy:static:prod
 ```
 
 ### 4. Verify Deployment
@@ -150,11 +150,11 @@ No `.env.production` file is used. Local development uses `.env.local` only.
 
 ### Pre-deployment Checks
 
-- Run all tests (`pnpm test`)
-- Run E2E tests when routes or form flows change (`pnpm test:e2e`)
-- Check types (`pnpm type-check`)
-- Verify dependencies (`pnpm install`)
-- Analyze bundle size (`pnpm analyze`)
+- Run all tests (`bun run test`)
+- Run E2E tests when routes or form flows change (`bun run test:e2e`)
+- Check types (`bun run type-check`)
+- Verify dependencies (`bun install`)
+- Analyze bundle size (`bun run analyze`)
 
 ### Deployment Safety
 
@@ -175,22 +175,22 @@ No `.env.production` file is used. Local development uses `.env.local` only.
 
 ```bash
 # Build application with image optimization
-pnpm build
+bun run build
 
 # Analyze bundle size
-pnpm analyze
+bun run analyze
 
 # Navigate to infrastructure workspace
 cd infrastructure
 
 # Deploy all stacks
-pnpm cdk deploy --all
+bun run cdk -- deploy --all
 
 # Deploy a specific stack
-pnpm cdk deploy prod-portfolio-email
+bun run cdk -- deploy prod-portfolio-email
 
 # Review planned changes without deploying
-pnpm cdk diff
+bun run cdk -- diff
 ```
 
 ### Rollback
@@ -198,7 +198,7 @@ pnpm cdk diff
 CDK does not have a built-in rollback command. To rollback:
 
 1. Revert the code changes in git
-2. Redeploy with `pnpm cdk deploy --all`
+2. Redeploy with `bun run --cwd infrastructure cdk -- deploy --all`
 
 For detailed information about specific aspects of deployment, refer to the
 individual documentation sections listed above.
