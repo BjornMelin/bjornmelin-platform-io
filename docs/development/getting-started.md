@@ -9,6 +9,12 @@ This guide will help you set up your development environment for bjornmelin-plat
 - AWS CLI configured with appropriate credentials
 - Git
 
+## Windows support
+
+Development is supported on Windows via WSL2 (recommended). Run all `bun`/Node commands from inside
+your WSL environment. Some helper scripts (for example `scripts/*.sh`) assume a POSIX shell and will
+not work in plain PowerShell/CMD without a compatibility layer.
+
 ## Initial Setup
 
 1. Clone the repository:

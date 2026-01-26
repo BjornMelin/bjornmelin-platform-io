@@ -12,10 +12,10 @@
  *   sync-dns  - Create/update Route53 records from Resend requirements
  *
  * Usage:
- *   pnpm resend:status
- *   pnpm resend:records
- *   pnpm resend:verify
- *   pnpm resend:sync-dns --dry-run
+ *   bun run resend:status
+ *   bun run resend:records
+ *   bun run resend:verify
+ *   bun run resend:sync-dns --dry-run
  *
  * Environment:
  *   AWS credentials must be configured (via AWS CLI profile or env vars)
@@ -365,7 +365,7 @@ async function statusCommand(options: { domain: string; region: string }): Promi
     console.log("✓ Domain is fully verified and ready for sending");
   } else {
     console.log("⚠ Domain verification incomplete. Add missing DNS records.");
-    console.log("  Run 'pnpm resend:verify' to trigger re-verification after adding records.");
+    console.log("  Run 'bun run resend:verify' to trigger re-verification after adding records.");
   }
 }
 
@@ -446,7 +446,7 @@ async function verifyCommand(options: { domain: string; region: string }): Promi
   }
 
   console.log("✓ Verification triggered successfully.");
-  console.log("  Check status again in a few minutes with 'pnpm resend:status'");
+  console.log("  Check status again in a few minutes with 'bun run resend:status'");
 }
 
 // Command: sync-dns

@@ -5,6 +5,10 @@ const nextConfig = {
   // 1) In Next.js 14+, this tells Next.js to produce static files in "out/" during `next build`.
   output: "export",
 
+  // Allow Playwright (and other local tools) to request dev assets from 127.0.0.1
+  // even when the dev server is started on "localhost".
+  allowedDevOrigins: ["127.0.0.1"],
+
   images: {
     loader: "custom",
     loaderFile: "./image-loader.ts",

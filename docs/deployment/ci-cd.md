@@ -54,6 +54,11 @@ workflow performs the safe sequence to keep the static export and CSP hashes in 
 2. `bun run --cwd infrastructure cdk -- deploy prod-portfolio-storage` (deploys CloudFront Functions + CSP hashes KVS)
 3. `bun run deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
 
+Note: the deploy workflow always regenerates the CSP hashes during `bun run build`, regardless of
+what is committed. Keep the generated hash artifacts tracked in git because the CDK app reads them
+during synth and local deploys. Removing them from version control would require changing the infra
+pipeline to generate them before every synth/deploy.
+
 ### Production Build
 
 1. Install web application dependencies from the repository root:

@@ -1,42 +1,36 @@
 {
   "name": "infrastructure",
   "version": "1.0.0",
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "bun@1.3.6",
   "bin": "bin/app.js",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "bun --bun tsc",
+    "watch": "bun --bun tsc -w",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "cdk": "cdk",
-    "deploy:dns": "cdk deploy prod-portfolio-dns",
-    "deploy:storage": "cdk deploy prod-portfolio-storage",
-    "deploy:deployment": "cdk deploy prod-portfolio-deployment",
-    "deploy:monitoring": "cdk deploy prod-portfolio-monitoring",
-    "deploy:email": "cdk deploy prod-portfolio-email",
-    "deploy:all": "cdk deploy --all",
-    "destroy:all": "cdk destroy --all",
-    "diff": "cdk diff"
+    "cdk": "bun --bun cdk",
+    "deploy:dns": "bun --bun cdk deploy prod-portfolio-dns",
+    "deploy:storage": "bun --bun cdk deploy prod-portfolio-storage",
+    "deploy:deployment": "bun --bun cdk deploy prod-portfolio-deployment",
+    "deploy:monitoring": "bun --bun cdk deploy prod-portfolio-monitoring",
+    "deploy:email": "bun --bun cdk deploy prod-portfolio-email",
+    "deploy:all": "bun --bun cdk deploy --all",
+    "destroy:all": "bun --bun cdk destroy --all",
+    "diff": "bun --bun cdk diff"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.159",
+    "@types/aws-lambda": "8.10.160",
     "@types/node": "^24.10.9",
-    "aws-cdk": "^2.1101.0",
+    "aws-cdk": "^2.1103.0",
     "esbuild": "^0.27.2",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
-    "vitest": "^4.0.17"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "unrs-resolver",
-      "esbuild"
-    ]
+    "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@aws-sdk/client-cloudfront": "3.971.0",
-    "@aws-sdk/client-ssm": "3.971.0",
-    "aws-cdk-lib": "2.235.0",
+    "@aws-sdk/client-cloudfront": "3.975.0",
+    "@aws-sdk/client-ssm": "3.975.0",
+    "aws-cdk-lib": "2.236.0",
     "constructs": "^10.4.5",
     "resend": "^6.7.0",
     "source-map-support": "^0.5.21"

@@ -21,11 +21,11 @@ Fixes # (issue)
 
 <!-- Please describe the tests that you ran to verify your changes. -->
 
-- [ ] Unit tests pass locally with `pnpm test`
-- [ ] E2E tests pass locally with `pnpm test:e2e`
-- [ ] Linting passes with `pnpm lint`
-- [ ] Type checking passes with `pnpm type-check`
-- [ ] Build succeeds with `pnpm build`
+- [ ] Unit tests pass locally with `bun run test`
+- [ ] E2E tests pass locally with `bun run test:e2e`
+- [ ] Linting passes with `bun run lint`
+- [ ] Type checking passes with `bun run type-check`
+- [ ] Build succeeds with `bun run build`
 
 ## Screenshots (if applicable)
 

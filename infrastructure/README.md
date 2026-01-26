@@ -9,7 +9,7 @@ This section guides you through setting up AWS infrastructure from scratch for a
 - AWS account with admin access
 - Domain registered in Route 53 (or DNS delegated to Route 53)
 - AWS CLI installed and configured (`aws configure`)
-- Node.js 24.x LTS (pinned via `.nvmrc`) and pnpm (via Corepack)
+- Node.js 24.x LTS (pinned via `.nvmrc`) and Bun (pinned via `.bun-version`)
 - GitHub repository with this code
 
 ### Step 1: Create GitHub OIDC Provider in AWS
@@ -25,7 +25,7 @@ This section guides you through setting up AWS infrastructure from scratch for a
 >
 > After completing these prerequisites, CDK handles all other infrastructure (DNS, storage,
 > email, monitoring). The CDK code in `lib/` is configured to only manage DNS, storage,
-> email, and monitoring stacks—it explicitly does not attempt to create the OIDC provider
+> email, and monitoring stacks -- it explicitly does not attempt to create the OIDC provider
 > or GitHub Actions IAM role. See the [Stack Architecture section](#stack-architecture)
 > below for details on what each CDK stack provisions.
 
@@ -121,7 +121,7 @@ Example inline policy (replace placeholders):
 
 #### Additional permissions for the static deploy step (S3 + CloudFront + CSP KVS)
 
-The production workflow also runs `pnpm deploy:static:prod`, which uses the AWS CLI to:
+The production workflow also runs `bun run deploy:static:prod`, which uses the AWS CLI to:
 
 - read CloudFormation exports (`cloudformation list-exports`)
 - upload the `out/` directory to S3 (`aws s3 sync ...`)
@@ -247,20 +247,20 @@ bash scripts/ops/rotate-resend-sending-key.sh
 
 ```bash
 cd infrastructure
-pnpm install
-pnpm cdk deploy prod-portfolio-dns --require-approval never
-pnpm cdk deploy prod-portfolio-storage --require-approval never
-pnpm cdk deploy prod-portfolio-email --require-approval never
-pnpm cdk deploy prod-portfolio-monitoring --require-approval never
+bun install
+bun --bun cdk deploy prod-portfolio-dns --require-approval never
+bun --bun cdk deploy prod-portfolio-storage --require-approval never
+bun --bun cdk deploy prod-portfolio-email --require-approval never
+bun --bun cdk deploy prod-portfolio-monitoring --require-approval never
 ```
 
 > **Tip:** The `--require-approval never` flag bypasses CDK's change review prompts. For
-> first-time deployments, consider running `pnpm cdk diff <stack-name>` first to review
+> first-time deployments, consider running `bun --bun cdk diff <stack-name>` first to review
 > changes, or omit the flag to get interactive approval prompts. Keep `--require-approval
 > never` primarily for automated CI/CD pipelines.
 >
 > **Note (CSP hashes KVS):** The Storage stack provisions the CloudFront KeyValueStore used for CSP hashes (ADR-0001).
-> The KVS contents are build artifacts and are synced during the static deploy step (`pnpm deploy:static:prod`).
+> The KVS contents are build artifacts and are synced during the static deploy step (`bun run deploy:static:prod`).
 
 ### Step 6: Deploy Application
 
@@ -313,7 +313,7 @@ graph TD
 
 - AWS CLI configured
 - Node.js 24.x LTS (use `nvm use` from repo root)
-- pnpm package manager (align with repository CI version)
+- Bun (align with repository `.bun-version`)
 - Domain registered in Route 53
 
 ### Configuration Parameters
@@ -333,20 +333,20 @@ export const CONFIG = {
 
    ```bash
    cd infrastructure
-   pnpm install
+   bun install
    ```
 
 2. Deploy stacks in order:
 
    ```bash
    # Deploy DNS stack first (wait for certificate validation)
-   pnpm deploy:dns
+   bun run deploy:dns
 
    # Deploy remaining stacks
-   pnpm deploy:storage
-   pnpm deploy:deployment
-   pnpm deploy:monitoring
-   pnpm deploy:email
+   bun run deploy:storage
+   bun run deploy:deployment
+   bun run deploy:monitoring
+   bun run deploy:email
    ```
 
 ### Troubleshooting Steps
@@ -374,7 +374,7 @@ export const CONFIG = {
 cdk destroy prod-portfolio-[stack-name]
 
 # Rollback all stacks
-pnpm destroy:all
+bun run destroy:all
 ```
 
 ## Monitoring Documentation
@@ -435,16 +435,16 @@ Commands
 
 ```bash
 # Install deps (once)
-pnpm -C infrastructure install
+bun --cwd infrastructure install
 
 # Run the infra test suite
-pnpm -C infrastructure test
+bun run --cwd infrastructure test
 
 # With coverage (v8)
-pnpm -C infrastructure test:coverage
+bun run --cwd infrastructure test:coverage
 
 # Run a single test file
-pnpm -C infrastructure vitest run test/storage-stack.test.ts
+bun run --cwd infrastructure test -- test/storage-stack.test.ts
 ```
 
 Notes

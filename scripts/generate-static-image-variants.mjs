@@ -94,6 +94,12 @@ const generateForFile = async (absSourcePath) => {
 };
 
 const main = async () => {
+  if (process.env.SKIP_IMAGE_VARIANTS === "true") {
+    // eslint-disable-next-line no-console
+    console.log("images: SKIP_IMAGE_VARIANTS=true, skipping variant generation");
+    return;
+  }
+
   try {
     await fs.access(publicDir);
   } catch {

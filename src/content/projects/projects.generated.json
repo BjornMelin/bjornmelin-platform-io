@@ -180,7 +180,7 @@
         "formatting": "Biome (2 spaces, double quotes, semicolons)",
         "commits": "Conventional Commits (feat, fix, docs, etc.)",
         "testing": "Vitest + jsdom, coverage thresholds enforced",
-        "quality": "pnpm lint && pnpm test required before PR"
+        "quality": "bun run lint && bun run test required before PR"
       },
       "status": "Active Production",
       "topics": [

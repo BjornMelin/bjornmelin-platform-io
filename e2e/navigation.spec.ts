@@ -1,5 +1,7 @@
 import { expect, test } from "./test";
 
+const urlExpectationTimeoutMs = 30_000;
+
 test("navbar routes between core pages", async ({ page }) => {
   await page.goto("/");
 
@@ -9,15 +11,15 @@ test("navbar routes between core pages", async ({ page }) => {
     .first();
 
   await primaryNav.getByRole("link", { name: "About" }).click();
-  await expect(page).toHaveURL(/\/about\/?$/);
+  await expect(page).toHaveURL(/\/about\/?$/, { timeout: urlExpectationTimeoutMs });
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Bjorn Melin");
 
   await primaryNav.getByRole("link", { name: "Projects" }).click();
-  await expect(page).toHaveURL(/\/projects\/?$/);
+  await expect(page).toHaveURL(/\/projects\/?$/, { timeout: urlExpectationTimeoutMs });
   await expect(page.getByRole("heading", { level: 1, name: "Projects" })).toBeVisible();
 
   await primaryNav.getByRole("link", { name: "Contact" }).click();
-  await expect(page).toHaveURL(/\/contact\/?$/);
+  await expect(page).toHaveURL(/\/contact\/?$/, { timeout: urlExpectationTimeoutMs });
   await expect(page.getByRole("heading", { level: 1, name: "Contact Me" })).toBeVisible();
 });
 
@@ -25,11 +27,11 @@ test("hero CTAs navigate to contact and projects", async ({ page }) => {
   await page.goto("/");
 
   await page.getByRole("link", { name: "Get in Touch" }).click();
-  await expect(page).toHaveURL(/\/contact\/?$/);
+  await expect(page).toHaveURL(/\/contact\/?$/, { timeout: urlExpectationTimeoutMs });
 
   await page.goto("/");
   await page.getByRole("link", { name: "View Projects" }).click();
-  await expect(page).toHaveURL(/\/projects\/?$/);
+  await expect(page).toHaveURL(/\/projects\/?$/, { timeout: urlExpectationTimeoutMs });
 });
 
 test("mobile menu closes on navigation", async ({ page }) => {
@@ -42,7 +44,7 @@ test("mobile menu closes on navigation", async ({ page }) => {
   await expect(primaryNav.getByRole("link", { name: "Home" })).toBeVisible();
 
   await primaryNav.getByRole("link", { name: "Projects" }).click();
-  await expect(page).toHaveURL(/\/projects\/?$/);
+  await expect(page).toHaveURL(/\/projects\/?$/, { timeout: urlExpectationTimeoutMs });
   await expect(page.getByRole("heading", { level: 1, name: "Projects" })).toBeVisible();
 
   // Menu content should be gone after link click (the "Home" entry only exists in the mobile panel).

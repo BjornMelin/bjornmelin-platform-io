@@ -90,7 +90,7 @@ export default defineConfig({
       "opensrc/**",
     ],
     coverage: {
-      provider: "v8",
+      provider: "istanbul",
       reporter: coverageReporters,
       include: [
         // Core application logic

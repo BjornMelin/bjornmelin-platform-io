@@ -6,7 +6,7 @@ show_help() {
 Usage: fix-gh-oidc-static-deploy-policy.sh --role-name <iam-role-name> [options]
 
 Attaches an inline IAM policy to the given role so the static deploy step
-(`pnpm deploy:static:prod` / scripts/deploy-static-site.mjs) can:
+(`bun run deploy:static:prod` / scripts/deploy-static-site.mjs) can:
   - Read CloudFormation exports to discover targets (cloudformation:ListExports)
   - Upload the Next.js static export to S3 (s3 sync)
   - Sync the CSP hashes CloudFront KeyValueStore (cloudfront-keyvaluestore:*)

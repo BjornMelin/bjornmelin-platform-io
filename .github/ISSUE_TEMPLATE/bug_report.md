@@ -36,7 +36,7 @@ Steps to reproduce the behavior:
 - **OS:** [e.g., macOS, Windows, Linux]
 - **Browser:** [e.g., Chrome 120, Firefox 121]
 - **Node Version:** [e.g., 24.10.0]
-- **pnpm Version:** [e.g., 9.0.0]
+- **Bun Version:** [e.g., 1.3.6]
 
 ## Additional Context
 

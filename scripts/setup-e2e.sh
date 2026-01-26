@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-pnpm exec playwright install chromium
-
+bun --bun playwright install chromium
