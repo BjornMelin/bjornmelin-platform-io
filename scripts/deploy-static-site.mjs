@@ -50,7 +50,7 @@ function chunk(items, size) {
 function readKvsPayload(filePath) {
   if (!fs.existsSync(filePath)) {
     throw new Error(
-      `KVS payload not found: ${filePath}\nRun \`pnpm build\` first (it generates CSP hashes + KVS payload).`,
+      `KVS payload not found: ${filePath}\nRun \`bun run build\` first (it generates CSP hashes + KVS payload).`,
     );
   }
   const json = JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -154,7 +154,7 @@ const invalidationPaths = (readArg("--invalidation-paths") ?? "/*")
   .filter(Boolean);
 
 if (!fs.existsSync(outDir)) {
-  throw new Error(`out dir not found: ${outDir}\nRun \`pnpm build\` first so the static export exists.`);
+  throw new Error(`out dir not found: ${outDir}\nRun \`bun run build\` first so the static export exists.`);
 }
 
 const { Exports } = awsJson(["cloudformation", "list-exports"]);
