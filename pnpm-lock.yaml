@@ -87,8 +87,8 @@ importers:
         specifier: ^7.71.1
         version: 7.71.1(react@19.2.3)
       resend:
-        specifier: ^6.7.0
-        version: 6.7.0
+        specifier: ^6.8.0
+        version: 6.8.0
       superjson:
         specifier: ^2.2.6
         version: 2.2.6
@@ -3089,8 +3089,8 @@ packages:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
 
-  resend@6.7.0:
-    resolution: {integrity: sha512-2ZV0NDZsh4Gh+Nd1hvluZIitmGJ59O4+OxMufymG6Y8uz1Jgt2uS1seSENnkIUlmwg7/dwmfIJC9rAufByz7wA==}
+  resend@6.8.0:
+    resolution: {integrity: sha512-fDOXGqafQfQXl8nXe93wr93pus8tW7YPpowenE3SmG7dJJf0hH3xUWm3xqacnPvhqjCQTJH9xETg07rmUeSuqQ==}
     engines: {node: '>=20'}
     peerDependencies:
       '@react-email/render': '*'
@@ -6667,7 +6667,7 @@ snapshots:
 
   require-from-string@2.0.2: {}
 
-  resend@6.7.0:
+  resend@6.8.0:
     dependencies:
       svix: 1.84.1
 
