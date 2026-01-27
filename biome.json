@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.12/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.13/schema.json",
   "files": {
     "ignoreUnknown": true,
     "includes": [
@@ -15,7 +15,11 @@
       "!infrastructure/lib/functions/cloudfront/next-csp-response.js",
       "!infrastructure/lib/generated/next-inline-script-hashes.js",
       "!.aws-sam",
-      "!.taskmaster"
+      "!.archive",
+      "!.codex",
+      "!.firecrawl",
+      "!.agents",
+      "!opensrc"
     ]
   },
   "css": {
