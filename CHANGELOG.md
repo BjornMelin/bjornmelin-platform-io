@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.7.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.6.0...v3.7.0) (2026-01-28)
+
+
+### Features
+
+* **deps,CVE-2026-23864:** update dependencies and schema version ([6850856](https://github.com/BjornMelin/bjornmelin-platform-io/commit/6850856134e0713f6754f525daaf5dd870a534f0))
+
+
+### Bug Fixes
+
+* resolve linting issues in CSP hash generation script ([e5d4931](https://github.com/BjornMelin/bjornmelin-platform-io/commit/e5d49319baef1bf39693b132a80d07edba2f7df8))
+
 ## [3.6.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.5.0...v3.6.0) (2026-01-25)
 
 
