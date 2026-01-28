@@ -25,7 +25,7 @@ function computeInlineScriptHashes(html) {
   const scriptRe = /<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi;
 
   let match;
-  while ((match = scriptRe.exec(html))) {
+  for (match = scriptRe.exec(html); match; match = scriptRe.exec(html)) {
     const attrs = match[1] ?? "";
     const body = match[2] ?? "";
 
@@ -60,8 +60,7 @@ const kvsTarget = path.resolve(
   readArg("--kvs-target") ?? "infrastructure/lib/generated/next-inline-script-hashes.kvs.json",
 );
 const functionTarget = path.resolve(
-  readArg("--function-target") ??
-    "infrastructure/lib/functions/cloudfront/next-csp-response.js",
+  readArg("--function-target") ?? "infrastructure/lib/functions/cloudfront/next-csp-response.js",
 );
 
 if (!fs.existsSync(outDir)) {
@@ -77,10 +76,7 @@ for (const htmlFile of htmlFiles) {
   const html = fs.readFileSync(htmlFile, "utf8");
   const hashes = [...computeInlineScriptHashes(html)].sort();
   for (const hash of hashes) allHashes.add(hash);
-  const relativePath = `/${path
-    .relative(outDir, htmlFile)
-    .split(path.sep)
-    .join("/")}`;
+  const relativePath = `/${path.relative(outDir, htmlFile).split(path.sep).join("/")}`;
   perPathHashes[relativePath] = hashes;
 }
 
@@ -110,10 +106,7 @@ ${hashes.map((hash) => `  "sha256-${hash}",`).join("\n")}
 );
 
 const perPathHashesSha = Object.fromEntries(
-  Object.entries(perPathHashes).map(([key, value]) => [
-    key,
-    value.map((hash) => `sha256-${hash}`),
-  ]),
+  Object.entries(perPathHashes).map(([key, value]) => [key, value.map((hash) => `sha256-${hash}`)]),
 );
 
 fs.mkdirSync(path.dirname(perPathTarget), { recursive: true });
@@ -141,9 +134,7 @@ for (const { key, value } of kvsData) {
   const keyBytes = Buffer.byteLength(key, "utf8");
   const valueBytes = Buffer.byteLength(value, "utf8");
   if (keyBytes > 512) {
-    console.error(
-      `CloudFront KeyValueStore key exceeds 512 bytes: ${keyBytes} bytes (${key})`,
-    );
+    console.error(`CloudFront KeyValueStore key exceeds 512 bytes: ${keyBytes} bytes (${key})`);
     process.exit(1);
   }
   if (valueBytes > 1024) {
@@ -155,7 +146,7 @@ for (const { key, value } of kvsData) {
 }
 
 fs.mkdirSync(path.dirname(kvsTarget), { recursive: true });
-const kvsPayload = JSON.stringify({ data: kvsData }, null, 2) + "\n";
+const kvsPayload = `${JSON.stringify({ data: kvsData }, null, 2)}\n`;
 const kvsPayloadBytes = Buffer.byteLength(kvsPayload, "utf8");
 const keyValueStoreLimitBytes = 5 * 1024 * 1024;
 if (kvsPayloadBytes > keyValueStoreLimitBytes) {
@@ -348,18 +339,18 @@ if (functionOutputBytes > cloudFrontFunctionLimitBytes) {
 fs.mkdirSync(path.dirname(functionTarget), { recursive: true });
 fs.writeFileSync(functionTarget, functionOutput, "utf8");
 
-	process.stdout.write(
-	  JSON.stringify(
-	    {
-	      outDir,
-	      target,
-	      perPathTarget,
-	      perPathJsTarget,
-	      kvsTarget,
-	      functionTarget,
-	      hashCount: hashes.length,
-	    },
-	    null,
-	    2,
-	  ) + "\n",
-	);
+process.stdout.write(
+  `${JSON.stringify(
+    {
+      outDir,
+      target,
+      perPathTarget,
+      perPathJsTarget,
+      kvsTarget,
+      functionTarget,
+      hashCount: hashes.length,
+    },
+    null,
+    2,
+  )}\n`,
+);
