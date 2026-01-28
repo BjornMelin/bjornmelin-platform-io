@@ -46,13 +46,7 @@ function computeStatistics(projects) {
 
 async function main() {
   const root = process.cwd();
-  const projectsJsonPath = path.join(
-    root,
-    "src",
-    "content",
-    "projects",
-    "projects.generated.json",
-  );
+  const projectsJsonPath = path.join(root, "src", "content", "projects", "projects.generated.json");
 
   const raw = await readFile(projectsJsonPath, "utf8");
   const parsed = JSON.parse(raw);
