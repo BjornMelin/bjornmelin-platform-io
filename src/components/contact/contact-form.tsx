@@ -35,7 +35,6 @@ interface APIErrorResponse {
  * @returns A fully accessible contact form.
  */
 export function ContactForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
   const { toast } = useToast();
   const idPrefix = useId();
@@ -57,7 +56,7 @@ export function ContactForm() {
     handleSubmit,
     reset,
     setError,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     mode: "onTouched",
@@ -65,7 +64,6 @@ export function ContactForm() {
   });
 
   const onSubmit = async (data: ContactFormData) => {
-    setIsSubmitting(true);
     setFormStatus("idle");
 
     try {
@@ -173,8 +171,6 @@ export function ContactForm() {
         description: error instanceof Error ? error.message : "Failed to send message",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

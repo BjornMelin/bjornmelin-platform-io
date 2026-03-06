@@ -116,6 +116,7 @@ test-results/
 agent-logs/
 .archive/
 .codex/
+.claude/
 .firecrawl/
 .agents/
 
