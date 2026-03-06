@@ -24,10 +24,10 @@ Development documentation for the bjornmelin-platform-io project.
 
 #### Frontend
 
-- Next.js 16.1.3 (App Router, static export)
-- React 19.2.3
+- Next.js 16.1.6 (App Router, static export)
+- React 19.2.4
 - TypeScript 5.9.3
-- Tailwind CSS 4.1.18 (CSS-first config)
+- Tailwind CSS 4.2.1 (CSS-first config)
 - shadcn/ui components
 
 #### Build Optimization
@@ -38,7 +38,7 @@ Development documentation for the bjornmelin-platform-io project.
 
 #### Infrastructure
 
-- AWS CDK
+- AWS CDK 2.241.x
 - AWS S3
 - Resend (email delivery)
 
@@ -48,6 +48,8 @@ Development documentation for the bjornmelin-platform-io project.
 - Zod for validation
 - Vitest (unit tests)
 - Playwright (E2E tests)
+- `@types/node` pinned to the latest `24.x` line while the runtime stays on
+  Node 24 LTS
 
 ## Development Workflow
 

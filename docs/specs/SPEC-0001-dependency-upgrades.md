@@ -55,16 +55,16 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### Version baseline (pinned)
 
-- Next.js 16.1.3
-- React 19.2.3
+- Next.js 16.1.6
+- React 19.2.4
 - TypeScript 5.9.3
-- Tailwind CSS 4.1.18
-- @tailwindcss/postcss 4.1.18
+- Tailwind CSS 4.2.1
+- @tailwindcss/postcss 4.2.1
 - pnpm 10.28.0 (Corepack)
-- Zod 4.3.5
-- Vitest 4.0.17
-- Playwright 1.57.0
-- Biome 2.3.11
+- Zod 4.3.6
+- Vitest 4.0.18
+- Playwright 1.58.2
+- Biome 2.4.6
 
 *Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
 spec lists the intentional baseline versions for the core toolchain.*
@@ -74,6 +74,10 @@ spec lists the intentional baseline versions for the core toolchain.*
 The lockfile is the source of truth for reproducible installs. Core runtime
 dependencies are pinned, while many non-core dependencies use ranges and are
 resolved via `pnpm-lock.yaml`.
+
+No temporary `pnpm.overrides` entries are required in the current baseline.
+Earlier audit remediation pins were removed after upstream transitive
+resolution caught up and `pnpm audit` remained clean without them.
 
 ### Rationale
 
@@ -106,6 +110,9 @@ This baseline also removes unused dependencies to reduce the operational surface
 ## Operational notes
 
 - Follow the standard upgrade workflow and re-run `pnpm install` before `pnpm build`.
+- Keep `@types/node` on the latest `24.x` release while the repository engine
+  remains `>=24 <25`; `25.x` is intentionally left out of scope until the Node
+  engine policy changes.
 
 ## Failure modes and mitigation
 
