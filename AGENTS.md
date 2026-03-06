@@ -46,9 +46,11 @@ Infrastructure:
   `@remarks @param @typeParam @returns @throws @example @see @deprecated` (order matters).
 - TSDoc `@param` tags MUST use `@param name - desc` with no brace typing.
 - If an exported function adds or changes a thrown error, it MUST include `@throws ErrorType - condition`.
-- Barrel imports MUST NEVER be introduced from package entrypoints or `index` re-exports (for example `lucide-react` or `@mui/material`).
+- Barrel imports MUST NEVER be introduced from package entrypoints or `index` re-exports.
+  Examples: `lucide-react`, `@mui/material`.
 - Direct module paths MUST ALWAYS be used for imports (for example `lucide-react/dist/esm/icons/x` or `@mui/material/Button`).
-- The only barrel-import exception is packages listed in `experimental.optimizePackageImports`; those MAY be used because Next rewrites them.
+- The only barrel-import exception is packages listed in `experimental.optimizePackageImports`;
+  those MAY be used because Next rewrites them.
 - Lucide icons MUST ALWAYS use direct `lucide-react/dist/esm/icons/*` imports.
 - The Lucide typings shim at `src/types/lucide-react-icons.d.ts` MUST be preserved when those direct paths are used.
 
@@ -77,11 +79,13 @@ Infrastructure:
 - Tailwind CSS MUST use the v4 CSS-first configuration in `src/app/globals.css`.
 - `tailwind.config.ts` MUST be treated as tooling-only unless it is explicitly loaded via `@config`.
 - Static export is mandatory via `output: "export"`.
-- Server Actions, ISR, Draft Mode, request-dependent Route Handlers, and any other server-runtime-only features MUST NOT be introduced.
+- Server Actions, ISR, Draft Mode, request-dependent Route Handlers, and any other
+  server-runtime-only features MUST NOT be introduced.
 - CSP inline script hashes are generated and are NOT secrets.
 - `infrastructure/lib/generated/next-inline-script-hashes.ts` MUST NEVER be deleted or edited manually.
 - CSP hashes MUST be regenerated with `pnpm generate:csp-hashes`, usually via `pnpm build`.
-- Static export and CSP deployment steps MUST stay in sync: `pnpm build` -> `pnpm -C infrastructure deploy:storage` -> `pnpm deploy:static:prod`.
+- Static export and CSP deployment steps MUST stay in sync:
+  `pnpm build` -> `pnpm -C infrastructure deploy:storage` -> `pnpm deploy:static:prod`.
 - Merges to `main` MUST preserve the GitHub Actions deployment flow defined in `.github/workflows/deploy.yml`.
 
 ## Browser Automation
