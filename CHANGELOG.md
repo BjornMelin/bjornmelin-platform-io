@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.7.1](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.7.0...v3.7.1) (2026-03-06)
+
+
+### Bug Fixes
+
+* **build:** pin turbopack root and refresh csp assets ([6dca2a4](https://github.com/BjornMelin/bjornmelin-platform-io/commit/6dca2a48dab9227cc77e968afeaae54b4c103267))
+
 ## [3.7.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.6.0...v3.7.0) (2026-01-28)
 
 
