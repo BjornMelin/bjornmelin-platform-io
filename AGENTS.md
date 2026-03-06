@@ -2,91 +2,92 @@
 
 ## Project Structure & Module Organization
 
-- `src/app/`: Next.js App Router routes (`page.tsx`, `layout.tsx`, `route.ts`).
-- `src/components/`: UI + site sections (keep shared logic in `src/lib/` when possible).
-- `src/lib/`, `src/hooks/`, `src/types/`: core logic, hooks, and types.
-- `src/__tests__/`: Vitest unit/integration tests (`*.test.ts(x)`).
-- `src/test/`, `src/mocks/`: test setup, helpers, factories, and MSW handlers.
-- `public/`: static assets. `out/`: generated static export (do not edit).
-- `infrastructure/`: AWS CDK app + its own tests/config.
-- `scripts/`: build/deploy/ops utilities. `docs/`: architecture + runbooks.
+- `src/app/` MUST contain Next.js App Router routes (`page.tsx`, `layout.tsx`, `route.ts`).
+- `src/components/` MUST contain UI and site sections; shared logic MUST live in `src/lib/` when appropriate.
+- `src/lib/`, `src/hooks/`, and `src/types/` MUST contain core logic, hooks, and types.
+- `src/__tests__/` MUST contain Vitest unit and integration tests (`*.test.ts(x)`).
+- `src/test/` and `src/mocks/` MUST contain test setup, helpers, factories, and MSW handlers.
+- `public/` MUST contain static assets.
+- `out/` MUST be treated as generated output and MUST NOT be edited manually.
+- `infrastructure/` MUST contain the AWS CDK app and its independent tests and config.
+- `scripts/` MUST contain build, deploy, and operational utilities.
+- `docs/` MUST contain architecture decisions, specifications, and runbooks.
 
 ## Build, Test, and Development Commands
 
-- `pnpm install`: install dependencies (Node version pinned via `.nvmrc`).
+- `pnpm install`: install dependencies (Node version follows `.nvmrc`).
 - `pnpm dev`: run Next.js locally on `http://localhost:3000`.
 - `pnpm build`: production build; generates image variants, writes static `out/`, and updates CSP hashes.
-- `pnpm start` or `pnpm serve`: serve the `out/` static export.
-- `pnpm lint` / `pnpm format`: Biome lint+format (writes fixes).
-- `pnpm type-check`: TypeScript typecheck.
-- `pnpm test` / `pnpm test:coverage`: Vitest unit/integration tests + coverage.
-- `pnpm test:e2e`: Playwright (expects tests in `e2e/`).
+- `pnpm start` or `pnpm serve`: serve the static export in `out/`.
+- `pnpm lint` and `pnpm format`: Biome linting and formatting.
+- `pnpm type-check`: TypeScript validation.
+- `pnpm test` and `pnpm test:coverage`: Vitest unit and integration coverage.
+- `pnpm test:e2e`: Playwright tests in `e2e/`.
 
 Infrastructure:
 
-- `pnpm -C infrastructure install`: install infra dependencies.
-- `pnpm -C infrastructure test`: infra Vitest suite (Node environment).
-- `pnpm -C infrastructure deploy:storage` (and other `deploy:*`): deploy CDK stacks.
+- `pnpm -C infrastructure install`: install infrastructure dependencies.
+- `pnpm -C infrastructure test`: run the infrastructure Vitest suite.
+- `pnpm -C infrastructure deploy:storage` and other `deploy:*`: deploy CDK stacks.
 
 ## Coding Style & Naming Conventions
 
-- TypeScript-first; strict typing preferred. Prefer existing patterns over new abstractions.
-- Formatting/linting: Biome (2 spaces, double quotes, semicolons; see `biome.json`).
-- Naming: React components `PascalCase.tsx`, hooks `useThing.ts`, tests `*.test.ts(x)`.
-- **Characters**: no Unicode em dash U+2014; use `--`. Detect with `rg -n --pcre2 "\\x{2014}" .`.
-- **Promises**: no floating promises; use `await`/`return`/`.catch`/`.then(..., onRejected)`.
+- TypeScript-first code MUST be the default, and changed code MUST stay strictly typed.
+- Existing repo patterns MUST be preferred over new abstractions unless a new abstraction is clearly required.
+- Biome formatting and linting rules in `biome.json` MUST be followed.
+- React components MUST use `PascalCase.tsx`, hooks MUST use `useThing.ts`, and tests MUST use `*.test.ts(x)`.
+- Unicode em dash `U+2014` MUST NOT be used; `--` MUST be used instead. Detect with `rg -n --pcre2 "\\x{2014}" .`.
+- Floating promises MUST NEVER be introduced; code MUST use `await`, `return`, `.catch`, or `.then(..., onRejected)`.
   Prefer lint rule enforcement (e.g., `@typescript-eslint/no-floating-promises`) for reliable
   detection. If using `rg`, note that `rg -n --pcre2 "Promise\\.resolve\\(\\)" .` is a narrow
   heuristic and will miss common cases like `fooAsync();`.
-- **TSDoc** (TS/TSX): every changed/added export gets `/** ... */` (no blank line).
-  One-sentence summary ending with `.`. Allowed tags only:
+- Every changed or added exported TS/TSX symbol MUST have a `/** ... */` TSDoc block with no blank line before it.
+- TSDoc summaries MUST be one sentence ending with `.`. Allowed tags are only:
   `@remarks @param @typeParam @returns @throws @example @see @deprecated` (order matters).
-  Use `@param name - desc` and no brace typing. If you add/modify a `throw` in an exported function, add
-  `@throws ErrorType - condition` (e.g., `@throws Error - when ...`).
-- **NEVER use barrel imports** (importing from a package's main entrypoint or `index` file that re-exports many modules).
-  Don’t import from package entrypoints or `index` re-exports (e.g., `from 'lucide-react'`,
-  `from '@mui/material'`).
-- **Use direct paths only.** Import the specific module/file you need (e.g., `lucide-react/dist/esm/icons/x`, `@mui/material/Button`).
-- **Exception (Next.js):** Barrel imports are allowed only for packages listed in `experimental.optimizePackageImports`
-  (Next rewrites them to direct imports).
-- **Lucide icons:** use direct `lucide-react/dist/esm/icons/*` imports. A typings shim lives at `src/types/lucide-react-icons.d.ts`
-  to support these paths.
+- TSDoc `@param` tags MUST use `@param name - desc` with no brace typing.
+- If an exported function adds or changes a thrown error, it MUST include `@throws ErrorType - condition`.
+- Barrel imports MUST NEVER be introduced from package entrypoints or `index` re-exports (for example `lucide-react` or `@mui/material`).
+- Direct module paths MUST ALWAYS be used for imports (for example `lucide-react/dist/esm/icons/x` or `@mui/material/Button`).
+- The only barrel-import exception is packages listed in `experimental.optimizePackageImports`; those MAY be used because Next rewrites them.
+- Lucide icons MUST ALWAYS use direct `lucide-react/dist/esm/icons/*` imports.
+- The Lucide typings shim at `src/types/lucide-react-icons.d.ts` MUST be preserved when those direct paths are used.
 
 ## Testing Guidelines
 
-- App tests: Vitest + `jsdom`; coverage thresholds are enforced by default (override via
-  `COVERAGE_THRESHOLD_DEFAULT` / `COVERAGE_THRESHOLD_<METRIC>`).
-- Infra tests: run from `infrastructure/` (separate Vitest config).
+- App tests MUST use Vitest with `jsdom`.
+- Coverage thresholds MUST be enforced by default and MAY only be changed via `COVERAGE_THRESHOLD_DEFAULT` or `COVERAGE_THRESHOLD_<METRIC>`.
+- Infrastructure tests MUST be run from `infrastructure/` with the separate Vitest config.
 
 ## Commit & Pull Request Guidelines
 
-- Commit messages follow Conventional Commits (examples from history: `feat(infra): ...`,
-  `fix(csp): ...`, `chore(deps): ...`).
-- PRs: include a clear description, link issues/ADRs when relevant, and add screenshots for UI changes.
-- Before committing/opening a PR, run: `pnpm lint && pnpm test` (plus `pnpm type-check` / `pnpm test:e2e` when applicable).
+- Commit messages MUST follow Conventional Commits (for example `feat(infra): ...`, `fix(csp): ...`, `chore(deps): ...`).
+- PRs MUST include a clear description, MUST link issues or ADRs when relevant, and MUST include screenshots for UI changes.
+- Before committing or opening a PR, `pnpm lint && pnpm test` MUST be run.
+- `pnpm type-check` and `pnpm test:e2e` MUST also be run when the change can affect those surfaces.
 
 ## Documentation Guidelines
 
-- New ADRs must use `docs/architecture/adr/ADR-0000-template.md`.
-- New specs must use `docs/specs/SPEC-0000-template.md`.
+- New ADRs MUST use `docs/architecture/adr/ADR-0000-template.md`.
+- New specs MUST use `docs/specs/SPEC-0000-template.md`.
 
 ## Security, Configuration, and Deployment Notes
 
-- Keep secrets out of git. Use `.env.local` for local overrides (start from `.env.example`).
-- Tailwind CSS uses v4 "CSS-first" config in `src/app/globals.css`.
-  `tailwind.config.ts` exists only for tooling unless explicitly loaded via `@config`.
-- Static export is mandatory (`output: "export"`). Do not introduce Server Actions, ISR, Draft Mode,
-  request-dependent Route Handlers, or other features that require a server runtime.
-- CSP inline script hashes are generated and are **not secrets** (they appear in public CSP headers).
-  Never delete or manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
-  Regenerate with `pnpm generate:csp-hashes` (usually via `pnpm build`).
-  See `docs/architecture/adr/ADR-0001-cloudfront-csp-nextjs-inline-hashes.md`.
-- Static export + CSP must stay in sync: `pnpm build` → `pnpm -C infrastructure deploy:storage` → `pnpm deploy:static:prod`.
-- GitHub Actions: merges to `main` run the same sequence automatically via `.github/workflows/deploy.yml`.
+- Secrets MUST NEVER be committed to git.
+- `.env.local` MUST be used for local-only overrides, starting from `.env.example`.
+- Tailwind CSS MUST use the v4 CSS-first configuration in `src/app/globals.css`.
+- `tailwind.config.ts` MUST be treated as tooling-only unless it is explicitly loaded via `@config`.
+- Static export is mandatory via `output: "export"`.
+- Server Actions, ISR, Draft Mode, request-dependent Route Handlers, and any other server-runtime-only features MUST NOT be introduced.
+- CSP inline script hashes are generated and are NOT secrets.
+- `infrastructure/lib/generated/next-inline-script-hashes.ts` MUST NEVER be deleted or edited manually.
+- CSP hashes MUST be regenerated with `pnpm generate:csp-hashes`, usually via `pnpm build`.
+- Static export and CSP deployment steps MUST stay in sync: `pnpm build` -> `pnpm -C infrastructure deploy:storage` -> `pnpm deploy:static:prod`.
+- Merges to `main` MUST preserve the GitHub Actions deployment flow defined in `.github/workflows/deploy.yml`.
 
 ## Browser Automation
 
-Use `agent-browser` for web automation. Run `agent-browser --help` for all commands.
+`agent-browser` MUST be used for browser automation work.
+`agent-browser --help` SHOULD be used when command syntax is needed.
 
 Core workflow:
 
@@ -99,11 +100,9 @@ Core workflow:
 
 ## Source Code Reference
 
-Source code for dependencies is available in `opensrc/` for deeper understanding of implementation details.
-
-See `opensrc/sources.json` for the list of available packages and their versions.
-
-Use this source code when you need to understand how a package works internally, not just its types/interface.
+Dependency source code in `opensrc/` SHOULD be used when internal implementation details matter.
+`opensrc/sources.json` MUST be treated as the index of fetched packages and versions.
+Dependency source MUST be consulted when types or public docs are insufficient to understand behavior.
 
 ### Fetching Additional Source Code
 
