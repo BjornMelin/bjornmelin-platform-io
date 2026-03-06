@@ -4,10 +4,7 @@ import {
   DeleteKeyValueStoreCommand,
   DescribeKeyValueStoreCommand,
 } from "@aws-sdk/client-cloudfront";
-import type {
-  CloudFormationCustomResourceEvent,
-  CloudFormationCustomResourceHandler,
-} from "aws-lambda";
+import type { CdkCustomResourceEvent, CdkCustomResourceHandler } from "aws-lambda";
 
 type ResourceProps = {
   Name?: string;
@@ -93,13 +90,14 @@ async function deleteKeyValueStore(client: CloudFrontClient, name: string) {
 /**
  * CloudFormation custom resource handler that creates, updates, or deletes a CloudFront
  * KeyValueStore and returns the PhysicalResourceId plus KeyValueStoreArn in the response data.
- * @param event - CloudFormation custom resource event for create/update/delete lifecycle actions.
- * @returns Promise resolving to a CloudFormationCustomResourceResponse object with
+ * @param event - CDK custom resource event for create/update/delete lifecycle actions.
+ * @returns Promise resolving to a CDK custom resource response object with
  * PhysicalResourceId and Data.KeyValueStoreArn.
  */
-export const handler: CloudFormationCustomResourceHandler = async (
-  event: CloudFormationCustomResourceEvent,
-) => {
+export const handler: CdkCustomResourceHandler<
+  ResourceProps,
+  { KeyValueStoreArn: string }
+> = async (event: CdkCustomResourceEvent<ResourceProps>) => {
   const props = (event.ResourceProperties ?? {}) as ResourceProps;
   const name = requireString(props.Name, "Name");
   const comment = typeof props.Comment === "string" ? props.Comment : "";

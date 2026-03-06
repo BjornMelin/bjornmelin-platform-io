@@ -19,13 +19,13 @@
     "diff": "cdk diff"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.159",
-    "@types/node": "^24.10.9",
-    "aws-cdk": "^2.1101.0",
-    "esbuild": "^0.27.2",
+    "@types/aws-lambda": "8.10.161",
+    "@types/node": "^24.11.0",
+    "aws-cdk": "^2.1109.0",
+    "esbuild": "^0.27.3",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
-    "vitest": "^4.0.17"
+    "vitest": "^4.0.18"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -34,11 +34,11 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-cloudfront": "3.971.0",
-    "@aws-sdk/client-ssm": "3.971.0",
-    "aws-cdk-lib": "2.235.0",
-    "constructs": "^10.4.5",
-    "resend": "^6.8.0",
+    "@aws-sdk/client-cloudfront": "3.1003.0",
+    "@aws-sdk/client-ssm": "3.1003.0",
+    "aws-cdk-lib": "2.241.0",
+    "constructs": "^10.5.1",
+    "resend": "^6.9.3",
     "source-map-support": "^0.5.21"
   }
 }
