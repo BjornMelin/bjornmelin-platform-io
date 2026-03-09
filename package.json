@@ -72,7 +72,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@aws-sdk/client-route-53": "^3.1003.0",
+    "@aws-sdk/client-route-53": "^3.1004.0",
     "@biomejs/biome": "^2.4.6",
     "@commitlint/cli": "^20.4.3",
     "@commitlint/config-conventional": "^20.4.3",
