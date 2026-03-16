@@ -183,7 +183,7 @@ jobs:
 
       - name: Post Lighthouse sticky comment
         if: steps.lighthouse-comment.outputs.should_comment == 'true'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: lighthouse-report
           message: ${{ steps.lighthouse-comment.outputs.comment_body }}
