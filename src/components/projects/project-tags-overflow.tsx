@@ -15,7 +15,8 @@ interface ProjectTagsOverflowProps {
  * @param props.hiddenTags - Tags hidden from the inline card row.
  * @returns Overflow tags trigger or static fallback badge.
  */
-export function ProjectTagsOverflow({ hiddenTags }: ProjectTagsOverflowProps) {
+export function ProjectTagsOverflow(props: ProjectTagsOverflowProps) {
+  const { hiddenTags } = props;
   const [isMounted, setIsMounted] = React.useState(false);
   const hiddenCount = hiddenTags.length;
 

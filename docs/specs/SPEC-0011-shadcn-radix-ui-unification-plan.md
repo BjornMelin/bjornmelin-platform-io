@@ -217,13 +217,13 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 - [package.json](../../package.json#L1):
   add `radix-ui`, then remove obsolete individual primitive packages after
   verification.
-- `pnpm-lock.yaml`: update only as a consequence of the dependency cleanup.
-- `src/components/ui/button.tsx`: migrate `Slot` import shape carefully and
+- [pnpm-lock.yaml](../../pnpm-lock.yaml#L1): update only as a consequence of the dependency cleanup.
+- [src/components/ui/button.tsx](../../src/components/ui/button.tsx#L1): migrate `Slot` import shape carefully and
   recheck `asChild` typing.
-- `src/components/ui/dialog.tsx` and
+- [src/components/ui/dialog.tsx](../../src/components/ui/dialog.tsx#L1) and
   [src/components/ui/sheet.tsx](../../src/components/ui/sheet.tsx#L1):
   verify shared `Dialog` primitive behavior remains intact.
-- `src/components/ui/dropdown-menu.tsx`,
+- [src/components/ui/dropdown-menu.tsx](../../src/components/ui/dropdown-menu.tsx#L1),
   [src/components/ui/select.tsx](../../src/components/ui/select.tsx#L1),
   [src/components/ui/navigation-menu.tsx](../../src/components/ui/navigation-menu.tsx#L1),
   [src/components/ui/popover.tsx](../../src/components/ui/popover.tsx#L1),
