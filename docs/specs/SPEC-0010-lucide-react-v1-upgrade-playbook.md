@@ -170,8 +170,8 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
   update Lucide import policy to match Next.js 16 reality.
 - [next.config.mjs](../../next.config.mjs#L1):
   leave unchanged unless explicit clarity is later preferred.
-- [src/types/lucide-react-icons.d.ts](../../src/types/lucide-react-icons.d.ts#L1):
-  delete after barrel import migration.
+- `src/types/lucide-react-icons.d.ts`:
+  deleted after barrel import migration.
 - `src/app/loading.tsx` and `src/components/**`: convert Lucide imports.
 - [src/data/skills.ts](../../src/data/skills.ts#L1):
   tighten icon typing to `LucideIcon`.
