@@ -1,16 +1,14 @@
-import Brain from "lucide-react/dist/esm/icons/brain";
-import Cloud from "lucide-react/dist/esm/icons/cloud";
-import Code from "lucide-react/dist/esm/icons/code";
-import Terminal from "lucide-react/dist/esm/icons/terminal";
-import type { ElementType } from "react";
+import { Brain, Cloud, Code, type LucideIcon, Terminal } from "lucide-react";
 
+/** Skill category metadata rendered across the about surfaces. */
 export interface SkillCategory {
   name: string;
-  Icon: ElementType;
+  Icon: LucideIcon;
   skills: string[];
   color: string;
 }
 
+/** Ordered skill categories rendered in the portfolio UI. */
 export const skillCategories: SkillCategory[] = [
   {
     name: "AI & Machine Learning",

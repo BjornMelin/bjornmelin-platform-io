@@ -1,10 +1,4 @@
-import Award from "lucide-react/dist/esm/icons/award";
-import Brain from "lucide-react/dist/esm/icons/brain";
-import Building2 from "lucide-react/dist/esm/icons/building-2";
-import Cloud from "lucide-react/dist/esm/icons/cloud";
-import Code from "lucide-react/dist/esm/icons/code";
-import GraduationCap from "lucide-react/dist/esm/icons/graduation-cap";
-import Sparkles from "lucide-react/dist/esm/icons/sparkles";
+import { Award, Brain, Building2, Cloud, Code, GraduationCap, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";

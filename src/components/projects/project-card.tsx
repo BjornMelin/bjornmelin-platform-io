@@ -1,8 +1,6 @@
-import BookOpenText from "lucide-react/dist/esm/icons/book-open-text";
-import ExternalLink from "lucide-react/dist/esm/icons/external-link";
-import GitFork from "lucide-react/dist/esm/icons/git-fork";
-import Github from "lucide-react/dist/esm/icons/github";
-import Star from "lucide-react/dist/esm/icons/star";
+"use client";
+
+import { BookOpenText, ExternalLink, FolderGit2, GitFork, Star } from "lucide-react";
 import Link from "next/link";
 import { ExpandableText } from "@/components/shared/expandable-text";
 import { TechBadge } from "@/components/shared/tech-badge";
@@ -149,7 +147,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               rel="noopener noreferrer"
               aria-label={`Open ${project.title} repository on GitHub`}
             >
-              <Github className="h-4 w-4" aria-hidden="true" />
+              <FolderGit2 className="h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
           <Button variant="outline" className="h-11 md:h-9" asChild>
