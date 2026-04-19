@@ -2,6 +2,22 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.8.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.7.1...v3.8.0) (2026-04-19)
+
+
+### Features
+
+* **shadcn:** update exports in UI components and improve null checks in domain manager script ([e1c289e](https://github.com/BjornMelin/bjornmelin-platform-io/commit/e1c289e1fdfd0ecaed95f944ab8a43712a807178))
+
+
+### Bug Fixes
+
+* **docs:** drop stale lucide shim link ([63c8014](https://github.com/BjornMelin/bjornmelin-platform-io/commit/63c8014d81aba39eb5a4466da83b623b42418c4c))
+* **docs:** use repo-relative spec links ([2ffcb48](https://github.com/BjornMelin/bjornmelin-platform-io/commit/2ffcb4891954f99c6ab0804736a793330855b250))
+* **e2e:** avoid radix popover hydration mismatch ([6ef0f0b](https://github.com/BjornMelin/bjornmelin-platform-io/commit/6ef0f0b54e3aba592ed6f156ce098852050fa60d))
+* **projects:** keep project card server-rendered ([717c8c1](https://github.com/BjornMelin/bjornmelin-platform-io/commit/717c8c1f939be04dbc42f5f5a453a7655ce9445c))
+* **review:** address remaining ui and manifest threads ([8749d23](https://github.com/BjornMelin/bjornmelin-platform-io/commit/8749d239c7abbba776fb31b2cbccf1479150ab82))
+
 ## [3.7.1](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.7.0...v3.7.1) (2026-03-06)
 
 
