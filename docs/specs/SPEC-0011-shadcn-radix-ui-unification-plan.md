@@ -212,27 +212,27 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### File-level contract for this repository
 
-- [components.json](/home/bjorn/repos/bjornmelin-platform-io/components.json:1):
+- [components.json](../../components.json#L1):
   preserve `style: "new-york"` and use it as the migration eligibility signal.
-- [package.json](/home/bjorn/repos/bjornmelin-platform-io/package.json:1):
+- [package.json](../../package.json#L1):
   add `radix-ui`, then remove obsolete individual primitive packages after
   verification.
 - `pnpm-lock.yaml`: update only as a consequence of the dependency cleanup.
 - `src/components/ui/button.tsx`: migrate `Slot` import shape carefully and
   recheck `asChild` typing.
 - `src/components/ui/dialog.tsx` and
-  [src/components/ui/sheet.tsx](/home/bjorn/repos/bjornmelin-platform-io/src/components/ui/sheet.tsx:1):
+  [src/components/ui/sheet.tsx](../../src/components/ui/sheet.tsx#L1):
   verify shared `Dialog` primitive behavior remains intact.
 - `src/components/ui/dropdown-menu.tsx`,
-  [src/components/ui/select.tsx](/home/bjorn/repos/bjornmelin-platform-io/src/components/ui/select.tsx:1),
-  [src/components/ui/navigation-menu.tsx](/home/bjorn/repos/bjornmelin-platform-io/src/components/ui/navigation-menu.tsx:1),
-  [src/components/ui/popover.tsx](/home/bjorn/repos/bjornmelin-platform-io/src/components/ui/popover.tsx:1),
-  [src/components/ui/toast.tsx](/home/bjorn/repos/bjornmelin-platform-io/src/components/ui/toast.tsx:1),
-  [src/components/ui/toggle.tsx](/home/bjorn/repos/bjornmelin-platform-io/src/components/ui/toggle.tsx:1),
+  [src/components/ui/select.tsx](../../src/components/ui/select.tsx#L1),
+  [src/components/ui/navigation-menu.tsx](../../src/components/ui/navigation-menu.tsx#L1),
+  [src/components/ui/popover.tsx](../../src/components/ui/popover.tsx#L1),
+  [src/components/ui/toast.tsx](../../src/components/ui/toast.tsx#L1),
+  [src/components/ui/toggle.tsx](../../src/components/ui/toggle.tsx#L1),
   and
-  [src/components/ui/toggle-group.tsx](/home/bjorn/repos/bjornmelin-platform-io/src/components/ui/toggle-group.tsx:1):
+  [src/components/ui/toggle-group.tsx](../../src/components/ui/toggle-group.tsx#L1):
   migrate imports and recheck keyboard/focus behavior.
-- [src/components/layout/footer.tsx](/home/bjorn/repos/bjornmelin-platform-io/src/components/layout/footer.tsx:1):
+- [src/components/layout/footer.tsx](../../src/components/layout/footer.tsx#L1):
   treat `@radix-ui/react-icons` as adjacent follow-on or leave it explicitly
   out of scope for this migration wave.
 

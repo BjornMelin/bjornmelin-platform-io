@@ -166,18 +166,18 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### File-level contract for this repository
 
-- [AGENTS.md](/home/bjorn/repos/bjornmelin-platform-io/AGENTS.md:50):
+- [AGENTS.md](../../AGENTS.md#L50):
   update Lucide import policy to match Next.js 16 reality.
-- [next.config.mjs](/home/bjorn/repos/bjornmelin-platform-io/next.config.mjs:1):
+- [next.config.mjs](../../next.config.mjs#L1):
   leave unchanged unless explicit clarity is later preferred.
-- [src/types/lucide-react-icons.d.ts](/home/bjorn/repos/bjornmelin-platform-io/src/types/lucide-react-icons.d.ts:1):
+- [src/types/lucide-react-icons.d.ts](../../src/types/lucide-react-icons.d.ts#L1):
   delete after barrel import migration.
 - `src/app/loading.tsx` and `src/components/**`: convert Lucide imports.
-- [src/data/skills.ts](/home/bjorn/repos/bjornmelin-platform-io/src/data/skills.ts:1):
+- [src/data/skills.ts](../../src/data/skills.ts#L1):
   tighten icon typing to `LucideIcon`.
-- [src/components/layout/footer.tsx](/home/bjorn/repos/bjornmelin-platform-io/src/components/layout/footer.tsx:1):
+- [src/components/layout/footer.tsx](../../src/components/layout/footer.tsx#L1):
   replace Radix brand icons with local SVG ownership.
-- [package.json](/home/bjorn/repos/bjornmelin-platform-io/package.json:48):
+- [package.json](../../package.json#L48):
   remove `@radix-ui/react-icons`.
 
 ### What to adopt
