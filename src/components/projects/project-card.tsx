@@ -1,5 +1,3 @@
-"use client";
-
 import { BookOpenText, ExternalLink, FolderGit2, GitFork, Star } from "lucide-react";
 import Link from "next/link";
 import { ExpandableText } from "@/components/shared/expandable-text";
