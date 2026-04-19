@@ -46,11 +46,12 @@ Infrastructure:
 - TSDoc `@param`: `@param name - desc`; no brace typing.
 - If exported function adds or changes thrown error, it MUST include `@throws ErrorType - condition`.
 - Barrel imports MUST NEVER be introduced from package entrypoints or `index` re-exports.
-  e.g. `lucide-react`, `@mui/material`.
-- Direct module paths MUST ALWAYS be used for imports (e.g. `lucide-react/dist/esm/icons/x`, `@mui/material/Button`).
-- Exception: packages in `experimental.optimizePackageImports` MAY be used (Next rewrites).
-- Lucide icons MUST ALWAYS use direct `lucide-react/dist/esm/icons/*` imports.
-- Lucide typings shim `src/types/lucide-react-icons.d.ts` MUST be preserved when using those paths.
+  e.g. `@mui/material`.
+- Direct module paths MUST ALWAYS be used for imports (e.g. `@mui/material/Button`).
+- Exception: packages in `experimental.optimizePackageImports` and packages optimized by Next.js by default MAY be used
+  because Next rewrites them.
+- Lucide icons MUST use named imports from `lucide-react` in this repo.
+- `src/types/lucide-react-icons.d.ts` MUST NOT be reintroduced unless the repo intentionally returns to deep Lucide paths.
 
 ## Testing Guidelines
 

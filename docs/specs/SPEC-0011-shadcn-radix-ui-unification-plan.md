@@ -33,8 +33,9 @@ This repository currently matches the official migration preconditions closely:
 - 13 local component files still import individual `@radix-ui/react-*`
   packages
 - `package.json` does not yet include `radix-ui`
-- `@radix-ui/react-icons` remains for footer brand icons, but the shadcn
-  `radix` migration intentionally does not rewrite that package
+- footer brand icons were already localized during `SPEC-0010`, but the shadcn
+  `radix` migration still intentionally does not rewrite
+  `@radix-ui/react-icons` in other repos
 
 Current official shadcn guidance makes the local primitive-import convention
 stale. As of the February 2026 `new-york` update, shadcn now uses the unified
@@ -172,8 +173,8 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
   - `src/components/ui/toast.tsx`
   - `src/components/ui/toggle.tsx`
   - `src/components/ui/toggle-group.tsx`
-- `@radix-ui/react-icons` is still used by
-  `src/components/layout/footer.tsx`.
+- `@radix-ui/react-icons` is no longer in this repo after `SPEC-0010`, but the
+  upstream shadcn migrator still skips that package generically.
 
 ### Upstream shadcn and Radix capabilities that matter
 

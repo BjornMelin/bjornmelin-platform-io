@@ -1,13 +1,13 @@
 ---
 spec: SPEC-0010
 title: Lucide React v1 upgrade playbook
-version: 0.1.0
+version: 0.2.0
 date: 2026-04-19
 owners: ["ai-arch"]
-status: Proposed
+status: Implemented
 related_requirements: ["FR-001", "NFR-001"]
 related_adrs: ["ADR-0005", "ADR-0009"]
-notes: "Atomic repo-grounded and reusable playbook for Lucide React v1 adoption in Next.js repositories."
+notes: "Implemented repo-grounded and reusable playbook for Lucide React v1 adoption in Next.js repositories."
 ---
 
 ## Summary
@@ -24,8 +24,8 @@ It is intentionally dual-purpose:
 
 ## Context
 
-This repository already declares `lucide-react@1.8.0`, but its integration
-shape still reflects an older deep-import model:
+This repository started the migration already on `lucide-react@1.8.0`, but its
+integration shape still reflected an older deep-import model:
 
 - 17 files import `lucide-react/dist/esm/icons/*`
 - `AGENTS.md` requires that pattern
@@ -33,9 +33,11 @@ shape still reflects an older deep-import model:
   the deep path shape
 - `@radix-ui/react-icons` remains only for GitHub and LinkedIn footer logos
 
-Current Next.js guidance makes the local convention stale. In Next.js 16,
+Current Next.js guidance made the local convention stale. In Next.js 16,
 `lucide-react` is already optimized by default for package imports, so named
-imports from `lucide-react` are the cleaner canonical path for App Router repos.
+imports from `lucide-react` are the cleaner canonical path for App Router
+repos. This migration is now implemented locally and the spec remains as the
+reusable execution artifact for future repos.
 
 ## Goals / Non-goals
 
@@ -116,7 +118,7 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ## Repo-Specific Findings
 
-### Validated current state
+### Validated starting state
 
 - `package.json` already pins `lucide-react` to `1.8.0`.
 - `next.config.mjs` does not explicitly configure `optimizePackageImports`.
@@ -124,6 +126,17 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 - `src/types/lucide-react-icons.d.ts` exists solely to support that deep import
   rule.
 - `@radix-ui/react-icons` is only used in `src/components/layout/footer.tsx`.
+
+### Implemented outcome
+
+- All local Lucide imports now use named imports from `lucide-react`.
+- `src/types/lucide-react-icons.d.ts` is deleted.
+- `@radix-ui/react-icons` is removed from the manifest and lockfile.
+- Footer GitHub and LinkedIn icons are now local SVG components.
+- `src/data/skills.ts` now uses Lucide's `LucideIcon` type.
+- `AGENTS.md` now reflects the named-import policy for Lucide in this repo.
+- `next.config.mjs` remains unchanged because explicit Lucide optimization
+  config is still unnecessary.
 
 ### Upstream Lucide v1 capabilities that matter
 
@@ -243,40 +256,55 @@ Use this before applying the playbook in a different repository.
 
 ## Embedded Execution Tracker
 
-Use this section as the live state block during implementation.
+This section records the local implementation outcome and can still be reused
+as the live state block in another repository.
 
 ### Status ledger
 
-- Overall status: `Not started | In progress | Blocked | Completed`
-- Branch / PR:
-- Owner:
-- Started:
-- Last updated:
+- Overall status: `Completed`
+- Branch / PR: local working tree
+- Owner: Codex
+- Started: 2026-04-19
+- Last updated: 2026-04-19
 
 ### Repo notes
 
 - Findings:
-  - None yet.
+  - 17 deep Lucide import sites were converted to named `lucide-react`
+    imports.
+  - Footer brand icons were localized and `@radix-ui/react-icons` was removed.
+  - `src/data/skills.ts` now uses `LucideIcon`.
+  - `next.config.mjs` required no change.
 - Assumptions:
-  - None yet.
+  - None.
 - Risks / blockers:
-  - None yet.
+  - None.
 - Deferred items:
-  - None yet.
+  - `SPEC-0011` remains the separate shadcn `radix-ui` follow-on wave.
 
 ### Checkoff ledger
 
-- [ ] Discovery completed
-- [ ] Decisions locked
-- [ ] Imports migrated
-- [ ] Brand icons localized
-- [ ] Shims deleted
-- [ ] Policy/docs updated
-- [ ] Verification completed
+- [x] Discovery completed
+- [x] Decisions locked
+- [x] Imports migrated
+- [x] Brand icons localized
+- [x] Shims deleted
+- [x] Policy/docs updated
+- [x] Verification completed
 
 ## Verification Matrix
 
 ### Repository-native commands
+
+Executed successfully on 2026-04-19:
+
+- `pnpm lint`
+- `pnpm type-check`
+- `pnpm test -- --run`
+- `pnpm build`
+- `pnpm audit --json`
+- `bun audit`
+- `rg -n 'lucide-react/dist/esm/icons/|@radix-ui/react-icons' src package.json pnpm-lock.yaml AGENTS.md`
 
 ```bash
 pnpm lint
@@ -321,7 +349,6 @@ rg -n 'lucide-react/dist/esm/icons/' .
 - `pnpm-lock.yaml`
 - `next.config.mjs`
 - `AGENTS.md`
-- `src/types/lucide-react-icons.d.ts`
 - `src/components/layout/footer.tsx`
 - `src/data/skills.ts`
 - `src/components/**`
@@ -382,5 +409,7 @@ Verification expectation:
 
 ## Changelog
 
+- **0.2 (2026-04-19)**: Implemented the local Lucide migration, completed the
+  tracker, and recorded command evidence.
 - **0.1 (2026-04-19)**: Initial Lucide React v1 upgrade playbook and reusable
   Codex execution artifact.
