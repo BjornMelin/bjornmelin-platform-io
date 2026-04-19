@@ -151,6 +151,7 @@ type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
 /** Action element type for Toast components. */
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
+/** Exposes toast primitives, components, and related public types. */
 export {
   Toast,
   ToastAction,

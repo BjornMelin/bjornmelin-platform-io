@@ -169,6 +169,7 @@ const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTML
 };
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 
+/** Exposes dropdown menu primitives, composed components, and related helpers. */
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,

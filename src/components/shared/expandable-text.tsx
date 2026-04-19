@@ -10,12 +10,11 @@ import { cn } from "@/lib/utils";
  *
  * @remarks
  * `children` provides the text content to render, and `className` is optional.
- *
- * @property children - Text content to render inside the component.
- * @property className - Optional additional CSS classes for styling.
  */
 interface ExpandableTextProps {
+  /** Text content to render inside the component. */
   children: string;
+  /** Optional additional CSS classes for styling. */
   className?: string;
 }
 
