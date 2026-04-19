@@ -100,23 +100,10 @@ Core workflow:
 3. `agent-browser click @e1` / `fill @e2 "text"` - Interact using refs
 4. Re-snapshot after page changes
 
-<!-- opensrc:start -->
+## Using Source Code Reference Skills
 
-## Source Code Reference
-
-Dependency source code in `opensrc/` SHOULD be used when internal implementation details matter.
-`opensrc/sources.json` MUST be treated as the index of fetched packages and versions.
-Dependency source MUST be consulted when types or public docs are insufficient to understand behavior.
-
-### Fetching Additional Source Code
-
-To fetch source code for a package or repository you need to understand, run:
-
-```bash
-npx opensrc <package>           # npm package (e.g., npx opensrc zod)
-npx opensrc pypi:<package>      # Python package (e.g., npx opensrc pypi:requests)
-npx opensrc crates:<package>    # Rust crate (e.g., npx opensrc crates:serde)
-npx opensrc <owner>/<repo>      # GitHub repo (e.g., npx opensrc vercel/ai)
-```
-
-<!-- opensrc:end -->
+- Use the `$opensrc` skill to fetch source code for a package or repository when internal implementation details
+  matter or when public docs/types are insufficient.
+- Use the `$opensrc-inspect` skill to search or inspect code within previously fetched sources and to compare
+  dependencies versions source code while performing any upgrades to ensure compatibility and full leverage of
+  latest native dependency api references and features.
