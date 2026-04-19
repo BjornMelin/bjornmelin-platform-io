@@ -119,6 +119,7 @@ agent-logs/
 .claude/
 .firecrawl/
 .agents/
+skills-lock.json
 
 # opensrc - source code for packages
 opensrc/

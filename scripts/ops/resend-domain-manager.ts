@@ -476,7 +476,7 @@ async function syncDnsCommand(options: {
   let hostedZoneId: string;
   if (!providedZoneId) {
     const zone = await findHostedZone(domain);
-    if (!zone || !zone.Id) {
+    if (!zone?.Id) {
       console.error(`No Route53 hosted zone found for '${domain}'.`);
       console.log("Use --hosted-zone-id to specify manually.");
       process.exit(1);

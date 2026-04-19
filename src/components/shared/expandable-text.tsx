@@ -1,6 +1,6 @@
 "use client";
 
-import ChevronDown from "lucide-react/dist/esm/icons/chevron-down";
+import { ChevronDown } from "lucide-react";
 import * as React from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
@@ -10,12 +10,11 @@ import { cn } from "@/lib/utils";
  *
  * @remarks
  * `children` provides the text content to render, and `className` is optional.
- *
- * @property children - Text content to render inside the component.
- * @property className - Optional additional CSS classes for styling.
  */
 interface ExpandableTextProps {
+  /** Text content to render inside the component. */
   children: string;
+  /** Optional additional CSS classes for styling. */
   className?: string;
 }
 

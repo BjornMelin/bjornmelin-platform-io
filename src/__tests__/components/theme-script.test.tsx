@@ -241,11 +241,6 @@ describe("theme barrel exports", () => {
     expect(typeof themeModule.ThemeScript).toBe("function");
   });
 
-  it("exports ThemeProvider", async () => {
-    const themeModule = await import("@/components/theme");
-    expect(themeModule.ThemeProvider).toBeDefined();
-  });
-
   it("exports ThemeToggle", async () => {
     const themeModule = await import("@/components/theme");
     expect(themeModule.ThemeToggle).toBeDefined();

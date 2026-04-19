@@ -1,17 +1,13 @@
-import BookOpenText from "lucide-react/dist/esm/icons/book-open-text";
-import ExternalLink from "lucide-react/dist/esm/icons/external-link";
-import GitFork from "lucide-react/dist/esm/icons/git-fork";
-import Github from "lucide-react/dist/esm/icons/github";
-import Star from "lucide-react/dist/esm/icons/star";
+import { BookOpenText, ExternalLink, FolderGit2, GitFork, Star } from "lucide-react";
 import Link from "next/link";
 import { ExpandableText } from "@/components/shared/expandable-text";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import type { ProjectCardModel } from "@/types/project";
+import { ProjectTagsOverflow } from "./project-tags-overflow";
 
 interface ProjectCardProps {
   project: ProjectCardModel;
@@ -28,7 +24,6 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
   const maxVisibleTags = 4;
   const visibleTags = project.tags.slice(0, maxVisibleTags);
   const hiddenTags = project.tags.slice(maxVisibleTags);
-  const hiddenCount = hiddenTags.length;
 
   return (
     <Card
@@ -96,34 +91,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               <TechBadge key={tag} name={tag} size="sm" />
             ))}
           </div>
-          {hiddenCount > 0 ? (
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className="inline-flex h-11 items-center rounded-full border border-border/60 bg-muted/70 px-3 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-8 md:px-2 md:py-0.5"
-                  aria-label={`Show ${hiddenCount} more tags`}
-                  title="Show all tags"
-                >
-                  +{hiddenCount}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-72 p-3" side="top" align="start">
-                <div className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Tags
-                  </p>
-                  <div className="max-h-44 overflow-auto pr-1">
-                    <div className="flex flex-wrap gap-2">
-                      {project.tags.map((tag) => (
-                        <TechBadge key={tag} name={tag} size="sm" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          ) : null}
+          <ProjectTagsOverflow hiddenTags={hiddenTags} />
         </div>
 
         {/* Metadata last (smaller) */}
@@ -149,7 +117,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               rel="noopener noreferrer"
               aria-label={`Open ${project.title} repository on GitHub`}
             >
-              <Github className="h-4 w-4" aria-hidden="true" />
+              <FolderGit2 className="h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
           <Button variant="outline" className="h-11 md:h-9" asChild>

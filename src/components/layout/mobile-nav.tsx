@@ -1,11 +1,6 @@
 "use client";
 
-import Briefcase from "lucide-react/dist/esm/icons/briefcase";
-import Home from "lucide-react/dist/esm/icons/home";
-import Mail from "lucide-react/dist/esm/icons/mail";
-import Menu from "lucide-react/dist/esm/icons/menu";
-import User from "lucide-react/dist/esm/icons/user";
-import X from "lucide-react/dist/esm/icons/x";
+import { Briefcase, Home, Mail, Menu, User, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";

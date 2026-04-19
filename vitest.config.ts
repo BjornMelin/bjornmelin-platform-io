@@ -132,8 +132,6 @@ export default defineConfig({
         "src/lib/security/index.ts",
         // UI library components (shadcn/radix - vendor code)
         "src/components/ui/**",
-        // Thin wrappers around third-party libraries
-        "src/components/theme/theme-provider.tsx",
       ],
       thresholds: coverageThresholds,
     },

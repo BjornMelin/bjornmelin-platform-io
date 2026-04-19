@@ -39,6 +39,12 @@ jobs:
       - name: Run type checking
         run: pnpm type-check
 
+      - name: Install infrastructure dependencies
+        run: pnpm -C infrastructure install --frozen-lockfile
+
+      - name: Run infrastructure build
+        run: pnpm -C infrastructure build
+
   unit-tests:
     name: Unit Tests
     if: ${{ inputs.run-unit-tests }}
@@ -55,6 +61,12 @@ jobs:
 
       - name: Run unit tests with coverage
         run: pnpm test:coverage
+
+      - name: Install infrastructure dependencies
+        run: pnpm -C infrastructure install --frozen-lockfile
+
+      - name: Run infrastructure tests
+        run: pnpm -C infrastructure test
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5

@@ -1,8 +1,8 @@
 ---
 spec: SPEC-0001
 title: Dependency upgrades
-version: 1.1.0
-date: 2026-01-18
+version: 1.2.0
+date: 2026-04-18
 owners: ["ai-arch"]
 status: Implemented
 related_requirements: ["FR-001", "NFR-001"]
@@ -46,7 +46,7 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ## Constraints
 
-- Next.js remains on 16.1.x
+- Next.js remains on 16.2.x
 - React remains on 19.2.x
 - Node.js engine remains `>=24 <25` (validated in CI for this repository)
 - Static export (`output: "export"`) remains required
@@ -55,16 +55,16 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### Version baseline (pinned)
 
-- Next.js 16.1.6
-- React 19.2.4
-- TypeScript 5.9.3
-- Tailwind CSS 4.2.1
-- @tailwindcss/postcss 4.2.1
+- Next.js 16.2.4
+- React 19.2.5
+- TypeScript 6.0.3
+- Tailwind CSS 4.2.2
+- @tailwindcss/postcss 4.2.2
 - pnpm 10.28.0 (Corepack)
 - Zod 4.3.6
-- Vitest 4.0.18
-- Playwright 1.58.2
-- Biome 2.4.6
+- Vitest 4.1.4
+- Playwright 1.59.1
+- Biome 2.4.12
 
 *Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
 spec lists the intentional baseline versions for the core toolchain.*
@@ -75,13 +75,14 @@ The lockfile is the source of truth for reproducible installs. Core runtime
 dependencies are pinned, while many non-core dependencies use ranges and are
 resolved via `pnpm-lock.yaml`.
 
-No temporary `pnpm.overrides` entries are required in the current baseline.
-Earlier audit remediation pins were removed after upstream transitive
-resolution caught up and `pnpm audit` remained clean without them.
+Targeted `pnpm.overrides` entries are retained for the current baseline to
+force patched transitive versions where upstream release lines have not yet
+fully absorbed the security fixes. The baseline remains audit-clean with these
+overrides applied.
 
 ### Rationale
 
-Upgrades prioritize security fixes, compatibility with the Next.js 16.1.x App Router,
+Upgrades prioritize security fixes, compatibility with the Next.js 16.2.x App Router,
 and improved DX while preserving static export constraints.
 
 This baseline also removes unused dependencies to reduce the operational surface area (example:
@@ -133,4 +134,6 @@ This baseline also removes unused dependencies to reduce the operational surface
 
 ## Changelog
 
+- **1.2 (2026-04-18)**: Security and toolchain refresh for Next.js 16.2.4, TypeScript 6, Vite 8,
+  and audited transitive overrides.
 - **1.1 (2026-01-18)**: Current baseline and constraints.

@@ -2,7 +2,7 @@
 
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva, type VariantProps } from "class-variance-authority";
-import X from "lucide-react/dist/esm/icons/x";
+import { X } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -151,14 +151,15 @@ type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
 /** Action element type for Toast components. */
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
+/** Exposes toast primitives, components, and related public types. */
 export {
-  type ToastProps,
-  type ToastActionElement,
-  ToastProvider,
-  ToastViewport,
   Toast,
-  ToastTitle,
-  ToastDescription,
-  ToastClose,
   ToastAction,
+  type ToastActionElement,
+  ToastClose,
+  ToastDescription,
+  type ToastProps,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
 };

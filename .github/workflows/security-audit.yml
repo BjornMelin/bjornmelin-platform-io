@@ -30,11 +30,27 @@ jobs:
         run: |
           pnpm audit --json > audit-report.json || true
 
+      - name: Install infrastructure dependencies
+        shell: bash
+        run: pnpm -C infrastructure install --frozen-lockfile
+
+      - name: Run infrastructure pnpm audit
+        shell: bash
+        run: |
+          pnpm -C infrastructure audit --json > infrastructure-audit-report.json || true
+
       - name: Evaluate audit severity
         run: node .github/scripts/evaluate-audit.mjs
 
+      - name: Evaluate infrastructure audit severity
+        env:
+          AUDIT_REPORT_PATH: infrastructure-audit-report.json
+        run: node .github/scripts/evaluate-audit.mjs
+
       - name: Check for outdated packages
-        run: pnpm outdated || true
+        run: |
+          pnpm outdated || true
+          pnpm -C infrastructure outdated || true
 
   dependency-review:
     name: Dependency Review

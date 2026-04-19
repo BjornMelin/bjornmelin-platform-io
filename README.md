@@ -7,8 +7,8 @@ and AWS CDK infrastructure. Deployed to S3 with CloudFront CDN. Requires Node.js
 [![CI](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/ci.yml)
 [![Security Audit](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/security-audit.yml)
 [![CodeQL](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml/badge.svg)](https://github.com/bjornmelin/bjornmelin-platform-io/actions/workflows/codeql.yml)
-[![React](https://img.shields.io/badge/React-19.2.3-blue?logo=react)](https://react.dev)
-[![Next.js](https://img.shields.io/badge/Next.js-16.1.3-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.5-blue?logo=react)](https://react.dev)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2.4-black?logo=next.js)](https://nextjs.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-BjornMelin-181717?logo=github)](https://github.com/BjornMelin)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Bjorn%20Melin-0077B5?logo=linkedin)](https://www.linkedin.com/in/bjorn-melin)
 [![Medium](https://img.shields.io/badge/Medium-000000?logo=medium&logoColor=white)](https://medium.com/@bjornmelin)
@@ -242,9 +242,9 @@ pnpm dev
 ```yaml
 Frontend:
   Core:
-    - React 19.2.3
-    - Next.js 16.1.3
-    - TypeScript 5.9.3
+    - React 19.2.5
+    - Next.js 16.2.4
+    - TypeScript 6.0.3
 
   UI:
     - Tailwind CSS

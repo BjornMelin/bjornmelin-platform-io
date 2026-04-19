@@ -61,6 +61,8 @@ docs/
 │   ├── SPEC-0007-*.md
 │   ├── SPEC-0008-*.md
 │   ├── SPEC-0009-*.md
+│   ├── SPEC-0010-*.md
+│   ├── SPEC-0011-*.md
 │   ├── requirements.md        # Canonical requirement IDs referenced by specs
 │   └── README.md
 │
