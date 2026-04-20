@@ -69,7 +69,7 @@ jobs:
         run: pnpm -C infrastructure test
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         if: always()
         with:
           files: ./coverage/lcov.info
