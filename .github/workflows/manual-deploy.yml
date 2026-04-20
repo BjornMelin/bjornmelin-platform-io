@@ -232,7 +232,7 @@ jobs:
           echo "url=${APP_URL}" >> "$GITHUB_OUTPUT"
 
       - name: Create deployment record
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           DEPLOY_ENV: ${{ inputs.environment }}
           DEPLOY_REASON: ${{ inputs.reason }}
