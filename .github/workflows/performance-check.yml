@@ -84,7 +84,7 @@ jobs:
       - name: Evaluate Lighthouse comment criteria
         id: lighthouse-comment
         if: always()
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           LIGHTHOUSE_OUTCOME: ${{ steps.lighthouse.outcome }}
           LH_DELTA_THRESHOLD: '5'
