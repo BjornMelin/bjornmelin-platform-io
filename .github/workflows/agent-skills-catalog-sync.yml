@@ -21,8 +21,7 @@ on:
         default: catalog/agent-skills-lab.json
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read # Required for checkout and source catalog fetch.
 
 concurrency:
   group: agent-skills-catalog-sync
@@ -37,9 +36,15 @@ jobs:
   sync-catalog:
     name: Sync generated catalog
     runs-on: ubuntu-latest
+    outputs:
+      catalog_path: ${{ steps.source.outputs.catalog_path }}
+      source_ref: ${{ steps.source.outputs.source_ref }}
+      source_repository: ${{ steps.source.outputs.source_repository }}
     steps:
       - name: Checkout portfolio
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -143,9 +148,39 @@ jobs:
           pnpm vitest run src/__tests__/data/agent-skills-data.test.ts
           pnpm type-check
 
+      - name: Upload synced catalog
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: agent-skills-generated-catalog
+          path: src/content/agent-skills/agent-skills.generated.json
+          if-no-files-found: error
+          retention-days: 1
+
+  create-sync-pr:
+    name: Create sync pull request
+    needs: sync-catalog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push the generated catalog branch.
+      pull-requests: write # Required to open or update the catalog sync PR.
+    steps:
+      - name: Checkout portfolio
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Download synced catalog
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          name: agent-skills-generated-catalog
+          path: /tmp/agent-skills-generated-catalog
+
+      - name: Restore synced catalog
+        run: cp /tmp/agent-skills-generated-catalog/agent-skills.generated.json "${TARGET_CATALOG_PATH}"
+
       - name: Create catalog sync pull request
         id: cpr
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
         with:
           token: ${{ secrets.AGENT_SKILLS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
           add-paths: src/content/agent-skills/agent-skills.generated.json
@@ -154,9 +189,9 @@ jobs:
           body: |
             Automated Agent Skills Lab catalog sync from `BjornMelin/dev-skills`.
 
-            - Source repository: `${{ steps.source.outputs.source_repository }}`
-            - Source ref: `${{ steps.source.outputs.source_ref }}`
-            - Source catalog: `${{ steps.source.outputs.catalog_path }}`
+            - Source repository: `${{ needs.sync-catalog.outputs.source_repository }}`
+            - Source ref: `${{ needs.sync-catalog.outputs.source_ref }}`
+            - Source catalog: `${{ needs.sync-catalog.outputs.catalog_path }}`
             - Validation: `pnpm vitest run src/__tests__/data/agent-skills-data.test.ts` and `pnpm type-check`
 
             This PR updates only the generated catalog consumed by `/agent-skills`.
