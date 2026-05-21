@@ -39,10 +39,11 @@ describe("generateMetadata", () => {
     expect(metadata.description).toBe(PROFILE.summary);
     expect(metadata.metadataBase?.toString()).toBe("https://bjornmelin.io/");
     expect(metadata.alternates?.canonical).toBe("https://bjornmelin.io");
+    expect(metadata.openGraph?.url).toBe("https://bjornmelin.io");
   });
 
   it("applies overrides and propagates image data when provided", () => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://example.com";
+    process.env.NEXT_PUBLIC_BASE_URL = "https://example.com/";
 
     const metadata = generateMetadata({
       title: "About",
@@ -55,6 +56,7 @@ describe("generateMetadata", () => {
     expect(metadata.description).toBe("About page");
     expect(metadata.metadataBase?.toString()).toBe("https://example.com/");
     expect(metadata.alternates?.canonical).toBe("https://example.com/about");
+    expect(metadata.openGraph?.url).toBe("https://example.com/about");
     const openGraphImages = metadata.openGraph?.images;
     const ogImageList = Array.isArray(openGraphImages)
       ? openGraphImages
