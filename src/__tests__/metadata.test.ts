@@ -74,4 +74,14 @@ describe("generateMetadata", () => {
         : [];
     expect(toImageUrl(twitterImageList[0])).toBe("/banner.png");
   });
+
+  it("falls back when NEXT_PUBLIC_BASE_URL is malformed", () => {
+    process.env.NEXT_PUBLIC_BASE_URL = "not a url";
+
+    const metadata = generateMetadata({ path: "/agent-skills" });
+
+    expect(metadata.metadataBase?.toString()).toBe("https://bjornmelin.io/");
+    expect(metadata.alternates?.canonical).toBe("https://bjornmelin.io/agent-skills");
+    expect(metadata.openGraph?.url).toBe("https://bjornmelin.io/agent-skills");
+  });
 });

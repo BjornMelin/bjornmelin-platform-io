@@ -8,6 +8,18 @@ interface GenerateMetadataProps {
   image?: string;
 }
 
+const DEFAULT_METADATA_BASE_URL = "https://bjornmelin.io";
+
+const resolveMetadataBase = (baseUrl: string | undefined): URL => {
+  const candidate = baseUrl?.trim() || DEFAULT_METADATA_BASE_URL;
+
+  try {
+    return new URL(candidate);
+  } catch {
+    return new URL(DEFAULT_METADATA_BASE_URL);
+  }
+};
+
 /**
  * Builds metadata defaults with optional overrides.
  * @param title - Page title override.
@@ -22,8 +34,7 @@ export function generateMetadata({
   path = "",
   image,
 }: GenerateMetadataProps): Metadata {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim() || "https://bjornmelin.io";
-  const metadataBase = new URL(baseUrl);
+  const metadataBase = resolveMetadataBase(process.env.NEXT_PUBLIC_BASE_URL);
   const canonicalPath = path ? (path.startsWith("/") ? path : `/${path}`) : "";
   const resolvedUrl = canonicalPath
     ? new URL(canonicalPath, metadataBase).toString()
