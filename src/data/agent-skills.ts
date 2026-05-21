@@ -128,6 +128,7 @@ export const agentSkillsMetadata: AgentSkillsMetadata = {
   sourceRepository: parsed.sourceRepository,
   sourceCommit: parsed.sourceCommit,
   skillsCount: parsed.skillsCount,
+  validSkillsCount: parsed.validSkillsCount,
   totalSkillDirectories: parsed.totalSkillDirectories,
   packagedCount: agentSkillsData.filter((skill) => skill.packageStatus.present).length,
   installCommands: parsed.installCommands,

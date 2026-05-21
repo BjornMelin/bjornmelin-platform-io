@@ -11,6 +11,7 @@ import {
 describe("agent skills data", () => {
   it("parses generated catalog metadata and skill counts", () => {
     expect(agentSkillsMetadata.skillsCount).toBe(agentSkillsData.length);
+    expect(agentSkillsMetadata.validSkillsCount).toBe(agentSkillsData.length);
     expect(agentSkillsMetadata.totalSkillDirectories).toBeGreaterThanOrEqual(
       agentSkillsData.length,
     );
