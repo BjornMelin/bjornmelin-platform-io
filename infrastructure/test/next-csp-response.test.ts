@@ -154,6 +154,24 @@ describe("next-csp-response CloudFront Function", () => {
     expect(response.headers?.["content-security-policy"]).toBeUndefined();
   });
 
+  it("fails soft when a path index exists but its hash chunk is missing", async () => {
+    const get = vi.fn(async (key: string) => {
+      if (key === "/about/index.html") return "0";
+      if (key.startsWith("__hashes:")) return null;
+      return null;
+    });
+    const localHandler = loadCspResponseHandler(get);
+
+    const response = await localHandler({
+      request: { uri: "/about", headers: { host: { value: "example.com" } } },
+      response: { headers: { "content-type": { value: "text/html" } } },
+    });
+
+    expect(get).toHaveBeenCalledWith("/about/index.html");
+    expect(get).toHaveBeenCalledWith("__hashes:0");
+    expect(response.headers?.["content-security-policy"]).toBeUndefined();
+  });
+
   it("skips KVS lookups for non-HTML requests", async () => {
     const get = vi.fn(async (_key: string) => "0");
     const localHandler = loadCspResponseHandler(get);

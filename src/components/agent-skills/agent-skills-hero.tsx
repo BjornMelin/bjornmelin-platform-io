@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { AgentSkillCardModel, AgentSkillsMetadata } from "@/types/agent-skill";
 
 interface AgentSkillsHeroProps {
-  featuredSkills: AgentSkillCardModel[];
+  featuredSkills: ReadonlyArray<AgentSkillCardModel>;
   metadata: AgentSkillsMetadata;
 }
 
@@ -69,8 +69,10 @@ export function AgentSkillsHero({ featuredSkills, metadata }: AgentSkillsHeroPro
                     <p className="text-xs text-muted-foreground">Packaged</p>
                   </div>
                   <div>
-                    <p className="font-mono text-3xl tabular-nums">{metadata.validSkillsCount}</p>
-                    <p className="text-xs text-muted-foreground">Valid</p>
+                    <p className="font-mono text-3xl tabular-nums">
+                      {metadata.totalSkillDirectories}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Source dirs</p>
                   </div>
                   <div>
                     <p className="font-mono text-3xl tabular-nums">

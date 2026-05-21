@@ -2,8 +2,8 @@
 ADR: 0001
 Title: CloudFront CSP for Next.js static export uses hash allow-list
 Status: Accepted
-Version: 1.2
-Date: 2026-01-18
+Version: 1.3
+Date: 2026-05-21
 Supersedes: []
 Superseded-by: []
 Related: ["ADR-0005"]

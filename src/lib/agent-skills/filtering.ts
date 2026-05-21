@@ -1,6 +1,14 @@
 import { normalizeText } from "@/lib/projects/filtering";
-import type { AgentSkillCardModel } from "@/types/agent-skill";
+import type { AgentSkillCardModel, AgentSkillReadinessLabel } from "@/types/agent-skill";
 import type { AgentSkillsPackageFilter, AgentSkillsSort } from "./query-state";
+
+const readinessLabels = new Set<AgentSkillReadinessLabel>([
+  "Valid",
+  "Packaged",
+  "Documented",
+  "Resource-rich",
+  "Emerging",
+]);
 
 /** Filter criteria for Agent Skills Lab queries. */
 export type AgentSkillFilters = {
@@ -9,6 +17,10 @@ export type AgentSkillFilters = {
   readiness: string;
   packageState: AgentSkillsPackageFilter;
 };
+
+function isAgentSkillReadinessLabel(value: string): value is AgentSkillReadinessLabel {
+  return readinessLabels.has(value as AgentSkillReadinessLabel);
+}
 
 function skillSearchText(skill: AgentSkillCardModel): string {
   return [
@@ -29,21 +41,22 @@ function skillSearchText(skill: AgentSkillCardModel): string {
  * @returns Filtered array of skills matching all criteria.
  */
 export function filterAgentSkills(
-  skills: AgentSkillCardModel[],
+  skills: ReadonlyArray<AgentSkillCardModel>,
   filters: AgentSkillFilters,
 ): AgentSkillCardModel[] {
   const q = normalizeText(filters.q);
   const hasQuery = q.length > 0;
+  const readiness =
+    filters.readiness !== "all" && isAgentSkillReadinessLabel(filters.readiness)
+      ? filters.readiness
+      : undefined;
 
   return skills.filter((skill) => {
     if (filters.category !== "all" && skill.category !== filters.category) {
       return false;
     }
 
-    if (
-      filters.readiness !== "all" &&
-      !skill.readinessLabels.includes(filters.readiness as never)
-    ) {
+    if (readiness && !skill.readinessLabels.includes(readiness)) {
       return false;
     }
 
@@ -70,7 +83,7 @@ export function filterAgentSkills(
  * @returns New sorted array without mutating the original.
  */
 export function sortAgentSkills(
-  skills: AgentSkillCardModel[],
+  skills: ReadonlyArray<AgentSkillCardModel>,
   sort: AgentSkillsSort,
 ): AgentSkillCardModel[] {
   const sorted = [...skills];

@@ -86,7 +86,7 @@ async function readHashChunk(chunkIndex, cache) {
   } catch (error) {
     value = "";
   }
-  cache[key] = value || "";
+  cache[key] = value ? value.split(".") : [];
   return cache[key];
 }
 
@@ -100,7 +100,7 @@ async function decodeHashList(encoded) {
     if (isNaN(idx)) continue;
     var chunkIndex = Math.floor(idx / HASH_CHUNK_SIZE);
     var chunkValue = await readHashChunk(chunkIndex, cache);
-    var digest = chunkValue.split(".")[idx % HASH_CHUNK_SIZE];
+    var digest = chunkValue[idx % HASH_CHUNK_SIZE];
     if (!digest) continue;
     out.push(digest);
   }
@@ -152,6 +152,7 @@ async function handler(event) {
   // The deploy pipeline syncs KVS immediately after the storage stack deploy.
   if (encoded == null) return response;
   var hashes = await decodeHashList(encoded);
+  if (!hashes.length) return response;
   var hostHeader =
     request.headers && request.headers.host && request.headers.host.value;
   var csp = buildCsp(hostHeader || "", hashes);

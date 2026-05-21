@@ -39,7 +39,7 @@ export function AgentSkillDetail({ skill }: AgentSkillDetailProps) {
         <div className="container mx-auto px-4 py-14 md:py-20">
           <Button
             variant="ghost"
-            className="mb-8 h-10 rounded-full px-0 hover:bg-transparent"
+            className="mb-8 h-11 rounded-full px-0 hover:bg-transparent md:h-10"
             asChild
           >
             <Link href="/agent-skills">

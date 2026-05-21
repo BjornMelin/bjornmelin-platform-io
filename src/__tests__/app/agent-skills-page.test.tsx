@@ -74,7 +74,6 @@ vi.mock("@/data/agent-skills", () => ({
     sourceRepository: "https://github.com/BjornMelin/dev-skills",
     sourceCommit: "abcdef1",
     skillsCount: 1,
-    validSkillsCount: 1,
     totalSkillDirectories: 1,
     packagedCount: 1,
     installCommands: {

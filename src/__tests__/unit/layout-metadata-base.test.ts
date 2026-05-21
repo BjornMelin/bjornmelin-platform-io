@@ -41,4 +41,12 @@ describe("RootLayout metadataBase", () => {
 
     expect(metadata.metadataBase?.toString()).toBe("https://bjornmelin.io/");
   });
+
+  it("falls back when NEXT_PUBLIC_BASE_URL is empty", async () => {
+    process.env.NEXT_PUBLIC_BASE_URL = " ";
+
+    const { metadata } = await import("@/app/layout");
+
+    expect(metadata.metadataBase?.toString()).toBe("https://bjornmelin.io/");
+  });
 });

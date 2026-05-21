@@ -47,7 +47,7 @@ export function CommandCopyButton({ command, label, className }: CommandCopyButt
         type="button"
         variant="outline"
         size="icon"
-        className="h-9 w-9 shrink-0 rounded-full"
+        className="h-11 w-11 shrink-0 rounded-full md:h-9 md:w-9"
         onClick={handleCopy}
         aria-label={`Copy ${label} install command`}
       >

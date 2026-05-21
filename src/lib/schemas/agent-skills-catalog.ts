@@ -64,11 +64,10 @@ export const agentSkillsCatalogSkillSchema = z.looseObject({
 /** Schema for the full generated Agent Skills Lab catalog artifact. */
 export const agentSkillsCatalogSchema = z.looseObject({
   schemaVersion: z.literal("agent_skills_lab_catalog.v1"),
-  generatedAt: z.string().min(1),
+  generatedAt: z.string().datetime({ offset: true }),
   sourceRepository: z.url(),
-  sourceCommit: z.string().min(7),
+  sourceCommit: z.string().regex(/^[0-9a-f]{7,40}$/i),
   skillsCount: z.int().nonnegative(),
-  validSkillsCount: z.int().nonnegative(),
   totalSkillDirectories: z.int().nonnegative(),
   installCommands: agentSkillsCatalogInstallCommandsSchema,
   skills: z.array(agentSkillsCatalogSkillSchema),

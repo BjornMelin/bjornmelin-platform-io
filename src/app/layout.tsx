@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 
 /** Defines site-wide metadata for SEO and social sharing. */
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "https://bjornmelin.io"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL?.trim() || "https://bjornmelin.io"),
   title: {
     template: `%s | ${PROFILE.name}`,
     default: `${PROFILE.name} - ${PROFILE.shortTitle}`,

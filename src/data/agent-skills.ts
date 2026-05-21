@@ -94,8 +94,7 @@ const generatedSkills = parsed.skills.map((skill) => {
   return model;
 });
 
-/** Public Agent Skills Lab entries sorted for marketplace display. */
-export const agentSkillsData: AgentSkillCardModel[] = generatedSkills.sort((a, b) => {
+const sortedAgentSkills = generatedSkills.toSorted((a, b) => {
   const featuredDelta = Number(b.featured) - Number(a.featured);
   if (featuredDelta !== 0) return featuredDelta;
   const scoreDelta = b.score - a.score;
@@ -103,15 +102,24 @@ export const agentSkillsData: AgentSkillCardModel[] = generatedSkills.sort((a, b
   return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
 });
 
+/** Public Agent Skills Lab entries sorted for marketplace display. */
+export const agentSkillsData: ReadonlyArray<AgentSkillCardModel> = Object.freeze(sortedAgentSkills);
+
 /** Featured Agent Skills Lab entries curated for the route hero and showcase. */
-export const featuredAgentSkills = agentSkillsData.filter((skill) => skill.featured);
+export const featuredAgentSkills: ReadonlyArray<AgentSkillCardModel> = Object.freeze(
+  agentSkillsData.filter((skill) => skill.featured),
+);
 
 /** Sorted list of unique Agent Skills Lab category labels. */
-export const agentSkillCategories = dedupeAndSort(agentSkillsData.map((skill) => skill.category));
+export const agentSkillCategories: ReadonlyArray<string> = Object.freeze(
+  dedupeAndSort(agentSkillsData.map((skill) => skill.category)),
+);
 
 /** Sorted list of readiness labels currently present in the Agent Skills Lab catalog. */
-export const agentSkillReadinessLabels = readinessLabels.filter((label) =>
-  agentSkillsData.some((skill) => skill.readinessLabels.includes(label)),
+export const agentSkillReadinessLabels: ReadonlyArray<AgentSkillReadinessLabel> = Object.freeze(
+  readinessLabels.filter((label) =>
+    agentSkillsData.some((skill) => skill.readinessLabels.includes(label)),
+  ),
 );
 
 /** Metadata about the generated Agent Skills Lab catalog artifact. */
@@ -120,7 +128,6 @@ export const agentSkillsMetadata: AgentSkillsMetadata = {
   sourceRepository: parsed.sourceRepository,
   sourceCommit: parsed.sourceCommit,
   skillsCount: parsed.skillsCount,
-  validSkillsCount: parsed.validSkillsCount,
   totalSkillDirectories: parsed.totalSkillDirectories,
   packagedCount: agentSkillsData.filter((skill) => skill.packageStatus.present).length,
   installCommands: parsed.installCommands,

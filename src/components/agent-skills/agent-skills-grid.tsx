@@ -23,8 +23,8 @@ import { cn } from "@/lib/utils";
 import type { AgentSkillCardModel } from "@/types/agent-skill";
 
 interface AgentSkillsGridProps {
-  skills: AgentSkillCardModel[];
-  categories: string[];
+  skills: ReadonlyArray<AgentSkillCardModel>;
+  categories: ReadonlyArray<string>;
   readinessLabels: readonly string[];
   className?: string;
 }
