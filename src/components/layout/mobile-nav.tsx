@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, Home, Mail, Menu, User, X } from "lucide-react";
+import { Boxes, Briefcase, Home, Mail, Menu, User, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
@@ -32,7 +32,7 @@ export function MobileNav({
     href: string;
     label: string;
     description: string;
-    icon: "home" | "user" | "briefcase" | "mail";
+    icon: "home" | "user" | "briefcase" | "boxes" | "mail";
   }>;
   children: React.ReactNode;
 }) {
@@ -68,6 +68,7 @@ export function MobileNav({
       home: Home,
       user: User,
       briefcase: Briefcase,
+      boxes: Boxes,
       mail: Mail,
     }),
     [],

@@ -1,12 +1,18 @@
 import type { MetadataRoute } from "next";
+import { agentSkillsData } from "@/data/agent-skills";
 
+/** Enforces static rendering for sitemap generation. */
 export const dynamic = "force-static";
 
 const rawBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bjornmelin.io";
 const baseUrl = /^https?:\/\//.test(rawBaseUrl) ? rawBaseUrl : `https://${rawBaseUrl}`;
 
+/**
+ * Generates the public sitemap for static export.
+ * @returns Sitemap entries for static pages and Agent Skills Lab detail pages.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["/", "/about", "/projects", "/contact"].map((route) => {
+  const staticRoutes = ["/", "/about", "/projects", "/agent-skills", "/contact"].map((route) => {
     const url = new URL(route, baseUrl).toString();
     return {
       url,
@@ -16,13 +22,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     };
   });
 
-  // TODO: Add dynamic routes for projects
-  // const projectRoutes = projects.map((project) => ({
-  //   url: `${baseUrl}/projects/${project.slug}`,
-  //   lastModified: project.updatedAt,
-  //   changeFrequency: 'monthly' as const,
-  //   priority: 0.6,
-  // }));
+  const agentSkillRoutes = agentSkillsData.map((skill) => ({
+    url: new URL(skill.detailHref, baseUrl).toString(),
+    lastModified: new Date().toISOString(),
+    changeFrequency: "weekly" as const,
+    priority: skill.featured ? 0.7 : 0.6,
+  }));
 
-  return [...staticRoutes];
+  return [...staticRoutes, ...agentSkillRoutes];
 }

@@ -2,8 +2,8 @@
 import type React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("next/font/google", () => ({
-  Inter: () => ({ className: "mock-inter-font" }),
+vi.mock("next/font/local", () => ({
+  default: () => ({ className: "mock-geist-font", variable: "mock-geist-variable" }),
 }));
 
 vi.mock("@/components/layout/app-shell", () => ({
@@ -39,6 +39,6 @@ describe("RootLayout metadataBase", () => {
 
     const { metadata } = await import("@/app/layout");
 
-    expect(metadata.metadataBase?.toString()).toBe("https://bjornmelin.com/");
+    expect(metadata.metadataBase?.toString()).toBe("https://bjornmelin.io/");
   });
 });

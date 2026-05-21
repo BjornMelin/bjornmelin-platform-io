@@ -13,12 +13,12 @@
  *
  * CloudFront Functions runtime constraints:
  * - JavaScript runtime 2.0
- * - Uses CloudFront KeyValueStore for per-path hash indices (keeps code size < 10 KB)
+ * - Uses CloudFront KeyValueStore for per-path hash indices and digest chunks
  */
 import cf from "cloudfront";
 var kvsHandle = cf.kvs();
 
-var HASH_B64 = ["+Rda0i8nZlb7ZpLTSV9IhckyIQzqSue4Q2F5WQ809ow=","/YAFUuAgRv8EkYVI+Y9mnqGRgylw296d2SpW1NwiFzs=","0aDdt+E0je4LayERalHn8ESFOpspFrx2U0oG2RunfoQ=","0n6GCdZoQ48oD8EF6N1pUKH+2w0b3V0bRBk18b5DjGk=","1bQwMPWzh/A9qgH6DuZU3t1CQP9XtEtpsY5R8ViKw80=","1rxmNq9ZQu76yl/KBPVF4MD96WW52uzIZv8TTjb/KcI=","2j+vlO1qmw+HtB/oP+LRMLiIB6N1bhfFFv7YmNkdWkY=","2kdYZWRVQ9NiBwyglXkW4Kgq7gIIbj1EY9ZGIDgKnXc=","2qDeYz0fsSPpN7JMZcmWse9C6ZjqB5KJynSQD5HL/sQ=","3Tmw2E15eOyCUyQ2WsYw4uLvQPGnjW/sJ0Zc9Wkc+9E=","4ZfzSfwIj9DTVko8ScZMDriN19uw717rE8jJXkilIQs=","5zj28e9Sj4U85RoNyew7FcUjrm2OWSYP48XOEJXCQBw=","6dSgKZg5hLTLlnFpwgaJkPhUQ7Xa+bWHeas6Gpe8qa8=","6laUbl3Ly1aTykSTldyi0JlIrY31RCEH003Uyr8bhWE=","7ZboHxuzscOry+IfUWWP46mxq26MjsYq8NMLJ2kaBZw=","7kM7H4VF6zhPwW7W2R0awP9vbsL5FF8q2oMNOvu8oIw=","7mu4H06fwDCjmnxxr/xNHyuQC6pLTHr4M2E4jXw5WZs=","8iE0Bmdys33As1LKZIWBiqQOqHmSmRFxsVfmpH94CGw=","9jE13/+NakCIaLS20YyMfaCAbEg+2lksmMIH+mtYh6s=","BIM6wtSIDcq6zVYUsVCB2RCIZqf4id7QmHuz5RxdJeM=","BfKvea02RYtuf/6XxEpb7joyEZ0hVV2DdGd6Zc9zJvA=","CCX/z+lkmAbrccWj/FAts2lkb+jVktFU7X2D2VMBHF4=","DMQdXbf9YakaR0nhWM5H+7b9wzXE/k9N0N9vFe8ju2o=","EBXJmWOfljnqy5P7FQXes3VjqbnVIQ8pcCUMT2e+oKk=","Ev2jNgSJbP99lJ2224Zidglpzbce0K5YXoBy7p5e09I=","H2DDGEc7IDQsbyEtmzg2MkvyPgCUrN5jh7Csl8RtMwQ=","Hvfz5BKVDPVofOiwIWh9hjHZVuibiyYqE+32CSaORvs=","HwGg8uI5Nn3tUx2MvIBUppvCXqj+dAqXbukGCF5f38c=","IG/ijWKtadIMh8auHF/NzVYmeq6or1ehuHSQqVv4pKk=","IK1W5MpaFu7KXqi7xLhPngcAcgBqzHGqQeH/n/bOtZ0=","Is0u7xvDH1MEXkeyJAsycPQ0w6FFYT6tSi7va/EuFvE=","K/vdnRA4XXpNVLO8P2MVSrPAj2aVeJWAtKSry5X2nwY=","K734zgJpUtrKknqIY8Ptowa6J6H65lbnjsOdAOUrDok=","K9/hpRdL+gjejvXV1EpA04sEoihWpnX0M9ykVtxL2Wk=","Kn0Jion2R1Qct3nmK1l37+05xh6HtjKaR858+N8Bf2I=","L6MBpN/wLNzwHxUzCUjH1J/qXd5tI0yoEUXwUafxu9Y=","MehY9gyyNcrhAi3D4YJW55tlBdDJl3bt1JlTK4F7gdU=","NJo8DNGeH2UAHKIvCDS61IYUHqQou8zWuzm7j4CdwY8=","O/C1BQIXL8fmlWLTGMIz4I5QbNGL9AqcrUWAwUOsZBM=","OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=","Oh69yFbjztazbSoPiDg+EIoj0qsi/O5fa/2XE48Wy9U=","OiNOHZTqd73eSpV5yRaP+1DOSp0zm+cTXKj6erPWzEQ=","P2xYjkBOnBW+VtPOuLQVMLR4JnElfiITSQ83x9u1+Tk=","PvuCl3DMDwzMF6M5ooDUg2TWC6IZyHQ3f/zXYdQF77o=","Q2CTbQeQ4KEjcqQcHTRTCQSPILBJ8z07GfsR6K0oxZ8=","QAlSewaQLi/NPCznjAZSyvQ72heD0VdxmNDDkZeCxgc=","Qrj0eztdpNQdD5iInYGpSfs+6vTd7pARtcVM/ncV9Ek=","RVRf7FCOw4bXCCNP94jan+YuSSQDcl0rPuPwU+8z8WY=","S5ESetWDHcQiC7goFJ+uYj/RtfhuHZptKe6vRLyndw4=","SYyrHcKwGR042/AGKpuwGTzzeOp8BkbGib96HmXzPSA=","T5y9RBCUFiCez2z9lijHR1DM5PgVAqt3qGcDs8LM4XU=","TM0Uv7OX/1xTGgyV+HU4Olzeq0C1REpa0Fuj+PB5fI0=","VFvHqED+UkKfcmlfbgmsGlj0MI3mlJhQloduRQahBZY=","VY/RLc8vLVN6mpBKB2MyflxsCuFv2zkg2rXZo9KJ//g=","aFs5H0NXTMRPAvEZX/C/P499Hq+TOn2Mw5e2doE2drE=","awU52BArPV/Tkp6pofrr7URNtvKDDnT6qHiQqwrFpQI=","bHG80cv2iTHyElIAxt8+ClSmpfH04RartmJ68i1WIqs=","bHLXjEB5JQLyi/0e7eheP6FWUg0KNL5M+qWEzz/+gGE=","cuihEN41nNCiMYV2mUL8hrJb3rWO/yhQj9u5dsNr/D4=","dgfjqRUJTJQU5lJIur90LwCOd2YJz2bmjWqWsz3rDfI=","doSTxR8AJOiqPTDXQsMOQ923PysrL/InV1SqnObxZTc=","e0wQAJFdkW9yBiPog/DwUCh2PfE34w918Ad2SsXCTIs=","ekCuVbTnuxR4asYhGVKwg6XK8pNPYkdJk9fgr1jplDw=","fDmG/UQ5PvtjOT27/SLlOUszBbGowBCJMhK0o/ZUZYU=","fNL5BQhWUPGIRNxOd5KQIXKtNMzNJDrpGOKC1vtsv3Q=","j06l3LnFhSa7uVi9ROwjQtLZQ9RBHRJuR8wbF9GMsHk=","jKBMbclCMLBwYf7CFyxQRCoM/tb6kFEAEODR48dCghA=","jlM93/q3E9yRldRqELpCPQ/BC0MbiRkbR+eM4i6Fqxs=","lmPEcgvlkTXud7b/6hjA/8CtqWcBHbWM1giBpDVY/RE=","mJdNvsxjRuK84M/+9eyAUfLpfe3U7SiaFAW+Pos/5q8=","mimS8tNZA21qZPdDM/SUsaOkbnoic4C1Xg/u4U4eL6o=","mm/Oplsx2wGTIAjXDJJrO1qrjA93tJ9rrXVyiILTbC8=","n46vPwSWuMC0W703pBofImv82Z26xo4LXymv0E9caPk=","nKBN7Mz07q2c6gsisOECx4cDnL6qR1WzRd3Pccb0XXk=","nUX8/g+bLfYPpZTjG/eFLy88kLtrq5tRMFzQa4cJjJs=","o9DhuImzjCFREE46vbXUrggvEOnnFtffKUfwd+cYm70=","pHn8mYu/Fci/CRriSnuvuJ+BGwo3Ad2li90s/KXGllQ=","pYc0APZRpSXTYNfVNrrICfOEK7K1Vw4iep2VK+DvqYk=","prolUgzVI37xpOe0s1Ok0lEcxkXpxn81NE33KLlYFM4=","pt+yIpkf+PV4+DRGIToxbj2V+AKLDDA444g9Qom8Q2w=","s/O5e/Pg6aR9jMJPyounU9xWkm7eL1ER2A8pnJrc9hs=","sK6wNa1ci3MoF+5Hm+DhsCWNR84yGMNpIXDTke+IXF4=","sp6m5CXoWDm5q0SYwdqjRfxqnsJcwI0dm0M0tl+wcaA=","t2/6IdbReCFIt4sFwJ/au6Akj2kD3a5FPv/eWlfFNAg=","u2YqR2PhoH6VwKt66kpSQOpvLApYgU9GwAgp82uYXJ8=","udmcmh9tcLfeFyIPmEcvYj0quRfXwPcOFlzBD+2mscY=","uem4EkJujTHeW/D2E/QvmZy78HxvxPBN/G06ohPOsmg=","vGpV76mnRzZEExVIsE5zN/R65oWh59pqEW10CLj/uy0=","vX4uO8dl12HuQbio/3NlHJueKs3kXpMN5GdWCn+p2/Q=","xM/zVtw/ttS9MJPpcN/6xd9t6G/cVzY/jxH9cGjYFcM=","xseup7cQID/Cumm0MLipZ13JsI62tb1GKP7iYVRh0Vk=","ylo8VPiKlFve9MkblD6S8ftTTE+q7Bt/30flCplu3So=","yoIX9plPMn7YP56e0AxEqtPcS0NW2WQ+kHk87VUF0pA=","zw8ESLfwKP3rlxh9SSvWnxiqcyBLKC53TCrwTO5+EnA="];
+var HASH_CHUNK_SIZE = 16;
 
 var BASE_DIRECTIVES = [
   "default-src 'self'",
@@ -77,14 +77,30 @@ function isHtmlRequest(request, response) {
   return true;
 }
 
-function decodeHashList(encoded) {
+async function readHashChunk(chunkIndex, cache) {
+  var key = "__hashes:" + chunkIndex.toString(36);
+  if (cache[key] !== undefined) return cache[key];
+  var value;
+  try {
+    value = await kvsHandle.get(key);
+  } catch (error) {
+    value = "";
+  }
+  cache[key] = value || "";
+  return cache[key];
+}
+
+async function decodeHashList(encoded) {
   if (!encoded) return [];
   var parts = encoded.split(".");
   var out = [];
+  var cache = {};
   for (var i = 0; i < parts.length; i++) {
     var idx = parseInt(parts[i], 36);
     if (isNaN(idx)) continue;
-    var digest = HASH_B64[idx];
+    var chunkIndex = Math.floor(idx / HASH_CHUNK_SIZE);
+    var chunkValue = await readHashChunk(chunkIndex, cache);
+    var digest = chunkValue.split(".")[idx % HASH_CHUNK_SIZE];
     if (!digest) continue;
     out.push(digest);
   }
@@ -135,7 +151,7 @@ async function handler(event) {
   // Fail-soft: if KVS is unavailable/unpopulated, don't apply CSP yet.
   // The deploy pipeline syncs KVS immediately after the storage stack deploy.
   if (encoded == null) return response;
-  var hashes = decodeHashList(encoded);
+  var hashes = await decodeHashList(encoded);
   var hostHeader =
     request.headers && request.headers.host && request.headers.host.value;
   var csp = buildCsp(hostHeader || "", hashes);

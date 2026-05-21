@@ -18,8 +18,8 @@ describe("sitemap", () => {
   it("returns sitemap entries for static routes", () => {
     const result = sitemap();
 
-    expect(result).toHaveLength(4);
-    const routes = ["/", "/about", "/projects", "/contact"];
+    expect(result.length).toBeGreaterThan(4);
+    const routes = ["/", "/about", "/projects", "/agent-skills", "/contact"];
 
     routes.forEach((route, index) => {
       expect(new URL(result[index].url).pathname).toBe(route);
@@ -36,18 +36,30 @@ describe("sitemap", () => {
   it("sets other pages priority to 0.8", () => {
     const result = sitemap();
 
-    const otherEntries = result.filter((entry) => new URL(entry.url).pathname !== "/");
+    const otherEntries = result.filter((entry) =>
+      ["/about", "/projects", "/agent-skills", "/contact"].includes(new URL(entry.url).pathname),
+    );
     otherEntries.forEach((entry) => {
       expect(entry.priority).toBe(0.8);
     });
   });
 
-  it("sets changeFrequency to monthly for all entries", () => {
+  it("sets changeFrequency for all entries", () => {
     const result = sitemap();
 
-    result.forEach((entry) => {
-      expect(entry.changeFrequency).toBe("monthly");
-    });
+    expect(
+      result.every(
+        (entry) => entry.changeFrequency === "monthly" || entry.changeFrequency === "weekly",
+      ),
+    ).toBe(true);
+  });
+
+  it("includes Agent Skills Lab detail pages", () => {
+    const result = sitemap();
+
+    expect(
+      result.some((entry) => new URL(entry.url).pathname === "/agent-skills/deep-researcher"),
+    ).toBe(true);
   });
 
   it("sets lastModified to current date", () => {

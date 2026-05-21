@@ -16,7 +16,9 @@ type CloudFrontResponse = { headers?: CloudFrontHeaders };
  * @throws Error if the file doesn't define a global `handler` function
  */
 function loadCspResponseHandler(
-  getStub: (key: string) => Promise<string | null> = vi.fn(async (_key: string) => "0"),
+  getStub: (key: string) => Promise<string | null> = vi.fn(async (key: string) =>
+    key.startsWith("__hashes:") ? "test-digest" : "0",
+  ),
 ): (event: {
   request: CloudFrontRequest;
   response: CloudFrontResponse;
@@ -56,6 +58,7 @@ describe("next-csp-response CloudFront Function", () => {
 
   it("falls back to 404 hashes when path is unknown", async () => {
     const get = vi.fn(async (key: string) => {
+      if (key.startsWith("__hashes:")) return "test-digest";
       if (key === "/404.html") return "0";
       return null;
     });

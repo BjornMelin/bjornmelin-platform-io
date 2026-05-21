@@ -14,6 +14,7 @@ describe("Navbar/Footer", () => {
     expect(screen.getAllByRole("link", { name: /home/i }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: /about/i }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: /projects/i }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /agent skills/i }).length).toBeGreaterThan(0);
   });
 
   it("toggles the mobile menu", async () => {

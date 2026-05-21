@@ -37,8 +37,8 @@ describe("generateMetadata", () => {
 
     expect(metadata.title).toBe(`${PROFILE.name} - ${PROFILE.shortTitle}`);
     expect(metadata.description).toBe(PROFILE.summary);
-    expect(metadata.metadataBase?.toString()).toBe("https://bjornmelin.com/");
-    expect(metadata.alternates?.canonical).toBe("https://bjornmelin.com");
+    expect(metadata.metadataBase?.toString()).toBe("https://bjornmelin.io/");
+    expect(metadata.alternates?.canonical).toBe("https://bjornmelin.io");
   });
 
   it("applies overrides and propagates image data when provided", () => {

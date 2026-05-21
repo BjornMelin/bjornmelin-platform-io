@@ -22,7 +22,7 @@ export function generateMetadata({
   path = "",
   image,
 }: GenerateMetadataProps): Metadata {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bjornmelin.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bjornmelin.io";
   const fullTitle = title
     ? `${title} | ${PROFILE.name}`
     : `${PROFILE.name} - ${PROFILE.shortTitle}`;
