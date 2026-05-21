@@ -55,7 +55,6 @@ export type AgentSkillsMetadata = {
   sourceRepository: string;
   sourceCommit: string;
   skillsCount: number;
-  validSkillsCount: number;
   totalSkillDirectories: number;
   packagedCount: number;
   installCommands: {

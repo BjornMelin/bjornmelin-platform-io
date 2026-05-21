@@ -4,7 +4,6 @@
   "sourceRepository": "https://github.com/BjornMelin/dev-skills",
   "sourceCommit": "25e9f54916244da7c0ef8d39c257b13150ff8a2c",
   "skillsCount": 57,
-  "validSkillsCount": 57,
   "totalSkillDirectories": 57,
   "installCommands": {
     "list": "npx skills add BjornMelin/dev-skills --list",

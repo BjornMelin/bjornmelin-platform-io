@@ -68,7 +68,6 @@ export const agentSkillsCatalogSchema = z.looseObject({
   sourceRepository: z.url(),
   sourceCommit: z.string().regex(/^[0-9a-f]{7,40}$/i),
   skillsCount: z.int().nonnegative(),
-  validSkillsCount: z.int().nonnegative(),
   totalSkillDirectories: z.int().nonnegative(),
   installCommands: agentSkillsCatalogInstallCommandsSchema,
   skills: z.array(agentSkillsCatalogSkillSchema),
