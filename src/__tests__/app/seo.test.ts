@@ -1,17 +1,8 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 
 describe("sitemap", () => {
-  beforeAll(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
-  });
-
-  afterAll(() => {
-    vi.useRealTimers();
-  });
-
   // Note: sitemap uses process.env.NEXT_PUBLIC_APP_URL at module load time
   // We test the structure and logic, not the specific URL which depends on env
 
@@ -62,14 +53,11 @@ describe("sitemap", () => {
     ).toBe(true);
   });
 
-  it("sets lastModified to current date", () => {
+  it("omits lastModified until stable content dates are available", () => {
     const result = sitemap();
 
     result.forEach((entry) => {
-      expect(entry.lastModified).toBeDefined();
-      const parsed = new Date(entry.lastModified as string);
-      expect(Number.isNaN(parsed.getTime())).toBe(false);
-      expect(entry.lastModified).toBe("2025-01-01T00:00:00.000Z");
+      expect(entry.lastModified).toBeUndefined();
     });
   });
 

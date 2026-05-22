@@ -1,12 +1,24 @@
 import type { Metadata } from "next";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import { projectCategories, projectLanguages, projectsData } from "@/data/projects";
+import { sharedOpenGraphImage } from "@/lib/metadata";
 
 /** Metadata for the projects listing page. */
 export const metadata: Metadata = {
-  title: "Projects - Bjorn Melin",
+  title: "Projects",
   description:
     "Explore my portfolio of projects in machine learning and AI, cloud architecture, and web development.",
+  alternates: {
+    canonical: "/projects",
+  },
+  openGraph: {
+    type: "website",
+    url: "/projects",
+    title: "Projects - Bjorn Melin",
+    description:
+      "Explore my portfolio of projects in machine learning and AI, cloud architecture, and web development.",
+    images: [sharedOpenGraphImage],
+  },
 };
 
 /**
