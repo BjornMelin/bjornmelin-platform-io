@@ -325,13 +325,16 @@ pnpm -C infrastructure cdk deploy   # Deploy AWS infrastructure
 
 ## Docker
 
-Build the production image (requires Docker Desktop/daemon running):
+Docker is supported as a CI-verified local smoke surface for the static export.
+Production deploys still use S3/CloudFront, not the container image.
+
+Build the image and smoke-test the exported site:
 
 ```bash
-docker build -t platform-io:node24 .
+pnpm docker:verify
 ```
 
-Run the container and serve the exported site on port 8080:
+To run the already-built image manually on port 8080:
 
 ```bash
 docker run --rm -p 8080:80 platform-io:node24
