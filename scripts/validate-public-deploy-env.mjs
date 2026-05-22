@@ -49,6 +49,13 @@ function isHttpsUrl(value) {
   }
 }
 
+/**
+ * Validates public deploy environment variables before deployment jobs run.
+ *
+ * @param env - Environment variable map to inspect.
+ * @param options - Validation options that control environment-specific requirements.
+ * @returns List of validation error messages.
+ */
 export function validatePublicDeployEnv(env, options = {}) {
   const environment = options.environment || "production";
   const errors = [];
@@ -87,6 +94,13 @@ export function validatePublicDeployEnv(env, options = {}) {
   return errors;
 }
 
+/**
+ * Runs the public deploy environment validator from command line arguments.
+ *
+ * @param args - Command line arguments excluding the Node executable and script path.
+ * @param env - Environment variable map to inspect.
+ * @returns Process exit code where zero means validation passed.
+ */
 export function runCli(args, env = process.env) {
   const options = parseArgs(args);
   const errors = validatePublicDeployEnv(env, options);

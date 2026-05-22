@@ -188,6 +188,12 @@ const parseAllowedOrigins = (domainName: string): string[] => {
 
 const allowedOrigins = parseAllowedOrigins(domain);
 
+/**
+ * Handles contact form submissions with CORS, abuse controls, and email delivery.
+ *
+ * @param event - API Gateway proxy event containing the contact form request.
+ * @returns API Gateway proxy result for the accepted, rejected, or failed submission.
+ */
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const origin = event.headers.origin || event.headers.Origin;
 
@@ -220,6 +226,21 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
   }
 
+  resetExpiredRateLimits();
+
+  const sourceIp = resolveSourceIp(event);
+  const rateLimit = checkContactRateLimit(sourceIp);
+  if (!rateLimit.allowed) {
+    return {
+      statusCode: 429,
+      headers: {
+        ...corsHeaders,
+        "Retry-After": String(Math.ceil((rateLimit.resetTime - Date.now()) / 1000)),
+      },
+      body: JSON.stringify({ error: "Too many requests" }),
+    };
+  }
+
   // Check for missing body before try block (client error, not server error)
   if (!event.body) {
     return {
@@ -233,21 +254,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   }
 
   try {
-    resetExpiredRateLimits();
-
-    const sourceIp = resolveSourceIp(event);
-    const rateLimit = checkContactRateLimit(sourceIp);
-    if (!rateLimit.allowed) {
-      return {
-        statusCode: 429,
-        headers: {
-          ...corsHeaders,
-          "Retry-After": String(Math.ceil((rateLimit.resetTime - Date.now()) / 1000)),
-        },
-        body: JSON.stringify({ error: "Too many requests" }),
-      };
-    }
-
     const parsed: unknown = JSON.parse(event.body);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
       return badRequest(corsHeaders, "Invalid request");
