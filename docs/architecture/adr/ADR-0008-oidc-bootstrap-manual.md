@@ -41,11 +41,11 @@ security best practices.
 
 ## Alternatives
 
-- A: **Manual OIDC provider + role creation (current)** — Pros: secure, no long-lived creds,
+- A: **Manual OIDC provider + role creation (current)** -- Pros: secure, no long-lived creds,
   avoids bootstrapping loop. Cons: manual step for new forks.
-- B: CDK stack to create OIDC provider + role, run manually with local AWS admin creds — Pros:
+- B: CDK stack to create OIDC provider + role, run manually with local AWS admin creds -- Pros:
   IaC for repeatability. Cons: still manual; adds infra surface area to maintain.
-- C: Bootstrap from GitHub Actions using static AWS keys — Pros: fully automated. Cons:
+- C: Bootstrap from GitHub Actions using static AWS keys -- Pros: fully automated. Cons:
   insecure (long-lived credentials), violates least-privilege guidance.
 
 ### Decision Framework
