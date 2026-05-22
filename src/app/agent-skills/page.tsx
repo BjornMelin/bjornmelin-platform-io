@@ -38,13 +38,13 @@ export const metadata: Metadata = {
  */
 export default function AgentSkillsPage() {
   return (
-    <main className="overflow-x-hidden">
+    <div className="overflow-x-hidden">
       <AgentSkillsHero featuredSkills={featuredAgentSkills} metadata={agentSkillsMetadata} />
       <AgentSkillsGrid
         skills={agentSkillsData}
         categories={agentSkillCategories}
         readinessLabels={agentSkillReadinessLabels}
       />
-    </main>
+    </div>
   );
 }

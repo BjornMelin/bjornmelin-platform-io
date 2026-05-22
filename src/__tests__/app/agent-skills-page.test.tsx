@@ -93,10 +93,11 @@ describe("AgentSkillsPage", () => {
   });
 
   it("renders hero and grid sections", () => {
-    render(<AgentSkillsPage />);
+    const { container } = render(<AgentSkillsPage />);
 
     expect(screen.getByTestId("agent-skills-hero")).toBeInTheDocument();
     expect(screen.getByTestId("agent-skills-grid")).toBeInTheDocument();
+    expect(container.querySelector("main")).not.toBeInTheDocument();
   });
 
   it("passes catalog data to child components", () => {

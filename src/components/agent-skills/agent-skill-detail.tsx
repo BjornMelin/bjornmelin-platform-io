@@ -34,7 +34,7 @@ export function AgentSkillDetail({ skill }: AgentSkillDetailProps) {
   ] as const;
 
   return (
-    <main className="overflow-x-hidden">
+    <div className="overflow-x-hidden">
       <section className="border-b border-border/70">
         <div className="container mx-auto px-4 py-14 md:py-20">
           <Button
@@ -189,6 +189,6 @@ export function AgentSkillDetail({ skill }: AgentSkillDetailProps) {
           </aside>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
