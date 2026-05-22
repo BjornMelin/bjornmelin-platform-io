@@ -110,7 +110,7 @@ export default function StructuredData({ type }: StructuredDataProps): React.Rea
             key={createSchemaKey(record)}
             type="application/ld+json"
             suppressHydrationWarning
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload is controlled and escapes HTML opener characters.
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload is controlled, escapes HTML opener characters, and is tracked in #324.
             dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
           />
         );
