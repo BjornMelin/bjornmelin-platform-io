@@ -79,8 +79,12 @@ jobs:
             local name="$1"
             local value="$2"
 
-            if [[ -z "${value}" || ! "${value}" =~ ^https:// ]]; then
-              echo "${name} must be set and start with https:// for this environment." >&2
+            if [[ -z "${value}" ]]; then
+              echo "Missing required variable: ${name} (GitHub Environment: ${DEPLOY_ENV})" >&2
+              exit 1
+            fi
+            if [[ ! "${value}" =~ ^https:// ]]; then
+              echo "${name} must start with https:// (GitHub Environment: ${DEPLOY_ENV})." >&2
               exit 1
             fi
           }
