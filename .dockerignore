@@ -1,0 +1,46 @@
+# Git and local editor state
+.git
+.gitignore
+.dockerignore
+.vscode/
+.idea/
+
+# Dependencies and package-manager caches
+node_modules/
+**/node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+.pnp
+.pnp.js
+
+# Local secrets and machine-specific config
+.env
+.env.*
+*.pem
+
+# Agent, research, and generated workbench state
+.agents/
+.archive/
+.claude/
+.codex/
+.firecrawl/
+.roo/
+.roomodes
+.cursor/
+agent-logs/
+opensrc/
+skills-lock.json
+
+# Build, coverage, and test artifacts
+.next/
+out/
+coverage/
+infrastructure/coverage/
+cdk.out/
+playwright-report/
+test-results/
+*.tsbuildinfo
+*.log
+dev-debug.log
+repomix-output.txt
