@@ -33,8 +33,9 @@ jobs:
           set -euo pipefail
 
           echo "Checking for outdated dependencies..."
+          outdated_file="${RUNNER_TEMP:-/tmp}/pnpm-outdated.json"
           set +e
-          pnpm outdated --format json > outdated.json
+          pnpm outdated --format json > "${outdated_file}"
           outdated_status=$?
           set -e
           if [[ "${outdated_status}" -gt 1 ]]; then
@@ -42,7 +43,7 @@ jobs:
             exit "${outdated_status}"
           fi
 
-          OUTDATED="$(cat outdated.json)"
+          OUTDATED="$(cat "${outdated_file}")"
           if [[ -z "${OUTDATED}" ]]; then
             OUTDATED="[]"
           fi

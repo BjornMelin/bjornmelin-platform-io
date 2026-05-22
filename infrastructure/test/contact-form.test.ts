@@ -278,6 +278,22 @@ describe("contact-form Lambda handler", () => {
     expect(getParameterMock).not.toHaveBeenCalled();
   });
 
+  it("returns success without sending email for non-string honeypot submissions", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify(validPayload({ honeypot: 0 })),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(200);
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
   it("rejects submissions that omit form load timing before sending email", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 

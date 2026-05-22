@@ -138,6 +138,11 @@ function isValidFormLoadTime(value: unknown): value is number {
   return typeof value === "number" && Number.isInteger(value) && value > 0;
 }
 
+function isHoneypotSubmission(payload: Record<string, unknown>): boolean {
+  if (!Object.prototype.hasOwnProperty.call(payload, "honeypot")) return false;
+  return typeof payload.honeypot !== "string" || isHoneypotTriggered(payload.honeypot);
+}
+
 function badRequest(
   corsHeaders: APIGatewayProxyResult["headers"],
   message = "Invalid submission",
@@ -250,7 +255,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       };
     }
 
-    if (isHoneypotTriggered(typeof payload.honeypot === "string" ? payload.honeypot : null)) {
+    if (isHoneypotSubmission(payload)) {
       return {
         statusCode: 200,
         headers: corsHeaders,

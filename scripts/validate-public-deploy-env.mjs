@@ -17,7 +17,12 @@ function parseArgs(args) {
   for (let index = 0; index < args.length; index++) {
     const arg = args[index];
     if (arg === "--environment") {
-      options.environment = args[++index] || options.environment;
+      const environment = args[index + 1];
+      if (!environment || environment.startsWith("--")) {
+        throw new Error("--environment requires a value");
+      }
+      options.environment = environment;
+      index++;
       continue;
     }
     if (arg === "--require-aws-role") {

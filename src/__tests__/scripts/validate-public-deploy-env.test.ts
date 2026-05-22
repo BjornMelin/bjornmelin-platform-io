@@ -63,6 +63,24 @@ describe("validate-public-deploy-env", () => {
     expect(result.stderr).toContain("AWS_DEPLOY_ROLE_ARN must be a full IAM Role ARN");
   });
 
+  it("rejects missing environment argument values", () => {
+    const result = spawnSync(
+      process.execPath,
+      [scriptPath, "--environment", "--require-aws-role"],
+      {
+        cwd: process.cwd(),
+        env: {
+          ...process.env,
+          ...validEnv,
+        },
+        encoding: "utf8",
+      },
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("--environment requires a value");
+  });
+
   it("rejects invalid contact email variables", () => {
     const result = runValidator({ ...validEnv, CONTACT_EMAIL: "not-email" });
 
