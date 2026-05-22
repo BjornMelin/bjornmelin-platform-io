@@ -18,7 +18,10 @@ const toSiteBaseUrl = (candidate: string | undefined): URL | null => {
   }
 };
 
-/** Resolves the canonical public site base URL from supported environment variables. */
+/**
+ * Resolves the canonical public site base URL from supported environment variables.
+ * @returns Canonical public base URL used for metadata, sitemap, and robots generation.
+ */
 export function resolveSiteBaseUrl(): URL {
   return (
     toSiteBaseUrl(process.env.NEXT_PUBLIC_APP_URL) ??
