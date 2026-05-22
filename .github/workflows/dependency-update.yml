@@ -16,9 +16,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -29,8 +30,23 @@ jobs:
       - name: Check for updates
         id: check-updates
         run: |
+          set -euo pipefail
+
           echo "Checking for outdated dependencies..."
-          OUTDATED=$(pnpm outdated --format json || echo '[]')
+          outdated_file="${RUNNER_TEMP:-/tmp}/pnpm-outdated.json"
+          set +e
+          pnpm outdated --format json > "${outdated_file}"
+          outdated_status=$?
+          set -e
+          if [[ "${outdated_status}" -gt 1 ]]; then
+            echo "pnpm outdated failed with status ${outdated_status}" >&2
+            exit "${outdated_status}"
+          fi
+
+          OUTDATED="$(cat "${outdated_file}")"
+          if [[ -z "${OUTDATED}" ]]; then
+            OUTDATED="[]"
+          fi
           {
             echo 'outdated<<__OUTDATED_JSON__'
             echo "$OUTDATED"
@@ -59,13 +75,14 @@ jobs:
           # Update non-major versions
           pnpm update
           
-          # Run tests to ensure nothing is broken
+          # Run validation to ensure nothing is broken or newly vulnerable
+          pnpm audit --audit-level moderate
           pnpm test
           pnpm build
 
       - name: Create Pull Request
         if: steps.check-updates.outputs.has_updates == 'true'
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore(deps): update dependencies'
