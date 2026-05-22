@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppShell } from "@/components/layout/app-shell";
 import StructuredData from "@/components/structured-data";
 import { ThemeScript } from "@/components/theme";
+import { sharedOpenGraphImage } from "@/lib/metadata";
 import { PROFILE } from "@/lib/profile";
 import { resolveSiteBaseUrl } from "@/lib/site-url";
 import { Providers } from "./providers";
@@ -40,22 +41,19 @@ export const metadata: Metadata = {
     default: `${PROFILE.name} - ${PROFILE.shortTitle}`,
   },
   description: PROFILE.summary,
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: "/headshot/headshot-2024.jpg",
     apple: "/headshot/headshot-2024.jpg",
   },
   openGraph: {
     type: "website",
+    url: "/",
     title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
     description: PROFILE.summary,
-    images: [
-      {
-        url: "/screenshots/hero-preview.png",
-        width: 1200,
-        height: 630,
-        alt: "Bjorn Melin - Portfolio Hero Section",
-      },
-    ],
+    images: [sharedOpenGraphImage],
   },
   twitter: {
     card: "summary_large_image",

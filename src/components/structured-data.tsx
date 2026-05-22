@@ -2,6 +2,9 @@
 import { createHash } from "node:crypto";
 import type React from "react";
 import { PROFILE } from "@/lib/profile";
+import { resolveSiteBaseUrl } from "@/lib/site-url";
+
+const canonicalSiteUrl = (): string => resolveSiteBaseUrl().toString().replace(/\/$/, "");
 
 /**
  * Builds a JSON-LD Person schema for the portfolio owner.
@@ -12,7 +15,7 @@ export function generatePersonSchema(): Record<string, unknown> {
     "@context": "https://schema.org",
     "@type": "Person",
     name: PROFILE.name,
-    url: "https://bjornmelin.com",
+    url: canonicalSiteUrl(),
     jobTitle: PROFILE.shortTitle,
     description: PROFILE.summary,
     sameAs: [
@@ -54,7 +57,7 @@ export function generateWebsiteSchema(): Record<string, unknown> {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: `${PROFILE.name} - Portfolio`,
-    url: "https://bjornmelin.com",
+    url: canonicalSiteUrl(),
     description: PROFILE.websiteSummary,
     author: {
       "@type": "Person",
@@ -107,8 +110,8 @@ export default function StructuredData({ type }: StructuredDataProps): React.Rea
             key={createSchemaKey(record)}
             type="application/ld+json"
             suppressHydrationWarning
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload is static and controlled.
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD payload is controlled, escapes HTML opener characters, and is tracked in #324.
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
           />
         );
       })}

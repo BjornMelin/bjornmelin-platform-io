@@ -16,7 +16,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const url = new URL(route, baseUrl).toString();
     return {
       url,
-      lastModified: new Date().toISOString(),
       changeFrequency: "monthly" as const,
       priority: route === "/" ? 1 : 0.8,
     };
@@ -24,7 +23,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const agentSkillRoutes = agentSkillsData.map((skill) => ({
     url: new URL(skill.detailHref, baseUrl).toString(),
-    lastModified: new Date().toISOString(),
     changeFrequency: "weekly" as const,
     priority: skill.featured ? 0.7 : 0.6,
   }));

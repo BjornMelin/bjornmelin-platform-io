@@ -32,6 +32,18 @@ describe("<ProjectCard />", () => {
       "href",
       project.repoUrl,
     );
+    expect(screen.getByRole("link", { name: "Open Beta" })).toHaveAttribute(
+      "href",
+      project.primaryUrl,
+    );
+    expect(screen.getByRole("link", { name: "Open Beta live site" })).toHaveAttribute(
+      "href",
+      project.liveUrl,
+    );
+    expect(screen.getByRole("link", { name: "Open Beta documentation" })).toHaveAttribute(
+      "href",
+      project.docsUrl,
+    );
   });
 
   it("renders stats row", () => {

@@ -25,7 +25,7 @@ This section guides you through setting up AWS infrastructure from scratch for a
 >
 > After completing these prerequisites, CDK handles all other infrastructure (DNS, storage,
 > email, monitoring). The CDK code in `lib/` is configured to only manage DNS, storage,
-> email, and monitoring stacks—it explicitly does not attempt to create the OIDC provider
+> email, and monitoring stacks -- it explicitly does not attempt to create the OIDC provider
 > or GitHub Actions IAM role. See the [Stack Architecture section](#stack-architecture)
 > below for details on what each CDK stack provisions.
 
