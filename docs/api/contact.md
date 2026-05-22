@@ -26,7 +26,7 @@ For example:
   email: string;   // Valid email format
   message: string; // 10-1000 characters
   honeypot?: string; // Must be empty (bot detection)
-  formLoadTime?: number; // Timestamp (ms) when form loaded
+  formLoadTime: number; // Timestamp (ms) when form loaded
 }
 ```
 
@@ -38,7 +38,7 @@ For example:
 | `email` | string | Required, valid email format |
 | `message` | string | Required, 10-1000 characters |
 | `honeypot` | string | Optional, must be empty |
-| `formLoadTime` | number | Optional, used for timing checks |
+| `formLoadTime` | number | Required, must be at least 3 seconds before submission |
 
 ## Response
 
@@ -126,6 +126,8 @@ curl -X POST "$NEXT_PUBLIC_API_URL/contact" \
   -d '{
     "name": "John Doe",
     "email": "john@example.com",
-    "message": "Hello, I would like to get in touch."
+    "message": "Hello, I would like to get in touch.",
+    "honeypot": "",
+    "formLoadTime": 1779436800000
   }'
 ```
