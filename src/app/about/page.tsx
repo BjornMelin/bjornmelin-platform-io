@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AboutDetail } from "@/components/sections/about-detail";
+import { sharedOpenGraphImage } from "@/lib/metadata";
 import { PROFILE } from "@/lib/profile";
 
 /** Page metadata definition. */
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     url: "/about",
     title: `About - ${PROFILE.name} | ${PROFILE.shortTitle}`,
     description: PROFILE.summary,
+    images: [sharedOpenGraphImage],
   },
 };
 

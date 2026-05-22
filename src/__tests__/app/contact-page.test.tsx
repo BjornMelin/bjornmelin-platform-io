@@ -47,6 +47,11 @@ describe("ContactPage metadata", () => {
 
   it("exports canonical and Open Graph URL metadata", () => {
     expect(metadata.alternates?.canonical).toBe("/contact");
-    expect(metadata.openGraph).toEqual(expect.objectContaining({ url: "/contact" }));
+    expect(metadata.openGraph).toEqual(
+      expect.objectContaining({
+        url: "/contact",
+        images: expect.arrayContaining([expect.objectContaining({ width: 1200 })]),
+      }),
+    );
   });
 });

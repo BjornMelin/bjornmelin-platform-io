@@ -123,5 +123,10 @@ describe("AgentSkillsPage metadata", () => {
   it("exports marketplace metadata", () => {
     expect(metadata.title).toBe("Agent Skills Lab");
     expect(metadata.description).toContain("public marketplace");
+    expect(metadata.openGraph).toEqual(
+      expect.objectContaining({
+        images: expect.arrayContaining([expect.objectContaining({ width: 1200 })]),
+      }),
+    );
   });
 });

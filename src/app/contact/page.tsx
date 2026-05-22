@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/contact-form";
+import { sharedOpenGraphImage } from "@/lib/metadata";
 import { PROFILE } from "@/lib/profile";
 
 export const metadata: Metadata = {
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     url: "/contact",
     title: `Contact | ${PROFILE.name}`,
     description: "Get in touch with me through this contact form.",
+    images: [sharedOpenGraphImage],
   },
 };
 

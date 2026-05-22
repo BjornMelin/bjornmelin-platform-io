@@ -34,6 +34,11 @@ describe("AboutPage metadata", () => {
 
   it("exports canonical and Open Graph URL metadata", () => {
     expect(metadata.alternates?.canonical).toBe("/about");
-    expect(metadata.openGraph).toEqual(expect.objectContaining({ url: "/about" }));
+    expect(metadata.openGraph).toEqual(
+      expect.objectContaining({
+        url: "/about",
+        images: expect.arrayContaining([expect.objectContaining({ width: 1200 })]),
+      }),
+    );
   });
 });

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { About } from "@/components/sections/about";
 import { FeaturedProjects } from "@/components/sections/featured-projects";
 import { Hero } from "@/components/sections/hero";
+import { sharedOpenGraphImage } from "@/lib/metadata";
 import { PROFILE } from "@/lib/profile";
 
 /** Page metadata definition. */
@@ -18,14 +19,7 @@ export const metadata: Metadata = {
     url: "/",
     title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
     description: PROFILE.summary,
-    images: [
-      {
-        url: "/screenshots/hero-preview.png",
-        width: 1200,
-        height: 630,
-        alt: "Bjorn Melin - Portfolio Hero Section",
-      },
-    ],
+    images: [sharedOpenGraphImage],
   },
   twitter: {
     card: "summary_large_image",

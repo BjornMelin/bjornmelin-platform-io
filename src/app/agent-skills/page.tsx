@@ -8,6 +8,7 @@ import {
   agentSkillsMetadata,
   featuredAgentSkills,
 } from "@/data/agent-skills";
+import { sharedOpenGraphImage } from "@/lib/metadata";
 
 /** Metadata for the Agent Skills Lab marketplace page. */
 export const metadata: Metadata = {
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
       "A public marketplace of Codex, AI agent, and developer automation skills with install commands, source links, and quality signals.",
     url: "/agent-skills",
     type: "website",
+    images: [sharedOpenGraphImage],
   },
   twitter: {
     card: "summary_large_image",
