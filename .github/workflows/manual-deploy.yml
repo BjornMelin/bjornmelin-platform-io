@@ -67,6 +67,7 @@ jobs:
       - name: Validate required secrets/variables
         shell: bash
         env:
+          DEPLOY_ENV: ${{ inputs.environment }}
           AWS_DEPLOY_ROLE_ARN: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
           NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
