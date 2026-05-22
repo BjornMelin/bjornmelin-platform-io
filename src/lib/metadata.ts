@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PROFILE } from "@/lib/profile";
+import { resolveSiteBaseUrl } from "@/lib/site-url";
 
 interface GenerateMetadataProps {
   title?: string;
@@ -7,18 +8,6 @@ interface GenerateMetadataProps {
   path?: string;
   image?: string;
 }
-
-const DEFAULT_METADATA_BASE_URL = "https://bjornmelin.io";
-
-const resolveMetadataBase = (baseUrl: string | undefined): URL => {
-  const candidate = baseUrl?.trim() || DEFAULT_METADATA_BASE_URL;
-
-  try {
-    return new URL(candidate);
-  } catch {
-    return new URL(DEFAULT_METADATA_BASE_URL);
-  }
-};
 
 /**
  * Builds metadata defaults with optional overrides.
@@ -34,7 +23,7 @@ export function generateMetadata({
   path = "",
   image,
 }: GenerateMetadataProps): Metadata {
-  const metadataBase = resolveMetadataBase(process.env.NEXT_PUBLIC_BASE_URL);
+  const metadataBase = resolveSiteBaseUrl();
   const canonicalPath = path ? (path.startsWith("/") ? path : `/${path}`) : "";
   const resolvedUrl = canonicalPath
     ? new URL(canonicalPath, metadataBase).toString()

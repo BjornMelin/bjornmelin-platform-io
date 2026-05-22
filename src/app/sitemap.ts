@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
 import { agentSkillsData } from "@/data/agent-skills";
+import { resolveSiteBaseUrl } from "@/lib/site-url";
 
 /** Enforces static rendering for sitemap generation. */
 export const dynamic = "force-static";
 
-const rawBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bjornmelin.io";
-const baseUrl = /^https?:\/\//.test(rawBaseUrl) ? rawBaseUrl : `https://${rawBaseUrl}`;
+const baseUrl = resolveSiteBaseUrl();
 
 /**
  * Generates the public sitemap for static export.

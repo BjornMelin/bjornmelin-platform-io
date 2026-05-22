@@ -105,7 +105,7 @@ export function AgentSkillsHero({ featuredSkills, metadata }: AgentSkillsHeroPro
                 <Link
                   key={skill.slug}
                   href={skill.detailHref}
-                  className="rounded-lg border border-border/70 bg-background p-4 text-left transition-colors hover:border-foreground/30 hover:bg-muted/30 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className="rounded-lg border border-border/70 bg-background p-4 text-left motion-safe:transition-colors motion-reduce:transition-none hover:border-foreground/30 hover:bg-muted/30 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="font-medium">{skill.name}</span>

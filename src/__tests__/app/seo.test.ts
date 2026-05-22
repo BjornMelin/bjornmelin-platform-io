@@ -144,9 +144,18 @@ describe("SEO base URL normalization", () => {
 
   it("falls back to the default base URL when NEXT_PUBLIC_APP_URL is empty", async () => {
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "");
     const { default: robotsModule } = await import("@/app/robots");
 
     expect(robotsModule().sitemap).toBe("https://bjornmelin.io/sitemap.xml");
+  });
+
+  it("falls back to NEXT_PUBLIC_BASE_URL for robots when NEXT_PUBLIC_APP_URL is empty", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://base.example.com");
+    const { default: robotsModule } = await import("@/app/robots");
+
+    expect(robotsModule().sitemap).toBe("https://base.example.com/sitemap.xml");
   });
 
   it("preserves https:// when NEXT_PUBLIC_APP_URL includes protocol", async () => {
@@ -166,10 +175,20 @@ describe("SEO base URL normalization", () => {
 
   it("falls back to the default base URL for sitemap when NEXT_PUBLIC_APP_URL is empty", async () => {
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "");
     const { default: sitemapModule } = await import("@/app/sitemap");
 
     const result = sitemapModule();
     expect(result[0]?.url).toContain("https://bjornmelin.io/");
+  });
+
+  it("falls back to NEXT_PUBLIC_BASE_URL for sitemap when NEXT_PUBLIC_APP_URL is empty", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://base.example.com");
+    const { default: sitemapModule } = await import("@/app/sitemap");
+
+    const result = sitemapModule();
+    expect(result[0]?.url).toContain("https://base.example.com/");
   });
 
   it("preserves https:// for sitemap URLs when NEXT_PUBLIC_APP_URL includes protocol", async () => {

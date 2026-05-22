@@ -25,6 +25,9 @@ function readinessVariant(label: string): "default" | "secondary" | "outline" {
  */
 export function AgentSkillCard({ skill, className }: AgentSkillCardProps) {
   const PackageIcon = skill.packageStatus.present ? PackageCheck : PackageOpen;
+  const packageStatusLabel = skill.packageStatus.present
+    ? "Packaged skill artifact"
+    : "Source install only";
 
   return (
     <article
@@ -57,7 +60,9 @@ export function AgentSkillCard({ skill, className }: AgentSkillCardProps) {
               ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
               : "border-border bg-muted text-muted-foreground",
           )}
-          title={skill.packageStatus.present ? "Packaged skill artifact" : "Source install only"}
+          aria-label={packageStatusLabel}
+          role="img"
+          title={packageStatusLabel}
         >
           <PackageIcon className="h-4 w-4" aria-hidden="true" />
         </span>

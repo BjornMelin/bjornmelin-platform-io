@@ -5,6 +5,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import StructuredData from "@/components/structured-data";
 import { ThemeScript } from "@/components/theme";
 import { PROFILE } from "@/lib/profile";
+import { resolveSiteBaseUrl } from "@/lib/site-url";
 import { Providers } from "./providers";
 
 const geistSans = localFont({
@@ -33,7 +34,7 @@ export const viewport: Viewport = {
 
 /** Defines site-wide metadata for SEO and social sharing. */
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL?.trim() || "https://bjornmelin.io"),
+  metadataBase: resolveSiteBaseUrl(),
   title: {
     template: `%s | ${PROFILE.name}`,
     default: `${PROFILE.name} - ${PROFILE.shortTitle}`,
