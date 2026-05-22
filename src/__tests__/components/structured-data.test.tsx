@@ -3,7 +3,7 @@
  */
 
 import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import StructuredData, {
   createSchemaKey,
   generatePersonSchema,
@@ -20,6 +20,16 @@ describe("structured-data", () => {
     expect(Array.isArray(sameAs)).toBe(true);
   });
 
+  it("uses the canonical public site URL for schema URLs", () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://bjornmelin.io/");
+
+    const person = generatePersonSchema() as Record<string, unknown>;
+    const site = generateWebsiteSchema() as Record<string, unknown>;
+
+    expect(person.url).toBe("https://bjornmelin.io");
+    expect(site.url).toBe("https://bjornmelin.io");
+  });
+
   it("renders both person and website JSON-LD", () => {
     render(<StructuredData type="both" />);
     // We can query by type attribute instead (role generic for fragments), assert count by DOM query:
@@ -30,6 +40,7 @@ describe("structured-data", () => {
       .join("\n");
     expect(texts).toContain('"@type":"Person"');
     expect(texts).toContain('"@type":"WebSite"');
+    expect(texts).not.toContain("bjornmelin.com");
   });
 
   it("renders only person JSON-LD", () => {

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/contact-form";
-import { Toaster } from "@/components/ui/toaster";
 import { PROFILE } from "@/lib/profile";
 
 export const metadata: Metadata = {
@@ -10,7 +9,7 @@ export const metadata: Metadata = {
 
 /**
  * Contact page component displaying a contact form for visitors to send messages.
- * @returns The rendered contact page with form and toast notifications.
+ * @returns The rendered contact page with form content.
  */
 export default function ContactPage() {
   return (
@@ -25,7 +24,6 @@ export default function ContactPage() {
         </div>
         <ContactForm />
       </div>
-      <Toaster />
     </div>
   );
 }

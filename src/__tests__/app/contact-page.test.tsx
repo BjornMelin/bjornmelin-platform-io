@@ -28,6 +28,12 @@ describe("ContactPage", () => {
 
     expect(screen.getByTestId("contact-form")).toBeInTheDocument();
   });
+
+  it("does not render a page-local toast viewport", () => {
+    render(<ContactPage />);
+
+    expect(screen.queryByLabelText("Notifications")).not.toBeInTheDocument();
+  });
 });
 
 describe("ContactPage metadata", () => {
