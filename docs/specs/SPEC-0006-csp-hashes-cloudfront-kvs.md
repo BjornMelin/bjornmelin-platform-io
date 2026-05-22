@@ -54,9 +54,10 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 - A **viewer-response CloudFront Function** (JS runtime 2.0) sets `Content-Security-Policy` for HTML responses.
 - Per-path “which hashes apply” data is stored in **CloudFront KeyValueStore (KVS)** (CloudFront Function code is capped
   at 10,240 bytes).
-- Because KVS values are capped at 1,024 bytes, KVS stores compact **per-path indices**, not full hash strings.
-  - Function code contains a global array of base64 digests: `HASH_B64[]` (no `sha256-` prefix).
+- Because KVS values are capped at 1,024 bytes, KVS stores compact **per-path indices** and separate digest chunks.
+  - KVS stores global hash chunks under `__hashes:<base36 chunk index>` values.
   - KVS stores per-path values as dot-delimited base36 indices: `0.1.2.k.10`.
+  - Function code contains only the chunk size and lookup logic, so static route growth does not inflate function source.
 
 ### Data formats
 
@@ -65,7 +66,8 @@ Generated artifacts:
 - `infrastructure/lib/generated/next-inline-script-hashes.ts` (global allow-list; audit/debug)
 - `infrastructure/lib/generated/next-inline-script-hashes.json` (per-path hashes; optional tooling)
 - `infrastructure/lib/generated/next-inline-script-hashes.kvs.json` (KVS sync payload)
-  - Format: `{ "data": [ { "key": "/about/index.html", "value": "0.1.2.k.10" }, ... ] }`
+  - Format: `{ "data": [ { "key": "__hashes:0", "value": "<digest>.<digest>" },
+    { "key": "/about/index.html", "value": "0.1.2.k.10" }, ... ] }`
 - `infrastructure/lib/functions/cloudfront/next-csp-response.js` (CSP CloudFront Function source)
 
 Note: The generated JS artifacts are intentionally compact to preserve CloudFront Function size limits.
@@ -92,7 +94,7 @@ Implementation lives in `infrastructure/lib/functions/cloudfront/next-csp-respon
   - Skips `/_next/*` and non-HTML assets.
 - CSP construction:
   - Base directives are stable constants in function code.
-  - `script-src 'self'` + per-path hashes (decoded from KVS indices).
+  - `script-src 'self'` + per-path hashes (decoded from KVS indices and digest chunks).
   - `connect-src` is derived from host mapping.
 - Reliability:
   - If the per-path KVS entry is missing, the function tries `"/404.html"` then `"/index.html"`.

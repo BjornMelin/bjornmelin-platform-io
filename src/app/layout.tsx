@@ -1,13 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { AppShell } from "@/components/layout/app-shell";
 import StructuredData from "@/components/structured-data";
 import { ThemeScript } from "@/components/theme";
 import { PROFILE } from "@/lib/profile";
+import { resolveSiteBaseUrl } from "@/lib/site-url";
 import { Providers } from "./providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  display: "swap",
+});
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  display: "swap",
+});
 
 /** Enforces static rendering for the root layout. */
 export const dynamic = "error";
@@ -24,7 +34,7 @@ export const viewport: Viewport = {
 
 /** Defines site-wide metadata for SEO and social sharing. */
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "https://bjornmelin.com"),
+  metadataBase: resolveSiteBaseUrl(),
   title: {
     template: `%s | ${PROFILE.name}`,
     default: `${PROFILE.name} - ${PROFILE.shortTitle}`,
@@ -65,11 +75,15 @@ export const metadata: Metadata = {
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <ThemeScript />
       </head>
-      <body className={inter.className}>
+      <body className={`${geistSans.className} antialiased`}>
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>

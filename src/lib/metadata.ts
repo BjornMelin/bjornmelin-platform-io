@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PROFILE } from "@/lib/profile";
+import { resolveSiteBaseUrl } from "@/lib/site-url";
 
 interface GenerateMetadataProps {
   title?: string;
@@ -22,7 +23,11 @@ export function generateMetadata({
   path = "",
   image,
 }: GenerateMetadataProps): Metadata {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bjornmelin.com";
+  const metadataBase = resolveSiteBaseUrl();
+  const canonicalPath = path ? (path.startsWith("/") ? path : `/${path}`) : "";
+  const resolvedUrl = canonicalPath
+    ? new URL(canonicalPath, metadataBase).toString()
+    : metadataBase.toString().replace(/\/$/, "");
   const fullTitle = title
     ? `${title} | ${PROFILE.name}`
     : `${PROFILE.name} - ${PROFILE.shortTitle}`;
@@ -31,14 +36,14 @@ export function generateMetadata({
   return {
     title: fullTitle,
     description: finalDescription,
-    metadataBase: new URL(baseUrl),
+    metadataBase,
     alternates: {
-      canonical: `${baseUrl}${path}`,
+      canonical: resolvedUrl,
     },
     openGraph: {
       title: fullTitle,
       description: finalDescription,
-      url: `${baseUrl}${path}`,
+      url: resolvedUrl,
       siteName: PROFILE.name,
       type: "website",
       ...(image && { images: [{ url: image }] }),

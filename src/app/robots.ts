@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
+import { resolveSiteBaseUrl } from "@/lib/site-url";
 
 export const dynamic = "force-static";
 
-const rawBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bjornmelin.io";
-const baseUrl = /^https?:\/\//.test(rawBaseUrl) ? rawBaseUrl : `https://${rawBaseUrl}`;
+const baseUrl = resolveSiteBaseUrl();
 
 export default function robots(): MetadataRoute.Robots {
   return {

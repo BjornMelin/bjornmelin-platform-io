@@ -2,8 +2,8 @@
 ADR: 0001
 Title: CloudFront CSP for Next.js static export uses hash allow-list
 Status: Accepted
-Version: 1.2
-Date: 2026-01-18
+Version: 1.3
+Date: 2026-05-21
 Supersedes: []
 Superseded-by: []
 Related: ["ADR-0005"]
@@ -53,10 +53,11 @@ hash allow-list did not match the currently deployed static export.
   - a **SHA-256 hash allow-list** for required inline scripts.
 - The allow-list is generated from the static export (`out/**/*.html`) by `pnpm generate:csp-hashes`, which writes:
   - `infrastructure/lib/generated/next-inline-script-hashes.ts` (global hash allow-list)
-  - `infrastructure/lib/generated/next-inline-script-hashes.kvs.json` (per-path hash index payload for KVS)
+  - `infrastructure/lib/generated/next-inline-script-hashes.kvs.json`
+    (hash chunks plus per-path hash index payload for KVS)
   - `infrastructure/lib/functions/cloudfront/next-csp-response.js` (viewer-response CloudFront Function)
-- Per-path hash indices are stored in a **CloudFront KeyValueStore (KVS)** to keep the CloudFront Function source
-  under the 10 KB limit while supporting large sites.
+- Hash digest chunks and per-path hash indices are stored in a **CloudFront KeyValueStore (KVS)** to keep the
+  CloudFront Function source under the 10 KB limit while supporting large static sites.
 
 ## Decision Framework Score (must be ≥ 9.0)
 
@@ -183,3 +184,5 @@ strict CSP approach for CloudFront-served static content.
 - **1.0 (2025-12-27)**: Initial decision and production rollout.
 - **1.1 (2026-01-18)**: Moved per-path hash indices into CloudFront KeyValueStore and added size guardrails.
 - **1.2 (2026-01-18)**: Added fail-soft behavior when KVS is unpopulated to prevent rollout outages.
+- **1.3 (2026-05-21)**: Moved global hash digests from function source into KVS chunks so large static route
+  sets stay under CloudFront Function size limits.

@@ -1,0 +1,199 @@
+name: Agent Skills Catalog Sync
+
+on:
+  repository_dispatch:
+    types: [agent-skills-catalog-updated]
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "dev-skills branch, tag, or commit to sync from"
+        required: false
+        type: string
+        default: main
+      source_sha:
+        description: "Exact dev-skills commit SHA to sync from; overrides source_ref"
+        required: false
+        type: string
+      catalog_path:
+        description: "Catalog path in dev-skills"
+        required: false
+        type: string
+        default: catalog/agent-skills-lab.json
+
+permissions:
+  contents: read # Required for checkout and source catalog fetch.
+
+concurrency:
+  group: agent-skills-catalog-sync
+  cancel-in-progress: true
+
+env:
+  EXPECTED_SOURCE_REPOSITORY: BjornMelin/dev-skills
+  EXPECTED_CATALOG_PATH: catalog/agent-skills-lab.json
+  TARGET_CATALOG_PATH: src/content/agent-skills/agent-skills.generated.json
+
+jobs:
+  sync-catalog:
+    name: Sync generated catalog
+    runs-on: ubuntu-latest
+    outputs:
+      catalog_path: ${{ steps.source.outputs.catalog_path }}
+      source_ref: ${{ steps.source.outputs.source_ref }}
+      source_repository: ${{ steps.source.outputs.source_repository }}
+    steps:
+      - name: Checkout portfolio
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install: 'true'
+
+      - name: Resolve source catalog
+        id: source
+        env:
+          DISPATCH_SOURCE_REPOSITORY: ${{ github.event.client_payload.source_repository }}
+          DISPATCH_SOURCE_REF: ${{ github.event.client_payload.source_ref }}
+          DISPATCH_SOURCE_SHA: ${{ github.event.client_payload.source_sha }}
+          DISPATCH_CATALOG_PATH: ${{ github.event.client_payload.catalog_path }}
+          INPUT_SOURCE_REF: ${{ inputs.source_ref }}
+          INPUT_SOURCE_SHA: ${{ inputs.source_sha }}
+          INPUT_CATALOG_PATH: ${{ inputs.catalog_path }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          source_repository="${DISPATCH_SOURCE_REPOSITORY:-${EXPECTED_SOURCE_REPOSITORY}}"
+          catalog_path="${DISPATCH_CATALOG_PATH:-${INPUT_CATALOG_PATH:-${EXPECTED_CATALOG_PATH}}}"
+          source_ref="${DISPATCH_SOURCE_SHA:-${INPUT_SOURCE_SHA:-}}"
+          if [[ -z "${source_ref}" ]]; then
+            source_ref="${DISPATCH_SOURCE_REF:-${INPUT_SOURCE_REF:-main}}"
+          fi
+
+          if [[ "${source_repository}" != "${EXPECTED_SOURCE_REPOSITORY}" ]]; then
+            echo "Unexpected source repository: ${source_repository}" >&2
+            exit 1
+          fi
+          if [[ "${catalog_path}" != "${EXPECTED_CATALOG_PATH}" ]]; then
+            echo "Unexpected catalog path: ${catalog_path}" >&2
+            exit 1
+          fi
+          if [[ "${source_ref}" == *".."* || ! "${source_ref}" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+            echo "Unsafe source ref: ${source_ref}" >&2
+            exit 1
+          fi
+          if [[ "${GITHUB_EVENT_NAME}" == "repository_dispatch" && ! "${source_ref}" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo "repository_dispatch sync requires an exact source_sha." >&2
+            exit 1
+          fi
+
+          {
+            echo "source_repository=${source_repository}"
+            echo "source_ref=${source_ref}"
+            echo "catalog_path=${catalog_path}"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Fetch and validate catalog
+        env:
+          GH_TOKEN: ${{ secrets.AGENT_SKILLS_SOURCE_TOKEN || secrets.GITHUB_TOKEN }}
+          SOURCE_REPOSITORY: ${{ steps.source.outputs.source_repository }}
+          SOURCE_REF: ${{ steps.source.outputs.source_ref }}
+          CATALOG_PATH: ${{ steps.source.outputs.catalog_path }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          fetched_catalog="$(mktemp)"
+          normalized_catalog="$(mktemp)"
+
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            "repos/${SOURCE_REPOSITORY}/contents/${CATALOG_PATH}?ref=${SOURCE_REF}" \
+            --jq '.content' | base64 --decode > "${fetched_catalog}"
+
+          source_commit="$(jq -er '.sourceCommit' "${fetched_catalog}")"
+          if [[ "${SOURCE_REF}" =~ ^[0-9a-fA-F]{40}$ && "${source_commit}" != "${SOURCE_REF}" ]]; then
+            jq \
+              --arg old "${source_commit}" \
+              --arg new "${SOURCE_REF}" \
+              'walk(if type == "string" then gsub($old; $new) else . end) | .sourceCommit = $new' \
+              "${fetched_catalog}" > "${normalized_catalog}"
+          else
+            cp "${fetched_catalog}" "${normalized_catalog}"
+          fi
+
+          jq -e \
+            --arg repository "https://github.com/${SOURCE_REPOSITORY}" \
+            '.schemaVersion == "agent_skills_lab_catalog.v1"
+              and .sourceRepository == $repository
+              and (.sourceCommit | test("^[0-9a-f]{7,40}$"; "i"))
+              and (.skills | type == "array")
+              and .skillsCount == (.skills | length)
+              and .totalSkillDirectories >= .skillsCount' \
+            "${normalized_catalog}" >/dev/null
+
+          if [[ "${SOURCE_REF}" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            jq -e --arg source_ref "${SOURCE_REF}" '.sourceCommit == $source_ref' "${normalized_catalog}" >/dev/null
+          fi
+
+          cp "${normalized_catalog}" "${TARGET_CATALOG_PATH}"
+
+      - name: Run catalog checks
+        env:
+          SKIP_ENV_VALIDATION: 'true'
+          NEXT_PUBLIC_APP_URL: https://bjornmelin.io
+        run: |
+          pnpm vitest run src/__tests__/data/agent-skills-data.test.ts
+          pnpm type-check
+
+      - name: Upload synced catalog
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: agent-skills-generated-catalog
+          path: src/content/agent-skills/agent-skills.generated.json
+          if-no-files-found: error
+          retention-days: 1
+
+  create-sync-pr:
+    name: Create sync pull request
+    needs: sync-catalog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push the generated catalog branch.
+      pull-requests: write # Required to open or update the catalog sync PR.
+    steps:
+      - name: Checkout portfolio
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Download synced catalog
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          name: agent-skills-generated-catalog
+          path: /tmp/agent-skills-generated-catalog
+
+      - name: Restore synced catalog
+        run: cp /tmp/agent-skills-generated-catalog/agent-skills.generated.json "${TARGET_CATALOG_PATH}"
+
+      - name: Create catalog sync pull request
+        id: cpr
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
+        with:
+          token: ${{ secrets.AGENT_SKILLS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+          add-paths: src/content/agent-skills/agent-skills.generated.json
+          commit-message: 'chore(agent-skills): sync generated catalog'
+          title: 'chore(agent-skills): sync generated catalog'
+          body: |
+            Automated Agent Skills Lab catalog sync from `BjornMelin/dev-skills`.
+
+            - Source repository: `${{ needs.sync-catalog.outputs.source_repository }}`
+            - Source ref: `${{ needs.sync-catalog.outputs.source_ref }}`
+            - Source catalog: `${{ needs.sync-catalog.outputs.catalog_path }}`
+            - Validation: `pnpm vitest run src/__tests__/data/agent-skills-data.test.ts` and `pnpm type-check`
+
+            This PR updates only the generated catalog consumed by `/agent-skills`.
+          branch: chore/agent-skills-catalog-sync
+          delete-branch: true

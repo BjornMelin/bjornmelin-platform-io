@@ -16,7 +16,9 @@ type CloudFrontResponse = { headers?: CloudFrontHeaders };
  * @throws Error if the file doesn't define a global `handler` function
  */
 function loadCspResponseHandler(
-  getStub: (key: string) => Promise<string | null> = vi.fn(async (_key: string) => "0"),
+  getStub: (key: string) => Promise<string | null> = vi.fn(async (key: string) =>
+    key.startsWith("__hashes:") ? "test-digest" : "0",
+  ),
 ): (event: {
   request: CloudFrontRequest;
   response: CloudFrontResponse;
@@ -56,6 +58,7 @@ describe("next-csp-response CloudFront Function", () => {
 
   it("falls back to 404 hashes when path is unknown", async () => {
     const get = vi.fn(async (key: string) => {
+      if (key.startsWith("__hashes:")) return "test-digest";
       if (key === "/404.html") return "0";
       return null;
     });
@@ -148,6 +151,42 @@ describe("next-csp-response CloudFront Function", () => {
     });
 
     expect(get).toHaveBeenCalled();
+    expect(response.headers?.["content-security-policy"]).toBeUndefined();
+  });
+
+  it("fails soft when a path index exists but its hash chunk is missing", async () => {
+    const get = vi.fn(async (key: string) => {
+      if (key === "/about/index.html") return "0";
+      if (key.startsWith("__hashes:")) return null;
+      return null;
+    });
+    const localHandler = loadCspResponseHandler(get);
+
+    const response = await localHandler({
+      request: { uri: "/about", headers: { host: { value: "example.com" } } },
+      response: { headers: { "content-type": { value: "text/html" } } },
+    });
+
+    expect(get).toHaveBeenCalledWith("/about/index.html");
+    expect(get).toHaveBeenCalledWith("__hashes:0");
+    expect(response.headers?.["content-security-policy"]).toBeUndefined();
+  });
+
+  it("fails soft when any digest referenced by a path index is missing", async () => {
+    const get = vi.fn(async (key: string) => {
+      if (key === "/about/index.html") return "0.1";
+      if (key === "__hashes:0") return "test-digest";
+      return null;
+    });
+    const localHandler = loadCspResponseHandler(get);
+
+    const response = await localHandler({
+      request: { uri: "/about", headers: { host: { value: "example.com" } } },
+      response: { headers: { "content-type": { value: "text/html" } } },
+    });
+
+    expect(get).toHaveBeenCalledWith("/about/index.html");
+    expect(get).toHaveBeenCalledWith("__hashes:0");
     expect(response.headers?.["content-security-policy"]).toBeUndefined();
   });
 

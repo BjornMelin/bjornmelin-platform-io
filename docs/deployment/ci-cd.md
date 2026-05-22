@@ -54,6 +54,13 @@ workflow performs the safe sequence to keep the static export and CSP hashes in 
 2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage` (deploys CloudFront Functions + CSP hashes KVS)
 3. `pnpm deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
 
+The Agent Skills Lab catalog uses a reviewable sync path before production deploys. When
+`BjornMelin/dev-skills` emits the `agent-skills-catalog-updated` repository dispatch event,
+`.github/workflows/agent-skills-catalog-sync.yml` fetches the pushed catalog, validates it,
+updates `src/content/agent-skills/agent-skills.generated.json`, runs focused checks, and opens
+or updates a conventional catalog-sync PR. Merging that PR to `main` uses the normal deploy
+workflow above.
+
 ### Production Build
 
 1. Install web application dependencies from the repository root:
@@ -147,6 +154,8 @@ Production uses GitHub Environment "production" variables and secrets:
 | :-------- | :----------------------------------------------- | :------------------------- |
 | Variables | `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_APP_URL`    | Public client config       |
 | Secrets   | `AWS_DEPLOY_ROLE_ARN`                            | OIDC role ARN for AWS auth |
+| Secrets   | `AGENT_SKILLS_SOURCE_TOKEN`                      | Optional read token for a private `dev-skills` catalog source |
+| Secrets   | `AGENT_SKILLS_SYNC_TOKEN`                        | Optional write token so catalog-sync PRs trigger standard PR CI |
 | AWS       | OIDC via `aws-actions/configure-aws-credentials` | No static keys             |
 
 At runtime (Lambda), use AWS SSM Parameter Store / Secrets Manager rather than `.env` files.

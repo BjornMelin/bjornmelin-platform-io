@@ -8,7 +8,7 @@ import * as React from "react";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
-type MobileNavIcon = "home" | "user" | "briefcase" | "mail";
+type MobileNavIcon = "home" | "user" | "briefcase" | "boxes" | "mail";
 
 const NavSeparator = () => (
   <span aria-hidden="true" className="text-muted-foreground/30">
@@ -36,6 +36,12 @@ const navItems = [
     label: "Projects",
     description: "GitHub repos, open-source, and experiments",
     icon: "briefcase" as MobileNavIcon,
+  },
+  {
+    href: "/agent-skills",
+    label: "Agent Skills",
+    description: "Installable Codex and AI agent workflows",
+    icon: "boxes" as MobileNavIcon,
   },
   {
     href: "/contact",

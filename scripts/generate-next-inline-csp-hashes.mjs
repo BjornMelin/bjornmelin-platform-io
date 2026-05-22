@@ -113,6 +113,15 @@ fs.mkdirSync(path.dirname(perPathTarget), { recursive: true });
 fs.writeFileSync(perPathTarget, `${JSON.stringify(perPathHashesSha, null, 2)}\n`, "utf8");
 
 const hashIndexByDigest = new Map(hashes.map((hash, idx) => [hash, idx]));
+const hashChunkSize = 16;
+const hashChunkEntries = [];
+for (let start = 0; start < hashes.length; start += hashChunkSize) {
+  const chunkIndex = start / hashChunkSize;
+  hashChunkEntries.push({
+    key: `__hashes:${chunkIndex.toString(36)}`,
+    value: hashes.slice(start, start + hashChunkSize).join("."),
+  });
+}
 const perPathHashIndexes = Object.fromEntries(
   Object.entries(perPathHashes).map(([key, value]) => {
     const indices = value
@@ -129,7 +138,10 @@ const perPathHashIndexes = Object.fromEntries(
   }),
 );
 
-const kvsData = Object.entries(perPathHashIndexes).map(([key, value]) => ({ key, value }));
+const kvsData = [
+  ...hashChunkEntries,
+  ...Object.entries(perPathHashIndexes).map(([key, value]) => ({ key, value })),
+];
 for (const { key, value } of kvsData) {
   const keyBytes = Buffer.byteLength(key, "utf8");
   const valueBytes = Buffer.byteLength(value, "utf8");
@@ -194,12 +206,12 @@ const functionSource = `/* biome-ignore format: Keep output compact (CloudFront 
  *
  * CloudFront Functions runtime constraints:
  * - JavaScript runtime 2.0
- * - Uses CloudFront KeyValueStore for per-path hash indices (keeps code size < 10 KB)
+ * - Uses CloudFront KeyValueStore for per-path hash indices and digest chunks
  */
 import cf from "cloudfront";
 var kvsHandle = cf.kvs();
 
-var HASH_B64 = ${JSON.stringify(hashes)};
+var HASH_CHUNK_SIZE = ${hashChunkSize};
 
 var BASE_DIRECTIVES = [
   "default-src 'self'",
@@ -258,15 +270,32 @@ function isHtmlRequest(request, response) {
   return true;
 }
 
-function decodeHashList(encoded) {
+async function readHashChunk(chunkIndex, cache) {
+  var key = "__hashes:" + chunkIndex.toString(36);
+  if (cache[key] !== undefined) return cache[key];
+  var value;
+  try {
+    value = await kvsHandle.get(key);
+  } catch (error) {
+    value = null;
+  }
+  cache[key] = value ? value.split(".") : null;
+  return cache[key];
+}
+
+async function decodeHashList(encoded) {
   if (!encoded) return [];
   var parts = encoded.split(".");
   var out = [];
+  var cache = {};
   for (var i = 0; i < parts.length; i++) {
     var idx = parseInt(parts[i], 36);
     if (isNaN(idx)) continue;
-    var digest = HASH_B64[idx];
-    if (!digest) continue;
+    var chunkIndex = Math.floor(idx / HASH_CHUNK_SIZE);
+    var chunkValue = await readHashChunk(chunkIndex, cache);
+    if (chunkValue == null) return null;
+    var digest = chunkValue[idx % HASH_CHUNK_SIZE];
+    if (!digest) return null;
     out.push(digest);
   }
   return out;
@@ -316,7 +345,9 @@ async function handler(event) {
   // Fail-soft: if KVS is unavailable/unpopulated, don't apply CSP yet.
   // The deploy pipeline syncs KVS immediately after the storage stack deploy.
   if (encoded == null) return response;
-  var hashes = decodeHashList(encoded);
+  var hashes = await decodeHashList(encoded);
+  if (hashes == null) return response;
+  if (!hashes.length) return response;
   var hostHeader =
     request.headers && request.headers.host && request.headers.host.value;
   var csp = buildCsp(hostHeader || "", hashes);

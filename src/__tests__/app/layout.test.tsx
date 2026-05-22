@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("next/font/google", () => ({
-  Inter: () => ({ className: "mock-inter-font" }),
+vi.mock("next/font/local", () => ({
+  default: () => ({ className: "mock-geist-font", variable: "mock-geist-variable" }),
 }));
 
 vi.mock("@/components/layout/navbar", () => ({

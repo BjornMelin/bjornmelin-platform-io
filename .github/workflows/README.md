@@ -24,45 +24,55 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
      CloudFront invalidation, smoke check, job summary
    - workflow_dispatch inputs: `dry_run` (skip S3 upload / KVS sync / invalidation) and `skip_smoke_check`
 
-4. **release-please.yml** - Automated semantic versioning and releases
+4. **agent-skills-catalog-sync.yml** - Agent Skills Lab catalog sync
+   - Runs on: `repository_dispatch` event `agent-skills-catalog-updated` and manual `workflow_dispatch`
+   - Features: validates the dispatched `BjornMelin/dev-skills` source SHA, fetches
+     `catalog/agent-skills-lab.json`, normalizes source links to the immutable pushed commit, runs focused checks,
+     and opens or updates a generated catalog PR for `src/content/agent-skills/agent-skills.generated.json`
+   - Optional secrets:
+     - `AGENT_SKILLS_SOURCE_TOKEN` with read access to `BjornMelin/dev-skills` if the source repository is private
+     - `AGENT_SKILLS_SYNC_TOKEN` with `contents: write` and `pull-requests: write` if auto-created sync PRs should
+       trigger the standard PR CI workflows instead of relying only on the sync workflow's focused checks
+
+5. **release-please.yml** - Automated semantic versioning and releases
    - Runs on: Push to main
    - Features: Opens/updates Release PR based on conventional commits; creates git tags and GitHub Releases on merge
    - Uses: [googleapis/release-please-action@v4](https://github.com/googleapis/release-please-action)
 
-5. **manual-deploy.yml** - Manual deployment workflow
+6. **manual-deploy.yml** - Manual deployment workflow
    - Runs on: Workflow dispatch
    - Features: Environment selection, test skipping option, stack-output-based S3/KVS/CloudFront deploy,
      deployment tracking, concurrency control
 
 ### Security & Quality
 
-6. **codeql.yml** - GitHub CodeQL security analysis
+7. **codeql.yml** - GitHub CodeQL security analysis
    - Runs on: Push, PRs, monthly schedule (15th at 06:00 UTC)
    - Scans: JavaScript/TypeScript code for vulnerabilities
 
-7. **security-audit.yml** - Dependency security audit
+8. **security-audit.yml** - Dependency security audit
    - Runs on: Push, PRs, monthly schedule (22nd at 08:00 UTC)
    - Features: pnpm audit, dependency review
 
-8. **dependency-update.yml** - Automated dependency updates
+9. **dependency-update.yml** - Automated dependency updates
    - Runs on: Monthly schedule (1st at 09:00 UTC)
    - Features: Non-major updates, automated PR creation
 
 ### Maintenance
 
-9. **branch-protection.yml** - PR validation and protection
-   - Runs on: Pull requests to main
-   - Features: Conventional commit check, merge conflict detection, auto-labeling
+10. **branch-protection.yml** - PR validation and protection
+    - Runs on: Pull requests to main
+    - Features: Conventional commit check, merge conflict detection, auto-labeling
 
-10. **pr-labeler.yml** - Automatic PR labeling
+11. **pr-labeler.yml** - Automatic PR labeling
     - Runs on: PR opened/edited
     - Features: Path-based labels, conventional commit labels
 
-11. **stale.yml** - Manage stale issues and PRs
+12. **stale.yml** - Manage stale issues and PRs
     - Runs on: Monthly schedule (1st of each month at 00:00 UTC)
     - Features: Auto-close inactive items, configurable timelines
 
-12. **link-check.yml** - Check for broken links
+13. **link-check.yml** - Check for broken links
     - Runs on: Push, PRs, monthly schedule (8th at 04:00 UTC)
     - Features: Markdown link validation, issue creation on failure
     - Exclusions:
@@ -81,14 +91,14 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 ### Performance
 
-13. **performance-check.yml** - Performance monitoring
+14. **performance-check.yml** - Performance monitoring
     - Runs on: Push to main, PRs
     - Features: Lighthouse CI, bundle size analysis
     - Metrics: Performance, accessibility, SEO, best practices
 
 ### Infrastructure
 
-14. **infrastructure.yml** - AWS CDK infrastructure deployment
+15. **infrastructure.yml** - AWS CDK infrastructure deployment
     - Runs on: Workflow dispatch
     - Features: CDK deploy for DNS, storage, email, monitoring stacks
 
@@ -164,6 +174,8 @@ Required secrets:
 - `GITHUB_TOKEN` - Automatically provided by GitHub
 - `CODECOV_TOKEN` - For code coverage reporting (optional)
 - `AWS_DEPLOY_ROLE_ARN` - IAM role ARN for OIDC authentication (recommended as an **Environment secret** on `production`)
+- `AGENT_SKILLS_SOURCE_TOKEN` - Optional read token for syncing a private `BjornMelin/dev-skills` catalog
+- `AGENT_SKILLS_SYNC_TOKEN` - Optional write token for catalog-sync PRs that should trigger standard CI workflows
 
 Required variables (set in GitHub Environment):
 
