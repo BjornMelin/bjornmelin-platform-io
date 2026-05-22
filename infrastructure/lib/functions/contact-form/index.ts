@@ -6,7 +6,20 @@ import {
   createContactEmailText,
   validateContactForm,
 } from "../../../../src/lib/email/templates/contact-form";
+import { isHoneypotTriggered } from "../../../../src/lib/security/honeypot";
+import { getMinSubmissionTime, isSubmissionTooFast } from "../../../../src/lib/security/time-check";
 import { getParameter } from "../../utils/ssm";
+
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 60_000;
+const acceptedPayloadFields = new Set(["name", "email", "message", "honeypot", "formLoadTime"]);
+
+interface RateLimitEntry {
+  count: number;
+  resetTime: number;
+}
+
+const rateLimitMap = new Map<string, RateLimitEntry>();
 
 /**
  * Retrieves a required environment variable or throws when missing.
@@ -79,6 +92,61 @@ function sanitizeEmail(email: string): string | null {
     return null;
   }
   return email.trim();
+}
+
+function resolveSourceIp(event: APIGatewayProxyEvent): string {
+  const sourceIp = event.requestContext?.identity?.sourceIp;
+  if (sourceIp) return sourceIp;
+
+  const forwardedFor = event.headers["x-forwarded-for"] || event.headers["X-Forwarded-For"];
+  const firstForwardedIp = forwardedFor?.split(",")[0]?.trim();
+  return firstForwardedIp || "unknown";
+}
+
+function checkContactRateLimit(ip: string): RateLimitEntry & { allowed: boolean } {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetTime) {
+    const nextEntry = { count: 1, resetTime: now + RATE_WINDOW_MS };
+    rateLimitMap.set(ip, nextEntry);
+    return { ...nextEntry, allowed: true };
+  }
+
+  if (entry.count >= RATE_LIMIT) {
+    return { ...entry, allowed: false };
+  }
+
+  entry.count++;
+  return { ...entry, allowed: true };
+}
+
+function resetExpiredRateLimits(): void {
+  const now = Date.now();
+  for (const [ip, entry] of rateLimitMap.entries()) {
+    if (now > entry.resetTime) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}
+
+function hasUnexpectedFields(data: Record<string, unknown>): boolean {
+  return Object.keys(data).some((key) => !acceptedPayloadFields.has(key));
+}
+
+function isValidFormLoadTime(value: unknown): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value > 0;
+}
+
+function badRequest(
+  corsHeaders: APIGatewayProxyResult["headers"],
+  message = "Invalid submission",
+): APIGatewayProxyResult {
+  return {
+    statusCode: 400,
+    headers: corsHeaders,
+    body: JSON.stringify({ error: message }),
+  };
 }
 
 /**
@@ -160,8 +228,19 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   }
 
   try {
+    resetExpiredRateLimits();
+
     const parsed: unknown = JSON.parse(event.body);
-    const validationResult = validateContactForm(parsed as Record<string, unknown>);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return badRequest(corsHeaders, "Invalid request");
+    }
+
+    const payload = parsed as Record<string, unknown>;
+    if (hasUnexpectedFields(payload)) {
+      return badRequest(corsHeaders);
+    }
+
+    const validationResult = validateContactForm(payload);
 
     if (!validationResult.valid) {
       return {
@@ -171,8 +250,43 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       };
     }
 
-    // At this point, validation passed, so we can safely cast
-    const data = parsed as ContactFormData;
+    if (isHoneypotTriggered(typeof payload.honeypot === "string" ? payload.honeypot : null)) {
+      return {
+        statusCode: 200,
+        headers: corsHeaders,
+        body: JSON.stringify({ success: true }),
+      };
+    }
+
+    if (!isValidFormLoadTime(payload.formLoadTime)) {
+      return badRequest(corsHeaders);
+    }
+
+    if (isSubmissionTooFast(payload.formLoadTime)) {
+      return badRequest(
+        corsHeaders,
+        `Please wait at least ${getMinSubmissionTime() / 1000} seconds before submitting.`,
+      );
+    }
+
+    const sourceIp = resolveSourceIp(event);
+    const rateLimit = checkContactRateLimit(sourceIp);
+    if (!rateLimit.allowed) {
+      return {
+        statusCode: 429,
+        headers: {
+          ...corsHeaders,
+          "Retry-After": String(Math.ceil((rateLimit.resetTime - Date.now()) / 1000)),
+        },
+        body: JSON.stringify({ error: "Too many requests" }),
+      };
+    }
+
+    const data: ContactFormData = {
+      name: payload.name as ContactFormData["name"],
+      email: payload.email as ContactFormData["email"],
+      message: payload.message as ContactFormData["message"],
+    };
 
     // Validate and sanitize email to prevent header injection
     const sanitizedEmail = sanitizeEmail(data.email);

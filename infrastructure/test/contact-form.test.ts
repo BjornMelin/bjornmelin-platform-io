@@ -15,6 +15,15 @@ vi.mock("resend", () => ({
 }));
 
 describe("contact-form Lambda handler", () => {
+  const validPayload = (overrides: Record<string, unknown> = {}) => ({
+    name: "Test User",
+    email: "user@example.com",
+    message: "This is a test message for the contact form.",
+    honeypot: "",
+    formLoadTime: Date.now() - 5000,
+    ...overrides,
+  });
+
   beforeEach(async () => {
     // Reset modules to clear cached state
     vi.resetModules();
@@ -50,11 +59,7 @@ describe("contact-form Lambda handler", () => {
     const event = {
       httpMethod: "POST",
       headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "Test User",
-        email: "user@example.com",
-        message: "This is a test message for the contact form.",
-      }),
+      body: JSON.stringify(validPayload()),
     };
 
     // @ts-expect-error - simplified event for testing
@@ -72,11 +77,7 @@ describe("contact-form Lambda handler", () => {
     const event = {
       httpMethod: "POST",
       headers: { origin: "https://malicious-site.com" },
-      body: JSON.stringify({
-        name: "Test",
-        email: "test@test.com",
-        message: "Test message here",
-      }),
+      body: JSON.stringify(validPayload()),
     };
 
     // @ts-expect-error - simplified event for testing
@@ -108,6 +109,8 @@ describe("contact-form Lambda handler", () => {
         name: "A", // Too short
         email: "invalid-email",
         message: "Short", // Too short
+        honeypot: "",
+        formLoadTime: Date.now() - 5000,
       }),
     };
 
@@ -154,11 +157,13 @@ describe("contact-form Lambda handler", () => {
     const event = {
       httpMethod: "POST",
       headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "John Doe",
-        email: "john@example.com",
-        message: "Hello, this is my message!",
-      }),
+      body: JSON.stringify(
+        validPayload({
+          name: "John Doe",
+          email: "john@example.com",
+          message: "Hello, this is my message!",
+        }),
+      ),
     };
 
     // @ts-expect-error - simplified event for testing
@@ -191,11 +196,7 @@ describe("contact-form Lambda handler", () => {
     const event = {
       httpMethod: "POST",
       headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "Test User",
-        email: "test@example.com",
-        message: "Testing Resend error handling",
-      }),
+      body: JSON.stringify(validPayload({ message: "Testing Resend error handling" })),
     };
 
     // @ts-expect-error - simplified event for testing
@@ -220,11 +221,7 @@ describe("contact-form Lambda handler", () => {
     const event = {
       httpMethod: "POST",
       headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "Test User",
-        email: "test@example.com",
-        message: "Testing missing SSM parameter",
-      }),
+      body: JSON.stringify(validPayload({ message: "Testing missing SSM parameter" })),
     };
 
     // @ts-expect-error - simplified event for testing
@@ -243,11 +240,13 @@ describe("contact-form Lambda handler", () => {
     const event = {
       httpMethod: "POST",
       headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "Evil<script>alert('xss')</script>User",
-        email: "evil@example.com",
-        message: "Message with <b>HTML</b> & special chars",
-      }),
+      body: JSON.stringify(
+        validPayload({
+          name: "Evil<script>alert('xss')</script>User",
+          email: "evil@example.com",
+          message: "Message with <b>HTML</b> & special chars",
+        }),
+      ),
     };
 
     // @ts-expect-error - simplified event for testing
@@ -261,5 +260,102 @@ describe("contact-form Lambda handler", () => {
     expect(html).toContain("&lt;b&gt;");
     expect(html).toContain("&amp;");
     expect(html).not.toContain("<script>");
+  });
+
+  it("returns success without sending email for honeypot submissions", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify(validPayload({ honeypot: "bot-filled" })),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(200);
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects submissions that omit form load timing before sending email", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const { formLoadTime: _formLoadTime, ...payload } = validPayload();
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify(payload),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(400);
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects submissions that happen too quickly before sending email", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-22T08:00:00Z"));
+    try {
+      const mod = await import("../lib/functions/contact-form/index");
+
+      const event = {
+        httpMethod: "POST",
+        headers: { origin: "https://example.com" },
+        body: JSON.stringify(validPayload({ formLoadTime: Date.now() - 1000 })),
+      };
+
+      // @ts-expect-error - simplified event for testing
+      const result = await mod.handler(event);
+      expect(result.statusCode).toBe(400);
+      expect(mockSend).not.toHaveBeenCalled();
+      expect(getParameterMock).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("rate limits repeated submissions by source IP before sending email", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      requestContext: { identity: { sourceIp: "203.0.113.9" } },
+      body: JSON.stringify(validPayload()),
+    };
+
+    for (let i = 0; i < 5; i++) {
+      // @ts-expect-error - simplified event for testing
+      const result = await mod.handler(event);
+      expect(result.statusCode).toBe(200);
+    }
+
+    mockSend.mockClear();
+    getParameterMock.mockClear();
+
+    // @ts-expect-error - simplified event for testing
+    const rateLimited = await mod.handler(event);
+    expect(rateLimited.statusCode).toBe(429);
+    expect(rateLimited.headers?.["Retry-After"]).toBeDefined();
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects unexpected payload fields before sending email", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      body: JSON.stringify(validPayload({ role: "admin" })),
+    };
+
+    // @ts-expect-error - simplified event for testing
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(400);
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
   });
 });

@@ -19,6 +19,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
@@ -29,8 +30,22 @@ jobs:
       - name: Check for updates
         id: check-updates
         run: |
+          set -euo pipefail
+
           echo "Checking for outdated dependencies..."
-          OUTDATED=$(pnpm outdated --format json || echo '[]')
+          set +e
+          pnpm outdated --format json > outdated.json
+          outdated_status=$?
+          set -e
+          if [[ "${outdated_status}" -gt 1 ]]; then
+            echo "pnpm outdated failed with status ${outdated_status}" >&2
+            exit "${outdated_status}"
+          fi
+
+          OUTDATED="$(cat outdated.json)"
+          if [[ -z "${OUTDATED}" ]]; then
+            OUTDATED="[]"
+          fi
           {
             echo 'outdated<<__OUTDATED_JSON__'
             echo "$OUTDATED"
@@ -59,7 +74,8 @@ jobs:
           # Update non-major versions
           pnpm update
           
-          # Run tests to ensure nothing is broken
+          # Run validation to ensure nothing is broken or newly vulnerable
+          pnpm audit --audit-level moderate
           pnpm test
           pnpm build
 

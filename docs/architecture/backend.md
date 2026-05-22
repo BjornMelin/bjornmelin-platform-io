@@ -43,7 +43,7 @@ contact.ts:
 - email format validation
 - message length requirements
 - honeypot field (optional, must be empty)
-- formLoadTime (optional, for timing validation)
+- formLoadTime (required for timing validation)
 ```
 
 ## Email Integration

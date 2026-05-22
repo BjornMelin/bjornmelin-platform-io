@@ -34,6 +34,11 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
       - name: Validate required secrets/variables
         shell: bash
         env:
@@ -42,45 +47,7 @@ jobs:
           NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
           NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
-        run: |
-          set -euo pipefail
-
-          require_url() {
-            local name="$1"
-            local value="$2"
-
-            if [[ -z "${value}" ]]; then
-              echo "Missing required variable: ${name} (GitHub Environment: production)" >&2
-              exit 1
-            fi
-            if [[ ! "${value}" =~ ^https:// ]]; then
-              echo "${name} must start with https:// (GitHub Environment: production)." >&2
-              exit 1
-            fi
-          }
-
-          if [[ -z "${AWS_DEPLOY_ROLE_ARN}" ]]; then
-            echo "Missing required secret: AWS_DEPLOY_ROLE_ARN" >&2
-            exit 1
-          fi
-          if [[ ! "${AWS_DEPLOY_ROLE_ARN}" =~ ^arn:aws:iam::[0-9]{12}:role/.+ ]]; then
-            echo "AWS_DEPLOY_ROLE_ARN must be a full IAM Role ARN (got a non-ARN value)." >&2
-            echo "Expected format: arn:aws:iam::123456789012:role/prod-portfolio-deploy" >&2
-            exit 1
-          fi
-
-          if [[ -z "${CONTACT_EMAIL}" ]]; then
-            echo "Missing required variable: CONTACT_EMAIL (GitHub Environment: production)" >&2
-            exit 1
-          fi
-          if [[ ! "${CONTACT_EMAIL}" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]]; then
-            echo "CONTACT_EMAIL must be a valid email address (GitHub Environment: production)." >&2
-            exit 1
-          fi
-
-          require_url "NEXT_PUBLIC_API_URL" "${NEXT_PUBLIC_API_URL}"
-          require_url "NEXT_PUBLIC_APP_URL" "${NEXT_PUBLIC_APP_URL}"
-          require_url "NEXT_PUBLIC_BASE_URL" "${NEXT_PUBLIC_BASE_URL}"
+        run: node scripts/validate-public-deploy-env.mjs --environment production --require-aws-role --require-contact-email
 
   ci:
     name: CI Pipeline
