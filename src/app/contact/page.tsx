@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 /**
  * Contact page component displaying a contact form for visitors to send messages.
- * @returns The rendered contact page with form and toast notifications.
+ * @returns The rendered contact page with form content.
  */
 export default function ContactPage() {
   return (

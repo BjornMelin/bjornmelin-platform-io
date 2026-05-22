@@ -1,3 +1,4 @@
+import type { APIGatewayProxyEvent } from "aws-lambda";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the SSM module
@@ -15,6 +16,69 @@ vi.mock("resend", () => ({
 }));
 
 describe("contact-form Lambda handler", () => {
+  const validPayload = (overrides: Record<string, unknown> = {}) => ({
+    name: "Test User",
+    email: "user@example.com",
+    message: "This is a test message for the contact form.",
+    honeypot: "",
+    formLoadTime: Date.now() - 5000,
+    ...overrides,
+  });
+
+  const buildApiGatewayEvent = ({
+    body = JSON.stringify(validPayload()),
+    headers = { origin: "https://example.com" },
+    httpMethod = "POST",
+    sourceIp = "198.51.100.10",
+  }: {
+    body?: string | null;
+    headers?: APIGatewayProxyEvent["headers"];
+    httpMethod?: string;
+    sourceIp?: string;
+  } = {}): APIGatewayProxyEvent => ({
+    body,
+    headers,
+    httpMethod,
+    isBase64Encoded: false,
+    multiValueHeaders: {},
+    multiValueQueryStringParameters: null,
+    path: "/contact",
+    pathParameters: null,
+    queryStringParameters: null,
+    requestContext: {
+      accountId: "123456789012",
+      apiId: "contact-form-test",
+      authorizer: undefined,
+      httpMethod,
+      identity: {
+        accessKey: null,
+        accountId: null,
+        apiKey: null,
+        apiKeyId: null,
+        caller: null,
+        clientCert: null,
+        cognitoAuthenticationProvider: null,
+        cognitoAuthenticationType: null,
+        cognitoIdentityId: null,
+        cognitoIdentityPoolId: null,
+        principalOrgId: null,
+        sourceIp,
+        user: null,
+        userAgent: "vitest",
+        userArn: null,
+      },
+      path: "/contact",
+      protocol: "HTTP/1.1",
+      requestId: "contact-form-test-request",
+      requestTimeEpoch: Date.now(),
+      resourceId: "contact-form-resource",
+      resourcePath: "/contact",
+      stage: "test",
+    },
+    resource: "/contact",
+    stageVariables: null,
+  });
+
   beforeEach(async () => {
     // Reset modules to clear cached state
     vi.resetModules();
@@ -47,17 +111,10 @@ describe("contact-form Lambda handler", () => {
   it("retrieves SSM parameters for recipient email and API key", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
-      httpMethod: "POST",
-      headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "Test User",
-        email: "user@example.com",
-        message: "This is a test message for the contact form.",
-      }),
-    };
+    const event = buildApiGatewayEvent({
+      body: JSON.stringify(validPayload()),
+    });
 
-    // @ts-expect-error - simplified event for testing
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(200);
 
@@ -69,17 +126,11 @@ describe("contact-form Lambda handler", () => {
   it("returns 403 for disallowed origins", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
-      httpMethod: "POST",
+    const event = buildApiGatewayEvent({
       headers: { origin: "https://malicious-site.com" },
-      body: JSON.stringify({
-        name: "Test",
-        email: "test@test.com",
-        message: "Test message here",
-      }),
-    };
+      body: JSON.stringify(validPayload()),
+    });
 
-    // @ts-expect-error - simplified event for testing
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(403);
   });
@@ -87,12 +138,11 @@ describe("contact-form Lambda handler", () => {
   it("handles OPTIONS preflight requests", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
+    const event = buildApiGatewayEvent({
       httpMethod: "OPTIONS",
       headers: { origin: "https://example.com" },
-    };
+    });
 
-    // @ts-expect-error - simplified event for testing
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(200);
     expect(result.headers?.["Access-Control-Allow-Origin"]).toBe("https://example.com");
@@ -101,17 +151,16 @@ describe("contact-form Lambda handler", () => {
   it("validates input and returns 400 for invalid data", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
-      httpMethod: "POST",
-      headers: { origin: "https://example.com" },
+    const event = buildApiGatewayEvent({
       body: JSON.stringify({
         name: "A", // Too short
         email: "invalid-email",
         message: "Short", // Too short
+        honeypot: "",
+        formLoadTime: Date.now() - 5000,
       }),
-    };
+    });
 
-    // @ts-expect-error - simplified event for testing
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(400);
   });
@@ -119,13 +168,10 @@ describe("contact-form Lambda handler", () => {
   it("returns 400 for missing request body", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
-      httpMethod: "POST",
-      headers: { origin: "https://example.com" },
+    const event = buildApiGatewayEvent({
       body: null,
-    };
+    });
 
-    // @ts-expect-error - simplified event for testing
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(400);
     const body = JSON.parse(result.body);
@@ -135,13 +181,10 @@ describe("contact-form Lambda handler", () => {
   it("returns 400 for invalid JSON body", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
-      httpMethod: "POST",
-      headers: { origin: "https://example.com" },
+    const event = buildApiGatewayEvent({
       body: "not-valid-json",
-    };
+    });
 
-    // @ts-expect-error - simplified event for testing
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(400);
     const body = JSON.parse(result.body);
@@ -151,17 +194,16 @@ describe("contact-form Lambda handler", () => {
   it("sends email with correct structure", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
-      httpMethod: "POST",
-      headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "John Doe",
-        email: "john@example.com",
-        message: "Hello, this is my message!",
-      }),
-    };
+    const event = buildApiGatewayEvent({
+      body: JSON.stringify(
+        validPayload({
+          name: "John Doe",
+          email: "john@example.com",
+          message: "Hello, this is my message!",
+        }),
+      ),
+    });
 
-    // @ts-expect-error - simplified event for testing
     await mod.handler(event);
 
     expect(mockSend).toHaveBeenCalledWith(
@@ -188,17 +230,10 @@ describe("contact-form Lambda handler", () => {
 
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
-      httpMethod: "POST",
-      headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "Test User",
-        email: "test@example.com",
-        message: "Testing Resend error handling",
-      }),
-    };
+    const event = buildApiGatewayEvent({
+      body: JSON.stringify(validPayload({ message: "Testing Resend error handling" })),
+    });
 
-    // @ts-expect-error - simplified event for testing
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(500);
 
@@ -217,17 +252,10 @@ describe("contact-form Lambda handler", () => {
 
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
-      httpMethod: "POST",
-      headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "Test User",
-        email: "test@example.com",
-        message: "Testing missing SSM parameter",
-      }),
-    };
+    const event = buildApiGatewayEvent({
+      body: JSON.stringify(validPayload({ message: "Testing missing SSM parameter" })),
+    });
 
-    // @ts-expect-error - simplified event for testing
     const result = await mod.handler(event);
     expect(result.statusCode).toBe(500);
 
@@ -240,17 +268,16 @@ describe("contact-form Lambda handler", () => {
   it("escapes HTML in email content to prevent XSS", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 
-    const event = {
-      httpMethod: "POST",
-      headers: { origin: "https://example.com" },
-      body: JSON.stringify({
-        name: "Evil<script>alert('xss')</script>User",
-        email: "evil@example.com",
-        message: "Message with <b>HTML</b> & special chars",
-      }),
-    };
+    const event = buildApiGatewayEvent({
+      body: JSON.stringify(
+        validPayload({
+          name: "Evil<script>alert('xss')</script>User",
+          email: "evil@example.com",
+          message: "Message with <b>HTML</b> & special chars",
+        }),
+      ),
+    });
 
-    // @ts-expect-error - simplified event for testing
     await mod.handler(event);
 
     const callArgs = mockSend.mock.calls[0]?.[0] as Record<string, unknown> | undefined;
@@ -261,5 +288,137 @@ describe("contact-form Lambda handler", () => {
     expect(html).toContain("&lt;b&gt;");
     expect(html).toContain("&amp;");
     expect(html).not.toContain("<script>");
+  });
+
+  it("returns success without sending email for honeypot submissions", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = buildApiGatewayEvent({
+      body: JSON.stringify(validPayload({ honeypot: "bot-filled" })),
+    });
+
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(200);
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
+  it("returns success without sending email for non-string honeypot submissions", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = buildApiGatewayEvent({
+      body: JSON.stringify(validPayload({ honeypot: 0 })),
+    });
+
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(200);
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects submissions that omit form load timing before sending email", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const { formLoadTime: _formLoadTime, ...payload } = validPayload();
+    const event = buildApiGatewayEvent({
+      body: JSON.stringify(payload),
+    });
+
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(400);
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects submissions that happen too quickly before sending email", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-22T08:00:00Z"));
+    try {
+      const mod = await import("../lib/functions/contact-form/index");
+
+      const event = buildApiGatewayEvent({
+        body: JSON.stringify(validPayload({ formLoadTime: Date.now() - 1000 })),
+      });
+
+      const result = await mod.handler(event);
+      expect(result.statusCode).toBe(400);
+      expect(mockSend).not.toHaveBeenCalled();
+      expect(getParameterMock).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("rate limits repeated submissions by source IP before sending email", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+    const event = buildApiGatewayEvent({
+      sourceIp: "203.0.113.9",
+      body: JSON.stringify(validPayload()),
+    });
+
+    for (let i = 0; i < 5; i++) {
+      const result = await mod.handler(event);
+      expect(result.statusCode).toBe(200);
+    }
+
+    mockSend.mockClear();
+    getParameterMock.mockClear();
+
+    const rateLimited = await mod.handler(event);
+    expect(rateLimited.statusCode).toBe(429);
+    expect(rateLimited.headers?.["Retry-After"]).toBeDefined();
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
+  it("rate limits repeated invalid submissions before early rejection", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+    const event = buildApiGatewayEvent({
+      sourceIp: "203.0.113.10",
+      body: JSON.stringify(validPayload({ role: "admin" })),
+    });
+
+    for (let i = 0; i < 5; i++) {
+      const result = await mod.handler(event);
+      expect(result.statusCode).toBe(400);
+    }
+
+    const rateLimited = await mod.handler(event);
+    expect(rateLimited.statusCode).toBe(429);
+    expect(rateLimited.headers?.["Retry-After"]).toBeDefined();
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
+  it("rate limits repeated missing-body submissions before early rejection", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+    const event = buildApiGatewayEvent({
+      sourceIp: "203.0.113.11",
+      body: null,
+    });
+
+    for (let i = 0; i < 5; i++) {
+      const result = await mod.handler(event);
+      expect(result.statusCode).toBe(400);
+    }
+
+    const rateLimited = await mod.handler(event);
+    expect(rateLimited.statusCode).toBe(429);
+    expect(rateLimited.headers?.["Retry-After"]).toBeDefined();
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects unexpected payload fields before sending email", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+
+    const event = buildApiGatewayEvent({
+      body: JSON.stringify(validPayload({ role: "admin" })),
+    });
+
+    const result = await mod.handler(event);
+    expect(result.statusCode).toBe(400);
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
   });
 });
