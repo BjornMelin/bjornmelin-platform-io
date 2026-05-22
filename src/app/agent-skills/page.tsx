@@ -8,10 +8,11 @@ import {
   agentSkillsMetadata,
   featuredAgentSkills,
 } from "@/data/agent-skills";
+import { sharedOpenGraphImage } from "@/lib/metadata";
 
 /** Metadata for the Agent Skills Lab marketplace page. */
 export const metadata: Metadata = {
-  title: "Agent Skills Lab - Bjorn Melin",
+  title: "Agent Skills Lab",
   description:
     "Browse Bjorn Melin's public marketplace of installable Codex, AI agent, and developer automation skills generated from the dev-skills repository.",
   alternates: {
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
       "A public marketplace of Codex, AI agent, and developer automation skills with install commands, source links, and quality signals.",
     url: "/agent-skills",
     type: "website",
+    images: [sharedOpenGraphImage],
   },
   twitter: {
     card: "summary_large_image",

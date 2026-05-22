@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import { PROFILE } from "@/lib/profile";
 import { resolveSiteBaseUrl } from "@/lib/site-url";
 
+/** Shared Open Graph image used by portfolio pages. */
+export const sharedOpenGraphImage = {
+  url: "/screenshots/hero-preview.png",
+  width: 1200,
+  height: 630,
+  alt: "Bjorn Melin - Portfolio Hero Section",
+};
+
 interface GenerateMetadataProps {
   title?: string;
   description?: string;

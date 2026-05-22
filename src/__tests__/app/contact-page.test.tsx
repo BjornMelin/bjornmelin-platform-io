@@ -29,19 +29,29 @@ describe("ContactPage", () => {
     expect(screen.getByTestId("contact-form")).toBeInTheDocument();
   });
 
-  it("does not render a page-local toast viewport", () => {
+  it("uses the root toast provider only", () => {
     render(<ContactPage />);
 
-    expect(screen.queryByLabelText("Notifications")).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: /notifications/i })).not.toBeInTheDocument();
   });
 });
 
 describe("ContactPage metadata", () => {
   it("exports metadata with correct title", () => {
-    expect(metadata.title).toBe("Contact | Bjorn Melin");
+    expect(metadata.title).toBe("Contact");
   });
 
   it("exports metadata with description", () => {
     expect(metadata.description).toBe("Get in touch with me through this contact form.");
+  });
+
+  it("exports canonical and Open Graph URL metadata", () => {
+    expect(metadata.alternates?.canonical).toBe("/contact");
+    expect(metadata.openGraph).toEqual(
+      expect.objectContaining({
+        url: "/contact",
+        images: expect.arrayContaining([expect.objectContaining({ width: 1200 })]),
+      }),
+    );
   });
 });

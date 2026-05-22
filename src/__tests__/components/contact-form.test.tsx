@@ -211,6 +211,7 @@ describe("ContactForm", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/failed to send message/i)).toBeInTheDocument();
+      expect(screen.getByText("Server error")).toBeInTheDocument();
     });
   });
 
@@ -229,6 +230,7 @@ describe("ContactForm", () => {
           description: expect.stringContaining("Set NEXT_PUBLIC_API_URL"),
         }),
       );
+      expect(screen.getByText(/set NEXT_PUBLIC_API_URL/i)).toBeInTheDocument();
     });
   });
 

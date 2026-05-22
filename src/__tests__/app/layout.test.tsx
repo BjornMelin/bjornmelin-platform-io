@@ -89,10 +89,15 @@ describe("RootLayout metadata", () => {
     expect(metadata.description).toBe(PROFILE.summary);
   });
 
+  it("sets a root canonical URL", () => {
+    expect(metadata.alternates?.canonical).toBe("/");
+  });
+
   it("has openGraph configuration", () => {
     expect(metadata.openGraph).toBeDefined();
     const og = metadata.openGraph as Record<string, unknown>;
     expect(og.type).toBe("website");
+    expect(og.url).toBe("/");
     expect(og.title).toContain("Bjorn Melin");
   });
 
