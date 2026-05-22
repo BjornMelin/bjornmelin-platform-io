@@ -47,6 +47,36 @@ describe("env validation", () => {
     }
   });
 
+  it("requires NEXT_PUBLIC_API_URL as a valid URL", async () => {
+    vi.stubEnv("SKIP_ENV_VALIDATION", "");
+    vi.stubEnv("CONTACT_EMAIL", "test@example.com");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "not-a-url");
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://example.com");
+
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      await expect(import("@/env.mjs")).rejects.toThrow("Invalid environment variables");
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
+  it("requires NEXT_PUBLIC_BASE_URL as a valid URL", async () => {
+    vi.stubEnv("SKIP_ENV_VALIDATION", "");
+    vi.stubEnv("CONTACT_EMAIL", "test@example.com");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com");
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "not-a-url");
+
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      await expect(import("@/env.mjs")).rejects.toThrow("Invalid environment variables");
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
   it("accepts optional server variables when not set in env", async () => {
     vi.stubEnv("SKIP_ENV_VALIDATION", "");
     vi.stubEnv("CONTACT_EMAIL", "test@example.com");

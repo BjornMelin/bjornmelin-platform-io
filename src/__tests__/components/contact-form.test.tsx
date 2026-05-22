@@ -146,6 +146,36 @@ describe("ContactForm", () => {
     });
   });
 
+  it("submits Zod-transformed visible fields in the payload", async () => {
+    const user = userEvent.setup();
+    let capturedBody: Record<string, unknown> | null = null;
+    const endpoint = buildContactEndpoint(apiBaseUrl);
+
+    server.use(
+      http.post(endpoint, async ({ request }) => {
+        capturedBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({ success: true });
+      }),
+    );
+
+    render(<ContactForm />);
+    await fillContactForm(user, {
+      name: "  John Doe  ",
+      email: "john@example.com",
+      message: "  This is a test message that is long enough for validation.  ",
+    });
+
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(capturedBody).toMatchObject({
+        name: "John Doe",
+        email: "john@example.com",
+        message: "This is a test message that is long enough for validation.",
+      });
+    });
+  });
+
   it("shows loading state during submission", async () => {
     const user = userEvent.setup();
     const endpoint = buildContactEndpoint(apiBaseUrl);
