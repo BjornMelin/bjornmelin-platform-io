@@ -39,9 +39,25 @@ jobs:
         env:
           AWS_DEPLOY_ROLE_ARN: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
         run: |
           set -euo pipefail
+
+          require_url() {
+            local name="$1"
+            local value="$2"
+
+            if [[ -z "${value}" ]]; then
+              echo "Missing required variable: ${name} (GitHub Environment: production)" >&2
+              exit 1
+            fi
+            if [[ ! "${value}" =~ ^https:// ]]; then
+              echo "${name} must start with https:// (GitHub Environment: production)." >&2
+              exit 1
+            fi
+          }
 
           if [[ -z "${AWS_DEPLOY_ROLE_ARN}" ]]; then
             echo "Missing required secret: AWS_DEPLOY_ROLE_ARN" >&2
@@ -62,14 +78,9 @@ jobs:
             exit 1
           fi
 
-          if [[ -z "${NEXT_PUBLIC_APP_URL}" ]]; then
-            echo "Missing required variable: NEXT_PUBLIC_APP_URL (GitHub Environment: production)" >&2
-            exit 1
-          fi
-          if [[ ! "${NEXT_PUBLIC_APP_URL}" =~ ^https?:// ]]; then
-            echo "NEXT_PUBLIC_APP_URL must start with http:// or https:// (GitHub Environment: production)." >&2
-            exit 1
-          fi
+          require_url "NEXT_PUBLIC_API_URL" "${NEXT_PUBLIC_API_URL}"
+          require_url "NEXT_PUBLIC_APP_URL" "${NEXT_PUBLIC_APP_URL}"
+          require_url "NEXT_PUBLIC_BASE_URL" "${NEXT_PUBLIC_BASE_URL}"
 
   ci:
     name: CI Pipeline
