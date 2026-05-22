@@ -49,7 +49,7 @@ importers:
         specifier: ~6.0.3
         version: 6.0.3
       vitest:
-        specifier: ^4.1.7
+        specifier: ~4.1.7
         version: 4.1.7(@types/node@24.12.2)(vite@8.0.8(@types/node@24.12.2)(esbuild@0.28.0)(tsx@4.21.0))
 
 packages:
