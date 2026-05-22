@@ -74,16 +74,20 @@ describe("Home page", () => {
 
 describe("Home page metadata", () => {
   it("exports metadata with correct title", () => {
-    expect(metadata.title).toBe(`${PROFILE.name} - ${PROFILE.shortTitle}`);
+    expect(metadata.title).toEqual({ absolute: `${PROFILE.name} - ${PROFILE.shortTitle}` });
   });
 
   it("exports metadata with description mentioning key skills", () => {
     expect(metadata.description).toBe(PROFILE.summary);
   });
 
+  it("exports root canonical metadata", () => {
+    expect(metadata.alternates?.canonical).toBe("/");
+  });
+
   it("exports metadata with openGraph configuration", () => {
     expect(metadata.openGraph).toBeDefined();
-    expect(metadata.openGraph).toEqual(expect.objectContaining({ type: "website" }));
+    expect(metadata.openGraph).toEqual(expect.objectContaining({ type: "website", url: "/" }));
     expect(metadata.openGraph).toHaveProperty("images");
   });
 

@@ -26,7 +26,7 @@ export const contactFormWithSecuritySchema = z.strictObject({
   email: z.email(),
   message: z.string().min(10).max(1000),
   honeypot: z.string().length(0).optional(),
-  formLoadTime: z.int().optional(),
+  formLoadTime: z.int().positive(),
 });
 ```
 
@@ -35,6 +35,8 @@ export const contactFormWithSecuritySchema = z.strictObject({
 | `name` | string | 2-50 characters |
 | `email` | string | Valid email format |
 | `message` | string | 10-1000 characters |
+| `honeypot` | string | Optional, must be empty |
+| `formLoadTime` | number | Required positive timestamp in milliseconds |
 
 ## Data Models
 
