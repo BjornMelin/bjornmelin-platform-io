@@ -34,6 +34,7 @@ interface APIErrorResponse {
  */
 export function ContactForm() {
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
+  const [formErrorMessage, setFormErrorMessage] = useState("");
   const { toast } = useToast();
   const idPrefix = useId();
   const fieldIds = useMemo(
@@ -63,6 +64,7 @@ export function ContactForm() {
 
   const onSubmit = async (data: ContactFormData) => {
     setFormStatus("idle");
+    setFormErrorMessage("");
 
     try {
       const allowLocalContact = process.env.NEXT_PUBLIC_ALLOW_LOCAL_CONTACT === "true";
@@ -157,16 +159,19 @@ export function ContactForm() {
       }
 
       setFormStatus("success");
+      setFormErrorMessage("");
       toast({
         title: "Message sent!",
         description: "Thanks for your message. I'll get back to you soon.",
       });
       reset();
     } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to send message";
       setFormStatus("error");
+      setFormErrorMessage(message);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to send message",
+        description: message,
         variant: "destructive",
       });
     }
@@ -196,17 +201,20 @@ export function ContactForm() {
           <AlertCircle className="h-4 w-4" aria-hidden="true" />
           <AlertTitle>Failed to Send Message</AlertTitle>
           <AlertDescription>
-            Please try again. If the problem persists, reach out via the contact form later or send
-            a message through{" "}
-            <a
-              href="https://www.linkedin.com/in/bjornmelin/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xs underline hover:text-red-400 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              LinkedIn
-            </a>
-            .
+            <p>{formErrorMessage || "Failed to send message"}</p>
+            <p className="mt-2">
+              Please try again. If the problem persists, reach out via the contact form later or
+              send a message through{" "}
+              <a
+                href="https://www.linkedin.com/in/bjornmelin/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xs underline hover:text-red-400 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                LinkedIn
+              </a>
+              .
+            </p>
           </AlertDescription>
         </Alert>
       )}

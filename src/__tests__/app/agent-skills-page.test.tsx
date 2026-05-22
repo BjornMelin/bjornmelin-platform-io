@@ -121,7 +121,7 @@ describe("AgentSkillsPage", () => {
 
 describe("AgentSkillsPage metadata", () => {
   it("exports marketplace metadata", () => {
-    expect(metadata.title).toBe("Agent Skills Lab - Bjorn Melin");
+    expect(metadata.title).toBe("Agent Skills Lab");
     expect(metadata.description).toContain("public marketplace");
   });
 });

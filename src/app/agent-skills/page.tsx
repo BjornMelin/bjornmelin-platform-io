@@ -11,7 +11,7 @@ import {
 
 /** Metadata for the Agent Skills Lab marketplace page. */
 export const metadata: Metadata = {
-  title: "Agent Skills Lab - Bjorn Melin",
+  title: "Agent Skills Lab",
   description:
     "Browse Bjorn Melin's public marketplace of installable Codex, AI agent, and developer automation skills generated from the dev-skills repository.",
   alternates: {

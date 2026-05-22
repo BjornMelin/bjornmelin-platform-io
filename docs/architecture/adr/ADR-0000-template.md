@@ -31,9 +31,9 @@ References: <official docs and key sources as markdown links or []>
 
 ## Alternatives
 
-- A: [desc] — Pros / Cons
-- B: [desc] — Pros / Cons
-- C: [desc] — Pros / Cons
+- A: [desc] -- Pros / Cons
+- B: [desc] -- Pros / Cons
+- C: [desc] -- Pros / Cons
 
 ### Decision Framework
 

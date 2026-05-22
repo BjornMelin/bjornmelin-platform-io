@@ -121,7 +121,12 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
             </Link>
           </Button>
           <Button variant="outline" className="h-11 md:h-9" asChild>
-            <Link href={project.primaryUrl} target="_blank" rel="noopener noreferrer">
+            <Link
+              href={project.primaryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Open ${project.title}`}
+            >
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
               <span>Open</span>
             </Link>
@@ -131,14 +136,24 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
         <div className="flex items-center gap-2">
           {project.liveUrl ? (
             <Button variant="secondary" className="h-11 md:h-9" asChild>
-              <Link href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+              <Link
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open ${project.title} live site`}
+              >
                 Live
               </Link>
             </Button>
           ) : null}
           {project.docsUrl ? (
             <Button variant="outline" className="h-11 md:h-9" asChild>
-              <Link href={project.docsUrl} target="_blank" rel="noopener noreferrer">
+              <Link
+                href={project.docsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open ${project.title} documentation`}
+              >
                 <BookOpenText className="h-4 w-4" aria-hidden="true" />
                 Docs
               </Link>

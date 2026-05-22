@@ -40,12 +40,16 @@ export const metadata: Metadata = {
     default: `${PROFILE.name} - ${PROFILE.shortTitle}`,
   },
   description: PROFILE.summary,
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: "/headshot/headshot-2024.jpg",
     apple: "/headshot/headshot-2024.jpg",
   },
   openGraph: {
     type: "website",
+    url: "/",
     title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
     description: PROFILE.summary,
     images: [

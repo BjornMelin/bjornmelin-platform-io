@@ -17,7 +17,11 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { filterProjects, sortProjects } from "@/lib/projects/filtering";
-import { type ProjectsSort, projectsQueryParsers } from "@/lib/projects/query-state";
+import {
+  type ProjectsQueryState,
+  type ProjectsSort,
+  projectsQueryParsers,
+} from "@/lib/projects/query-state";
 import { cn } from "@/lib/utils";
 import type { ProjectCardModel } from "@/types/project";
 import { ProjectCard } from "./project-card";
@@ -41,6 +45,18 @@ interface ProjectGridProps {
 export function ProjectGrid({ projects, categories, languages, className }: ProjectGridProps) {
   const [{ q, category, lang, minStars, sort }, setQuery] = useQueryStates(projectsQueryParsers);
   const normalizedLang = lang.toLowerCase();
+  const updateQuery = (value: Partial<ProjectsQueryState>) => {
+    setQuery(value).then(
+      () => undefined,
+      () => undefined,
+    );
+  };
+  const clearQuery = () => {
+    setQuery(null).then(
+      () => undefined,
+      () => undefined,
+    );
+  };
 
   const filtered = filterProjects(projects, { q, category, lang: normalizedLang, minStars });
   const sorted = sortProjects(filtered, sort);
@@ -71,7 +87,7 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
                 type="search"
                 value={q}
                 onChange={(event) => {
-                  setQuery({ q: event.target.value });
+                  updateQuery({ q: event.target.value });
                 }}
                 placeholder="Search projects…"
                 className="h-11 pl-9 md:h-9"
@@ -92,7 +108,7 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
             <Select
               value={category}
               onValueChange={(value) => {
-                setQuery({ category: value });
+                updateQuery({ category: value });
               }}
             >
               <SelectTrigger
@@ -120,7 +136,7 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
             <Select
               value={normalizedLang}
               onValueChange={(value) => {
-                setQuery({ lang: value });
+                updateQuery({ lang: value });
               }}
             >
               <SelectTrigger
@@ -148,7 +164,7 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
             <Select
               value={String(minStars)}
               onValueChange={(value) => {
-                setQuery({ minStars: Number(value) });
+                updateQuery({ minStars: Number(value) });
               }}
             >
               <SelectTrigger
@@ -175,7 +191,7 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
             <Select
               value={sort}
               onValueChange={(value) => {
-                setQuery({ sort: value as ProjectsSort });
+                updateQuery({ sort: value as ProjectsSort });
               }}
             >
               <SelectTrigger id="projects-sort" aria-label="Sort projects" className="h-11 md:h-9">
@@ -200,7 +216,7 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
             {isDirty ? (
               <Button
                 variant="outline"
-                onClick={() => setQuery(null)}
+                onClick={clearQuery}
                 aria-label="Clear Filters"
                 className="h-11 md:h-9"
               >
@@ -219,7 +235,7 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
           <p className="text-muted-foreground">No projects match the current filters.</p>
           {isDirty ? (
             <div className="mt-4">
-              <Button variant="outline" onClick={() => setQuery(null)}>
+              <Button variant="outline" onClick={clearQuery}>
                 Clear Filters
               </Button>
             </div>

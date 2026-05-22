@@ -62,14 +62,11 @@ describe("sitemap", () => {
     ).toBe(true);
   });
 
-  it("sets lastModified to current date", () => {
+  it("omits lastModified until stable content dates are available", () => {
     const result = sitemap();
 
     result.forEach((entry) => {
-      expect(entry.lastModified).toBeDefined();
-      const parsed = new Date(entry.lastModified as string);
-      expect(Number.isNaN(parsed.getTime())).toBe(false);
-      expect(entry.lastModified).toBe("2025-01-01T00:00:00.000Z");
+      expect(entry.lastModified).toBeUndefined();
     });
   });
 

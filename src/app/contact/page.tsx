@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/contact-form";
-import { Toaster } from "@/components/ui/toaster";
 import { PROFILE } from "@/lib/profile";
 
 export const metadata: Metadata = {
-  title: `Contact | ${PROFILE.name}`,
+  title: "Contact",
   description: "Get in touch with me through this contact form.",
+  alternates: {
+    canonical: "/contact",
+  },
+  openGraph: {
+    type: "website",
+    url: "/contact",
+    title: `Contact | ${PROFILE.name}`,
+    description: "Get in touch with me through this contact form.",
+  },
 };
 
 /**
@@ -25,7 +33,6 @@ export default function ContactPage() {
         </div>
         <ContactForm />
       </div>
-      <Toaster />
     </div>
   );
 }

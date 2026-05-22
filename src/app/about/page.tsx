@@ -4,8 +4,17 @@ import { PROFILE } from "@/lib/profile";
 
 /** Page metadata definition. */
 export const metadata: Metadata = {
-  title: `About - ${PROFILE.name} | ${PROFILE.shortTitle}`,
+  title: "About",
   description: PROFILE.summary,
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    type: "website",
+    url: "/about",
+    title: `About - ${PROFILE.name} | ${PROFILE.shortTitle}`,
+    description: PROFILE.summary,
+  },
 };
 
 /**

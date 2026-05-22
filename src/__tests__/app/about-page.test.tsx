@@ -25,10 +25,15 @@ describe("AboutPage", () => {
 
 describe("AboutPage metadata", () => {
   it("exports metadata with correct title", () => {
-    expect(metadata.title).toBe(`About - ${PROFILE.name} | ${PROFILE.shortTitle}`);
+    expect(metadata.title).toBe("About");
   });
 
   it("exports metadata with description mentioning credentials", () => {
     expect(metadata.description).toBe(PROFILE.summary);
+  });
+
+  it("exports canonical and Open Graph URL metadata", () => {
+    expect(metadata.alternates?.canonical).toBe("/about");
+    expect(metadata.openGraph).toEqual(expect.objectContaining({ url: "/about" }));
   });
 });

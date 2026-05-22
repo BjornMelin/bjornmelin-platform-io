@@ -124,11 +124,16 @@ describe("ProjectsPage", () => {
 
 describe("ProjectsPage metadata", () => {
   it("exports metadata with correct title", () => {
-    expect(metadata.title).toBe("Projects - Bjorn Melin");
+    expect(metadata.title).toBe("Projects");
   });
 
   it("exports metadata with description", () => {
     expect(metadata.description).toContain("portfolio of projects");
     expect(metadata.description).toContain("machine learning");
+  });
+
+  it("exports canonical and Open Graph URL metadata", () => {
+    expect(metadata.alternates?.canonical).toBe("/projects");
+    expect(metadata.openGraph).toEqual(expect.objectContaining({ url: "/projects" }));
   });
 });

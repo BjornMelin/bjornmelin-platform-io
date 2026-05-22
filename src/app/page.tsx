@@ -6,10 +6,16 @@ import { PROFILE } from "@/lib/profile";
 
 /** Page metadata definition. */
 export const metadata: Metadata = {
-  title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
+  title: {
+    absolute: `${PROFILE.name} - ${PROFILE.shortTitle}`,
+  },
   description: PROFILE.summary,
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
+    url: "/",
     title: `${PROFILE.name} - ${PROFILE.shortTitle}`,
     description: PROFILE.summary,
     images: [
