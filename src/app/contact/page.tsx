@@ -3,6 +3,7 @@ import { ContactForm } from "@/components/contact/contact-form";
 import { sharedOpenGraphImage } from "@/lib/metadata";
 import { PROFILE } from "@/lib/profile";
 
+/** Metadata for the contact page. */
 export const metadata: Metadata = {
   title: "Contact",
   description: "Get in touch with me through this contact form.",
