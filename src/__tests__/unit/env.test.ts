@@ -1,6 +1,11 @@
 /* @vitest-environment node */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+const stubValidPublicUrls = () => {
+  vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com");
+  vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://example.com");
+};
+
 describe("env validation", () => {
   beforeEach(() => {
     // Reset modules to force fresh env validation on each test
@@ -15,6 +20,7 @@ describe("env validation", () => {
     vi.stubEnv("SKIP_ENV_VALIDATION", "");
     vi.stubEnv("CONTACT_EMAIL", "invalid-email");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
+    stubValidPublicUrls();
 
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
@@ -28,6 +34,7 @@ describe("env validation", () => {
     vi.stubEnv("SKIP_ENV_VALIDATION", "");
     vi.stubEnv("CONTACT_EMAIL", "valid@example.com");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
+    stubValidPublicUrls();
 
     const { env } = await import("@/env.mjs");
 
@@ -38,6 +45,7 @@ describe("env validation", () => {
     vi.stubEnv("SKIP_ENV_VALIDATION", "");
     vi.stubEnv("CONTACT_EMAIL", "test@example.com");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
+    stubValidPublicUrls();
 
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
@@ -77,10 +85,37 @@ describe("env validation", () => {
     }
   });
 
+  it("accepts valid NEXT_PUBLIC_API_URL", async () => {
+    const publicApiUrl = "https://api.example.com";
+    vi.stubEnv("SKIP_ENV_VALIDATION", "");
+    vi.stubEnv("CONTACT_EMAIL", "test@example.com");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", publicApiUrl);
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://example.com");
+
+    const { env } = await import("@/env.mjs");
+
+    expect(env.NEXT_PUBLIC_API_URL).toBe(publicApiUrl);
+  });
+
+  it("accepts valid NEXT_PUBLIC_BASE_URL", async () => {
+    const publicBaseUrl = "https://example.com";
+    vi.stubEnv("SKIP_ENV_VALIDATION", "");
+    vi.stubEnv("CONTACT_EMAIL", "test@example.com");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com");
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", publicBaseUrl);
+
+    const { env } = await import("@/env.mjs");
+
+    expect(env.NEXT_PUBLIC_BASE_URL).toBe(publicBaseUrl);
+  });
+
   it("accepts optional server variables when not set in env", async () => {
     vi.stubEnv("SKIP_ENV_VALIDATION", "");
     vi.stubEnv("CONTACT_EMAIL", "test@example.com");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "example.com");
+    stubValidPublicUrls();
     // Don't set AWS_REGION and RESEND_API_KEY - they should be undefined
     // Note: In t3-env, an empty string "" triggers validation, but truly unset vars are undefined
 
