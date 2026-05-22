@@ -359,6 +359,29 @@ describe("contact-form Lambda handler", () => {
     expect(getParameterMock).not.toHaveBeenCalled();
   });
 
+  it("rate limits repeated invalid submissions before early rejection", async () => {
+    const mod = await import("../lib/functions/contact-form/index");
+    const event = {
+      httpMethod: "POST",
+      headers: { origin: "https://example.com" },
+      requestContext: { identity: { sourceIp: "203.0.113.10" } },
+      body: JSON.stringify(validPayload({ role: "admin" })),
+    };
+
+    for (let i = 0; i < 5; i++) {
+      // @ts-expect-error - simplified event for testing
+      const result = await mod.handler(event);
+      expect(result.statusCode).toBe(400);
+    }
+
+    // @ts-expect-error - simplified event for testing
+    const rateLimited = await mod.handler(event);
+    expect(rateLimited.statusCode).toBe(429);
+    expect(rateLimited.headers?.["Retry-After"]).toBeDefined();
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(getParameterMock).not.toHaveBeenCalled();
+  });
+
   it("rejects unexpected payload fields before sending email", async () => {
     const mod = await import("../lib/functions/contact-form/index");
 

@@ -235,6 +235,19 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   try {
     resetExpiredRateLimits();
 
+    const sourceIp = resolveSourceIp(event);
+    const rateLimit = checkContactRateLimit(sourceIp);
+    if (!rateLimit.allowed) {
+      return {
+        statusCode: 429,
+        headers: {
+          ...corsHeaders,
+          "Retry-After": String(Math.ceil((rateLimit.resetTime - Date.now()) / 1000)),
+        },
+        body: JSON.stringify({ error: "Too many requests" }),
+      };
+    }
+
     const parsed: unknown = JSON.parse(event.body);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
       return badRequest(corsHeaders, "Invalid request");
@@ -272,19 +285,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         corsHeaders,
         `Please wait at least ${getMinSubmissionTime() / 1000} seconds before submitting.`,
       );
-    }
-
-    const sourceIp = resolveSourceIp(event);
-    const rateLimit = checkContactRateLimit(sourceIp);
-    if (!rateLimit.allowed) {
-      return {
-        statusCode: 429,
-        headers: {
-          ...corsHeaders,
-          "Retry-After": String(Math.ceil((rateLimit.resetTime - Date.now()) / 1000)),
-        },
-        body: JSON.stringify({ error: "Too many requests" }),
-      };
     }
 
     const data: ContactFormData = {
