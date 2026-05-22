@@ -47,13 +47,17 @@ The site will be available at [http://localhost:3000](http://localhost:3000)
 
 ## Run with Docker
 
-Build the image (ensure Docker Desktop/daemon is running):
+Docker is supported for local static-export smoke testing. It is not the
+production deployment target.
+
+Build the image and run the smoke check:
 
 ```bash
-docker build -t platform-io:node24 .
+pnpm docker:verify
 ```
 
-Run the container and access the site at <http://localhost:8080>:
+To run the already-built image manually and access the site at
+<http://localhost:8080>:
 
 ```bash
 docker run --rm -p 8080:80 platform-io:node24

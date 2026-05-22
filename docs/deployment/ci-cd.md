@@ -118,14 +118,17 @@ See ADR-0006 for the detailed decision and constraints.
 
 ### Local Container Smoke Test
 
-Build and run the Docker image that serves the static export:
+Docker is supported as a CI-verified local smoke surface for the static export.
+It is not the production deploy target; production deploys still use S3 and
+CloudFront.
 
 ```bash
-docker build -t platform-io:node24 .
-docker run --rm -p 8080:80 platform-io:node24
+pnpm docker:verify
 ```
 
-Open <http://localhost:8080> to verify assets and routes.
+The `Docker` workflow runs the same posture in CI by building the image with
+Buildx, loading it locally on the runner, and smoke-testing `/` plus
+`/contact/`.
 
 ## Automated Releases (release-please)
 
