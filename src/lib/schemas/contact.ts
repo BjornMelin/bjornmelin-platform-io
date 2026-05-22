@@ -42,7 +42,7 @@ export const contactFormWithSecuritySchema = z.strictObject({
   /** Honeypot field - must be empty (bots fill this) */
   honeypot: z.string().length(0, { error: "Invalid submission" }).optional(),
   /** Timestamp when form was loaded (for timing validation) */
-  formLoadTime: z.int().optional().describe("Form load timestamp in milliseconds"),
+  formLoadTime: z.int().positive().describe("Form load timestamp in milliseconds"),
 });
 
 /** Inferred contact form payload from contactFormSchema. */
