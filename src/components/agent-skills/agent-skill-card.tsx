@@ -65,6 +65,7 @@ export function AgentSkillCard({ skill, className }: AgentSkillCardProps) {
           title={packageStatusLabel}
         >
           <PackageIcon className="h-4 w-4" aria-hidden="true" />
+          <span className="sr-only">{packageStatusLabel}</span>
         </span>
       </div>
 
