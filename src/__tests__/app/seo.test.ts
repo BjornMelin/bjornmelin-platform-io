@@ -1,17 +1,8 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 
 describe("sitemap", () => {
-  beforeAll(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
-  });
-
-  afterAll(() => {
-    vi.useRealTimers();
-  });
-
   // Note: sitemap uses process.env.NEXT_PUBLIC_APP_URL at module load time
   // We test the structure and logic, not the specific URL which depends on env
 

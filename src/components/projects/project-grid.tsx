@@ -45,17 +45,17 @@ interface ProjectGridProps {
 export function ProjectGrid({ projects, categories, languages, className }: ProjectGridProps) {
   const [{ q, category, lang, minStars, sort }, setQuery] = useQueryStates(projectsQueryParsers);
   const normalizedLang = lang.toLowerCase();
-  const updateQuery = (value: Partial<ProjectsQueryState>) => {
-    setQuery(value).then(
+  const consumeQueryUpdate = (promise: ReturnType<typeof setQuery>) => {
+    promise.then(
       () => undefined,
       () => undefined,
     );
   };
+  const updateQuery = (value: Partial<ProjectsQueryState>) => {
+    consumeQueryUpdate(setQuery(value));
+  };
   const clearQuery = () => {
-    setQuery(null).then(
-      () => undefined,
-      () => undefined,
-    );
+    consumeQueryUpdate(setQuery(null));
   };
 
   const filtered = filterProjects(projects, { q, category, lang: normalizedLang, minStars });
