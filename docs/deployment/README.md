@@ -58,6 +58,7 @@ Development deployments are used for testing:
 
 - Local development server (`pnpm dev`)
 - Local static build verification (`pnpm build && pnpm serve`)
+- Local/container static smoke verification (`pnpm docker:verify`)
 - GitHub Actions jobs assume an environment-specific OIDC role
 
 ## Deployment Process
