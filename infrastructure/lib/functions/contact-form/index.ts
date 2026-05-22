@@ -139,7 +139,7 @@ function isValidFormLoadTime(value: unknown): value is number {
 }
 
 function isHoneypotSubmission(payload: Record<string, unknown>): boolean {
-  if (!Object.prototype.hasOwnProperty.call(payload, "honeypot")) return false;
+  if (payload.honeypot === undefined) return false;
   return typeof payload.honeypot !== "string" || isHoneypotTriggered(payload.honeypot);
 }
 
