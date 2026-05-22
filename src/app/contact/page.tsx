@@ -1,10 +1,22 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/contact-form";
+import { sharedOpenGraphImage } from "@/lib/metadata";
 import { PROFILE } from "@/lib/profile";
 
+/** Metadata for the contact page. */
 export const metadata: Metadata = {
-  title: `Contact | ${PROFILE.name}`,
+  title: "Contact",
   description: "Get in touch with me through this contact form.",
+  alternates: {
+    canonical: "/contact",
+  },
+  openGraph: {
+    type: "website",
+    url: "/contact",
+    title: `Contact | ${PROFILE.name}`,
+    description: "Get in touch with me through this contact form.",
+    images: [sharedOpenGraphImage],
+  },
 };
 
 /**

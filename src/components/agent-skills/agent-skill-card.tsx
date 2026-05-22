@@ -105,7 +105,7 @@ export function AgentSkillCard({ skill, className }: AgentSkillCardProps) {
 
       <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
         <Button variant="secondary" className="h-11 rounded-full md:h-9" asChild>
-          <Link href={skill.detailHref}>
+          <Link href={skill.detailHref} aria-label={`View ${skill.name} details`}>
             <Code2 className="h-4 w-4" aria-hidden="true" />
             Details
           </Link>
