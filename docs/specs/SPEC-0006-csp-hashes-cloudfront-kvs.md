@@ -63,15 +63,15 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 Generated artifacts:
 
-- `infrastructure/lib/generated/next-inline-script-hashes.ts` (global allow-list; audit/debug)
-- `infrastructure/lib/generated/next-inline-script-hashes.json` (per-path hashes; optional tooling)
-- `infrastructure/lib/generated/next-inline-script-hashes.kvs.json` (KVS sync payload)
+- `.next/csp/next-inline-script-hashes.ts` (ignored global allow-list; audit/debug)
+- `.next/csp/next-inline-script-hashes.json` (ignored per-path hashes; optional tooling)
+- `.next/csp/next-inline-script-hashes.kvs.json` (ignored KVS sync payload)
   - Format: `{ "data": [ { "key": "__hashes:0", "value": "<digest>.<digest>" },
     { "key": "/about/index.html", "value": "0.1.2.k.10" }, ... ] }`
 - `infrastructure/lib/functions/cloudfront/next-csp-response.js` (CSP CloudFront Function source)
 
-Note: The generated JS artifacts are intentionally compact to preserve CloudFront Function size limits.
-Biome excludes them from formatting checks via negated patterns in `biome.json`.
+Note: The CloudFront Function source is intentionally compact to preserve CloudFront Function size limits.
+Biome excludes it from formatting checks via a negated pattern in `biome.json`.
 
 ### Guardrails (hard failures)
 
@@ -138,7 +138,7 @@ The authoritative pipeline is in `.github/workflows/deploy.yml` and uses:
 2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage`
 3. `pnpm deploy:static:prod` (implemented by `scripts/deploy-static-site.mjs`):
    - reads CloudFormation exports (`cloudformation list-exports`)
-   - syncs KVS from `infrastructure/lib/generated/next-inline-script-hashes.kvs.json`
+   - syncs KVS from `.next/csp/next-inline-script-hashes.kvs.json`
    - uploads `out/` to S3
    - invalidates CloudFront
 
@@ -161,8 +161,8 @@ Chosen option: CloudFront Function + KVS (indices encoding)
 
 ## Key files
 
-- `infrastructure/lib/generated/next-inline-script-hashes.ts`
-- `infrastructure/lib/generated/next-inline-script-hashes.kvs.json`
+- `.next/csp/next-inline-script-hashes.ts`
+- `.next/csp/next-inline-script-hashes.kvs.json`
 - `infrastructure/lib/functions/cloudfront/next-csp-response.js`
 - `scripts/generate-next-inline-csp-hashes.mjs`
 

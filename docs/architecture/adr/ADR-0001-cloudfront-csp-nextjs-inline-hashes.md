@@ -52,8 +52,8 @@ hash allow-list did not match the currently deployed static export.
   - `'self'` for external JS served from the same origin, and
   - a **SHA-256 hash allow-list** for required inline scripts.
 - The allow-list is generated from the static export (`out/**/*.html`) by `pnpm generate:csp-hashes`, which writes:
-  - `infrastructure/lib/generated/next-inline-script-hashes.ts` (global hash allow-list)
-  - `infrastructure/lib/generated/next-inline-script-hashes.kvs.json`
+  - `.next/csp/next-inline-script-hashes.ts` (ignored global hash allow-list for local audit/debug)
+  - `.next/csp/next-inline-script-hashes.kvs.json`
     (hash chunks plus per-path hash index payload for KVS)
   - `infrastructure/lib/functions/cloudfront/next-csp-response.js` (viewer-response CloudFront Function)
 - Hash digest chunks and per-path hash indices are stored in a **CloudFront KeyValueStore (KVS)** to keep the
@@ -112,7 +112,8 @@ strict CSP approach for CloudFront-served static content.
 
 ## High-Level Architecture
 
-- Build step generates `out/` and CSP artifacts (hash allow-list + KVS payload + CloudFront Function source).
+- Build step generates `out/`, ignored per-build CSP hash payloads under `.next/csp/`, and the stable
+  CloudFront Function source.
 - CDK `StorageStack` provisions S3 + CloudFront, the viewer-response CSP Function, and its KeyValueStore.
 - Static deploy uploads `out/` to S3, syncs the CSP hashes KeyValueStore, and invalidates CloudFront.
 
@@ -156,7 +157,7 @@ strict CSP approach for CloudFront-served static content.
 ### Ongoing Maintenance & Considerations
 
 - Treat `pnpm build` as the single source of truth for `out/` + CSP hashes.
-- Never manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
+- Never commit the ignored `.next/csp/` hash payloads.
 - Never manually edit `infrastructure/lib/functions/cloudfront/next-csp-response.js`.
 
 ### Dependencies
