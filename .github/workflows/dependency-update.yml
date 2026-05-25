@@ -116,6 +116,7 @@ jobs:
           pnpm -C infrastructure audit --audit-level moderate
           pnpm test
           pnpm build
+          pnpm -C infrastructure build
           pnpm -C infrastructure test
 
       - name: Create Pull Request
