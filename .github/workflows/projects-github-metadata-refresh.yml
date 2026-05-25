@@ -1,0 +1,137 @@
+name: Projects GitHub Metadata Refresh
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Weekly on Monday at 09:00 UTC.
+  workflow_dispatch:
+    inputs:
+      owner:
+        description: "GitHub owner whose public repositories should be reflected on /projects"
+        required: false
+        type: string
+        default: BjornMelin
+      min_stars:
+        description: "Minimum star count required for generated portfolio inclusion"
+        required: false
+        type: string
+        default: "5"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: projects-github-metadata-refresh
+  cancel-in-progress: true
+
+env:
+  TARGET_PROJECTS_PATH: src/content/projects/projects.generated.json
+
+jobs:
+  refresh-projects:
+    name: Refresh generated projects metadata
+    runs-on: ubuntu-latest
+    outputs:
+      owner: ${{ steps.refresh-inputs.outputs.owner }}
+      min_stars: ${{ steps.refresh-inputs.outputs.min_stars }}
+    steps:
+      - name: Checkout portfolio
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install: "true"
+
+      - name: Resolve refresh inputs
+        id: refresh-inputs
+        env:
+          INPUT_OWNER: ${{ inputs.owner }}
+          INPUT_MIN_STARS: ${{ inputs.min_stars }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          owner="${INPUT_OWNER:-BjornMelin}"
+          min_stars="${INPUT_MIN_STARS:-5}"
+
+          if [[ ! "${owner}" =~ ^[A-Za-z0-9-]+$ ]]; then
+            echo "Unsafe GitHub owner: ${owner}" >&2
+            exit 1
+          fi
+          if [[ ! "${min_stars}" =~ ^[0-9]+$ ]]; then
+            echo "min_stars must be a nonnegative integer: ${min_stars}" >&2
+            exit 1
+          fi
+
+          {
+            echo "owner=${owner}"
+            echo "min_stars=${min_stars}"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Refresh projects metadata
+        env:
+          PROJECTS_GITHUB_REFRESH_TOKEN: ${{ secrets.PROJECTS_GITHUB_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          REFRESH_OWNER: ${{ steps.refresh-inputs.outputs.owner }}
+          MIN_STARS: ${{ steps.refresh-inputs.outputs.min_stars }}
+        run: pnpm projects:github:refresh --owner "${REFRESH_OWNER}" --min-stars "${MIN_STARS}"
+
+      - name: Run projects metadata checks
+        env:
+          SKIP_ENV_VALIDATION: "true"
+          NEXT_PUBLIC_APP_URL: https://bjornmelin.io
+        run: |
+          node scripts/verify-projects-json-statistics.mjs
+          pnpm vitest run src/__tests__/schemas/github-projects-schema.test.ts src/__tests__/data/projects-data.test.ts src/__tests__/scripts/refresh-projects-github-metadata.test.ts
+          pnpm type-check
+
+      - name: Upload refreshed projects metadata
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: projects-generated-metadata
+          path: ${{ env.TARGET_PROJECTS_PATH }}
+          if-no-files-found: error
+          retention-days: 1
+
+  create-refresh-pr:
+    name: Create generated-data pull request
+    needs: refresh-projects
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout portfolio
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Download refreshed projects metadata
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          name: projects-generated-metadata
+          path: /tmp/projects-generated-metadata
+
+      - name: Restore refreshed projects metadata
+        run: cp /tmp/projects-generated-metadata/projects.generated.json "${TARGET_PROJECTS_PATH}"
+
+      - name: Create projects metadata refresh pull request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
+        with:
+          token: ${{ secrets.PROJECTS_GITHUB_REFRESH_PR_TOKEN || github.token }}
+          add-paths: src/content/projects/projects.generated.json
+          commit-message: "chore(projects): refresh generated GitHub metadata"
+          title: "chore(projects): refresh generated GitHub metadata"
+          body: |
+            Automated Projects GitHub metadata refresh for `/projects`.
+
+            - Owner: `${{ needs.refresh-projects.outputs.owner }}`
+            - Minimum stars: `${{ needs.refresh-projects.outputs.min_stars }}`
+            - Generated file: `src/content/projects/projects.generated.json`
+            - Validation: `node scripts/verify-projects-json-statistics.mjs`, focused Vitest suites, and `pnpm type-check`
+
+            This PR updates only the generated projects metadata consumed by the static-exported Projects page.
+          branch: chore/projects-github-metadata-refresh
+          delete-branch: true

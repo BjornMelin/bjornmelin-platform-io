@@ -63,8 +63,27 @@ We adopt a canonical Projects content pipeline:
 - Safer evolution: generator can add fields without breaking runtime, thanks to `z.looseObject()` and `.catchall(z.unknown())`.
 - Faster UI iteration: presentation changes do not require editing the generated file.
 - Smaller client payload: Client Components receive a pre-normalized model with only needed fields.
+- GitHub repository facts can be refreshed automatically without adding runtime API routes or serverless handlers.
 
 ### Trade-offs
 
 - Requires keeping overrides keyed by stable project `id`.
 - Any schema-breaking generator changes fail fast at build/test time.
+- Repository metrics are current as of the last generated-data refresh, not fetched at request time.
+
+## GitHub metrics refresh
+
+Issue #151 originally proposed live API routes and serverless caching. That design conflicts with this repository's
+mandatory static export deployment. The implemented architecture keeps the same user-facing value with a scheduled
+and manually runnable generation step instead:
+
+- `scripts/refresh-projects-github-metadata.ts` discovers public owner repositories from the GitHub REST API.
+- Repositories with at least five stars are written to `src/content/projects/projects.generated.json`.
+- Existing curated fields, including summaries, architecture notes, recommendations, and overrides, stay under repo
+  review instead of being replaced by API data.
+- Refreshed facts include stars, forks, watchers, topics, default branch, commit count, open pull request count,
+  latest release metadata, and last pushed date.
+- `.github/workflows/projects-github-metadata-refresh.yml` runs the refresh on a weekly schedule or manual dispatch,
+  runs focused checks, and opens a generated-data pull request when the file changes.
+- `pnpm projects:github:check` can be used as a drift check. It compares the checked-in generated file with current
+  GitHub API results while preserving the checked-in `metadata.generated` date.

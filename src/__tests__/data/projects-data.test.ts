@@ -6,6 +6,13 @@ type TestProject = {
   url: string;
   stars: number;
   forks: number;
+  commitCount?: number;
+  openPullRequests?: number;
+  latestRelease?: {
+    tagName: string;
+    url: string;
+    published: string;
+  };
   updated: string;
   topics: string[];
 };
@@ -17,6 +24,13 @@ const baseProjects: TestProject[] = [
     url: "https://github.com/example/project-alpha",
     stars: 50,
     forks: 5,
+    commitCount: 123,
+    openPullRequests: 4,
+    latestRelease: {
+      tagName: "v1.0.0",
+      url: "https://github.com/example/project-alpha/releases/tag/v1.0.0",
+      published: "2025-12-15",
+    },
     updated: "2024-01-01",
     topics: ["alpha"],
   },
@@ -105,5 +119,22 @@ describe("projects data featured fallback", () => {
       .map((project) => project.id)
       .sort();
     expect(featuredIds).toEqual(["project-beta"].sort());
+  });
+
+  it("maps GitHub metrics into the card model", async () => {
+    const projectsData = await loadProjectsData({ overrides: {} });
+
+    expect(projectsData[0]).toEqual(
+      expect.objectContaining({
+        id: "project-alpha",
+        commitCount: 123,
+        openPullRequests: 4,
+        latestRelease: expect.objectContaining({
+          tagName: "v1.0.0",
+          url: "https://github.com/example/project-alpha/releases/tag/v1.0.0",
+          publishedLabel: "Dec 15, 2025",
+        }),
+      }),
+    );
   });
 });

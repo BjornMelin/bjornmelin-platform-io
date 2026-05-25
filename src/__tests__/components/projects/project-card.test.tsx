@@ -51,6 +51,15 @@ describe("<ProjectCard />", () => {
       title: "Stats Project",
       stars: 1200,
       forks: 34,
+      commitCount: 5678,
+      openPullRequests: 9,
+      latestRelease: {
+        tagName: "v2.0.0",
+        name: "v2.0.0",
+        url: "https://github.com/test/stats/releases/tag/v2.0.0",
+        published: "2025-12-15",
+        publishedLabel: "Dec 15, 2025",
+      },
       updatedLabel: "Jan 01, 2026",
     });
 
@@ -58,6 +67,12 @@ describe("<ProjectCard />", () => {
 
     expect(screen.getByText("1,200")).toBeInTheDocument();
     expect(screen.getByText("34")).toBeInTheDocument();
+    expect(screen.getByText("5,678 commits")).toBeInTheDocument();
+    expect(screen.getByText("9 open PRs")).toBeInTheDocument();
+    expect(screen.getByLabelText(/open stats project release v2.0.0/i)).toHaveAttribute(
+      "href",
+      "https://github.com/test/stats/releases/tag/v2.0.0",
+    );
     expect(screen.getByText(/updated jan 01, 2026/i)).toBeInTheDocument();
   });
 

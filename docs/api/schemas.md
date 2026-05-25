@@ -55,6 +55,16 @@ export type ProjectCardModel = {
   docsUrl?: string;
   stars: number;
   forks: number;
+  watchers?: number;
+  commitCount?: number;
+  openPullRequests?: number;
+  latestRelease?: {
+    tagName: string;
+    name?: string;
+    url: string;
+    published: string;
+    publishedLabel: string;
+  };
   language?: string;
   license?: string;
   updatedAt: string;
@@ -74,15 +84,19 @@ Located in `src/lib/schemas/github-projects.ts`:
 ```typescript
 import { z } from "zod";
 
+const httpsUrlSchema = z.url().refine((value) => new URL(value).protocol === "https:");
+
 export const githubProjectsFileSchema = z.looseObject({
   metadata: z.looseObject({ generated: z.string() }),
   projects: z.array(
     z.looseObject({
       id: z.string(),
       name: z.string(),
-      url: z.url(),
+      url: httpsUrlSchema,
       stars: z.int().nonnegative(),
       forks: z.int().nonnegative(),
+      commitCount: z.int().nonnegative().optional(),
+      openPullRequests: z.int().nonnegative().optional(),
       updated: z.string(),
       topics: z.array(z.string()).default([]),
     }),

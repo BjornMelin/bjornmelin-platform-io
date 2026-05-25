@@ -29,6 +29,8 @@
     "test:e2e:report": "playwright show-report",
     "test:e2e:docker": "./scripts/run-e2e-tests.sh",
     "test:e2e:setup": "./scripts/setup-e2e.sh",
+    "projects:github:refresh": "tsx scripts/refresh-projects-github-metadata.ts",
+    "projects:github:check": "tsx scripts/refresh-projects-github-metadata.ts --check",
     "docker:build": "docker build -t platform-io:node24 .",
     "docker:smoke": "./scripts/docker-smoke.sh",
     "docker:verify": "pnpm docker:build && pnpm docker:smoke",

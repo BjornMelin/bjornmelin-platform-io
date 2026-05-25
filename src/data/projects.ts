@@ -74,6 +74,15 @@ const generatedProjects = parsed.projects
 
       stars: project.stars,
       forks: project.forks,
+      watchers: project.watchers,
+      commitCount: project.commitCount,
+      openPullRequests: project.openPullRequests,
+      latestRelease: project.latestRelease
+        ? {
+            ...project.latestRelease,
+            publishedLabel: formatDateLabelUtc(project.latestRelease.published),
+          }
+        : undefined,
       language: project.language ?? undefined,
       license: project.license ?? undefined,
 

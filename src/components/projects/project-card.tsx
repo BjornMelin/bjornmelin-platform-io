@@ -1,4 +1,13 @@
-import { BookOpenText, ExternalLink, FolderGit2, GitFork, Star } from "lucide-react";
+import {
+  BookOpenText,
+  ExternalLink,
+  FolderGit2,
+  GitCommitHorizontal,
+  GitFork,
+  GitPullRequest,
+  Star,
+  Tag,
+} from "lucide-react";
 import Link from "next/link";
 import { ExpandableText } from "@/components/shared/expandable-text";
 import { TechBadge } from "@/components/shared/tech-badge";
@@ -104,6 +113,30 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
             <GitFork className="h-3.5 w-3.5" aria-hidden="true" />
             {project.forks.toLocaleString("en-US")}
           </span>
+          {typeof project.commitCount === "number" ? (
+            <span className="inline-flex items-center gap-1 tabular-nums">
+              <GitCommitHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
+              {project.commitCount.toLocaleString("en-US")} commits
+            </span>
+          ) : null}
+          {typeof project.openPullRequests === "number" ? (
+            <span className="inline-flex items-center gap-1 tabular-nums">
+              <GitPullRequest className="h-3.5 w-3.5" aria-hidden="true" />
+              {project.openPullRequests.toLocaleString("en-US")} open PRs
+            </span>
+          ) : null}
+          {project.latestRelease ? (
+            <Link
+              href={project.latestRelease.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center gap-1 rounded-xs px-1 tabular-nums hover:text-foreground hover:underline focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:min-h-6"
+              aria-label={`Open ${project.title} release ${project.latestRelease.tagName}`}
+            >
+              <Tag className="h-3.5 w-3.5" aria-hidden="true" />
+              {project.latestRelease.tagName}
+            </Link>
+          ) : null}
           <span className="tabular-nums">Updated {project.updatedLabel}</span>
         </div>
       </CardContent>
