@@ -84,6 +84,11 @@ describe("agentSkillsCatalogSchema", () => {
   });
 
   it("rejects non-https catalog source URLs", () => {
+    expect(agentSkillsCatalogSchema.safeParse(buildGeneratedCatalog()).success).toBe(true);
+    expect(
+      agentSkillsCatalogSchema.safeParse(buildGeneratedCatalogWithSourceUrls({})).success,
+    ).toBe(true);
+
     const unsafeSourceRepository = buildGeneratedCatalog({
       sourceRepository: "http://example.com/dev-skills",
     });

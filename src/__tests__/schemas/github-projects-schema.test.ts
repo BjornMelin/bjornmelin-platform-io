@@ -45,6 +45,9 @@ describe("githubProjectsFileSchema", () => {
     });
 
     expect(
+      githubProjectsFileSchema.safeParse(buildGeneratedProjects("https://example.com")).success,
+    ).toBe(true);
+    expect(
       githubProjectsFileSchema.safeParse(buildGeneratedProjects("javascript:alert(1)")).success,
     ).toBe(false);
     expect(
