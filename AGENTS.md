@@ -80,7 +80,8 @@ Infrastructure:
 - Static export mandatory via `output: "export"`.
 - Server Actions, ISR, Draft Mode, request-dependent Route Handlers, other server-runtime-only features MUST NOT be introduced.
 - CSP inline script hashes generated; NOT secrets.
-- `infrastructure/lib/generated/next-inline-script-hashes.ts` MUST NEVER be deleted or edited manually.
+- CSP hash payloads are generated under `.next/csp/` and MUST NOT be committed.
+- `infrastructure/lib/functions/cloudfront/next-csp-response.js` MUST NEVER be edited manually.
 - CSP hashes MUST be regenerated with `pnpm generate:csp-hashes`, usually `pnpm build`.
 - Static export + CSP deployment MUST stay in sync:
   `pnpm build` -> `pnpm -C infrastructure deploy:storage` -> `pnpm deploy:static:prod`.

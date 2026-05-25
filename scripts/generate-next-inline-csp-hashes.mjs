@@ -47,17 +47,18 @@ function computeInlineScriptHashes(html) {
 }
 
 const outDir = path.resolve(readArg("--out-dir") ?? "out");
+const generatedCspDir = ".next/csp";
 const target = path.resolve(
-  readArg("--target") ?? "infrastructure/lib/generated/next-inline-script-hashes.ts",
+  readArg("--target") ?? `${generatedCspDir}/next-inline-script-hashes.ts`,
 );
 const perPathTarget = path.resolve(
-  readArg("--per-path-target") ?? "infrastructure/lib/generated/next-inline-script-hashes.json",
+  readArg("--per-path-target") ?? `${generatedCspDir}/next-inline-script-hashes.json`,
 );
 const perPathJsTarget = path.resolve(
-  readArg("--per-path-js-target") ?? "infrastructure/lib/generated/next-inline-script-hashes.js",
+  readArg("--per-path-js-target") ?? `${generatedCspDir}/next-inline-script-hashes.js`,
 );
 const kvsTarget = path.resolve(
-  readArg("--kvs-target") ?? "infrastructure/lib/generated/next-inline-script-hashes.kvs.json",
+  readArg("--kvs-target") ?? `${generatedCspDir}/next-inline-script-hashes.kvs.json`,
 );
 const functionTarget = path.resolve(
   readArg("--function-target") ?? "infrastructure/lib/functions/cloudfront/next-csp-response.js",

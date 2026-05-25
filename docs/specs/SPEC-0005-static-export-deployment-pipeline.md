@@ -82,8 +82,8 @@ matching `out/` artifacts can cause a blank page due to CSP violations (ADR-0001
 
 - `pnpm build` produces:
   - `out/` containing fully static HTML/CSS/JS/assets
-  - updated `infrastructure/lib/generated/next-inline-script-hashes.ts`
-  - updated `infrastructure/lib/generated/next-inline-script-hashes.kvs.json`
+  - ignored `.next/csp/next-inline-script-hashes.ts`
+  - ignored `.next/csp/next-inline-script-hashes.kvs.json`
   - updated `infrastructure/lib/functions/cloudfront/next-csp-response.js`
 - `deploy.yml` deploys the matching `out/` directory, syncs the CSP hashes KVS, and invalidates CloudFront.
 - Post-deploy smoke check passes (`curl $NEXT_PUBLIC_APP_URL` returns 2xx/3xx).
@@ -107,7 +107,7 @@ pnpm deploy:static:prod
 
 ### Operational guardrails
 
-- Never manually edit `infrastructure/lib/generated/next-inline-script-hashes.ts`.
+- Never commit the ignored `.next/csp/` hash payloads.
 - Do not deploy `prod-portfolio-storage` without a preceding successful build from the same commit.
 - If `deploy.yml` is skipped (docs-only changes), use `manual-deploy.yml` when a site deploy is
   intentionally required.

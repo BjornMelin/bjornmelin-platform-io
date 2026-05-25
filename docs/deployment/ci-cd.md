@@ -50,7 +50,7 @@ CDK stacks do **not** create IAM users or access keys.
 Production is deployed automatically by `.github/workflows/deploy.yml` on merges to `main`. The
 workflow performs the safe sequence to keep the static export and CSP hashes in sync:
 
-1. `pnpm build` (generates `out/` and refreshes CSP artifacts under `infrastructure/lib/generated/`)
+1. `pnpm build` (generates `out/` and ignored per-build CSP payloads under `.next/csp/`)
 2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage` (deploys CloudFront Functions + CSP hashes KVS)
 3. `pnpm deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
 

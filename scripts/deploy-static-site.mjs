@@ -149,7 +149,7 @@ function syncKeyValueStore(kvsArn, desired) {
 const environment = readArg("--env") ?? process.env.PORTFOLIO_ENV ?? "prod";
 const outDir = path.resolve(readArg("--out-dir") ?? "out");
 const kvsPayloadPath = path.resolve(
-  readArg("--kvs-payload") ?? "infrastructure/lib/generated/next-inline-script-hashes.kvs.json",
+  readArg("--kvs-payload") ?? ".next/csp/next-inline-script-hashes.kvs.json",
 );
 const dryRun = hasFlag("--dry-run");
 const invalidationPaths = (readArg("--invalidation-paths") ?? "/*")
