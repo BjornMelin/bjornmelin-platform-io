@@ -1,8 +1,5 @@
 import { z } from "zod";
-
-const httpsUrlSchema = z.url().refine((value) => new URL(value).protocol === "https:", {
-  message: "Expected an https URL.",
-});
+import { httpsUrlSchema } from "@/lib/schemas/https-url";
 
 /** Schema for repository metadata in the generated projects JSON. */
 export const githubProjectsMetadataSchema = z.looseObject({

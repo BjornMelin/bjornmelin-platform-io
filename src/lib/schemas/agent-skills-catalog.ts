@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { httpsUrlSchema } from "@/lib/schemas/https-url";
 
 /** Schema for top-level install commands in the Agent Skills Lab catalog. */
 export const agentSkillsCatalogInstallCommandsSchema = z.looseObject({
@@ -9,8 +10,8 @@ export const agentSkillsCatalogInstallCommandsSchema = z.looseObject({
 
 /** Schema for source URLs attached to a catalogued skill. */
 export const agentSkillsCatalogSourceUrlsSchema = z.looseObject({
-  directory: z.url(),
-  skillMd: z.url(),
+  directory: httpsUrlSchema,
+  skillMd: httpsUrlSchema,
 });
 
 /** Schema for install commands attached to a catalogued skill. */
@@ -65,7 +66,7 @@ export const agentSkillsCatalogSkillSchema = z.looseObject({
 export const agentSkillsCatalogSchema = z.looseObject({
   schemaVersion: z.literal("agent_skills_lab_catalog.v1"),
   generatedAt: z.string().datetime({ offset: true }),
-  sourceRepository: z.url(),
+  sourceRepository: httpsUrlSchema,
   sourceCommit: z.string().regex(/^[0-9a-f]{7,40}$/i),
   skillsCount: z.int().nonnegative(),
   totalSkillDirectories: z.int().nonnegative(),
