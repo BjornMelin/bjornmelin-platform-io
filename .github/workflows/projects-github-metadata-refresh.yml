@@ -100,6 +100,7 @@ jobs:
     needs: refresh-projects
     runs-on: ubuntu-latest
     permissions:
+      # Required to push the generated metadata branch and open or update refresh PRs.
       contents: write
       pull-requests: write
     steps:
@@ -117,10 +118,19 @@ jobs:
       - name: Restore refreshed projects metadata
         run: cp /tmp/projects-generated-metadata/projects.generated.json "${TARGET_PROJECTS_PATH}"
 
+      - name: Require generated-data PR token
+        env:
+          PROJECTS_GITHUB_REFRESH_PR_TOKEN: ${{ secrets.PROJECTS_GITHUB_REFRESH_PR_TOKEN }}
+        run: |
+          if [ -z "${PROJECTS_GITHUB_REFRESH_PR_TOKEN}" ]; then
+            echo "::error::Set PROJECTS_GITHUB_REFRESH_PR_TOKEN to a PAT or GitHub App token with contents:write and pull-requests:write so refresh PRs trigger normal CI."
+            exit 1
+          fi
+
       - name: Create projects metadata refresh pull request
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
         with:
-          token: ${{ secrets.PROJECTS_GITHUB_REFRESH_PR_TOKEN || github.token }}
+          token: ${{ secrets.PROJECTS_GITHUB_REFRESH_PR_TOKEN }}
           add-paths: src/content/projects/projects.generated.json
           commit-message: "chore(projects): refresh generated GitHub metadata"
           title: "chore(projects): refresh generated GitHub metadata"

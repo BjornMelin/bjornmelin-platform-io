@@ -9,8 +9,7 @@ const DEFAULT_MIN_STARS = 5;
 const GITHUB_API_BASE_URL = "https://api.github.com";
 const GITHUB_API_VERSION = "2022-11-28";
 const GITHUB_FETCH_TIMEOUT_MS = 15_000;
-const DISCOVERED_SUMMARY_PLACEHOLDER =
-  "GitHub repository metadata discovered during the automated projects refresh.";
+const REPOSITORY_REFRESH_CONCURRENCY = 4;
 
 type JsonObject = Record<string, unknown>;
 
@@ -57,6 +56,7 @@ export type GitHubRepositoryResponse = {
   stargazers_count: number;
   forks_count: number;
   watchers_count: number;
+  subscribers_count?: number;
   license: { spdx_id?: string | null; name?: string | null } | null;
   language: string | null;
   created_at: string;
@@ -117,6 +117,9 @@ export function parseGitHubRepositoryUrl(repositoryUrl: string): GitHubRepositor
   }
 
   if (parsedUrl.hostname.toLowerCase() !== "github.com") {
+    return null;
+  }
+  if (parsedUrl.protocol !== "https:") {
     return null;
   }
 
@@ -188,9 +191,6 @@ export function applyGitHubProjectMetrics(
   metrics: GitHubProjectMetrics,
 ): JsonObject {
   const nextProject: JsonObject = { ...project };
-  if (nextProject.summary === DISCOVERED_SUMMARY_PLACEHOLDER) {
-    delete nextProject.summary;
-  }
   nextProject.name = metrics.name;
   nextProject.url = metrics.url;
   nextProject.stars = metrics.stars;
@@ -300,7 +300,7 @@ export async function refreshProjectsDocument(
   const seedsById = new Map(repositorySeeds.map((seed) => [seed.repo, seed]));
   const refreshedProjectIds = new Set<string>();
   const refreshedProjects: JsonObject[] = [];
-  const existingRefreshes: Promise<JsonObject | null>[] = [];
+  const existingRefreshes: { project: JsonObject; seed: GitHubRepositorySeed }[] = [];
 
   for (const existingProject of existingProjects) {
     const id = typeof existingProject.id === "string" ? existingProject.id : undefined;
@@ -312,30 +312,36 @@ export async function refreshProjectsDocument(
       continue;
     }
     refreshedProjectIds.add(id);
-    existingRefreshes.push(
-      refreshProjectFromSeed(existingProject, seed, options.minStars, options.fetchMetrics),
-    );
+    existingRefreshes.push({ project: existingProject, seed });
   }
 
-  for (const project of await Promise.all(existingRefreshes)) {
+  for (const project of await mapWithConcurrency(
+    existingRefreshes,
+    REPOSITORY_REFRESH_CONCURRENCY,
+    ({ project, seed }) =>
+      refreshProjectFromSeed(project, seed, options.minStars, options.fetchMetrics),
+  )) {
     if (project) {
       refreshedProjects.push(project);
     }
   }
 
-  const discoveredRefreshes: Promise<JsonObject | null>[] = [];
+  const discoveredRefreshes: { project: JsonObject; seed: GitHubRepositorySeed }[] = [];
   for (const seed of repositorySeeds) {
     if (refreshedProjectIds.has(seed.repo)) {
       continue;
     }
     const id = seed.repo;
     const existingProject = projectsById.get(id) ?? buildDiscoveredProject(seed);
-    discoveredRefreshes.push(
-      refreshProjectFromSeed(existingProject, seed, options.minStars, options.fetchMetrics),
-    );
+    discoveredRefreshes.push({ project: existingProject, seed });
   }
 
-  for (const project of await Promise.all(discoveredRefreshes)) {
+  for (const project of await mapWithConcurrency(
+    discoveredRefreshes,
+    REPOSITORY_REFRESH_CONCURRENCY,
+    ({ project, seed }) =>
+      refreshProjectFromSeed(project, seed, options.minStars, options.fetchMetrics),
+  )) {
     if (project) {
       refreshedProjects.push(project);
     }
@@ -373,6 +379,28 @@ async function refreshProjectFromSeed(
   }
 
   return applyGitHubProjectMetrics(project, metrics);
+}
+
+async function mapWithConcurrency<TItem, TResult>(
+  items: TItem[],
+  concurrency: number,
+  mapper: (item: TItem) => Promise<TResult>,
+): Promise<TResult[]> {
+  const results = new Array<TResult>(items.length);
+  let nextIndex = 0;
+  const workerCount = Math.min(concurrency, items.length);
+
+  await Promise.all(
+    Array.from({ length: workerCount }, async () => {
+      while (nextIndex < items.length) {
+        const currentIndex = nextIndex;
+        nextIndex += 1;
+        results[currentIndex] = await mapper(items[currentIndex] as TItem);
+      }
+    }),
+  );
+
+  return results;
 }
 
 function readNonnegativeInteger(value: unknown): number {
@@ -424,7 +452,7 @@ function buildRateLimitMessage(headers: Headers): string {
 async function fetchGitHubJson<T>(
   pathName: string,
   token: string | undefined,
-  options: { allowNotFound?: boolean } = {},
+  options: { allowNotFound?: boolean; allowConflict?: boolean } = {},
 ): Promise<GitHubApiResult<T> | null> {
   const response = await fetch(`${GITHUB_API_BASE_URL}${pathName}`, {
     headers: buildGitHubHeaders(token),
@@ -433,6 +461,9 @@ async function fetchGitHubJson<T>(
   const responseText = await response.text();
 
   if (response.status === 404 && options.allowNotFound) {
+    return null;
+  }
+  if (response.status === 409 && options.allowConflict) {
     return null;
   }
 
@@ -496,8 +527,14 @@ async function fetchAllUserRepositories(
   return repositories;
 }
 
-async function fetchCount(pathName: string, token: string | undefined): Promise<number> {
-  const result = await fetchGitHubJson<unknown[]>(pathName, token);
+async function fetchCount(
+  pathName: string,
+  token: string | undefined,
+  options: { allowConflictAsZero?: boolean } = {},
+): Promise<number> {
+  const result = await fetchGitHubJson<unknown[]>(pathName, token, {
+    allowConflict: options.allowConflictAsZero,
+  });
   if (!result) {
     return 0;
   }
@@ -508,25 +545,35 @@ async function fetchCount(pathName: string, token: string | undefined): Promise<
   );
 }
 
-async function fetchProjectMetrics(
+/**
+ * Fetch current GitHub repository metrics for one generated project seed.
+ *
+ * @param seed - Repository seed discovered from the owner repository listing.
+ * @param token - Optional GitHub API bearer token.
+ * @returns GitHub metrics ready to merge into generated projects data.
+ * @throws Error - When GitHub API requests fail.
+ */
+export async function fetchProjectMetrics(
   seed: GitHubRepositorySeed,
   token: string | undefined,
 ): Promise<GitHubProjectMetrics> {
   const owner = encodeURIComponent(seed.owner);
   const repo = encodeURIComponent(seed.repo);
-  const repositoryData = seed.repository;
-  const [commitCount, openPullRequests, latestReleaseResult] = await Promise.all([
+  const [repositoryResult, commitCount, openPullRequests, latestReleaseResult] = await Promise.all([
+    fetchGitHubJson<GitHubRepositoryResponse>(`/repos/${owner}/${repo}`, token),
     fetchCount(
       `/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(
-        repositoryData.default_branch,
+        seed.repository.default_branch,
       )}&per_page=1`,
       token,
+      { allowConflictAsZero: true },
     ),
     fetchCount(`/repos/${owner}/${repo}/pulls?state=open&per_page=1`, token),
     fetchGitHubJson<GitHubReleaseResponse>(`/repos/${owner}/${repo}/releases/latest`, token, {
       allowNotFound: true,
     }),
   ]);
+  const repositoryData = repositoryResult?.data ?? seed.repository;
 
   const latestRelease = latestReleaseResult
     ? buildLatestReleaseMetadata(latestReleaseResult.data)
@@ -537,7 +584,7 @@ async function fetchProjectMetrics(
     url: repositoryData.html_url,
     stars: repositoryData.stargazers_count,
     forks: repositoryData.forks_count,
-    watchers: repositoryData.watchers_count,
+    watchers: repositoryData.subscribers_count ?? 0,
     license: normalizeLicense(repositoryData.license),
     language: repositoryData.language,
     created: toDateOnly(repositoryData.created_at) ?? repositoryData.created_at,
@@ -545,7 +592,7 @@ async function fetchProjectMetrics(
       toDateOnly(repositoryData.pushed_at ?? repositoryData.updated_at) ??
       repositoryData.updated_at,
     description: normalizeOptionalString(repositoryData.description),
-    homepage: normalizeOptionalString(repositoryData.homepage),
+    homepage: normalizeOptionalHttpsUrl(repositoryData.homepage),
     topics: [...(repositoryData.topics ?? [])].sort((a, b) =>
       a.localeCompare(b, undefined, { sensitivity: "base" }),
     ),
@@ -580,6 +627,20 @@ function normalizeLicense(license: GitHubRepositoryResponse["license"]): string 
 function normalizeOptionalString(value: string | null | undefined): string | undefined {
   const normalized = value?.trim();
   return normalized ? normalized : undefined;
+}
+
+function normalizeOptionalHttpsUrl(value: string | null | undefined): string | undefined {
+  const normalized = normalizeOptionalString(value);
+  if (!normalized) {
+    return undefined;
+  }
+
+  try {
+    const url = new URL(normalized);
+    return url.protocol === "https:" ? url.toString() : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function defaultProjectsFilePath(): string {

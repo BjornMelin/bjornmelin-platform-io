@@ -25,6 +25,7 @@ The Projects page is built from a generated dataset checked into the repo.
 - Refresh script: `pnpm projects:github:refresh`
 - Drift check: `pnpm projects:github:check`
 - Required token: `PROJECTS_GITHUB_REFRESH_TOKEN`, `GH_TOKEN`, or `GITHUB_TOKEN`
+- Scheduled PR token: `PROJECTS_GITHUB_REFRESH_PR_TOKEN` with `contents: write` and `pull-requests: write`
 - Optional local fallback: pass `--allow-unauthenticated` for low-volume manual checks.
 
 The refresh discovers public `BjornMelin` owner repositories from GitHub, keeps repositories with at least five stars,

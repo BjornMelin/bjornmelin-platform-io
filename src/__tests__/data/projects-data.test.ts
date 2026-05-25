@@ -123,8 +123,10 @@ describe("projects data featured fallback", () => {
 
   it("maps GitHub metrics into the card model", async () => {
     const projectsData = await loadProjectsData({ overrides: {} });
+    const projectAlpha = projectsData.find((project) => project.id === "project-alpha");
 
-    expect(projectsData[0]).toEqual(
+    expect(projectAlpha).toBeDefined();
+    expect(projectAlpha).toEqual(
       expect.objectContaining({
         id: "project-alpha",
         commitCount: 123,

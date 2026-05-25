@@ -1,7 +1,8 @@
-/* @vitest-environment node */
-import { describe, expect, it } from "vitest";
+/* @vitest-environment jsdom */
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   applyGitHubProjectMetrics,
+  fetchProjectMetrics,
   type GitHubProjectMetrics,
   type GitHubRepositoryResponse,
   type GitHubRepositorySeed,
@@ -19,6 +20,7 @@ const repositoryResponse: GitHubRepositoryResponse = {
   stargazers_count: 50,
   forks_count: 5,
   watchers_count: 50,
+  subscribers_count: 7,
   license: { spdx_id: "MIT" },
   language: "TypeScript",
   created_at: "2024-01-01T00:00:00Z",
@@ -36,7 +38,7 @@ function buildMetrics(seed: GitHubRepositorySeed): GitHubProjectMetrics {
     url: seed.repository.html_url,
     stars: seed.repository.stargazers_count,
     forks: seed.repository.forks_count,
-    watchers: seed.repository.watchers_count,
+    watchers: seed.repository.subscribers_count ?? 0,
     license: seed.repository.license?.spdx_id ?? null,
     language: seed.repository.language,
     created: "2024-01-01",
@@ -56,11 +58,16 @@ function buildMetrics(seed: GitHubRepositorySeed): GitHubProjectMetrics {
 }
 
 describe("refresh projects GitHub metadata", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("parses GitHub repository URLs", () => {
     expect(parseGitHubRepositoryUrl("https://github.com/BjornMelin/example.git")).toEqual({
       owner: "BjornMelin",
       repo: "example",
     });
+    expect(parseGitHubRepositoryUrl("http://github.com/BjornMelin/example")).toBeNull();
     expect(parseGitHubRepositoryUrl("https://example.com/BjornMelin/example")).toBeNull();
   });
 
@@ -178,4 +185,84 @@ describe("refresh projects GitHub metadata", () => {
       }),
     );
   });
+
+  it("limits concurrent repository refreshes while preserving generated order", async () => {
+    let activeRefreshes = 0;
+    let maxActiveRefreshes = 0;
+    const repositorySeeds = Array.from({ length: 8 }, (_, index) => {
+      const repo = `project-${index}`;
+      return {
+        owner: "example",
+        repo,
+        repository: {
+          ...repositoryResponse,
+          name: repo,
+          html_url: `https://github.com/example/${repo}`,
+        },
+      };
+    });
+
+    const refreshed = await refreshProjectsDocument(
+      { metadata: {}, projects: [], statistics: {} },
+      {
+        generatedDate: "2026-05-25",
+        owner: "example",
+        minStars: 5,
+        listRepositories: async () => repositorySeeds,
+        fetchMetrics: async (seed) => {
+          activeRefreshes += 1;
+          maxActiveRefreshes = Math.max(maxActiveRefreshes, activeRefreshes);
+          await new Promise((resolve) => setTimeout(resolve, 0));
+          activeRefreshes -= 1;
+          return buildMetrics(seed);
+        },
+      },
+    );
+
+    expect(maxActiveRefreshes).toBeLessThanOrEqual(4);
+    expect(refreshed.projects?.map((project) => project.id)).toEqual(
+      repositorySeeds.map((seed) => seed.repo),
+    );
+  });
+
+  it("handles empty repositories and sanitizes optional GitHub URLs", async () => {
+    const fetchMock = vi.fn(async (input: Parameters<typeof fetch>[0]) => {
+      const url = String(input);
+      if (url.endsWith("/repos/example/project-alpha")) {
+        return jsonResponse({
+          ...repositoryResponse,
+          homepage: "http://example.com/plain-http",
+          subscribers_count: 3,
+        });
+      }
+      if (url.includes("/repos/example/project-alpha/commits?")) {
+        return jsonResponse({ message: "Git Repository is empty." }, { status: 409 });
+      }
+      if (url.includes("/repos/example/project-alpha/pulls?")) {
+        return jsonResponse([]);
+      }
+      if (url.endsWith("/repos/example/project-alpha/releases/latest")) {
+        return jsonResponse({ message: "Not Found" }, { status: 404 });
+      }
+      throw new Error(`Unexpected GitHub request: ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const metrics = await fetchProjectMetrics(
+      { owner: "example", repo: "project-alpha", repository: repositoryResponse },
+      "test-token",
+    );
+
+    expect(metrics.commitCount).toBe(0);
+    expect(metrics.watchers).toBe(3);
+    expect(metrics.homepage).toBeUndefined();
+  });
 });
+
+function jsonResponse(data: unknown, init: ResponseInit = {}): Response {
+  return new Response(JSON.stringify(data), {
+    status: init.status ?? 200,
+    statusText: init.statusText,
+    headers: { "content-type": "application/json" },
+  });
+}

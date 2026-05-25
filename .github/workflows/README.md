@@ -39,10 +39,11 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
    - Features: refreshes `src/content/projects/projects.generated.json` from public GitHub repository metrics,
      validates generated statistics, runs focused projects tests plus type-check, and opens or updates a generated-data
      PR
-   - Optional secrets:
+   - Required secret for generated-data PRs:
+     - `PROJECTS_GITHUB_REFRESH_PR_TOKEN` with `contents: write` and `pull-requests: write`; use a PAT or GitHub App
+       token so created PRs trigger standard CI
+   - Optional secret:
      - `PROJECTS_GITHUB_REFRESH_TOKEN` for authenticated GitHub API refreshes beyond the default workflow token
-     - `PROJECTS_GITHUB_REFRESH_PR_TOKEN` with `contents: write` and `pull-requests: write` if auto-created PRs should
-       trigger standard PR CI workflows instead of relying only on the refresh workflow's focused checks
 
 6. **release-please.yml** - Automated semantic versioning and releases
    - Runs on: Push to main
@@ -243,6 +244,7 @@ Add these badges to your README:
 
 | Day | Workflow | Time (UTC) |
 | --- | -------- | ---------- |
+| Monday (weekly) | projects-github-metadata-refresh.yml | 09:00 |
 | 1st | stale.yml | 00:00 |
 | 1st | dependency-update.yml | 09:00 |
 | 8th | link-check.yml | 04:00 |
