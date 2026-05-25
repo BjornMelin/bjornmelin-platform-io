@@ -16,7 +16,7 @@ describe("githubProjectsFileSchema", () => {
       expect.objectContaining({
         id: expect.any(String),
         name: expect.any(String),
-        url: expect.stringMatching(/^https?:\/\//),
+        url: expect.stringMatching(/^https:\/\//),
         stars: expect.any(Number),
         forks: expect.any(Number),
         updated: expect.any(String),
