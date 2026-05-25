@@ -29,6 +29,9 @@ jobs:
       - name: Install infrastructure dependencies
         run: pnpm -C infrastructure install --frozen-lockfile
 
+      - name: Verify Node type dependency boundary
+        run: pnpm deps:check-node-types
+
       - name: Check for updates
         id: check-updates
         run: |
@@ -106,6 +109,9 @@ jobs:
 
           # Update non-major infrastructure versions without traversing unrelated directories.
           pnpm -C infrastructure update
+
+          # Keep @types/node on the current repository Node major.
+          pnpm deps:check-node-types
 
           # Verify both lockfiles remain reproducible.
           pnpm install --frozen-lockfile

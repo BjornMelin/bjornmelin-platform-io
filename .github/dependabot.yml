@@ -8,6 +8,10 @@ updates:
       day: "monday"
       time: "04:00"
     open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "@types/node"
+        versions:
+          - ">=25.0.0"
     groups:
       production-dependencies:
         applies-to: version-updates
@@ -39,6 +43,10 @@ updates:
       day: "monday"
       time: "04:30"
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "@types/node"
+        versions:
+          - ">=25.0.0"
     groups:
       infrastructure-production-dependencies:
         applies-to: version-updates

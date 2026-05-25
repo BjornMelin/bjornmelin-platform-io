@@ -34,7 +34,7 @@ importers:
         specifier: 8.10.161
         version: 8.10.161
       '@types/node':
-        specifier: ~24.12.4
+        specifier: ^24.0.0
         version: 24.12.4
       aws-cdk:
         specifier: 2.1124.1
