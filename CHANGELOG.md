@@ -2,6 +2,31 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.9.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.8.0...v3.9.0) (2026-05-25)
+
+
+### Features
+
+* **agent-skills:** add Agent Skills Lab marketplace ([#316](https://github.com/BjornMelin/bjornmelin-platform-io/issues/316)) ([c9da0f8](https://github.com/BjornMelin/bjornmelin-platform-io/commit/c9da0f87fbd508f1031d62693d9c033036a50ce5))
+* **projects:** refresh docmind-ai-llm project metadata ([3f89e09](https://github.com/BjornMelin/bjornmelin-platform-io/commit/3f89e09088633d34945e40ffa506f96e27fad969))
+
+
+### Bug Fixes
+
+* **deps:** clear current security advisories ([#320](https://github.com/BjornMelin/bjornmelin-platform-io/issues/320)) ([441f38f](https://github.com/BjornMelin/bjornmelin-platform-io/commit/441f38f2e96f529943c0232a88b05b6f185bd349))
+* **infra:** keep honeypot guard compatible with infra build ([6f6ed97](https://github.com/BjornMelin/bjornmelin-platform-io/commit/6f6ed97e678a13c7e65aec31bc662e9aef800b82))
+* **metadata:** align structured data canonical url ([a670ea7](https://github.com/BjornMelin/bjornmelin-platform-io/commit/a670ea741808c6abe29abc7f48aa65325743001c))
+* **metadata:** align structured data canonical URL ([cc67cc9](https://github.com/BjornMelin/bjornmelin-platform-io/commit/cc67cc9fd8c32f924ed61fcf38caac5b1a17c41d))
+* **metadata:** document json-ld suppression scope ([f553121](https://github.com/BjornMelin/bjornmelin-platform-io/commit/f5531219dbd07b1e7da17afbb3b936ccdc644563))
+* **metadata:** preserve social preview images ([df0cb40](https://github.com/BjornMelin/bjornmelin-platform-io/commit/df0cb405e89daa7348847648ba8137e46681c801))
+* **security:** address deploy contract review ([d317929](https://github.com/BjornMelin/bjornmelin-platform-io/commit/d317929397af5e7504cc3ef58cf2bba17386c4ba))
+* **security:** close deploy review blockers ([63bcd62](https://github.com/BjornMelin/bjornmelin-platform-io/commit/63bcd6253ca4a32b2bdcfa678a04ba6bba1443c6))
+* **security:** close workflow and rate-limit review gaps ([4efb8bb](https://github.com/BjornMelin/bjornmelin-platform-io/commit/4efb8bbef659d8659cdff035e0285c95fcb7a7a9))
+* **security:** harden contact and deploy contracts ([689a424](https://github.com/BjornMelin/bjornmelin-platform-io/commit/689a424cf52930e15b114cce004491dc2300f274))
+* **security:** harden contact and deploy contracts ([c366b8f](https://github.com/BjornMelin/bjornmelin-platform-io/commit/c366b8f5b6d7843386a9ea7aaba4dd7cbb3bcfdc))
+* **ui:** tighten accessibility and metadata ([69acc39](https://github.com/BjornMelin/bjornmelin-platform-io/commit/69acc3950817e9ff613625f152786416e7a4b02c))
+* **ui:** tighten accessibility and metadata ([32dbc8f](https://github.com/BjornMelin/bjornmelin-platform-io/commit/32dbc8f0987dda86493ace0fb6b2dc0b30014d40))
+
 ## [3.8.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.7.1...v3.8.0) (2026-04-19)
 
 
