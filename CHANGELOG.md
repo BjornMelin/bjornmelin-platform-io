@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.10.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.9.0...v3.10.0) (2026-05-25)
+
+
+### Features
+
+* **projects:** automate GitHub metadata refresh ([#337](https://github.com/BjornMelin/bjornmelin-platform-io/issues/337)) ([f98b566](https://github.com/BjornMelin/bjornmelin-platform-io/commit/f98b5663aa30b07c41ae7275fa0e2e932064327d))
+
+
+### Bug Fixes
+
+* **security:** require https generated source urls ([5219aa6](https://github.com/BjornMelin/bjornmelin-platform-io/commit/5219aa6ed1d3abbd604a59d9443c2e69c028ddb6))
+
 ## [3.9.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.8.0...v3.9.0) (2026-05-25)
 
 
