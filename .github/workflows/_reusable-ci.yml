@@ -33,6 +33,9 @@ jobs:
         with:
           install: 'true'
 
+      - name: Verify Node type dependency boundary
+        run: pnpm deps:check-node-types
+
       - name: Run Biome linting
         run: pnpm lint
 

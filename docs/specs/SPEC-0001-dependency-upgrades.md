@@ -114,6 +114,9 @@ This baseline also removes unused dependencies to reduce the operational surface
 - Keep `@types/node` on the latest `24.x` release while the repository engine
   remains `>=24 <25`; `25.x` is intentionally left out of scope until the Node
   engine policy changes.
+- `pnpm deps:check-node-types` enforces that the root and infrastructure
+  manifests keep `@types/node` range-bound to the Node major pinned in `.nvmrc`;
+  Dependabot ignores `@types/node` `25.x` while the repo stays on Node 24.
 
 ## Failure modes and mitigation
 
