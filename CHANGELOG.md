@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.10.1](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.10.0...v3.10.1) (2026-05-25)
+
+
+### Bug Fixes
+
+* **csp:** keep hash payloads untracked ([4f96cde](https://github.com/BjornMelin/bjornmelin-platform-io/commit/4f96cdefe41eb474173089da274b5bfa8b4eeda9))
+
 ## [3.10.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.9.0...v3.10.0) (2026-05-25)
 
 
