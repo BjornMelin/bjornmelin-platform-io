@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+const httpsUrlSchema = z.url().refine((value) => new URL(value).protocol === "https:", {
+  message: "Expected an https URL.",
+});
+
 /** Schema for repository metadata in the generated projects JSON. */
 export const githubProjectsMetadataSchema = z.looseObject({
   generated: z.iso.date(),
@@ -14,16 +18,28 @@ export const githubProjectsMetadataSchema = z.looseObject({
 export const githubProjectSchema = z.looseObject({
   id: z.string(),
   name: z.string(),
-  url: z.url(),
+  url: httpsUrlSchema,
   stars: z.int().nonnegative(),
   forks: z.int().nonnegative(),
   updated: z.iso.date(),
   topics: z.array(z.string()).default(() => []),
 
   // Optional fields used for UI enrichment.
+  watchers: z.int().nonnegative().optional(),
+  defaultBranch: z.string().optional(),
+  commitCount: z.int().nonnegative().optional(),
+  openPullRequests: z.int().nonnegative().optional(),
+  latestRelease: z
+    .object({
+      tagName: z.string(),
+      name: z.string().optional(),
+      url: httpsUrlSchema,
+      published: z.iso.date(),
+    })
+    .optional(),
   description: z.string().optional(),
   summary: z.string().optional(),
-  homepage: z.preprocess((value) => (value === "" ? undefined : value), z.url().optional()),
+  homepage: z.preprocess((value) => (value === "" ? undefined : value), httpsUrlSchema.optional()),
   license: z.string().nullable().optional(),
   language: z.string().nullable().optional(),
 

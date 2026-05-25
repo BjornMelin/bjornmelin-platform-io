@@ -10,6 +10,16 @@ export type ProjectCardModel = {
 
   stars: number;
   forks: number;
+  watchers?: number;
+  commitCount?: number;
+  openPullRequests?: number;
+  latestRelease?: {
+    tagName: string;
+    name?: string;
+    url: string;
+    published: string;
+    publishedLabel: string;
+  };
   language?: string;
   license?: string;
 

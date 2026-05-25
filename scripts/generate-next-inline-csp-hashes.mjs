@@ -113,7 +113,7 @@ fs.mkdirSync(path.dirname(perPathTarget), { recursive: true });
 fs.writeFileSync(perPathTarget, `${JSON.stringify(perPathHashesSha, null, 2)}\n`, "utf8");
 
 const hashIndexByDigest = new Map(hashes.map((hash, idx) => [hash, idx]));
-const hashChunkSize = 16;
+const hashChunkSize = 8;
 const hashChunkEntries = [];
 for (let start = 0; start < hashes.length; start += hashChunkSize) {
   const chunkIndex = start / hashChunkSize;

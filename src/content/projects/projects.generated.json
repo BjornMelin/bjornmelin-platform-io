@@ -1,24 +1,24 @@
 {
   "metadata": {
     "description": "Comprehensive reference for all public GitHub repositories with 5+ stars",
-    "generated": "2026-01-17",
-    "totalRepositories": 17,
+    "generated": "2026-05-25",
+    "totalRepositories": 20,
     "author": "Bjorn Melin",
-    "updateFrequency": "As-needed",
-    "source": "GitHub API + Repository Documentation Analysis"
+    "updateFrequency": "Weekly via GitHub Actions or manually as needed",
+    "source": "GitHub REST API repository discovery and metrics refresh plus curated repository documentation analysis"
   },
   "projects": [
     {
       "id": "ai-docs-vector-db-hybrid-scraper",
       "name": "ai-docs-vector-db-hybrid-scraper",
       "url": "https://github.com/BjornMelin/ai-docs-vector-db-hybrid-scraper",
-      "stars": 8,
-      "forks": 2,
-      "watchers": 8,
+      "stars": 11,
+      "forks": 4,
+      "watchers": 2,
       "license": "MIT",
       "language": "Python",
       "created": "2025-05-22",
-      "updated": "2026-01-01",
+      "updated": "2026-03-31",
       "description": "Retrieval-augmented docs ingestion stack: Firecrawl + Crawl4AI + Qdrant vector search with FastAPI and MCP interfaces for AI engineers.",
       "summary": "Production-ready documentation ingestion and retrieval system combining multi-tier crawling orchestration (HTTP, Crawl4AI, browser-use, Playwright, Firecrawl) with hybrid retrieval using dense embeddings + BM25 sparse signals. Exposes FastAPI REST and FastMCP server interfaces.",
       "keyFeatures": [
@@ -67,20 +67,23 @@
         "rag",
         "retrieval-augmented-generation",
         "vector-search"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 1482,
+      "openPullRequests": 7
     },
     {
       "id": "ai-job-scraper",
       "name": "ai-job-scraper",
       "url": "https://github.com/BjornMelin/ai-job-scraper",
-      "stars": 14,
-      "forks": 3,
-      "watchers": 14,
+      "stars": 32,
+      "forks": 12,
+      "watchers": 0,
       "license": "MIT",
       "language": "Python",
       "created": "2025-07-29",
-      "updated": "2026-01-09",
-      "description": "Privacy-focused AI job scraper with local storage, interactive dashboard. Auto-scrapes AI/ML roles using ScrapeGraph-AI + LLM. Built for developers seeking AI careers.",
+      "updated": "2025-08-28",
+      "description": "🕵️‍♂️ Privacy-focused AI job scraper, local storage, and interactive dashboard. Auto-scrapes AI/ML roles from top companies using ScrapeGraph-AI + LLM and LangGraph Agents, filters for relevance, and provides a Streamlit UI for tracking applications. Built for developers seeking AI careers.",
       "summary": "Well-documented, production-ready local-first job search automation tool using 2-tier scraping (JobSpy + ScrapeGraphAI), Qwen3-4B-Instruct-2507-FP8 local LLM, SQLite + DuckDB analytics, and Streamlit UI. Achieves 92.8% code reduction through library-first architecture.",
       "keyFeatures": [
         "Local-first AI with Qwen3-4B-Instruct-2507 on RTX 4090",
@@ -133,24 +136,35 @@
         "docker",
         "job-scraper",
         "job-search",
+        "job-tracking",
+        "llm-extraction",
+        "local-first",
+        "modular",
+        "open-source",
         "privacy-focused",
         "python",
-        "streamlit"
-      ]
+        "scrapegraphai",
+        "sqlite",
+        "streamlit",
+        "web-scraping"
+      ],
+      "defaultBranch": "main",
+      "commitCount": 425,
+      "openPullRequests": 0
     },
     {
       "id": "bjornmelin-platform-io",
       "name": "bjornmelin-platform-io",
       "url": "https://github.com/BjornMelin/bjornmelin-platform-io",
-      "stars": 22,
-      "forks": 3,
-      "watchers": 22,
+      "stars": 21,
+      "forks": 4,
+      "watchers": 1,
       "license": "MIT",
       "language": "TypeScript",
       "created": "2024-11-16",
-      "updated": "2026-01-17",
+      "updated": "2026-05-25",
       "homepage": "https://bjornmelin.io/",
-      "description": "Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutions architecture through microservices, serverless APIs, and infrastructure as code.",
+      "description": "Cloud-native portfolio platform powering bjornmelin.io. Demonstrates AWS solutions architecture through microservices, serverless APIs, and infrastructure as code. Built with Next.js, AWS CDK, and modern DevOps practices.",
       "summary": "Production-ready Next.js 16 portfolio and solutions architecture showcase integrating AWS CDK infrastructure, serverless APIs, static export with CloudFront/Route53. Features comprehensive documentation, AGENTS.md guidelines, and static export + CSP management.",
       "keyFeatures": [
         "Next.js 16 with static export deployment",
@@ -186,35 +200,47 @@
       "topics": [
         "aws",
         "aws-cdk",
-        "aws-cognito",
         "cicd",
         "cloud-architecture",
         "cloudfront",
-        "containerization",
-        "devops",
         "dynamodb",
         "github-actions",
         "infrastructure-as-code",
         "microservices",
         "nextjs",
+        "node-js",
         "portfolio-website",
-        "solutions-architecture",
+        "react",
+        "resend-email",
+        "route53",
+        "s3-website",
+        "shadcn-ui",
         "tailwindcss",
-        "typescript"
-      ]
+        "typescript",
+        "zod-v4"
+      ],
+      "defaultBranch": "main",
+      "commitCount": 633,
+      "openPullRequests": 1,
+      "latestRelease": {
+        "tagName": "v3.9.0",
+        "name": "v3.9.0",
+        "url": "https://github.com/BjornMelin/bjornmelin-platform-io/releases/tag/v3.9.0",
+        "published": "2026-05-25"
+      }
     },
     {
       "id": "crawl4ai-mcp-server",
       "name": "crawl4ai-mcp-server",
       "url": "https://github.com/BjornMelin/crawl4ai-mcp-server",
-      "stars": 19,
-      "forks": 12,
-      "watchers": 19,
+      "stars": 28,
+      "forks": 14,
+      "watchers": 1,
       "license": null,
       "language": "TypeScript",
       "created": "2025-05-04",
-      "updated": "2025-12-31",
-      "description": "High-performance MCP Server for Crawl4AI - Enable AI assistants to access web scraping, crawling, and deep research via Model Context Protocol.",
+      "updated": "2026-01-01",
+      "description": "🚀 High-performance MCP Server for Crawl4AI - Enable AI assistants to access web scraping, crawling, and deep research via Model Context Protocol. Faster and more efficient than FireCrawl!",
       "summary": "TypeScript-based MCP server for integrating Crawl4AI web scraping capabilities with AI assistants. Under development with architecture planning for migration from Firecrawl API to proper Crawl4AI integration. Designed for CloudFlare Workers deployment.",
       "keyFeatures": [
         "Single webpage scraping",
@@ -262,27 +288,23 @@
         "branches": "feature/ or fix/ prefix"
       },
       "status": "Active Development",
-      "topics": [
-        "crawl4ai",
-        "mcp",
-        "mcp-server",
-        "web-scraping",
-        "cloudflare-workers",
-        "ai-assistant"
-      ]
+      "topics": [],
+      "defaultBranch": "main",
+      "commitCount": 51,
+      "openPullRequests": 1
     },
     {
       "id": "dev-pro-agents",
       "name": "dev-pro-agents",
       "url": "https://github.com/BjornMelin/dev-pro-agents",
-      "stars": 5,
-      "forks": 5,
-      "watchers": 5,
+      "stars": 10,
+      "forks": 6,
+      "watchers": 0,
       "license": "MIT",
       "language": "Python",
       "created": "2025-08-04",
-      "updated": "2025-12-16",
-      "description": "Advanced multi-agent orchestration framework built with LangGraph - Coordinate specialized AI agents for autonomous development, research, testing, and documentation workflows.",
+      "updated": "2025-08-04",
+      "description": "🤖 Advanced multi-agent orchestration framework built with LangGraph - Coordinate specialized AI agents for autonomous development, research, testing, and documentation workflows with intelligent task routing and real-time collaboration",
       "summary": "Production-ready multi-agent orchestration system using LangGraph Supervisor, Pydantic v2.11.7, and SQLModel. Achieved 91.8% code reduction through library-first refactoring with comprehensive planning documentation across 11 planning documents.",
       "keyFeatures": [
         "Dynamic agent discovery and registration",
@@ -357,7 +379,10 @@
         "task-management",
         "testing-automation",
         "workflow-orchestration"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 3,
+      "openPullRequests": 0
     },
     {
       "id": "docmind-ai-llm",
@@ -365,12 +390,12 @@
       "url": "https://github.com/BjornMelin/docmind-ai-llm",
       "stars": 128,
       "forks": 22,
-      "watchers": 128,
+      "watchers": 5,
       "license": "MIT",
       "language": "Python",
       "created": "2025-01-21",
-      "updated": "2026-01-16",
-      "description": "Offline-first Streamlit application with LlamaIndex, LangGraph, and local LLMs (Ollama, LMStudio, llama.cpp, vLLM) for advanced document analysis.",
+      "updated": "2026-05-20",
+      "description": "DocMind AI is a powerful, open-source Streamlit application leveraging LlamaIndex, LangGraph, and local Large Language Models (LLMs) via Ollama, LMStudio, llama.cpp, or vLLM for advanced document analysis. Analyze, summarize, and extract insights from a wide array of file formats, securely and privately, all offline.",
       "summary": "Most-starred repository (128 stars). Comprehensive offline-first document analysis system with Qwen3-4B-Instruct-2507-FP8, 128K context window, 5-agent LangGraph supervisor, hybrid retrieval, GraphRAG support, and extensive documentation (37+ specs, 48+ ADRs).",
       "keyFeatures": [
         "Offline-first operation with zero cloud dependency",
@@ -441,20 +466,30 @@
         "torch",
         "transformers",
         "vllm"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 1392,
+      "openPullRequests": 11,
+      "homepage": "https://github.com/BjornMelin/docmind-ai-llm",
+      "latestRelease": {
+        "tagName": "v0.9.0",
+        "name": "v0.9.0",
+        "url": "https://github.com/BjornMelin/docmind-ai-llm/releases/tag/v0.9.0",
+        "published": "2026-05-01"
+      }
     },
     {
       "id": "github-copilot-proxy",
       "name": "github-copilot-proxy",
       "url": "https://github.com/BjornMelin/github-copilot-proxy",
-      "stars": 29,
-      "forks": 6,
-      "watchers": 29,
+      "stars": 47,
+      "forks": 8,
+      "watchers": 2,
       "license": "MIT",
       "language": "TypeScript",
       "created": "2025-03-24",
-      "updated": "2026-01-15",
-      "description": "OpenAI-compatible proxy server that lets Cursor IDE connect directly to GitHub Copilot's LLM services. Bypass Cursor's 500 premium requests/month limit.",
+      "updated": "2026-04-23",
+      "description": "An OpenAI-compatible proxy server that lets Cursor IDE connect directly to GitHub Copilot's LLM services. Bypass Cursor's 500 premium requests/month limit by leveraging your existing GitHub Copilot subscription for unlimited AI-powered code completions, chat, and editing features within Cursor IDE.",
       "summary": "TypeScript proxy server enabling Cursor IDE to use GitHub Copilot's API directly, bypassing Cursor's 500 requests/month limit. Implements OpenAI API compatibility, GitHub OAuth authentication, automatic token refresh, and streaming support.",
       "keyFeatures": [
         "OpenAI API compatibility for Cursor IDE",
@@ -506,19 +541,29 @@
         "streaming-api",
         "token-management",
         "typescript"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 9,
+      "openPullRequests": 2,
+      "homepage": "https://github.com/BjornMelin/github-copilot-proxy",
+      "latestRelease": {
+        "tagName": "v0.1.0",
+        "name": "v0.1.0 - Initial Release",
+        "url": "https://github.com/BjornMelin/github-copilot-proxy/releases/tag/v0.1.0",
+        "published": "2025-03-24"
+      }
     },
     {
       "id": "linkedin-saved-posts-ai",
       "name": "linkedin-saved-posts-ai",
       "url": "https://github.com/BjornMelin/linkedin-saved-posts-ai",
-      "stars": 6,
-      "forks": 3,
-      "watchers": 6,
+      "stars": 8,
+      "forks": 5,
+      "watchers": 1,
       "license": "MIT",
       "language": null,
       "created": "2025-04-24",
-      "updated": "2025-12-30",
+      "updated": "2025-04-26",
       "description": "Scrape, classify & chat over your LinkedIn Saved Posts with Supabase, pgvector, Vercel Edge Functions, Playwright MCP and OpenRouter + OpenAI LLMs.",
       "summary": "Early-stage minimal repository for LinkedIn saved posts AI application. Uses Next.js with App Router, Supabase with pgvector for semantic search, Vercel Edge Functions, and Playwright MCP for scraping. Configuration scaffolding present but implementation sparse.",
       "keyFeatures": [
@@ -575,20 +620,23 @@
         "typescript",
         "vector-search",
         "vercel"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 2,
+      "openPullRequests": 0
     },
     {
       "id": "mcp-search-hub",
       "name": "mcp-search-hub",
       "url": "https://github.com/BjornMelin/mcp-search-hub",
       "stars": 6,
-      "forks": 1,
-      "watchers": 6,
+      "forks": 3,
+      "watchers": 1,
       "license": "MIT",
       "language": "Python",
       "created": "2025-05-14",
-      "updated": "2025-12-31",
-      "description": "Intelligent multi-provider search aggregation server built on FastMCP 2.0",
+      "updated": "2025-10-20",
+      "description": "🔍 Intelligent multi-provider search aggregation server built on FastMCP 2.0",
       "summary": "Production-ready MCP server aggregating 5 leading search providers (Linkup, Exa, Perplexity, Tavily, Firecrawl) with intelligent routing, result merging, tiered caching, and 30-45% cost reduction through provider selection optimization.",
       "keyFeatures": [
         "Unified interface for 5 search providers",
@@ -640,30 +688,23 @@
         "commits": "Conventional Commits"
       },
       "status": "Production-Ready",
-      "topics": [
-        "agentic-rag",
-        "ai",
-        "fastmcp",
-        "hybrid-search",
-        "llm",
-        "mcp",
-        "mcp-server",
-        "search-aggregation",
-        "vector-search"
-      ]
+      "topics": [],
+      "defaultBranch": "main",
+      "commitCount": 86,
+      "openPullRequests": 3
     },
     {
       "id": "openai-agents-travel-graph",
       "name": "openai-agents-travel-graph",
       "url": "https://github.com/BjornMelin/openai-agents-travel-graph",
-      "stars": 12,
-      "forks": 1,
-      "watchers": 12,
+      "stars": 16,
+      "forks": 2,
+      "watchers": 2,
       "license": "MIT",
       "language": "Python",
       "created": "2025-05-05",
-      "updated": "2026-01-05",
-      "description": "State-of-the-art multi-agent travel planning system powered by OpenAI Agents SDK and LangGraph orchestration.",
+      "updated": "2025-05-07",
+      "description": "🧳 A state-of-the-art multi-agent travel planning system powered by OpenAI Agents SDK and LangGraph orchestration. Leverages Stagehand/Playwright for browser automation, Supabase for data persistence, and Firecrawl/Tavily for intelligent research.",
       "summary": "Production-ready travel planning system with 6 specialized agents (destination research, flight/accommodation search, transportation, activity planning, budget management) orchestrated via LangGraph with browser automation, semantic search, and budget optimization.",
       "keyFeatures": [
         "Multi-agent travel planning system",
@@ -734,20 +775,24 @@
         "supabase",
         "tavily-api",
         "travel-recommendations"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 12,
+      "openPullRequests": 0,
+      "homepage": "https://github.com/BjornMelin/openai-agents-travel-graph"
     },
     {
       "id": "polyagent-research-intelligence",
       "name": "polyagent-research-intelligence",
       "url": "https://github.com/BjornMelin/polyagent-research-intelligence",
-      "stars": 9,
+      "stars": 11,
       "forks": 6,
-      "watchers": 9,
+      "watchers": 2,
       "license": "MIT",
       "language": "TypeScript",
       "created": "2025-01-19",
-      "updated": "2025-10-21",
-      "description": "Modular, multi-agent AI research and report generation platform using LangChain, FastAPI, PostgreSQL, and Next.js.",
+      "updated": "2025-01-20",
+      "description": "A modular, multi-agent AI research and report generation platform. Enter any topic, and PolyAgent Research Intelligence orchestrates multiple AI agents to retrieve literature, analyze data, and generate a polished report. Built for researchers and AI/ML engineers, leveraging LangChain, FastAPI, PostgreSQL, advanced LLMs, and a Next.js front-end.",
       "summary": "Multi-agent research orchestration platform (PolyAgent) where users input topics and specialized agents retrieve literature, analyze data, and generate polished reports. Built with TypeScript frontend and FastAPI backend with PostgreSQL + FAISS vector database.",
       "keyFeatures": [
         "Multi-agent system with specialized agents",
@@ -808,20 +853,23 @@
         "prometheus",
         "report-generation",
         "tailwindcss"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 8,
+      "openPullRequests": 0
     },
     {
       "id": "qdrant-neo4j-crawl4ai-mcp",
       "name": "qdrant-neo4j-crawl4ai-mcp",
       "url": "https://github.com/BjornMelin/qdrant-neo4j-crawl4ai-mcp",
-      "stars": 7,
-      "forks": 1,
-      "watchers": 7,
+      "stars": 9,
+      "forks": 3,
+      "watchers": 0,
       "license": "MIT",
       "language": "Python",
       "created": "2025-06-27",
-      "updated": "2025-11-27",
-      "description": "MCP server combining Qdrant vector search, Neo4j knowledge graphs, and Crawl4AI web intelligence with agentic RAG capabilities.",
+      "updated": "2025-06-28",
+      "description": "MCP server combining Qdrant vector search, Neo4j knowledge graphs, and Crawl4AI web intelligence with agentic RAG capabilities. FastMCP 2.0 architecture with enterprise security, monitoring, and Kubernetes deployment. AI/ML engineering powerhouse.",
       "summary": "Production-ready agentic RAG MCP server combining Qdrant (semantic similarity), Neo4j (relationship reasoning), Crawl4AI (web intelligence), and Pydantic-AI (agentic orchestration). Features 6 specialized agents, GraphRAG hybrid memory, RAGAs evaluation framework.",
       "keyFeatures": [
         "Qdrant vector search for semantic similarity",
@@ -907,20 +955,23 @@
         "semantic-search",
         "vector-database",
         "vector-embeddings"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 15,
+      "openPullRequests": 0
     },
     {
       "id": "stardex",
       "name": "stardex",
       "url": "https://github.com/BjornMelin/stardex",
-      "stars": 13,
+      "stars": 15,
       "forks": 1,
-      "watchers": 13,
+      "watchers": 2,
       "license": "MIT",
       "language": "TypeScript",
       "created": "2025-01-15",
-      "updated": "2025-12-30",
-      "description": "Explore GitHub stars intelligently. Search, filter, and cluster any GitHub user's starred repositories with AI-powered exploration.",
+      "updated": "2026-03-17",
+      "description": "🌟 Stardex: Explore GitHub Stars Intelligently. Stardex is a powerful web app that lets you search, filter, and cluster any GitHub user's starred repositories. Discover hidden patterns and find your next favorite project with intelligent, AI-powered exploration.",
       "summary": "Full-stack monorepo application for exploring GitHub starred repositories. Features Next.js 16 frontend with React 19, TanStack Query, and shadcn/ui; FastAPI backend with scikit-learn for K-means, hierarchical, and PCA+hierarchical clustering with tunable parameters from UI.",
       "keyFeatures": [
         "Search GitHub users and pull starred repositories",
@@ -996,20 +1047,23 @@
         "starred-repositories",
         "tailwindcss",
         "text-embeddings"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 51,
+      "openPullRequests": 1
     },
     {
       "id": "tripsage-ai",
       "name": "tripsage-ai",
       "url": "https://github.com/BjornMelin/tripsage-ai",
-      "stars": 22,
-      "forks": 11,
-      "watchers": 22,
+      "stars": 36,
+      "forks": 16,
+      "watchers": 1,
       "license": "MIT",
       "language": "TypeScript",
       "created": "2025-05-08",
-      "updated": "2026-01-10",
-      "description": "AI-powered travel planning system with budget optimization, multi-source search, and personalized recommendations built on Vercel AI SDK v6, Supabase, Upstash, and Next.js 16.",
+      "updated": "2026-05-18",
+      "description": "AI-powered travel planning system with budget optimization, multi-source search, and personalized recommendations built on Vercel AI SDK v6, Supabase + PGVector, Upstash Redis + QStash, and NextJS 16, TailwindCSS",
       "summary": "Production-ready sophisticated travel planning platform with 15+ AI tools, multi-provider LLM routing (OpenAI, Anthropic, xAI, OpenRouter), hybrid RAG with Cohere Rerank, zero-trust security with BYOK encryption, and comprehensive specifications (11 active, 50+ ADRs).",
       "keyFeatures": [
         "Multi-provider AI routing with automatic fallback",
@@ -1088,7 +1142,6 @@
       "status": "Production-Ready",
       "latestVersion": "v1.25.0 (2026-01-10)",
       "topics": [
-        "accommodation-search",
         "ai-agents",
         "ai-sdk-v6",
         "ai-travel-assistant",
@@ -1099,7 +1152,8 @@
         "multi-agent-system",
         "nextjs16",
         "pgvector",
-        "shadcn-ui",
+        "streamdown",
+        "streamlit-ui",
         "supabase",
         "travel-planner",
         "travel-recommendations",
@@ -1107,20 +1161,30 @@
         "upstash-qstash",
         "upstash-redis",
         "vercel-ai-sdk"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 3222,
+      "openPullRequests": 4,
+      "homepage": "https://github.com/BjornMelin/tripsage-ai",
+      "latestRelease": {
+        "tagName": "v1.33.7",
+        "name": "v1.33.7",
+        "url": "https://github.com/BjornMelin/tripsage-ai/releases/tag/v1.33.7",
+        "published": "2026-05-12"
+      }
     },
     {
       "id": "unified-knowledge-system",
       "name": "unified-knowledge-system",
       "url": "https://github.com/BjornMelin/unified-knowledge-system",
-      "stars": 5,
+      "stars": 8,
       "forks": 1,
-      "watchers": 5,
+      "watchers": 1,
       "license": "MIT",
       "language": null,
       "created": "2025-03-23",
-      "updated": "2025-11-16",
-      "description": "Comprehensive unified knowledge management system integrating multiple data sources with advanced search capabilities.",
+      "updated": "2025-03-23",
+      "description": "A comprehensive unified knowledge management system integrating multiple data sources with advanced search capabilities",
       "summary": "Early-stage knowledge management system design combining DevDocs (1000 pages/min free) and Firecrawl ($16/month) for content acquisition, Qdrant vector DB, Neo4j knowledge graphs, and Obsidian vault integration. Architecture documented with 6-layer design, cost analysis ($16/mo vs $519/mo alternatives).",
       "keyFeatures": [
         "Multi-source content acquisition (DevDocs + Firecrawl)",
@@ -1183,19 +1247,22 @@
         "unified-search",
         "vector-database",
         "vector-search"
-      ]
+      ],
+      "defaultBranch": "main",
+      "commitCount": 18,
+      "openPullRequests": 2
     },
     {
       "id": "prompt-atlas",
       "name": "prompt-atlas",
       "url": "https://github.com/BjornMelin/prompt-atlas",
-      "stars": 9,
-      "forks": 4,
-      "watchers": 9,
+      "stars": 15,
+      "forks": 5,
+      "watchers": 2,
       "license": "MIT",
       "language": null,
       "created": "2024-11-14",
-      "updated": "2025-12-31",
+      "updated": "2025-08-09",
       "description": "Expert-level prompt templates for modern software development using AI pair programming.",
       "summary": "Collection of expert-level prompt templates for AI pair programming. Repository structure contains prompts for various development scenarios. Limited documentation available in repository.",
       "keyFeatures": [
@@ -1223,20 +1290,23 @@
         "reference",
         "typescript"
       ],
-      "note": "Rate limit encountered during documentation fetch - minimal details available"
+      "note": "Rate limit encountered during documentation fetch - minimal details available",
+      "defaultBranch": "main",
+      "commitCount": 73,
+      "openPullRequests": 0
     },
     {
       "id": "enhanced-mem-vector-rag",
       "name": "enhanced-mem-vector-rag",
       "url": "https://github.com/BjornMelin/enhanced-mem-vector-rag",
-      "stars": 16,
-      "forks": 3,
-      "watchers": 16,
+      "stars": 17,
+      "forks": 4,
+      "watchers": 1,
       "license": "MIT",
       "language": "Python",
       "created": "2025-05-06",
-      "updated": "2025-12-12",
-      "description": "Developer-friendly hybrid-RAG toolkit merging Graphiti, Qdrant, mem0, LlamaIndex, and LangChain into one powerful engine.",
+      "updated": "2026-01-14",
+      "description": "⚡ Developer-friendly hybrid-RAG toolkit merging Graphiti, Qdrant, mem0, LlamaIndex, and LangChain into one powerful engine.",
       "summary": "Hybrid RAG toolkit integrating multiple leading libraries (Graphiti, Qdrant, mem0, LlamaIndex, LangChain) for comprehensive retrieval-augmented generation capabilities. Combines vector search, knowledge graphs, and memory management.",
       "keyFeatures": [
         "Integrated Graphiti support",
@@ -1253,39 +1323,135 @@
         "rag": "Hybrid approaches"
       },
       "status": "Active",
+      "topics": [],
+      "note": "Rate limit encountered during documentation fetch - limited details available",
+      "defaultBranch": "main",
+      "commitCount": 49,
+      "openPullRequests": 2
+    },
+    {
+      "id": "agent-review",
+      "name": "agent-review",
+      "url": "https://github.com/BjornMelin/agent-review",
+      "stars": 7,
+      "forks": 0,
+      "watchers": 0,
+      "license": null,
+      "language": "TypeScript",
+      "created": "2026-03-02",
+      "updated": "2026-05-13",
+      "defaultBranch": "main",
+      "commitCount": 66,
+      "openPullRequests": 0,
       "topics": [
-        "hybrid-rag",
-        "vector-search",
-        "knowledge-graphs",
-        "memory-management",
-        "langchain",
-        "llamaindex",
-        "qdrant",
-        "rag"
+        "agent-cli",
+        "agentic-ai",
+        "agentic-workflow",
+        "agents",
+        "cli",
+        "code-review",
+        "codex",
+        "coding-agent",
+        "openai",
+        "sandbox",
+        "turborepo"
       ],
-      "note": "Rate limit encountered during documentation fetch - limited details available"
+      "description": "Code review agents, scripts, and workflows.",
+      "homepage": "https://github.com/BjornMelin/agent-review"
+    },
+    {
+      "id": "grammarly-mcp",
+      "name": "grammarly-mcp",
+      "url": "https://github.com/BjornMelin/grammarly-mcp",
+      "stars": 5,
+      "forks": 0,
+      "watchers": 0,
+      "license": "MIT",
+      "language": "TypeScript",
+      "created": "2025-12-07",
+      "updated": "2026-01-14",
+      "defaultBranch": "main",
+      "commitCount": 56,
+      "openPullRequests": 2,
+      "topics": [
+        "ai-agents",
+        "ai-detection",
+        "ai-sdk-v5",
+        "ai-tools",
+        "anthropic",
+        "browser-automation",
+        "browserbase",
+        "claude",
+        "grammarly",
+        "llm",
+        "mcp",
+        "mcp-server",
+        "model-context-protocol",
+        "nodejs",
+        "plagiarism-checker",
+        "stagehand",
+        "text-optimization",
+        "typescript"
+      ],
+      "description": "MCP server for Grammarly AI detection and plagiarism scoring via Stagehand + Browserbase browser automation, with Claude-powered text optimization"
+    },
+    {
+      "id": "codeforge",
+      "name": "codeforge",
+      "url": "https://github.com/BjornMelin/codeforge",
+      "stars": 9,
+      "forks": 6,
+      "watchers": 0,
+      "license": "MIT",
+      "language": "Python",
+      "created": "2025-07-15",
+      "updated": "2025-07-21",
+      "defaultBranch": "main",
+      "commitCount": 28,
+      "openPullRequests": 0,
+      "topics": [
+        "agent-memory",
+        "agentic-ai",
+        "agentic-rag",
+        "ai-agents",
+        "artificial-intelligence",
+        "coding-agents",
+        "graphrag",
+        "langchain",
+        "langgraph",
+        "langsmith-tracing",
+        "local-ai-agents",
+        "neo4j",
+        "pydantic-v2",
+        "python",
+        "qdrant",
+        "redis",
+        "research-agents"
+      ],
+      "description": "🤖 CodeForge AI: An autonomous multi-agent coding system powered by LangGraph for agentic software development and automated workflows. SOTA custom agentic GraphRag, shared-state memory, auto-model routing for cost optimization, and a range of custom tooling.",
+      "homepage": "https://github.com/BjornMelin/codeforge"
     }
   ],
   "statistics": {
     "_comment": "All statistics are computed from the projects array: totalStars = sum of all stars; averageStars = totalStars / numberOfProjects; licenseDistribution.unlicensed counts projects with license === null; languageDistribution.unknown counts projects with language === null",
-    "totalStars": 330,
-    "averageStars": 19.41,
-    "numberOfProjects": 17,
+    "totalStars": 439,
+    "averageStars": 21.95,
+    "numberOfProjects": 20,
     "topRepositories": [
       "docmind-ai-llm (128 stars)",
-      "github-copilot-proxy (29 stars)",
-      "bjornmelin-platform-io (22 stars)",
-      "tripsage-ai (22 stars)",
-      "crawl4ai-mcp-server (19 stars)"
+      "github-copilot-proxy (47 stars)",
+      "tripsage-ai (36 stars)",
+      "ai-job-scraper (32 stars)",
+      "crawl4ai-mcp-server (28 stars)"
     ],
     "languageDistribution": {
-      "python": 8,
-      "typescript": 6,
+      "python": 9,
+      "typescript": 8,
       "unknown": 3
     },
     "licenseDistribution": {
-      "mit": 16,
-      "unlicensed": 1
+      "mit": 18,
+      "unlicensed": 2
     },
     "topicClusters": {
       "aiAgents": [

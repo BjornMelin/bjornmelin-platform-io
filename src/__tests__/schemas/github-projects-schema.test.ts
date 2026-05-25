@@ -24,4 +24,31 @@ describe("githubProjectsFileSchema", () => {
       }),
     );
   });
+
+  it("rejects non-https project URLs", () => {
+    const buildGeneratedProjects = (url: string) => ({
+      metadata: {
+        generated: "2026-05-25",
+        totalRepositories: 1,
+      },
+      projects: [
+        {
+          id: "unsafe",
+          name: "unsafe",
+          url,
+          stars: 1,
+          forks: 0,
+          updated: "2026-05-25",
+          topics: [],
+        },
+      ],
+    });
+
+    expect(
+      githubProjectsFileSchema.safeParse(buildGeneratedProjects("javascript:alert(1)")).success,
+    ).toBe(false);
+    expect(
+      githubProjectsFileSchema.safeParse(buildGeneratedProjects("http://example.com")).success,
+    ).toBe(false);
+  });
 });

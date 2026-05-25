@@ -18,7 +18,7 @@
 import cf from "cloudfront";
 var kvsHandle = cf.kvs();
 
-var HASH_CHUNK_SIZE = 16;
+var HASH_CHUNK_SIZE = 8;
 
 var BASE_DIRECTIVES = [
   "default-src 'self'",

@@ -34,45 +34,56 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
      - `AGENT_SKILLS_SYNC_TOKEN` with `contents: write` and `pull-requests: write` if auto-created sync PRs should
        trigger the standard PR CI workflows instead of relying only on the sync workflow's focused checks
 
-5. **release-please.yml** - Automated semantic versioning and releases
+5. **projects-github-metadata-refresh.yml** - Projects GitHub metadata refresh
+   - Runs on: weekly schedule and manual `workflow_dispatch`
+   - Features: refreshes `src/content/projects/projects.generated.json` from public GitHub repository metrics,
+     validates generated statistics, runs focused projects tests plus type-check, and opens or updates a generated-data
+     PR
+   - Required secret for generated-data PRs:
+     - `PROJECTS_GITHUB_REFRESH_PR_TOKEN` with `contents: write` and `pull-requests: write`; use a PAT or GitHub App
+       token so created PRs trigger standard CI
+   - Optional secret:
+     - `PROJECTS_GITHUB_REFRESH_TOKEN` for authenticated GitHub API refreshes beyond the default workflow token
+
+6. **release-please.yml** - Automated semantic versioning and releases
    - Runs on: Push to main
    - Features: Opens/updates Release PR based on conventional commits; creates git tags and GitHub Releases on merge
    - Uses: [googleapis/release-please-action@v4](https://github.com/googleapis/release-please-action)
 
-6. **manual-deploy.yml** - Manual deployment workflow
+7. **manual-deploy.yml** - Manual deployment workflow
    - Runs on: Workflow dispatch
    - Features: Environment selection, test skipping option, stack-output-based S3/KVS/CloudFront deploy,
      deployment tracking, concurrency control
 
 ### Security & Quality
 
-7. **codeql.yml** - GitHub CodeQL security analysis
+8. **codeql.yml** - GitHub CodeQL security analysis
    - Runs on: Push, PRs, monthly schedule (15th at 06:00 UTC)
    - Scans: JavaScript/TypeScript code for vulnerabilities
 
-8. **security-audit.yml** - Dependency security audit
+9. **security-audit.yml** - Dependency security audit
    - Runs on: Push, PRs, monthly schedule (22nd at 08:00 UTC)
    - Features: pnpm audit, dependency review
 
-9. **dependency-update.yml** - Automated dependency updates
-   - Runs on: Monthly schedule (1st at 09:00 UTC)
-   - Features: Non-major updates, automated PR creation
+10. **dependency-update.yml** - Automated dependency updates
+    - Runs on: Monthly schedule (1st at 09:00 UTC)
+    - Features: Non-major updates, automated PR creation
 
 ### Maintenance
 
-10. **branch-protection.yml** - PR validation and protection
+11. **branch-protection.yml** - PR validation and protection
     - Runs on: Pull requests to main
     - Features: Conventional commit check, merge conflict detection, auto-labeling
 
-11. **pr-labeler.yml** - Automatic PR labeling
+12. **pr-labeler.yml** - Automatic PR labeling
     - Runs on: PR opened/edited
     - Features: Path-based labels, conventional commit labels
 
-12. **stale.yml** - Manage stale issues and PRs
+13. **stale.yml** - Manage stale issues and PRs
     - Runs on: Monthly schedule (1st of each month at 00:00 UTC)
     - Features: Auto-close inactive items, configurable timelines
 
-13. **link-check.yml** - Check for broken links
+14. **link-check.yml** - Check for broken links
     - Runs on: Push, PRs, monthly schedule (8th at 04:00 UTC)
     - Features: Markdown link validation, issue creation on failure
     - Exclusions:
@@ -91,14 +102,14 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 ### Performance
 
-14. **performance-check.yml** - Performance monitoring
+15. **performance-check.yml** - Performance monitoring
     - Runs on: Push to main, PRs
     - Features: Lighthouse CI, bundle size analysis
     - Metrics: Performance, accessibility, SEO, best practices
 
 ### Infrastructure
 
-15. **infrastructure.yml** - AWS CDK infrastructure deployment
+16. **infrastructure.yml** - AWS CDK infrastructure deployment
     - Runs on: Workflow dispatch
     - Features: CDK deploy for DNS, storage, email, monitoring stacks
 
@@ -233,6 +244,7 @@ Add these badges to your README:
 
 | Day | Workflow | Time (UTC) |
 | --- | -------- | ---------- |
+| Monday (weekly) | projects-github-metadata-refresh.yml | 09:00 |
 | 1st | stale.yml | 00:00 |
 | 1st | dependency-update.yml | 09:00 |
 | 8th | link-check.yml | 04:00 |
