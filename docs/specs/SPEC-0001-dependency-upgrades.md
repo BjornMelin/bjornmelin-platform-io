@@ -1,8 +1,8 @@
 ---
 spec: SPEC-0001
 title: Dependency upgrades
-version: 1.2.0
-date: 2026-04-18
+version: 1.3.0
+date: 2026-06-01
 owners: ["ai-arch"]
 status: Implemented
 related_requirements: ["FR-001", "NFR-001"]
@@ -55,16 +55,18 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### Version baseline (pinned)
 
-- Next.js 16.2.4
-- React 19.2.5
+- Next.js 16.2.6
+- React 19.2.6
 - TypeScript 6.0.3
-- Tailwind CSS 4.2.2
-- @tailwindcss/postcss 4.2.2
+- Tailwind CSS 4.3.0
+- @tailwindcss/postcss 4.3.0
 - pnpm 10.28.0 (Corepack)
-- Zod 4.3.6
-- Vitest 4.1.4
-- Playwright 1.59.1
-- Biome 2.4.12
+- Zod 4.4.3
+- Vitest 4.1.8
+- Vite 8.0.16
+- Playwright 1.60.0
+- Biome 2.4.16
+- radix-ui 1.4.3
 
 *Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
 spec lists the intentional baseline versions for the core toolchain.*
@@ -87,6 +89,8 @@ and improved DX while preserving static export constraints.
 
 This baseline also removes unused dependencies to reduce the operational surface area (example:
 `framer-motion` was removed after it was no longer referenced in app code).
+The current baseline also unifies local shadcn Radix primitives on the
+`radix-ui` package instead of many individual `@radix-ui/react-*` dependencies.
 
 ## Decision Framework Score (must be ≥ 9.0)
 
@@ -137,6 +141,9 @@ This baseline also removes unused dependencies to reduce the operational surface
 
 ## Changelog
 
+- **1.3 (2026-06-01)**: Dependency modernization for AWS SDK, Resend, Lucide,
+  React Hook Form, Commander, Vite, Vitest, Biome, and shadcn `radix-ui`
+  unification while preserving the Node 24 runtime contract.
 - **1.2 (2026-04-18)**: Security and toolchain refresh for Next.js 16.2.4, TypeScript 6, Vite 8,
   and audited transitive overrides.
 - **1.1 (2026-01-18)**: Current baseline and constraints.

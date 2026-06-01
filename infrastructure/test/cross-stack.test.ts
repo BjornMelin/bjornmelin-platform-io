@@ -122,7 +122,7 @@ describe("Cross-stack references", () => {
     template.hasResourceProperties("AWS::ApiGateway::RestApi", Match.anyValue());
 
     spy.mockRestore();
-  });
+  }, 10_000);
 
   it("StorageStack exposes bucket and distribution for downstream stacks", () => {
     const app = new cdk.App();

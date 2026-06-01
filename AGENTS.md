@@ -50,6 +50,9 @@ Infrastructure:
 - Direct module paths MUST ALWAYS be used for imports (e.g. `@mui/material/Button`).
 - Exception: packages in `experimental.optimizePackageImports` and packages optimized by Next.js by default MAY be used
   because Next rewrites them.
+- `radix-ui` named imports from the package entrypoint MAY be used for shadcn-owned primitives in `src/components/ui/*`
+  while `next.config.mjs` includes `experimental.optimizePackageImports: ["radix-ui"]`; this matches shadcn's
+  unified Radix migration. Use documented namespace members such as `Slot.Root`, not legacy aliases.
 - Lucide icons MUST use named imports from `lucide-react` in this repo.
 - `src/types/lucide-react-icons.d.ts` MUST NOT be reintroduced unless the repo intentionally returns to deep Lucide paths.
 
