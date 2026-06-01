@@ -1,13 +1,13 @@
 ---
 spec: SPEC-0011
 title: shadcn radix-ui unification playbook
-version: 0.2.0
-date: 2026-04-19
+version: 1.0.0
+date: 2026-06-01
 owners: ["ai-arch"]
-status: Proposed
+status: Implemented
 related_requirements: ["NFR-001"]
 related_adrs: ["ADR-0005", "ADR-0009"]
-notes: "Atomic repo-grounded and reusable playbook for migrating shadcn new-york projects from individual Radix packages to the unified radix-ui package."
+notes: "Implemented local shadcn new-york migration from individual Radix packages to the unified radix-ui package."
 ---
 
 ## Summary
@@ -20,19 +20,20 @@ docs that still describe the pre-unification shape.
 
 It is intentionally dual-purpose:
 
-- a local implementation plan for `bjornmelin-platform-io`
+- a local implementation record for `bjornmelin-platform-io`
 - a reusable Codex execution artifact for future shadcn `new-york` repos
 
 ## Context
 
-This repository currently matches the official migration preconditions closely:
+This repository matched the official migration preconditions closely before
+implementation:
 
 - `components.json` is `style: "new-york"`
 - `pnpm dlx shadcn@latest info --json` reports `base: "radix"`
 - local shadcn-owned primitives live in `src/components/ui/*`
-- 13 local component files still import individual `@radix-ui/react-*`
+- 13 local component files imported individual `@radix-ui/react-*`
   packages
-- `package.json` does not yet include `radix-ui`
+- `package.json` did not yet include `radix-ui`
 - footer brand icons were already localized during `SPEC-0010`, but the shadcn
   `radix` migration still intentionally does not rewrite
   `@radix-ui/react-icons` in other repos
@@ -135,16 +136,16 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ## Repo-Specific Findings
 
-### Validated current state
+### Validated starting state
 
 - `components.json` declares `style: "new-york"` and `iconLibrary: "lucide"`.
 - `pnpm dlx shadcn@latest info --json` reports:
   - `framework: Next.js`
-  - `frameworkVersion: 16.2.4`
+  - `frameworkVersion: 16.2.6`
   - `base: radix`
   - `tailwindVersion: v4`
   - `resolvedPaths.ui: src/components/ui`
-- `package.json` currently depends on 13 individual Radix primitive packages:
+- `package.json` depended on 13 individual Radix primitive packages:
   - `@radix-ui/react-checkbox`
   - `@radix-ui/react-collapsible`
   - `@radix-ui/react-dialog`
@@ -158,8 +159,8 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
   - `@radix-ui/react-toast`
   - `@radix-ui/react-toggle`
   - `@radix-ui/react-toggle-group`
-- `package.json` does not yet include `radix-ui`.
-- Current direct primitive-import sites are:
+- `package.json` did not include `radix-ui`.
+- Starting direct primitive-import sites were:
   - `src/components/ui/button.tsx`
   - `src/components/ui/collapsible.tsx`
   - `src/components/ui/dialog.tsx`
@@ -175,6 +176,17 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
   - `src/components/ui/toggle-group.tsx`
 - `@radix-ui/react-icons` is no longer in this repo after `SPEC-0010`, but the
   upstream shadcn migrator still skips that package generically.
+
+### Implemented outcome
+
+- `pnpm dlx shadcn@latest migrate radix -y` rewrote local shadcn-owned
+  primitive imports.
+- `package.json` now depends on `radix-ui@1.4.3`.
+- The 13 obsolete direct `@radix-ui/react-*` primitive dependencies were
+  removed from `package.json` and `pnpm-lock.yaml`.
+- Grep proves no source import remains from `@radix-ui/react-*`.
+- `components.json` remains `style: "new-york"` with `base: radix` confirmed by
+  `shadcn info --json`.
 
 ### Upstream shadcn and Radix capabilities that matter
 
@@ -327,16 +339,17 @@ Use this section as the live state block during implementation.
 
 ### Status ledger
 
-- Overall status: `Not started | In progress | Blocked | Completed`
-- Branch / PR:
-- Owner:
-- Started:
-- Last updated:
+- Overall status: `Completed`
+- Branch / PR: `chore/dependency-modernization-2026-06`
+- Owner: `ai-arch`
+- Started: 2026-06-01
+- Last updated: 2026-06-01
 
 ### Repo notes
 
 - Findings:
-  - None yet.
+  - Local shadcn-owned primitive imports now use `radix-ui`.
+  - Old individual Radix primitive packages are no longer direct dependencies.
 - Assumptions:
   - None yet.
 - Risks / blockers:
@@ -346,13 +359,13 @@ Use this section as the live state block during implementation.
 
 ### Checkoff ledger
 
-- [ ] Discovery completed
-- [ ] Decisions locked
-- [ ] CLI migration run
-- [ ] Manual cleanup completed
-- [ ] Old packages removed
-- [ ] Policy/docs updated
-- [ ] Verification completed
+- [x] Discovery completed
+- [x] Decisions locked
+- [x] CLI migration run
+- [x] Manual cleanup completed
+- [x] Old packages removed
+- [x] Policy/docs updated
+- [x] Verification completed
 
 ## Verification Matrix
 
@@ -464,6 +477,9 @@ Verification expectation:
 
 ## Changelog
 
+- **1.0 (2026-06-01)**: Implemented local shadcn `radix-ui` migration, removed
+  obsolete individual Radix primitive dependencies, and recorded the completed
+  repo outcome.
 - **0.2 (2026-04-19)**: Expanded into a full dual-purpose shadcn Radix
   unification playbook with reusable kickoff prompt and execution tracker.
 - **0.1 (2026-04-19)**: Initial deferred but execution-ready `radix-ui`

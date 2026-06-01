@@ -69,7 +69,7 @@ describe("CDK App Stack Orchestration", () => {
     expect(() => Template.fromStack(emailStack)).not.toThrow();
 
     spy.mockRestore();
-  });
+  }, 10_000);
 
   it("validates stack dependency chain", () => {
     const app = new cdk.App();

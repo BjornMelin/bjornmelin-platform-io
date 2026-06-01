@@ -16,7 +16,7 @@ criteria, file-level contracts, and operational details.
 - SPEC-0008: Tailwind CSS v4 (CSS-first config) integration
 - SPEC-0009: Projects page
 - SPEC-0010: Lucide React v1 upgrade playbook
-- SPEC-0011: shadcn radix-ui unification follow-on migration
+- SPEC-0011: shadcn radix-ui unification
 
 ## Conventions
 
