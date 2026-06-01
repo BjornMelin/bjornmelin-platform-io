@@ -77,10 +77,10 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@aws-sdk/client-route-53": "^3.1053.0",
-    "@biomejs/biome": "^2.4.12",
-    "@commitlint/cli": "^21.0.1",
-    "@commitlint/config-conventional": "^21.0.1",
+    "@aws-sdk/client-route-53": "^3.1057.0",
+    "@biomejs/biome": "^2.4.16",
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
     "@playwright/test": "~1.60.0",
     "@tailwindcss/postcss": "4.3.0",
     "@testing-library/jest-dom": "^6.9.1",
@@ -101,9 +101,9 @@
     "postcss": "^8.5.15",
     "sharp": "^0.34.5",
     "tailwindcss": "4.3.0",
-    "tsx": "^4.22.3",
+    "tsx": "^4.22.4",
     "typescript": "~6.0.3",
-    "vite": "~8.0.14",
+    "vite": "~8.0.15",
     "vitest": "~4.1.7"
   },
   "pnpm": {
