@@ -19,9 +19,9 @@
     "diff": "cdk diff"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.161",
-    "@types/node": "^24.0.0",
-    "aws-cdk": "2.1125.0",
+    "@types/aws-lambda": "8.10.162",
+    "@types/node": "^24.13.1",
+    "aws-cdk": "2.1126.0",
     "esbuild": "^0.28.0",
     "tsx": "^4.22.4",
     "typescript": "~6.0.3",
