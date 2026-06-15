@@ -86,6 +86,15 @@ a matching 1-day cooldown before proposing newly released package versions.
 The shared Node/pnpm setup action asserts both root and infrastructure pnpm
 hardening settings before any workflow install runs.
 
+The 24-hour release-age policy is intentional for this release. It replaces the
+earlier 7-day candidate gate so current dependency upgrades can land after a
+short quarantine period while `trust-policy=no-downgrade`, frozen lockfiles,
+reviewed lockfile diffs, and CI audits remain enforced.
+
+Dependency Review blocks GPL-3.0 and AGPL-3.0 licenses. LGPL-3.0 is not denied
+for this release so native optional dependencies such as `sharp` libvips
+packages can be upgraded through the standard dependency-review workflow.
+
 Targeted `pnpm.overrides` entries are retained for the current baseline to
 force patched transitive versions where upstream release lines have not yet
 fully absorbed the security fixes. The baseline remains audit-clean with these
@@ -139,6 +148,10 @@ The current baseline also unifies local shadcn Radix primitives on the
 
 - `package.json`
 - `pnpm-lock.yaml`
+- `.npmrc` and `infrastructure/.npmrc`
+- `.github/dependabot.yml`
+- `.github/actions/setup-node-pnpm/action.yml`
+- `.github/workflows/security-audit.yml`
 
 ## References
 
@@ -150,6 +163,11 @@ The current baseline also unifies local shadcn Radix primitives on the
 
 ## Changelog
 
+- **1.4 (2026-06-15)**: Dependency modernization for the current Next.js,
+  React, Tailwind CSS, Biome, `radix-ui`, AWS SDK, and CDK baseline; pnpm
+  hardening via a 24-hour minimum release age and trust downgrade protection;
+  Dependabot 1-day cooldown; dependency-review GPL/AGPL enforcement; and AWS
+  Lambda runtime upgrades to Node.js 24.
 - **1.3 (2026-06-01)**: Dependency modernization for AWS SDK, Resend, Lucide,
   React Hook Form, Commander, Vite, Vitest, Biome, and shadcn `radix-ui`
   unification while preserving the Node 24 runtime contract.
