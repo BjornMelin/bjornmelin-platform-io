@@ -181,7 +181,7 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 - `pnpm dlx shadcn@latest migrate radix -y` rewrote local shadcn-owned
   primitive imports.
-- `package.json` now depends on `radix-ui@1.4.3`.
+- `package.json` now depends on `radix-ui@1.5.0`.
 - The 13 obsolete direct `@radix-ui/react-*` primitive dependencies were
   removed from `package.json` and `pnpm-lock.yaml`.
 - Grep proves no source import remains from `@radix-ui/react-*`.
