@@ -42,6 +42,15 @@ runs:
         node-version-file: .nvmrc
         cache: pnpm
 
+    - name: Verify pnpm supply-chain hardening
+      if: ${{ inputs.install == 'true' }}
+      shell: bash
+      run: |
+        test "$(pnpm config get minimum-release-age)" = "1440"
+        test "$(pnpm config get trust-policy)" = "no-downgrade"
+        test "$(pnpm -C infrastructure config get minimum-release-age)" = "1440"
+        test "$(pnpm -C infrastructure config get trust-policy)" = "no-downgrade"
+
     - name: Install dependencies
       if: ${{ inputs.install == 'true' }}
       shell: bash
