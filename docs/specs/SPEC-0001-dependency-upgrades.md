@@ -84,7 +84,8 @@ install contexts.
 Dependabot npm version-update PRs for root and infrastructure dependencies use
 a matching 1-day cooldown before proposing newly released package versions.
 The shared Node/pnpm setup action asserts both root and infrastructure pnpm
-hardening settings before any workflow install runs.
+hardening settings before any workflow install runs, including workflows that
+defer installation to a package subdirectory.
 
 The 24-hour release-age policy is intentional for this release. It replaces the
 earlier 7-day candidate gate so current dependency upgrades can land after a
