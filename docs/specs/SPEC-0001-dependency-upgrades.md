@@ -1,8 +1,8 @@
 ---
 spec: SPEC-0001
 title: Dependency upgrades
-version: 1.3.0
-date: 2026-06-01
+version: 1.4.0
+date: 2026-06-15
 owners: ["ai-arch"]
 status: Implemented
 related_requirements: ["FR-001", "NFR-001"]
@@ -55,18 +55,18 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### Version baseline (pinned)
 
-- Next.js 16.2.6
-- React 19.2.6
+- Next.js 16.2.9
+- React 19.2.7
 - TypeScript 6.0.3
-- Tailwind CSS 4.3.0
-- @tailwindcss/postcss 4.3.0
+- Tailwind CSS 4.3.1
+- @tailwindcss/postcss 4.3.1
 - pnpm 10.28.0 (Corepack)
 - Zod 4.4.3
 - Vitest 4.1.8
 - Vite 8.0.16
 - Playwright 1.60.0
-- Biome 2.4.16
-- radix-ui 1.4.3
+- Biome 2.5.0
+- radix-ui 1.5.0
 
 *Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
 spec lists the intentional baseline versions for the core toolchain.*
@@ -76,6 +76,15 @@ spec lists the intentional baseline versions for the core toolchain.*
 The lockfile is the source of truth for reproducible installs. Core runtime
 dependencies are pinned, while many non-core dependencies use ranges and are
 resolved via `pnpm-lock.yaml`.
+
+Root and infrastructure `.npmrc` supply-chain hardening enforces a 7-day
+minimum release age and trust downgrade protection for pnpm resolution in both
+install contexts.
+
+Dependabot npm version-update PRs for root and infrastructure dependencies use
+a matching 7-day cooldown before proposing newly released package versions.
+CI, security audit, and dependency-update workflows assert both root and
+infrastructure pnpm hardening settings before dependency checks run.
 
 Targeted `pnpm.overrides` entries are retained for the current baseline to
 force patched transitive versions where upstream release lines have not yet
