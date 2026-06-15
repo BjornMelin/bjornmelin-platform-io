@@ -6,19 +6,19 @@ interface TechBadgeProps {
   size?: "sm" | "md" | "lg";
 }
 
+const TECH_BADGE_SIZE_CLASSES: Record<NonNullable<TechBadgeProps["size"]>, string> = {
+  sm: "text-[11px] leading-5 px-2 py-0.5",
+  md: "text-xs leading-5 px-2.5 py-0.5",
+  lg: "text-sm leading-5 px-3 py-1",
+};
+
 /**
  * Render a pill style tech badge with truncation support.
  *
- * @param props TechBadgeProps for name, size, and className.
+ * @param props - TechBadgeProps for name, size, and className.
  * @returns A styled tech badge element.
  */
 export function TechBadge({ name, className, size = "md" }: TechBadgeProps) {
-  const sizeClasses = {
-    sm: "text-[11px] leading-5 px-2 py-0.5",
-    md: "text-xs leading-5 px-2.5 py-0.5",
-    lg: "text-sm leading-5 px-3 py-1",
-  };
-
   return (
     <span
       className={cn(
@@ -26,7 +26,7 @@ export function TechBadge({ name, className, size = "md" }: TechBadgeProps) {
         "border border-border/60 bg-muted/70 text-foreground/80",
         "transition-colors hover:bg-muted/80 dark:bg-muted/40 dark:text-foreground/90 dark:hover:bg-muted/60",
         "max-w-40",
-        sizeClasses[size],
+        TECH_BADGE_SIZE_CLASSES[size],
         className,
       )}
       title={name}
