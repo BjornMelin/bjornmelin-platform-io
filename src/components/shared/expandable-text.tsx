@@ -36,17 +36,16 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
     const el = textRef.current;
     if (!el || isOpen) return;
     const isOverflowing = el.scrollHeight > el.clientHeight + 1;
-    React.startTransition(() => {
-      setIsTruncated(isOverflowing);
-    });
+    setIsTruncated((current) => (current === isOverflowing ? current : isOverflowing));
   }, [isOpen]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: children updates should re-measure truncation.
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
+    checkTruncation();
+  });
+
+  React.useLayoutEffect(() => {
     const el = textRef.current;
     if (!el) return;
-
-    checkTruncation();
 
     const observer = new ResizeObserver(() => {
       checkTruncation();
@@ -54,7 +53,7 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
     observer.observe(el);
 
     return () => observer.disconnect();
-  }, [children, isOpen]);
+  }, [checkTruncation]);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
