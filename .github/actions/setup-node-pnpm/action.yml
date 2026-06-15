@@ -56,7 +56,7 @@ runs:
           actual="$("$@")"
 
           if [[ "${actual}" != "${expected}" ]]; then
-            echo "::error::${label} is '${actual}', expected '${expected}'." >&2
+            echo "::error::${label} is '${actual}', expected '${expected}'."
             exit 1
           fi
         }
