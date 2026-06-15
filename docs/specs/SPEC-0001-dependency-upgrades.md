@@ -77,12 +77,12 @@ The lockfile is the source of truth for reproducible installs. Core runtime
 dependencies are pinned, while many non-core dependencies use ranges and are
 resolved via `pnpm-lock.yaml`.
 
-Root and infrastructure `.npmrc` supply-chain hardening enforces a 7-day
+Root and infrastructure `.npmrc` supply-chain hardening enforces a 24-hour
 minimum release age and trust downgrade protection for pnpm resolution in both
 install contexts.
 
 Dependabot npm version-update PRs for root and infrastructure dependencies use
-a matching 7-day cooldown before proposing newly released package versions.
+a matching 1-day cooldown before proposing newly released package versions.
 CI, security audit, and dependency-update workflows assert both root and
 infrastructure pnpm hardening settings before dependency checks run.
 

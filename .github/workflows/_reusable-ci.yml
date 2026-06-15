@@ -35,9 +35,9 @@ jobs:
 
       - name: Verify pnpm supply-chain hardening
         run: |
-          test "$(pnpm config get minimum-release-age)" = "10080"
+          test "$(pnpm config get minimum-release-age)" = "1440"
           test "$(pnpm config get trust-policy)" = "no-downgrade"
-          test "$(pnpm -C infrastructure config get minimum-release-age)" = "10080"
+          test "$(pnpm -C infrastructure config get minimum-release-age)" = "1440"
           test "$(pnpm -C infrastructure config get trust-policy)" = "no-downgrade"
 
       - name: Verify Node type dependency boundary
