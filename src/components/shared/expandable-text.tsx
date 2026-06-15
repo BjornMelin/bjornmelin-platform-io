@@ -20,6 +20,8 @@ interface ExpandableTextProps {
 
 /**
  * Text component that truncates to 3 lines with a "Show more" toggle.
+ *
+ * @remarks
  * Only shows the toggle when the text is actually truncated.
  *
  * @param props - The {@link ExpandableTextProps} for {@link ExpandableText}.
@@ -40,8 +42,12 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
   }, [isOpen]);
 
   React.useLayoutEffect(() => {
+    if (children.length === 0) {
+      setIsTruncated(false);
+      return;
+    }
     checkTruncation();
-  });
+  }, [checkTruncation, children]);
 
   React.useLayoutEffect(() => {
     const el = textRef.current;

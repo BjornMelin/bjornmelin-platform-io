@@ -83,8 +83,8 @@ install contexts.
 
 Dependabot npm version-update PRs for root and infrastructure dependencies use
 a matching 1-day cooldown before proposing newly released package versions.
-CI, security audit, and dependency-update workflows assert both root and
-infrastructure pnpm hardening settings before dependency checks run.
+The shared Node/pnpm setup action asserts both root and infrastructure pnpm
+hardening settings before any workflow install runs.
 
 Targeted `pnpm.overrides` entries are retained for the current baseline to
 force patched transitive versions where upstream release lines have not yet
