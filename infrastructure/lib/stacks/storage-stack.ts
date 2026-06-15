@@ -95,7 +95,7 @@ export class StorageStack extends cdk.Stack {
 
     const kvsName = `${props.environment}-portfolio-csp-hashes`;
     const kvsProviderFn = new lambda.NodejsFunction(this, "CspHashesKvsProviderFunction", {
-      runtime: lambdaCore.Runtime.NODEJS_20_X,
+      runtime: lambdaCore.Runtime.NODEJS_24_X,
       entry: path.join(__dirname, "../functions/custom-resources/cloudfront-kvs/index.ts"),
       handler: "handler",
       memorySize: 128,
