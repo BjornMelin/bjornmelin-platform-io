@@ -43,13 +43,30 @@ runs:
         cache: pnpm
 
     - name: Verify pnpm supply-chain hardening
-      if: ${{ inputs.install == 'true' }}
       shell: bash
       run: |
-        test "$(pnpm config get minimum-release-age)" = "1440"
-        test "$(pnpm config get trust-policy)" = "no-downgrade"
-        test "$(pnpm -C infrastructure config get minimum-release-age)" = "1440"
-        test "$(pnpm -C infrastructure config get trust-policy)" = "no-downgrade"
+        set -euo pipefail
+
+        check_config() {
+          local label="$1"
+          local expected="$2"
+          shift 2
+
+          local actual
+          actual="$("$@")"
+
+          if [[ "${actual}" != "${expected}" ]]; then
+            echo "::error::${label} is '${actual}', expected '${expected}'." >&2
+            exit 1
+          fi
+        }
+
+        check_config "Root pnpm minimum-release-age" "1440" pnpm config get minimum-release-age
+        check_config "Root pnpm trust-policy" "no-downgrade" pnpm config get trust-policy
+        check_config "Infrastructure pnpm minimum-release-age" "1440" pnpm -C infrastructure config get minimum-release-age
+        check_config "Infrastructure pnpm trust-policy" "no-downgrade" pnpm -C infrastructure config get trust-policy
+
+        echo "pnpm supply-chain hardening verified for root and infrastructure installs."
 
     - name: Install dependencies
       if: ${{ inputs.install == 'true' }}
