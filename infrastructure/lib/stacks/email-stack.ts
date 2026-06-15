@@ -64,7 +64,7 @@ export class EmailStack extends cdk.Stack {
 
     // Create Lambda function for contact form
     this.emailFunction = new lambda.NodejsFunction(this, "ContactFormFunction", {
-      runtime: lambdaCore.Runtime.NODEJS_20_X,
+      runtime: lambdaCore.Runtime.NODEJS_24_X,
       handler: "handler",
       entry: path.join(__dirname, "../functions/contact-form/index.ts"),
       environment: {

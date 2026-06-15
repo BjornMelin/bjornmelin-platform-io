@@ -139,7 +139,7 @@ describe("EmailStack", () => {
 
     template.hasResourceProperties("AWS::Lambda::Function", {
       Architectures: ["arm64"],
-      Runtime: "nodejs20.x",
+      Runtime: "nodejs24.x",
     });
   });
 

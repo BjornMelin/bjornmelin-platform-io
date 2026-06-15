@@ -115,7 +115,7 @@ describe("Cross-stack references", () => {
 
     // Verify Lambda function is created for contact form
     template.hasResourceProperties("AWS::Lambda::Function", {
-      Runtime: "nodejs20.x",
+      Runtime: "nodejs24.x",
     });
 
     // Verify API Gateway is created
