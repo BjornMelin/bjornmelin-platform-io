@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.10.2](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.10.1...v3.10.2) (2026-06-15)
+
+
+### Bug Fixes
+
+* **ci:** emit pnpm hardening annotations on stdout ([aacf7de](https://github.com/BjornMelin/bjornmelin-platform-io/commit/aacf7de683a35e6ff98c0058742a4b2a2bd460be))
+* **ci:** gate pnpm install hardening checks ([add5f12](https://github.com/BjornMelin/bjornmelin-platform-io/commit/add5f12d4fa39a6b0f7876d0789f5238289a8a72))
+* **ci:** verify pnpm hardening before deferred installs ([c80b56e](https://github.com/BjornMelin/bjornmelin-platform-io/commit/c80b56e671fcc26ccd9b9c733f38ae6e69d3d01c))
+* **deps:** resolve security audit policy failures ([f8ab453](https://github.com/BjornMelin/bjornmelin-platform-io/commit/f8ab453cafd7c24f5fa3fef1d333bdd8b5ef086e))
+* **infra:** use node 24 lambda runtime ([128c484](https://github.com/BjornMelin/bjornmelin-platform-io/commit/128c48420e38cb4cd916a032ccc6000dcd9c3661))
+
 ## [3.10.1](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.10.0...v3.10.1) (2026-05-25)
 
 
