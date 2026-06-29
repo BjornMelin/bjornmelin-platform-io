@@ -37,11 +37,11 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-cloudfront": "3.1068.0",
-    "@aws-sdk/client-ssm": "3.1068.0",
-    "aws-cdk-lib": "2.259.0",
+    "@aws-sdk/client-cloudfront": "3.1075.0",
+    "@aws-sdk/client-ssm": "3.1075.0",
+    "aws-cdk-lib": "2.260.0",
     "constructs": "^10.6.0",
-    "resend": "^6.12.4",
+    "resend": "^6.16.0",
     "source-map-support": "^0.5.21"
   }
 }
