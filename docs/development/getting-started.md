@@ -97,7 +97,7 @@ For working with AWS infrastructure:
 
 - `pnpm dev` - Start development server
 - `pnpm build` - Build production bundle
-- `pnpm start` - Start production server
+- `pnpm start` - Serve the built static export from `out/`
 - `pnpm lint` - Run Biome lint with autofix
 - `pnpm type-check` - Run TypeScript checks
 

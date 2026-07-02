@@ -1,8 +1,8 @@
 ---
 spec: SPEC-0001
 title: Dependency upgrades
-version: 1.4.0
-date: 2026-06-15
+version: 1.5.0
+date: 2026-07-02
 owners: ["ai-arch"]
 status: Implemented
 related_requirements: ["FR-001", "NFR-001"]
@@ -55,18 +55,18 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 
 ### Version baseline (pinned)
 
-- Next.js 16.2.9
+- Next.js 16.2.10
 - React 19.2.7
 - TypeScript 6.0.3
-- Tailwind CSS 4.3.1
-- @tailwindcss/postcss 4.3.1
+- Tailwind CSS 4.3.2
+- @tailwindcss/postcss 4.3.2
 - pnpm 10.28.0 (Corepack)
 - Zod 4.4.3
-- Vitest 4.1.8
-- Vite 8.0.16
-- Playwright 1.60.0
-- Biome 2.5.0
-- radix-ui 1.5.0
+- Vitest 4.1.9
+- Vite 8.1.2
+- Playwright 1.61.1
+- Biome 2.5.2
+- radix-ui 1.6.1
 
 *Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
 spec lists the intentional baseline versions for the core toolchain.*
@@ -101,6 +101,18 @@ force patched transitive versions where upstream release lines have not yet
 fully absorbed the security fixes. The baseline remains audit-clean with these
 overrides applied.
 
+The root test environment currently overrides `jsdom > undici` to `7.28.0`
+because `jsdom@29.1.1` still permits a vulnerable Undici 7.x resolution. The
+root Next.js chain also pins `next > postcss` to the direct PostCSS patch level.
+Infrastructure declares `vite@8.1.2` directly so Vitest resolves a patched Vite
+peer without a second override owner.
+
+The July 2026 advisory cleanup is source-backed by GitHub advisories for
+Undici, `markdown-it`, `linkify-it`, `js-yaml`, and Vite. `markdownlint-cli`
+now resolves `markdown-it@14.2.0`, which pulls patched `linkify-it@5.0.1`.
+`@commitlint/*` now resolves the `cosmiconfig` YAML loader path to
+`js-yaml@4.3.0`, above the advisory's patched floor.
+
 ### Rationale
 
 Upgrades prioritize security fixes, compatibility with the Next.js 16.2.x App Router,
@@ -129,7 +141,15 @@ The current baseline also unifies local shadcn Radix primitives on the
 
 ## Testing
 
-- Not applicable (documentation-only spec).
+- Dependency upgrades MUST pass frozen installs for both graphs:
+  `pnpm install --frozen-lockfile` and `pnpm -C infrastructure install --frozen-lockfile`.
+- Dependency upgrades MUST pass audits for both graphs:
+  `pnpm audit --audit-level moderate` and `pnpm -C infrastructure audit --audit-level moderate`.
+- Dependency upgrades MUST preserve the Node type boundary with `pnpm deps:check-node-types`.
+- Runtime/toolchain upgrades MUST pass app validation with `pnpm lint`, `pnpm type-check`,
+  `pnpm test:coverage`, `pnpm build`, and `pnpm test:e2e`.
+- Infrastructure dependency upgrades MUST pass `pnpm -C infrastructure build` and
+  `pnpm -C infrastructure test`.
 
 ## Operational notes
 
@@ -158,12 +178,31 @@ The current baseline also unifies local shadcn Radix primitives on the
 
 - `package.json` for the authoritative versions
 - `AGENTS.md` and `docs/development/README.md` for toolchain guidance
+- [Next.js static export guide](https://nextjs.org/docs/app/guides/static-exports)
+- [Next.js releases](https://github.com/vercel/next.js/releases)
+- [Vitest 4.1 release notes](https://vitest.dev/blog/vitest-4-1.html)
+- [Vite releases and supported versions](https://vite.dev/releases)
+- [GHSA-vmh5-mc38-953g: Undici SOCKS5 requestTls bypass](https://github.com/advisories/GHSA-vmh5-mc38-953g)
+- [GHSA-vxpw-j846-p89q: Undici WebSocket fragment DoS](https://github.com/advisories/GHSA-vxpw-j846-p89q)
+- [GHSA-pr7r-676h-xcf6: Undici shared cache disclosure](https://github.com/advisories/GHSA-pr7r-676h-xcf6)
+- [GHSA-6v5v-wf23-fmfq: markdown-it quadratic complexity DoS](https://github.com/advisories/GHSA-6v5v-wf23-fmfq)
+- [GHSA-22p9-wv53-3rq4: linkify-it quadratic complexity DoS](https://github.com/advisories/GHSA-22p9-wv53-3rq4)
+- [GHSA-h67p-54hq-rp68: js-yaml quadratic complexity DoS](https://github.com/advisories/GHSA-h67p-54hq-rp68)
+- [GHSA-fx2h-pf6j-xcff: Vite server.fs.deny bypass](https://github.com/advisories/GHSA-fx2h-pf6j-xcff)
 - [Zod v4 migration guide](https://zod.dev/v4/changelog) / ADR-0002 (Zod v4 strategy)
 - [Vitest v4 migration notes](https://vitest.dev/guide/migration) / ADR-0003 (testing changes)
 - ADR-0004 (toolchain changes) / ADR-0005 (static export constraints)
 
 ## Changelog
 
+- **1.5 (2026-07-02)**: Dependency modernization for the Next.js 16.2.10,
+  Vite 8.1.2, Vitest 4.1.9, Playwright 1.61.1, Tailwind CSS 4.3.2, Biome
+  2.5.2, `radix-ui` 1.6.1, AWS SDK, CDK, Resend, Lucide, React Hook Form,
+  commitlint, markdownlint, Sharp, and locked static-export `serve` baseline;
+  resolved live development-tooling advisories for `undici`, markdownlint's
+  `markdown-it`/`linkify-it` chain, commitlint's `js-yaml` path, and
+  infrastructure Vite while keeping Node 24 and static export constraints
+  intact.
 - **1.4 (2026-06-15)**: Dependency modernization for the current Next.js,
   React, Tailwind CSS, Biome, `radix-ui`, AWS SDK, and CDK baseline; pnpm
   hardening via a 24-hour minimum release age and trust downgrade protection;
