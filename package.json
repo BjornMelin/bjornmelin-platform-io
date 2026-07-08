@@ -60,6 +60,7 @@
     "react-dom": "19.2.7",
     "react-hook-form": "^7.81.0",
     "resend": "^6.17.1",
+    "serve": "14.2.6",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "1.0.7",
     "zod": "^4.4.3"
@@ -87,7 +88,6 @@
     "msw": "^2.13.4",
     "playwright": "~1.61.1",
     "postcss": "^8.5.16",
-    "serve": "14.2.6",
     "sharp": "^0.35.3",
     "tailwindcss": "4.3.2",
     "tsx": "^4.23.0",
