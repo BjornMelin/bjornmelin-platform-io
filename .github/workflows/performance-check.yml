@@ -56,7 +56,6 @@ jobs:
 
       - name: Write Lighthouse summary
         if: always()
-        continue-on-error: true
         run: node scripts/summarize-lighthouse-results.mjs
 
       - name: Evaluate Lighthouse comment criteria
