@@ -37,7 +37,7 @@
     "docker:smoke": "./scripts/docker-smoke.sh",
     "docker:verify": "pnpm docker:build && pnpm docker:smoke",
     "deploy:static:prod": "node scripts/deploy-static-site.mjs --env prod",
-    "serve": "serve -n out",
+    "serve": "node scripts/serve-static-export.mjs",
     "prepare": "husky",
     "analyze": "next experimental-analyze --output",
     "resend:status": "tsx scripts/ops/resend-domain-manager.ts status",

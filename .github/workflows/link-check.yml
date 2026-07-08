@@ -27,7 +27,7 @@ jobs:
         with:
           fail: true
           # Note: prod site domains are excluded from this link-check (approved by Bjorn Melin; see .github/workflows/README.md).
-          # Some valid docs are also excluded due to intermittent CI timeouts (see PR checks logs).
+          # Some valid docs are also excluded due to intermittent external failures (see PR checks logs).
           args: |
             --verbose
             --no-progress
@@ -45,6 +45,7 @@ jobs:
             --exclude ^https://www\.conventionalcommits\.org/?$
             --exclude https://bjornmelin.io
             --exclude https://www.bjornmelin.io
+            --exclude ^https://api\.star-history\.com/svg
             --exclude ^https://github\.com/BjornMelin/bjornmelin-platform-io/compare/
             --timeout 30
             --max-retries 3
