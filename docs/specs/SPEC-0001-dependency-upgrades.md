@@ -83,6 +83,8 @@ install contexts.
 
 Dependabot npm version-update PRs for root and infrastructure dependencies use
 a matching 1-day cooldown before proposing newly released package versions.
+Dependabot also checks GitHub Actions weekly and groups action updates by
+major versus non-major upgrade risk; workflow YAML files own exact action pins.
 The shared Node/pnpm setup action asserts both root and infrastructure pnpm
 hardening settings before any workflow install runs, including workflows that
 defer installation to a package subdirectory.

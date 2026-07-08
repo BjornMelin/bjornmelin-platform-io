@@ -83,6 +83,20 @@ updates:
       day: "monday"
       time: "04:00"
     open-pull-requests-limit: 5
+    groups:
+      github-actions-major:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+      github-actions-non-major:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     commit-message:
       prefix: "ci"
       include: "scope"
