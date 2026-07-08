@@ -67,7 +67,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
 
 10. **security-audit.yml** - Dependency security audit
     - Runs on: Push, PRs, monthly schedule (22nd at 08:00 UTC)
-    - Features: pnpm audit, dependency review
+    - Features: pnpm audit, evaluate-audit severity gate
 
 11. **dependency-update.yml** - Automated dependency updates
     - Runs on: Monthly schedule (1st at 09:00 UTC) and manual dispatch
