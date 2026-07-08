@@ -38,7 +38,7 @@ Development documentation for the bjornmelin-platform-io project.
 
 #### Infrastructure
 
-- AWS CDK 2.250.x
+- AWS CDK CLI 2.1129.0 and aws-cdk-lib 2.261.0
 - AWS S3
 - Resend (email)
 

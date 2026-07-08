@@ -202,7 +202,9 @@ The current baseline also unifies local shadcn Radix primitives on the
 - **1.6 (2026-07-08)**: Dependency refresh for Vite 8.1.3, Vitest
   4.1.10, `radix-ui` 1.6.2, AWS SDK 3.1080.0, CDK lib 2.261.0,
   React Hook Form 7.81.0, Resend 6.17.1, and tsx 4.23.0 while keeping
-  Node 24 and static export constraints intact.
+  Node 24 and static export constraints intact. Static export serving uses
+  `scripts/serve-static-export.mjs` with pinned `serve@14.2.6` and
+  `NO_UPDATE_CHECK=1`, avoiding dynamic `npx` or `pnpm dlx` resolution.
 - **1.5 (2026-07-02)**: Dependency modernization for the Next.js 16.2.10,
   Vite 8.1.2, Vitest 4.1.9, Playwright 1.61.1, Tailwind CSS 4.3.2, Biome
   2.5.2, `radix-ui` 1.6.1, AWS SDK, CDK, Resend, Lucide, React Hook Form,
