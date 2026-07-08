@@ -87,7 +87,7 @@ workflow above.
    find out -name "*.webp" | wc -l  # Should show optimized images
    ```
 
-4. Run the production server locally (optional smoke test):
+4. Serve the static export locally (optional smoke test):
 
    ```bash
    pnpm serve

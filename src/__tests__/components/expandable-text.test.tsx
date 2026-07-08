@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ExpandableText } from "@/components/shared/expandable-text";
@@ -76,9 +76,11 @@ describe("ExpandableText", () => {
     expect(paragraphAfter).not.toHaveClass("line-clamp-3");
     expect(screen.getByRole("button", { name: /show less/i })).toBeInTheDocument();
 
-    for (const callback of resizeCallbacks) {
-      callback([], {} as ResizeObserver);
-    }
+    act(() => {
+      for (const callback of resizeCallbacks) {
+        callback([], {} as ResizeObserver);
+      }
+    });
     expect(screen.getByRole("button", { name: /show less/i })).toBeInTheDocument();
   });
 
