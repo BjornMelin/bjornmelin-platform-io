@@ -175,7 +175,8 @@ See `docs/specs/SPEC-0007-deploy-workflow-permissions-drift.md` for the deploy r
 ### Production
 
 - Deployments run through GitHub Actions using the `prod-portfolio-deploy` role
-- Security audit workflow on push, PR, and monthly schedule with pnpm audit severity gating
+- Security audit workflow on push, PR, and monthly schedule; `pnpm audit` reports are gated by
+  `.github/scripts/evaluate-audit.mjs`
 - CodeQL advanced workflow is the single SARIF publisher
 
 ## CI Workflows
@@ -184,7 +185,7 @@ See `docs/specs/SPEC-0007-deploy-workflow-permissions-drift.md` for the deploy r
 | :---------------------- | :-------------- | :-------------------------------------- |
 | `ci.yml`                | Push/PR         | Lint, type-check, test, build           |
 | `performance-check.yml` | Push/PR to main | Lighthouse CI, bundle analysis          |
-| `security-audit.yml`    | Push/PR/monthly | pnpm audit, dependency scanning         |
+| `security-audit.yml`    | Push/PR/monthly | pnpm audit evaluation, dependency scan  |
 | `release-please.yml`    | Push to main    | Open/update Release PR, create releases |
 | `deploy.yml`            | Push to main    | Deploy to production                    |
 
