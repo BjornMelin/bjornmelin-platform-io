@@ -1,8 +1,8 @@
 ---
 spec: SPEC-0001
 title: Dependency upgrades
-version: 1.5.0
-date: 2026-07-02
+version: 1.6.0
+date: 2026-07-08
 owners: ["ai-arch"]
 status: Implemented
 related_requirements: ["FR-001", "NFR-001"]
@@ -62,11 +62,11 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 - @tailwindcss/postcss 4.3.2
 - pnpm 10.28.0 (Corepack)
 - Zod 4.4.3
-- Vitest 4.1.9
-- Vite 8.1.2
+- Vitest 4.1.10
+- Vite 8.1.3
 - Playwright 1.61.1
 - Biome 2.5.2
-- radix-ui 1.6.1
+- radix-ui 1.6.2
 
 *Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
 spec lists the intentional baseline versions for the core toolchain.*
@@ -104,8 +104,12 @@ overrides applied.
 The root test environment currently overrides `jsdom > undici` to `7.28.0`
 because `jsdom@29.1.1` still permits a vulnerable Undici 7.x resolution. The
 root Next.js chain also pins `next > postcss` to the direct PostCSS patch level.
-Infrastructure declares `vite@8.1.2` directly so Vitest resolves a patched Vite
+Infrastructure declares `vite@8.1.3` directly so Vitest resolves a patched Vite
 peer without a second override owner.
+
+The July 8 refresh uses the newest release-age eligible package versions. Newer
+same-day AWS SDK releases remain outside this baseline until the 24-hour pnpm
+minimum release age admits them.
 
 The July 2026 advisory cleanup is source-backed by GitHub advisories for
 Undici, `markdown-it`, `linkify-it`, `js-yaml`, and Vite. `markdownlint-cli`
@@ -195,6 +199,10 @@ The current baseline also unifies local shadcn Radix primitives on the
 
 ## Changelog
 
+- **1.6 (2026-07-08)**: Dependency refresh for Vite 8.1.3, Vitest
+  4.1.10, `radix-ui` 1.6.2, AWS SDK 3.1080.0, CDK lib 2.261.0,
+  React Hook Form 7.81.0, Resend 6.17.1, and tsx 4.23.0 while keeping
+  Node 24 and static export constraints intact.
 - **1.5 (2026-07-02)**: Dependency modernization for the Next.js 16.2.10,
   Vite 8.1.2, Vitest 4.1.9, Playwright 1.61.1, Tailwind CSS 4.3.2, Biome
   2.5.2, `radix-ui` 1.6.1, AWS SDK, CDK, Resend, Lucide, React Hook Form,
