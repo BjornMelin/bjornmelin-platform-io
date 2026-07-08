@@ -112,6 +112,7 @@ This directory contains all the GitHub Actions workflows for the bjornmelin-plat
     - Runs on: Push to main, PRs, and manual dispatch
     - Features: Lighthouse CI, bundle size analysis
     - Metrics: Performance, accessibility, SEO, best practices
+    - Reporting: Summarizes `.lighthouseci` reports via `scripts/summarize-lighthouse-results.mjs`
 
 ### Infrastructure
 
