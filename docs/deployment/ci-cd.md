@@ -54,12 +54,49 @@ workflow performs the safe sequence to keep the static export and CSP hashes in 
 2. `pnpm -C infrastructure cdk deploy prod-portfolio-storage` (deploys CloudFront Functions + CSP hashes KVS)
 3. `pnpm deploy:static:prod` (S3 upload + CSP hashes KVS sync + CloudFront invalidation)
 
+### Agent Skills Lab catalog sync
+
 The Agent Skills Lab catalog uses a reviewable sync path before production deploys. When
 `BjornMelin/dev-skills` emits the `agent-skills-catalog-updated` repository dispatch event,
 `.github/workflows/agent-skills-catalog-sync.yml` fetches the pushed catalog, validates it,
 updates `src/content/agent-skills/agent-skills.generated.json`, runs focused checks, and opens
 or updates a conventional catalog-sync PR. Merging that PR to `main` uses the normal deploy
 workflow above.
+
+```mermaid
+graph TB
+    subgraph "BjornMelin/dev-skills"
+        DISPATCH["repository_dispatch<br/>agent-skills-catalog-updated"]
+    end
+    subgraph "agent-skills-catalog-sync.yml"
+        FETCH["Fetch + validate catalog at source_sha"]
+        CHECK["Run vitest + type-check"]
+        PR["Open/update PR<br/>chore/agent-skills-catalog-sync"]
+        FETCH --> CHECK --> PR
+    end
+    subgraph "Production"
+        MERGE["Merge PR to main"]
+        DEPLOY["Deploy Portfolio (deploy.yml)"]
+        LIVE["bjornmelin.io/agent-skills"]
+        MERGE --> DEPLOY --> LIVE
+    end
+    DISPATCH --> FETCH
+    PR -->|you merge| MERGE
+```
+
+The sync normally fires **instantly** on a `repository_dispatch` from dev-skills (authenticated
+there by the `PLATFORM_REPOSITORY_DISPATCH_TOKEN` secret). It can also be run on demand via
+`workflow_dispatch` — inputs `source_ref` (branch/tag/commit, default `main`) and `source_sha`
+(exact commit, overrides `source_ref`) — which is the fallback if a dispatch is ever missed:
+
+```bash
+gh workflow run agent-skills-catalog-sync.yml -R BjornMelin/bjornmelin-platform-io \
+  -f source_sha=<dev-skills main commit sha>
+```
+
+The full end-to-end flow, the producer-side verify gate, and the dispatch-token setup are
+documented in dev-skills:
+[`docs/reference/agent-skills-catalog-pipeline.md`](https://github.com/BjornMelin/dev-skills/blob/main/docs/reference/agent-skills-catalog-pipeline.md).
 
 ### Production Build
 
