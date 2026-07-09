@@ -36,11 +36,15 @@ env:
   EXPECTED_SOURCE_REPOSITORY: BjornMelin/dev-skills
   EXPECTED_CATALOG_PATH: catalog/agent-skills-lab.json
   TARGET_CATALOG_PATH: src/content/agent-skills/agent-skills.generated.json
+  SYNC_PR_BRANCH: chore/agent-skills-catalog-sync
 
 jobs:
   sync-catalog:
     name: Sync generated catalog
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # Checkout + git show of the committed catalog.
+      pull-requests: read # Detect an already-open sync PR to reconcile.
     outputs:
       catalog_path: ${{ steps.source.outputs.catalog_path }}
       source_ref: ${{ steps.source.outputs.source_ref }}
@@ -150,6 +154,7 @@ jobs:
         id: diff
         env:
           FORCE: ${{ inputs.force }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -178,12 +183,23 @@ jobs:
               '.generatedAt = "" | walk(if type == "string" then gsub($sha; "<sha>") else . end)' "$1"
           }
           git show "HEAD:${TARGET_CATALOG_PATH}" >"${committed}"
-          if diff -q <(norm "${committed}") <(norm "${TARGET_CATALOG_PATH}") >/dev/null; then
-            echo "changed=false" >>"${GITHUB_OUTPUT}"
-            echo "Catalog content unchanged (only provenance SHA/timestamp differ); skipping sync PR."
-          else
+          if ! diff -q <(norm "${committed}") <(norm "${TARGET_CATALOG_PATH}") >/dev/null; then
             echo "changed=true" >>"${GITHUB_OUTPUT}"
             echo "Catalog content changed; a sync PR will be opened or updated."
+            exit 0
+          fi
+
+          # Content matches main. Still proceed if a sync PR is already open, so
+          # create-pull-request can reconcile it: update it to the latest content,
+          # or close it and delete its branch now that main and upstream agree.
+          # Skipping here would strand a stale PR proposing removed content.
+          open_pr="$(gh pr list --repo "${GITHUB_REPOSITORY}" --head "${SYNC_PR_BRANCH}" --state open --json number --jq 'length')"
+          if [[ "${open_pr}" -gt 0 ]]; then
+            echo "changed=true" >>"${GITHUB_OUTPUT}"
+            echo "Content matches main, but an open ${SYNC_PR_BRANCH} PR exists; proceeding so it is reconciled."
+          else
+            echo "changed=false" >>"${GITHUB_OUTPUT}"
+            echo "Catalog content unchanged (only provenance SHA/timestamp differ) and no open sync PR; skipping."
           fi
 
       - name: Run catalog checks
@@ -242,5 +258,5 @@ jobs:
             - Validation: `pnpm vitest run src/__tests__/data/agent-skills-data.test.ts` and `pnpm type-check`
 
             This PR updates only the generated catalog consumed by `/agent-skills`.
-          branch: chore/agent-skills-catalog-sync
+          branch: ${{ env.SYNC_PR_BRANCH }}
           delete-branch: true
