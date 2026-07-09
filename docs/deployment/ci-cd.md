@@ -86,8 +86,9 @@ graph TB
 
 The sync normally fires **instantly** on a `repository_dispatch` from dev-skills (authenticated
 there by the `PLATFORM_REPOSITORY_DISPATCH_TOKEN` secret). It can also be run on demand via
-`workflow_dispatch` — inputs `source_ref` (branch/tag/commit, default `main`) and `source_sha`
-(exact commit, overrides `source_ref`) — which is the fallback if a dispatch is ever missed:
+`workflow_dispatch`, whose inputs are `source_ref` (branch/tag/commit, default `main`) and
+`source_sha` (exact commit, overrides `source_ref`). This is the fallback if a dispatch is ever
+missed:
 
 ```bash
 gh workflow run agent-skills-catalog-sync.yml -R BjornMelin/bjornmelin-platform-io \
