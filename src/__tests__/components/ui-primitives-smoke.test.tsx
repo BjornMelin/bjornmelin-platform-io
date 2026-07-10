@@ -39,12 +39,17 @@ function ToastFixture() {
   const { add } = useToastManager();
 
   return (
-    <button
-      type="button"
-      onClick={() => add({ title: "Toast title", description: "Toast description" })}
-    >
-      Show toast
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => add({ title: "Toast title", description: "Toast description" })}
+      >
+        Show toast
+      </button>
+      <button type="button" onClick={() => add({ title: "Newer toast" })}>
+        Show newer toast
+      </button>
+    </>
   );
 }
 
@@ -169,5 +174,26 @@ describe("Tailwind v4 UI primitives", () => {
       await waitFor(() => expect(screen.queryByText("Toast title")).not.toBeInTheDocument());
       unmount();
     }
+  });
+
+  it("hides older toasts beyond the provider limit", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ToastProvider limit={1}>
+        <ToastFixture />
+        <Toaster />
+      </ToastProvider>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Show toast" }));
+    await user.click(screen.getByRole("button", { name: "Show newer toast" }));
+
+    const limitedToast = (await screen.findByText("Toast title")).closest('[role="dialog"]');
+    const visibleToast = screen.getByText("Newer toast").closest('[role="dialog"]');
+
+    expect(limitedToast).toHaveAttribute("data-limited");
+    expect(limitedToast).toHaveClass("data-[limited]:hidden");
+    expect(visibleToast).not.toHaveAttribute("data-limited");
   });
 });

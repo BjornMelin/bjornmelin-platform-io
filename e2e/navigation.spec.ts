@@ -69,6 +69,27 @@ test("mobile menu dismisses with Escape or Close and restores trigger focus", as
   await expect(trigger).toBeFocused();
 });
 
+test("theme menu remains interactive inside the mobile sheet", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Toggle menu" }).click();
+  const sheet = page.getByRole("dialog", { name: "Navigation" });
+  const mobileNav = sheet.getByRole("navigation", { name: "Mobile primary" });
+  await expect(mobileNav).toBeVisible();
+
+  const themeTrigger = sheet.getByRole("button", { name: "Toggle theme" });
+  await themeTrigger.click();
+  const darkItem = page.getByRole("menuitem", { name: "Dark" });
+  await expect(darkItem).toBeVisible();
+  await darkItem.click();
+
+  await expect(page.locator("html")).toHaveClass(/dark/);
+  await expect.poll(() => page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
+  await expect(themeTrigger).toBeFocused();
+  await expect(mobileNav).toBeVisible();
+});
+
 test("theme menu changes and persists the selected theme", async ({ page }) => {
   await page.goto("/");
 

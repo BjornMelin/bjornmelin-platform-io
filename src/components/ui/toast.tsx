@@ -48,7 +48,7 @@ function Toast({ className, ...props }: ToastProps) {
   return (
     <ToastPrimitive.Root
       className={cn(
-        "group pointer-events-auto relative w-full overflow-hidden rounded-md border border-border bg-background p-4 pr-6 text-foreground shadow-lg transition-[transform,opacity] motion-reduce:transition-none data-[swiping]:translate-x-[var(--toast-swipe-movement-x)] data-[swiping]:transition-none data-starting-style:-translate-y-full data-starting-style:opacity-0 data-ending-style:translate-x-full data-ending-style:opacity-0 sm:data-starting-style:translate-y-full data-[type=destructive]:border-destructive data-[type=destructive]:bg-destructive data-[type=destructive]:text-destructive-foreground",
+        "group pointer-events-auto relative w-full overflow-hidden rounded-md border border-border bg-background p-4 pr-6 text-foreground shadow-lg transition-[transform,opacity] motion-reduce:transition-none data-[limited]:hidden data-[swiping]:translate-x-[var(--toast-swipe-movement-x)] data-[swiping]:transition-none data-starting-style:-translate-y-full data-starting-style:opacity-0 data-ending-style:translate-x-full data-ending-style:opacity-0 sm:data-starting-style:translate-y-full data-[type=destructive]:border-destructive data-[type=destructive]:bg-destructive data-[type=destructive]:text-destructive-foreground",
         className,
       )}
       {...props}

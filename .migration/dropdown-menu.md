@@ -6,6 +6,7 @@
 
 - `src/components/ui/dropdown-menu.tsx:3` now composes Base Menu Portal, Positioner, Popup, Group, and Item.
 - `src/components/theme/theme-toggle.tsx:28` uses Base `render` composition and direct menu-item handlers.
+- Portaled menu content sits above modal sheets so nested theme controls remain interactive.
 - `rg -n 'radix-ui|@radix-ui' src/components/ui/dropdown-menu.tsx src/components/theme/theme-toggle.tsx` returns no matches.
 
 ## Left alone
@@ -20,3 +21,5 @@
 
 - Open the theme menu by mouse and keyboard, move through all items, choose
   each theme, and confirm focus returns to the trigger.
+- At mobile width, open the navigation sheet and confirm its theme menu remains
+  visible and clickable above the sheet.
