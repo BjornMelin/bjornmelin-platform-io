@@ -57,7 +57,8 @@ describe("ExpandableText", () => {
 
     render(<ExpandableText>Short text</ExpandableText>);
 
-    expect(screen.getByText("Short text")).toBeInTheDocument();
+    expect(screen.getByText("Short text")).toBeVisible();
+    expect(screen.getByText("Short text")).not.toHaveAttribute("hidden");
     expect(screen.queryByRole("button", { name: /show more/i })).toBeNull();
   });
 
@@ -68,11 +69,14 @@ describe("ExpandableText", () => {
     render(<ExpandableText>Long text that overflows</ExpandableText>);
 
     const paragraphBefore = screen.getByText("Long text that overflows").closest("p");
+    expect(paragraphBefore).toBeVisible();
+    expect(paragraphBefore).not.toHaveAttribute("hidden");
     expect(paragraphBefore).toHaveClass("line-clamp-3");
 
     await user.click(screen.getByRole("button", { name: /show more/i }));
 
     const paragraphAfter = screen.getByText("Long text that overflows").closest("p");
+    expect(paragraphAfter).toBeVisible();
     expect(paragraphAfter).not.toHaveClass("line-clamp-3");
     expect(screen.getByRole("button", { name: /show less/i })).toBeInTheDocument();
 

@@ -8,6 +8,8 @@
 - `src/components/ui/toaster.tsx:15` renders records from `useToastManager`.
 - `src/app/providers.tsx:14` owns the single provider;
   `src/components/contact/contact-form.tsx:38` adds native manager records.
+- The fixed empty viewport ignores pointer input while each toast root opts back
+  into pointer interaction, so notifications never cover header controls.
 - `src/hooks/use-toast.ts` and four tests for the parallel custom store were deleted.
 - `rg -n 'radix-ui|@radix-ui' src/components/ui/toast.tsx
   src/components/ui/toaster.tsx src/app/providers.tsx

@@ -1,4 +1,4 @@
-import { act, render, screen, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
 import { describe, expect, it, vi } from "vitest";
@@ -12,10 +12,6 @@ async function selectOption(
 ) {
   await user.click(screen.getByRole("combobox", { name: triggerName }));
   const option = await screen.findByRole("option", { name: optionName });
-  // Base UI ignores item clicks during its 200 ms opening-click guard.
-  await act(async () => {
-    await new Promise<void>((resolve) => window.setTimeout(resolve, 200));
-  });
   await user.click(option);
 }
 

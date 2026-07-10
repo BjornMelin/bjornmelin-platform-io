@@ -2,7 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
 /**
@@ -32,6 +32,7 @@ interface ExpandableTextProps {
 export function ExpandableText({ children, className }: ExpandableTextProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isTruncated, setIsTruncated] = React.useState(false);
+  const textId = React.useId();
   const textRef = React.useRef<HTMLParagraphElement>(null);
 
   const checkTruncation = React.useCallback(() => {
@@ -63,22 +64,19 @@ export function ExpandableText({ children, className }: ExpandableTextProps) {
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleContent
-        keepMounted
-        render={
-          <p
-            ref={textRef}
-            className={cn("min-w-0 break-words", className, !isOpen && "line-clamp-3")}
-          >
-            {children}
-          </p>
-        }
-      />
+      <p
+        id={textId}
+        ref={textRef}
+        className={cn("min-w-0 break-words", className, !isOpen && "line-clamp-3")}
+      >
+        {children}
+      </p>
       {isTruncated && (
         <CollapsibleTrigger
           render={
             <button
               type="button"
+              aria-controls={textId}
               className="mt-1 inline-flex h-11 items-center gap-0.5 text-xs font-medium text-primary hover:text-primary/80 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-6"
             >
               {isOpen ? "Show Less" : "Show More"}

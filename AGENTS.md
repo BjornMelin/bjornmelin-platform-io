@@ -94,7 +94,9 @@ Infrastructure:
 
 ## Browser Automation
 
-`agent-browser` MUST be used for browser automation.
+Codex and other agents MUST use `agent-browser` for ad hoc browser automation
+and manual UI verification. Automated tests under `e2e/` MUST remain Playwright
+test-runner code and use the repository fixtures and Playwright APIs.
 `agent-browser --help` SHOULD be used when command syntax needed.
 
 Core workflow:

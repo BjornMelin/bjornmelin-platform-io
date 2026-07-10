@@ -49,7 +49,7 @@ test("mobile menu closes on navigation", async ({ page }) => {
   await expect(primaryNav.getByRole("link", { name: "Home" })).toHaveCount(0);
 });
 
-test("mobile menu dismisses with Escape and restores trigger focus", async ({ page }) => {
+test("mobile menu dismisses with Escape or Close and restores trigger focus", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
@@ -61,6 +61,12 @@ test("mobile menu dismisses with Escape and restores trigger focus", async ({ pa
 
   await expect(page.getByRole("navigation", { name: "Mobile primary" })).toHaveCount(0);
   await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await expect(page.getByRole("navigation", { name: "Mobile primary" })).toBeVisible();
+  await page.getByRole("button", { name: "Close" }).click();
+  await expect(page.getByRole("navigation", { name: "Mobile primary" })).toHaveCount(0);
+  await expect(trigger).toBeFocused();
 });
 
 test("theme menu changes and persists the selected theme", async ({ page }) => {
@@ -70,7 +76,8 @@ test("theme menu changes and persists the selected theme", async ({ page }) => {
   await trigger.click();
   const darkItem = page.getByRole("menuitem", { name: "Dark" });
   await expect(darkItem).toBeVisible();
-  await darkItem.click({ delay: 200 });
+  await darkItem.focus();
+  await page.keyboard.press("Enter");
 
   await expect(page.locator("html")).toHaveClass(/dark/);
   await expect.poll(() => page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");

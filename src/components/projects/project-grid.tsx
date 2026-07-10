@@ -1,8 +1,6 @@
 "use client";
 
-/**
- * @fileoverview Interactive projects grid: URL-synced search/filter/sort via nuqs.
- */
+/** Interactive projects grid with URL-synced search, filtering, and sorting. */
 
 import { Search, X } from "lucide-react";
 import { useQueryStates } from "nuqs";

@@ -36,7 +36,11 @@ type ButtonProps = Omit<ButtonPrimitive.Props, "className"> &
     className?: string;
   };
 
-/** Renders a Base UI button with the site variants and sizes. */
+/**
+ * Renders a Base UI button with the site variants and sizes.
+ * @param props - Button properties.
+ * @returns Styled Base UI button element.
+ */
 function Button({ className, variant, size, ...props }: ButtonProps) {
   return (
     <ButtonPrimitive className={cn(buttonVariants({ variant, size, className }))} {...props} />

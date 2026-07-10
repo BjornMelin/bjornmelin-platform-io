@@ -23,7 +23,11 @@ type DropdownMenuContentProps = Omit<DropdownMenuPrimitive.Popup.Props, "classNa
     className?: string;
   };
 
-/** Renders positioned dropdown menu content in a portal. */
+/**
+ * Renders positioned dropdown menu content in a portal.
+ * @param props - Dropdown menu content properties.
+ * @returns Positioned dropdown menu popup element.
+ */
 function DropdownMenuContent({
   className,
   align = "start",
@@ -58,7 +62,11 @@ type DropdownMenuItemProps = Omit<DropdownMenuPrimitive.Item.Props, "className">
   inset?: boolean;
 };
 
-/** Renders an interactive dropdown menu item. */
+/**
+ * Renders an interactive dropdown menu item.
+ * @param props - Dropdown menu item properties.
+ * @returns Styled Base UI menu item element.
+ */
 function DropdownMenuItem({ className, inset, ...props }: DropdownMenuItemProps) {
   return (
     <DropdownMenuPrimitive.Item

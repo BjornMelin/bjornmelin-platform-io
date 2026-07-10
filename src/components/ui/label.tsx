@@ -9,9 +9,13 @@ const labelVariants = cva(
 
 type LabelProps = React.ComponentProps<"label"> & VariantProps<typeof labelVariants>;
 
-/** Renders a native label with the site label styles. */
+/**
+ * Renders a native label with the site label styles.
+ * @param props - Native label properties.
+ * @returns Styled native label element.
+ */
 function Label({ className, ...props }: LabelProps) {
-  // biome-ignore lint/a11y/noLabelWithoutControl: Consumers provide htmlFor or nest a control.
+  // biome-ignore lint/a11y/noLabelWithoutControl: Consumers provide htmlFor or nest a control; tracked in docs/specs/SPEC-0012-shadcn-base-ui-hard-cut.md.
   return <label className={cn(labelVariants(), className)} {...props} />;
 }
 

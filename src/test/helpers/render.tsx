@@ -21,9 +21,10 @@ interface RenderWithProvidersResult extends RenderResult {
 }
 
 /**
- * Render a component with all app providers.
- * Includes Toaster by default.
- * Returns a userEvent instance for interactions.
+ * Renders a component with app providers and a configured user-event instance.
+ * @param ui - React element to render.
+ * @param options - Testing Library render options and provider controls.
+ * @returns Render result extended with a configured user-event instance.
  *
  * @example
  * ```tsx

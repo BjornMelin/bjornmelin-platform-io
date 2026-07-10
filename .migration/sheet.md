@@ -6,6 +6,8 @@
 
 - `src/components/ui/sheet.tsx:3` maps the sheet to Base Dialog Backdrop, Popup, Trigger, Close, Title, and Description.
 - `src/components/layout/mobile-nav.tsx:80` composes the menu button through the Base trigger.
+- The overlay and panel sit above the fixed navbar, and all sheet variants own
+  overscroll containment.
 - `rg -n 'radix-ui|@radix-ui' src/components/ui/sheet.tsx src/components/layout/mobile-nav.tsx` returns no matches.
 
 ## Left alone
@@ -15,6 +17,7 @@
 ## Behavior changes
 
 - Motion uses Base starting and ending style attributes instead of Radix state attributes.
+- The mobile trigger and close control expose 44-by-44-pixel pointer targets.
 
 ## Verify by hand
 

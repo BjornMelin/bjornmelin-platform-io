@@ -11,7 +11,10 @@ import {
   useToastManager,
 } from "@/components/ui/toast";
 
-/** Renders all toasts owned by the nearest Base UI toast provider. */
+/**
+ * Renders all toasts owned by the nearest Base UI toast provider.
+ * @returns Portal-rendered viewport containing all active toasts.
+ */
 export function Toaster() {
   const { toasts } = useToastManager();
 

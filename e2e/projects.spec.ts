@@ -56,6 +56,10 @@ test("projects page lists projects and supports URL-synced filtering", async ({ 
   await expect(sortCombobox).toBeFocused();
 
   await page.getByLabel("Clear Filters").click();
+  await expect(page).toHaveURL(/\/projects\/?$/);
+  await expect(searchBox).toHaveValue("");
+  await expect(categoryCombobox).toContainText(/all categories/i);
+  await expect(projectCards).toHaveCount(beforeCount);
 
   // Project data includes cards with enough tags to exercise the overflow popover.
   const overflowTrigger = page.getByRole("button", { name: /show .* more tags/i }).first();

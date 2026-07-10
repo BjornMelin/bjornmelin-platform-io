@@ -25,7 +25,7 @@ function SheetOverlay({ className, ...props }: SheetOverlayProps) {
   return (
     <SheetPrimitive.Backdrop
       className={cn(
-        "fixed inset-0 z-50 bg-black/80 transition-opacity duration-300 motion-reduce:transition-none data-starting-style:opacity-0 data-ending-style:opacity-0",
+        "fixed inset-0 z-[60] bg-black/80 transition-opacity duration-300 motion-reduce:transition-none data-starting-style:opacity-0 data-ending-style:opacity-0",
         className,
       )}
       {...props}
@@ -34,7 +34,7 @@ function SheetOverlay({ className, ...props }: SheetOverlayProps) {
 }
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 border-border bg-background p-6 shadow-lg transition-transform duration-500 ease-in-out motion-reduce:transition-none data-ending-style:duration-300",
+  "fixed z-[60] gap-4 overscroll-contain border-border bg-background p-6 shadow-lg transition-transform duration-500 ease-in-out motion-reduce:transition-none data-ending-style:duration-300",
   {
     variants: {
       side: {
@@ -57,7 +57,11 @@ type SheetContentProps = Omit<SheetPrimitive.Popup.Props, "className"> &
     className?: string;
   };
 
-/** Renders the positioned sheet panel and its close button. */
+/**
+ * Renders the positioned sheet panel and its close button.
+ * @param props - Sheet content properties.
+ * @returns Positioned Base UI dialog popup element.
+ */
 function SheetContent({ side = "right", className, children, ...props }: SheetContentProps) {
   return (
     <SheetPortal>
@@ -65,7 +69,7 @@ function SheetContent({ side = "right", className, children, ...props }: SheetCo
       <SheetPrimitive.Popup className={cn(sheetVariants({ side }), className)} {...props}>
         <SheetPrimitive.Close
           aria-label="Close"
-          className="absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none"
+          className="absolute right-2 top-2 inline-flex size-11 items-center justify-center rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none"
         >
           <X className="h-4 w-4" aria-hidden="true" />
           <span className="sr-only">Close</span>
@@ -76,7 +80,11 @@ function SheetContent({ side = "right", className, children, ...props }: SheetCo
   );
 }
 
-/** Renders the header area of a sheet. */
+/**
+ * Renders the header area of a sheet.
+ * @param props - Sheet header properties.
+ * @returns Styled sheet header element.
+ */
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex flex-col gap-2 text-center sm:text-left", className)} {...props} />
@@ -85,7 +93,11 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
 
 type SheetTitleProps = Omit<SheetPrimitive.Title.Props, "className"> & { className?: string };
 
-/** Renders the accessible title for a sheet. */
+/**
+ * Renders the accessible title for a sheet.
+ * @param props - Sheet title properties.
+ * @returns Accessible Base UI dialog title element.
+ */
 function SheetTitle({ className, ...props }: SheetTitleProps) {
   return (
     <SheetPrimitive.Title
@@ -99,7 +111,11 @@ type SheetDescriptionProps = Omit<SheetPrimitive.Description.Props, "className">
   className?: string;
 };
 
-/** Renders the accessible description for a sheet. */
+/**
+ * Renders the accessible description for a sheet.
+ * @param props - Sheet description properties.
+ * @returns Accessible Base UI dialog description element.
+ */
 function SheetDescription({ className, ...props }: SheetDescriptionProps) {
   return (
     <SheetPrimitive.Description

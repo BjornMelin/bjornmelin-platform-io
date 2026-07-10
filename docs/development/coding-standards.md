@@ -210,11 +210,12 @@ Reference: `https://github.com/airbnb/javascript?tab=readme-ov-file#comments`.
 
 ```typescript
 /**
- * ProjectCard component displays a project with its details
+ * Displays a project with its details.
  *
- * @param {ProjectCardModel} project - Project data to display
- * @param {string} className - Optional additional classes
- * @returns {JSX.Element} Project card component
+ * @param props - Project card properties.
+ * @param props.project - Project data to display.
+ * @param props.className - Optional additional classes.
+ * @returns Project card element.
  */
 export function ProjectCard({ project, className }: ProjectCardProps) {
   // Implementation

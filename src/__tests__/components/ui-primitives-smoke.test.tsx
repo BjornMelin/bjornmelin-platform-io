@@ -1,5 +1,5 @@
 /**
- * @fileoverview Smoke tests to ensure Tailwind v4-migrated UI primitives render without crashing.
+ * Smoke tests that ensure Tailwind v4 UI primitives render without crashing.
  *
  * These tests intentionally avoid brittle className assertions and instead verify stable
  * accessibility/behavior invariants. Their main purpose is coverage across impacted files.
@@ -7,6 +7,7 @@
 
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { createRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { Badge } from "@/components/ui/badge";
@@ -54,6 +55,7 @@ describe("Tailwind v4 UI primitives", () => {
 
   it("renders non-portal primitives", async () => {
     const user = userEvent.setup();
+    const separatorRef = createRef<HTMLDivElement>();
 
     render(
       <div>
@@ -69,7 +71,7 @@ describe("Tailwind v4 UI primitives", () => {
         <Input id="name" name="name" autoComplete="name" />
         <label htmlFor="message">Message</label>
         <Textarea id="message" name="message" />
-        <Separator />
+        <Separator ref={separatorRef} />
       </div>,
     );
 
@@ -78,6 +80,7 @@ describe("Tailwind v4 UI primitives", () => {
     expect(screen.getByText("Title")).toBeInTheDocument();
     expect(screen.getByLabelText("Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Message")).toBeInTheDocument();
+    expect(separatorRef.current).toHaveAttribute("role", "separator");
     await user.tab();
     expect(screen.getByRole("button", { name: "Action" })).toHaveFocus();
   });

@@ -22,10 +22,13 @@
 ## Behavior changes
 
 - Base `onValueChange` can provide `null`; consumers ignore null clears that are not valid filter states.
-- Base guards item activation during the first 200 ms of an opening click; tests model this native interaction guard.
+- Base guards accidental opening mouseup selection for 400 ms; explicit
+  pointer-down clicks and keyboard selections remain immediate.
 
 ## Verify by hand
 
 - Open every project and Agent Skills select, use arrows and typeahead, select
-  an option, press Escape, and confirm every option is visible before scrolling
-  and the trigger label and URL state update.
+  an option, press Escape, and confirm the popup is not constrained to the
+  trigger height. It must display as many options as the viewport allows and
+  scroll when the viewport cannot show them all. Confirm the trigger label and
+  URL state update.

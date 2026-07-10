@@ -18,7 +18,11 @@ type SelectTriggerProps = Omit<SelectPrimitive.Trigger.Props, "className"> & {
   className?: string;
 };
 
-/** Renders the button that opens the select popup. */
+/**
+ * Renders the button that opens the select popup.
+ * @param props - Select trigger properties.
+ * @returns Styled Base UI select trigger element.
+ */
 function SelectTrigger({ className, children, ...props }: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
@@ -77,7 +81,11 @@ type SelectContentProps = Omit<SelectPrimitive.Popup.Props, "className"> &
     className?: string;
   };
 
-/** Renders positioned select options in a portal. */
+/**
+ * Renders positioned select options in a portal.
+ * @param props - Select popup properties.
+ * @returns Positioned Base UI select popup element.
+ */
 function SelectContent({
   className,
   children,
@@ -117,7 +125,11 @@ type SelectItemProps = Omit<SelectPrimitive.Item.Props, "className"> & {
   className?: string;
 };
 
-/** Renders an option in the select popup. */
+/**
+ * Renders an option in the select popup.
+ * @param props - Select item properties.
+ * @returns Styled Base UI select option element.
+ */
 function SelectItem({ className, children, ...props }: SelectItemProps) {
   return (
     <SelectPrimitive.Item

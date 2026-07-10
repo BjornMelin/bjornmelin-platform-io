@@ -1,10 +1,5 @@
 "use client";
 
-/**
- * @fileoverview Theme toggle built with a dropdown menu.
- * Theme changes are handled by ThemeScript via data-theme-set attributes.
- */
-
 import { Moon, Sun } from "lucide-react";
 import {
   DropdownMenu,
@@ -16,7 +11,7 @@ import {
 
 /**
  * Renders a theme chooser wired via data-theme-set.
- * @returns {JSX.Element} Theme toggle control.
+ * @returns Theme toggle control.
  */
 export function ThemeToggle() {
   return (
@@ -26,7 +21,7 @@ export function ThemeToggle() {
           <button
             type="button"
             aria-label="Toggle theme"
-            className="relative rounded-md p-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="relative inline-flex size-11 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           />
         }
       >
@@ -36,19 +31,31 @@ export function ThemeToggle() {
         />
         <Moon
           aria-hidden="true"
-          className="absolute left-2 top-2 h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100"
+          className="absolute left-1/2 top-1/2 h-[1.2rem] w-[1.2rem] -translate-x-1/2 -translate-y-1/2 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100"
         />
         <span className="sr-only">Toggle theme</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-36">
         <DropdownMenuGroup>
-          <DropdownMenuItem className="w-full text-left text-sm" data-theme-set="light">
+          <DropdownMenuItem
+            nativeButton
+            render={<button type="button" data-theme-set="light" />}
+            className="w-full text-left text-sm"
+          >
             Light
           </DropdownMenuItem>
-          <DropdownMenuItem className="w-full text-left text-sm" data-theme-set="dark">
+          <DropdownMenuItem
+            nativeButton
+            render={<button type="button" data-theme-set="dark" />}
+            className="w-full text-left text-sm"
+          >
             Dark
           </DropdownMenuItem>
-          <DropdownMenuItem className="w-full text-left text-sm" data-theme-set="system">
+          <DropdownMenuItem
+            nativeButton
+            render={<button type="button" data-theme-set="system" />}
+            className="w-full text-left text-sm"
+          >
             System
           </DropdownMenuItem>
         </DropdownMenuGroup>
