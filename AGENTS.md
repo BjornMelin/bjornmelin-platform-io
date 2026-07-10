@@ -50,9 +50,9 @@ Infrastructure:
 - Direct module paths MUST ALWAYS be used for imports (e.g. `@mui/material/Button`).
 - Exception: packages in `experimental.optimizePackageImports` and packages optimized by Next.js by default MAY be used
   because Next rewrites them.
-- `radix-ui` named imports from the package entrypoint MAY be used for shadcn-owned primitives in `src/components/ui/*`
-  while `next.config.mjs` includes `experimental.optimizePackageImports: ["radix-ui"]`; this matches shadcn's
-  unified Radix migration. Use documented namespace members such as `Slot.Root`, not legacy aliases.
+- shadcn-owned primitives MUST use direct `@base-ui/react/<component>` imports in `src/components/ui/*`.
+- Base UI consumers MUST use `render` composition or semantic links styled with `buttonVariants`;
+  `asChild` MUST NOT be reintroduced.
 - Lucide icons MUST use named imports from `lucide-react` in this repo.
 - `src/types/lucide-react-icons.d.ts` MUST NOT be reintroduced unless the repo intentionally returns to deep Lucide paths.
 
@@ -79,7 +79,9 @@ Infrastructure:
 - Secrets MUST NEVER be committed.
 - `.env.local` MUST be used for local-only overrides from `.env.example`.
 - Tailwind CSS MUST use v4 CSS-first config in `src/app/globals.css`.
-- `tailwind.config.ts` MUST be tooling-only unless loaded via `@config`.
+- `components.json` MUST remain on `base-nova` with an empty Tailwind config path.
+- `tailwind.config.ts` MUST NOT be reintroduced unless the CSS entry point explicitly loads it via `@config`.
+- `ThemeScript` MUST remain the single theme owner; `next-themes` or a second class owner MUST NOT be reintroduced.
 - Static export mandatory via `output: "export"`.
 - Server Actions, ISR, Draft Mode, request-dependent Route Handlers, other server-runtime-only features MUST NOT be introduced.
 - CSP inline script hashes generated; NOT secrets.

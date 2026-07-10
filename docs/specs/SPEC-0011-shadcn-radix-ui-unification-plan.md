@@ -1,16 +1,20 @@
 ---
 spec: SPEC-0011
 title: shadcn radix-ui unification playbook
-version: 1.0.0
-date: 2026-06-01
+version: 1.1.0
+date: 2026-07-10
 owners: ["ai-arch"]
-status: Implemented
+status: Deprecated
 related_requirements: ["NFR-001"]
 related_adrs: ["ADR-0005", "ADR-0009"]
-notes: "Implemented local shadcn new-york migration from individual Radix packages to the unified radix-ui package."
+notes: "Historical Radix unification record superseded by SPEC-0012."
 ---
 
 ## Summary
+
+This historical migration record is superseded by `SPEC-0012`. Its Radix
+commands and package contracts are not valid instructions for the current
+Base UI repository.
 
 This specification defines the canonical end state for shadcn `new-york`
 projects that still depend on many individual `@radix-ui/react-*` packages:
@@ -477,6 +481,8 @@ Verification expectation:
 
 ## Changelog
 
+- **1.1 (2026-07-10)**: Deprecated after the Base UI hard cut documented in
+  `SPEC-0012`.
 - **1.0 (2026-06-01)**: Implemented local shadcn `radix-ui` migration, removed
   obsolete individual Radix primitive dependencies, and recorded the completed
   repo outcome.

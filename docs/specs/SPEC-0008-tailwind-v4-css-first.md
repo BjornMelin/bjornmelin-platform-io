@@ -1,8 +1,8 @@
 ---
 spec: SPEC-0008
 title: Tailwind CSS v4 (CSS-first config) integration
-version: 1.0.0
-date: 2026-01-19
+version: 1.1.0
+date: 2026-07-10
 owners: ["ai-arch"]
 status: Implemented
 related_requirements: ["FR-301", "FR-302", "NFR-001", "NFR-301"]
@@ -73,8 +73,10 @@ This project uses **PostCSS** for Tailwind integration (Next.js build pipeline):
   - Prefer `@utility` (not `@layer utilities`) for custom utilities.
 - `postcss.config.mjs`
   - Must include `@tailwindcss/postcss` as the Tailwind processor; other PostCSS plugins may coexist.
+- `components.json`
+  - Keep `tailwind.config` empty for the Tailwind v4 CSS-first integration.
 - `tailwind.config.ts`
-  - Exists only for tooling compatibility; Tailwind does not load it unless `@config` is used.
+  - Must remain absent unless `src/app/globals.css` intentionally loads it with `@config`.
 
 ### Migration checklist (v3 → v4)
 
@@ -161,7 +163,7 @@ pnpm serve
 
 - `src/app/globals.css`
 - `postcss.config.mjs`
-- `tailwind.config.ts`
+- `components.json`
 
 ## References
 
@@ -170,4 +172,6 @@ pnpm serve
 
 ## Changelog
 
+- **1.1 (2026-07-10)**: Removed the obsolete tooling config stub and recorded
+  the shadcn Tailwind v4 configuration contract.
 - **1.0 (2026-01-19)**: Initial version.

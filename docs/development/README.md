@@ -28,7 +28,7 @@ Development documentation for the bjornmelin-platform-io project.
 - React 19.2.7
 - TypeScript 6.0.3
 - Tailwind CSS 4.3.2 (CSS-first)
-- shadcn/ui
+- shadcn/ui `base-nova` with Base UI React 1.6.0
 
 #### Build Optimization
 
