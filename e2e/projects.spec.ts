@@ -40,7 +40,7 @@ test("projects page lists projects and supports URL-synced filtering", async ({ 
       }),
     )
     .toBe(true);
-  await ragOption.click({ delay: 200 });
+  await ragOption.click();
   await expect(page).toHaveURL(/category=RAG/);
   await page.goBack();
   await expect(page).not.toHaveURL(/category=/);
