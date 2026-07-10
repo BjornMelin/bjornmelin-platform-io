@@ -1,165 +1,118 @@
 "use client";
 
-import { cva, type VariantProps } from "class-variance-authority";
+import { Toast as ToastPrimitive } from "@base-ui/react/toast";
 import { X } from "lucide-react";
-import { Toast as ToastPrimitives } from "radix-ui";
-import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-/** Provider for toast state and configuration. */
-const ToastProvider = ToastPrimitives.Provider;
+/** Provides Base UI toast state and configurable limits. */
+const ToastProvider = ToastPrimitive.Provider;
 
-/** Toast viewport container used to position notifications.
- * @param props - Viewport props.
- * @param ref - Forwarded viewport ref.
- * @returns Toast viewport element.
- */
-const ToastViewport = React.forwardRef<
-  React.ComponentRef<typeof ToastPrimitives.Viewport>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Viewport
-    ref={ref}
-    aria-label="Notifications"
-    aria-live="polite"
-    className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
-      className,
-    )}
-    {...props}
-  />
-));
-ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
+/** Portals the toast viewport to the document body by default. */
+const ToastPortal = ToastPrimitive.Portal;
 
-const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between gap-2 overflow-hidden rounded-md border border-border p-4 pr-6 shadow-lg transition-[transform,opacity] data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
-  {
-    variants: {
-      variant: {
-        default: "bg-background text-foreground",
-        destructive:
-          "destructive group border-destructive bg-destructive text-destructive-foreground",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  },
-);
+/** Returns the current Base UI toast manager. */
+const useToastManager = ToastPrimitive.useToastManager;
 
-/** Toast root component for rendering a notification.
- * @param props - Toast props.
- * @param ref - Forwarded toast ref.
- * @returns Toast element.
- */
-const Toast = React.forwardRef<
-  React.ComponentRef<typeof ToastPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
+type ToastViewportProps = Omit<ToastPrimitive.Viewport.Props, "className"> & {
+  className?: string;
+};
+
+/** Renders the fixed viewport that contains notifications. */
+function ToastViewport({ className, ...props }: ToastViewportProps) {
   return (
-    <ToastPrimitives.Root
-      ref={ref}
-      className={cn(toastVariants({ variant }), className)}
+    <ToastPrimitive.Viewport
+      className={cn(
+        "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+        className,
+      )}
       {...props}
     />
   );
-});
-Toast.displayName = ToastPrimitives.Root.displayName;
+}
 
-/** Action element for a toast notification.
- * @param props - Toast action props.
- * @param ref - Forwarded action ref.
- * @returns Toast action element.
- */
-const ToastAction = React.forwardRef<
-  React.ComponentRef<typeof ToastPrimitives.Action>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Action
-    ref={ref}
-    className={cn(
-      "inline-flex h-11 shrink-0 items-center justify-center rounded-md border border-border bg-transparent px-3 text-sm font-medium transition-colors hover:bg-secondary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 hover:group-[.destructive]:border-destructive/30 hover:group-[.destructive]:bg-destructive hover:group-[.destructive]:text-destructive-foreground focus-visible:group-[.destructive]:ring-destructive",
-      className,
-    )}
-    {...props}
-  />
-));
-ToastAction.displayName = ToastPrimitives.Action.displayName;
+type ToastProps = Omit<ToastPrimitive.Root.Props, "className"> & {
+  className?: string;
+};
 
-/** Close button for a toast notification.
- * @param props - Toast close props.
- * @param ref - Forwarded close ref.
- * @returns Toast close element.
- */
-const ToastClose = React.forwardRef<
-  React.ComponentRef<typeof ToastPrimitives.Close>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Close
-    ref={ref}
-    aria-label="Close notification"
-    className={cn(
-      "absolute right-1 top-1 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background group-hover:opacity-100 group-[.destructive]:text-red-300 hover:group-[.destructive]:text-red-50 focus-visible:group-[.destructive]:ring-red-400 focus-visible:group-[.destructive]:ring-offset-red-600",
-      className,
-    )}
-    toast-close=""
-    {...props}
-  >
-    <X className="h-4 w-4" aria-hidden="true" />
-  </ToastPrimitives.Close>
-));
-ToastClose.displayName = ToastPrimitives.Close.displayName;
+/** Renders a manager-owned toast with type-driven styling. */
+function Toast({ className, ...props }: ToastProps) {
+  return (
+    <ToastPrimitive.Root
+      className={cn(
+        "group pointer-events-auto relative w-full overflow-hidden rounded-md border border-border bg-background p-4 pr-6 text-foreground shadow-lg transition-[transform,opacity] motion-reduce:transition-none data-[swiping]:translate-x-[var(--toast-swipe-movement-x)] data-[swiping]:transition-none data-starting-style:-translate-y-full data-starting-style:opacity-0 data-ending-style:translate-x-full data-ending-style:opacity-0 sm:data-starting-style:translate-y-full data-[type=destructive]:border-destructive data-[type=destructive]:bg-destructive data-[type=destructive]:text-destructive-foreground",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
-/** Title element for a toast notification.
- * @param props - Toast title props.
- * @param ref - Forwarded title ref.
- * @returns Toast title element.
- */
-const ToastTitle = React.forwardRef<
-  React.ComponentRef<typeof ToastPrimitives.Title>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title
-    ref={ref}
-    className={cn("text-sm font-semibold [&+div]:text-xs", className)}
-    {...props}
-  />
-));
-ToastTitle.displayName = ToastPrimitives.Title.displayName;
+type ToastContentProps = Omit<ToastPrimitive.Content.Props, "className"> & {
+  className?: string;
+};
 
-/** Description element for a toast notification.
- * @param props - Toast description props.
- * @param ref - Forwarded description ref.
- * @returns Toast description element.
- */
-const ToastDescription = React.forwardRef<
-  React.ComponentRef<typeof ToastPrimitives.Description>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Description
-    ref={ref}
-    className={cn("text-sm opacity-90", className)}
-    {...props}
-  />
-));
-ToastDescription.displayName = ToastPrimitives.Description.displayName;
+/** Lays out the visible contents of a toast. */
+function ToastContent({ className, ...props }: ToastContentProps) {
+  return (
+    <ToastPrimitive.Content
+      className={cn("flex w-full items-center justify-between gap-2", className)}
+      {...props}
+    />
+  );
+}
 
-/** Props for the Toast component. */
-type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
+type ToastCloseProps = Omit<ToastPrimitive.Close.Props, "className"> & {
+  className?: string;
+};
 
-/** Action element type for Toast components. */
-type ToastActionElement = React.ReactElement<typeof ToastAction>;
+/** Renders the button that dismisses a toast. */
+function ToastClose({ className, ...props }: ToastCloseProps) {
+  return (
+    <ToastPrimitive.Close
+      aria-label="Close notification"
+      className={cn(
+        "absolute right-1 top-1 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background group-hover:opacity-100 group-data-[type=destructive]:text-red-300 hover:group-data-[type=destructive]:text-red-50 focus-visible:group-data-[type=destructive]:ring-red-400 focus-visible:group-data-[type=destructive]:ring-offset-red-600",
+        className,
+      )}
+      {...props}
+    >
+      <X className="h-4 w-4" aria-hidden="true" />
+    </ToastPrimitive.Close>
+  );
+}
 
-/** Exposes toast primitives, components, and related public types. */
+type ToastTitleProps = Omit<ToastPrimitive.Title.Props, "className"> & {
+  className?: string;
+};
+
+/** Renders the accessible title of a toast. */
+function ToastTitle({ className, ...props }: ToastTitleProps) {
+  return (
+    <ToastPrimitive.Title
+      className={cn("text-sm font-semibold [&+p]:text-xs", className)}
+      {...props}
+    />
+  );
+}
+
+type ToastDescriptionProps = Omit<ToastPrimitive.Description.Props, "className"> & {
+  className?: string;
+};
+
+/** Renders the accessible description of a toast. */
+function ToastDescription({ className, ...props }: ToastDescriptionProps) {
+  return <ToastPrimitive.Description className={cn("text-sm opacity-90", className)} {...props} />;
+}
+
 export {
   Toast,
-  ToastAction,
-  type ToastActionElement,
   ToastClose,
+  ToastContent,
   ToastDescription,
-  type ToastProps,
+  ToastPortal,
   ToastProvider,
   ToastTitle,
   ToastViewport,
+  useToastManager,
 };

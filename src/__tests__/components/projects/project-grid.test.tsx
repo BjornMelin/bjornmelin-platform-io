@@ -1,9 +1,23 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
 import { describe, expect, it, vi } from "vitest";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import type { ProjectCardModel } from "@/types/project";
+
+async function selectOption(
+  user: ReturnType<typeof userEvent.setup>,
+  triggerName: RegExp,
+  optionName: string,
+) {
+  await user.click(screen.getByRole("combobox", { name: triggerName }));
+  const option = await screen.findByRole("option", { name: optionName });
+  // Base UI ignores item clicks during its 200 ms opening-click guard.
+  await act(async () => {
+    await new Promise<void>((resolve) => window.setTimeout(resolve, 200));
+  });
+  await user.click(option);
+}
 
 function buildProjects(): ProjectCardModel[] {
   return [
@@ -111,15 +125,12 @@ describe("<ProjectGrid />", () => {
     });
 
     // Category -> Web Scraping
-    await user.click(screen.getByRole("combobox", { name: /filter by category/i }));
-    await user.click(screen.getByRole("option", { name: "Web Scraping" }));
+    await selectOption(user, /filter by category/i, "Web Scraping");
 
     expect(screen.getAllByTestId("project-card")).toHaveLength(1);
     expect(screen.getByRole("link", { name: "Beta" })).toBeInTheDocument();
-
     // Language -> TypeScript (should yield empty set with current category)
-    await user.click(screen.getByRole("combobox", { name: /filter by language/i }));
-    await user.click(screen.getByRole("option", { name: "TypeScript" }));
+    await selectOption(user, /filter by language/i, "TypeScript");
 
     expect(screen.queryAllByTestId("project-card")).toHaveLength(0);
     expect(screen.getByText(/no projects match/i)).toBeInTheDocument();
@@ -136,14 +147,12 @@ describe("<ProjectGrid />", () => {
     });
 
     // minStars -> 25+ (filters out Beta)
-    await user.click(screen.getByRole("combobox", { name: /filter by minimum stars/i }));
-    await user.click(screen.getByRole("option", { name: "25+" }));
+    await selectOption(user, /filter by minimum stars/i, "25+");
 
     expect(screen.getAllByTestId("project-card")).toHaveLength(2);
 
     // Sort -> Name (Alpha then Gamma)
-    await user.click(screen.getByRole("combobox", { name: /sort projects/i }));
-    await user.click(screen.getByRole("option", { name: "Name" }));
+    await selectOption(user, /sort projects/i, "Name");
 
     const cards = screen.getAllByTestId("project-card");
     const [first, second] = cards;

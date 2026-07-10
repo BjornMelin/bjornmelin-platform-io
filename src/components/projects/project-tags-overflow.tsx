@@ -38,16 +38,18 @@ export function ProjectTagsOverflow(props: ProjectTagsOverflowProps) {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className="inline-flex h-11 items-center rounded-full border border-border/60 bg-muted/70 px-3 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-8 md:px-2 md:py-0.5"
-          aria-label={`Show ${hiddenCount} more tags`}
-          title="Show all tags"
-        >
-          +{hiddenCount}
-        </button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <button
+            type="button"
+            className="inline-flex h-11 items-center rounded-full border border-border/60 bg-muted/70 px-3 text-[11px] font-medium text-foreground/80 transition-colors hover:bg-muted/80 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:h-8 md:px-2 md:py-0.5"
+            aria-label={`Show ${hiddenCount} more tags`}
+            title="Show all tags"
+          >
+            +{hiddenCount}
+          </button>
+        }
+      />
       <PopoverContent className="w-72 p-3" side="top" align="start">
         <div className="space-y-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

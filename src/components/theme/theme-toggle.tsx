@@ -9,6 +9,7 @@ import { Moon, Sun } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -20,39 +21,37 @@ import {
 export function ThemeToggle() {
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label="Toggle theme"
-          className="relative rounded-md p-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          <Sun
-            aria-hidden="true"
-            className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0"
+      <DropdownMenuTrigger
+        render={
+          <button
+            type="button"
+            aria-label="Toggle theme"
+            className="relative rounded-md p-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           />
-          <Moon
-            aria-hidden="true"
-            className="absolute left-2 top-2 h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100"
-          />
-          <span className="sr-only">Toggle theme</span>
-        </button>
+        }
+      >
+        <Sun
+          aria-hidden="true"
+          className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0"
+        />
+        <Moon
+          aria-hidden="true"
+          className="absolute left-2 top-2 h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100"
+        />
+        <span className="sr-only">Toggle theme</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-36">
-        <DropdownMenuItem asChild>
-          <button type="button" data-theme-set="light" className="w-full text-left text-sm">
+        <DropdownMenuGroup>
+          <DropdownMenuItem className="w-full text-left text-sm" data-theme-set="light">
             Light
-          </button>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <button type="button" data-theme-set="dark" className="w-full text-left text-sm">
+          </DropdownMenuItem>
+          <DropdownMenuItem className="w-full text-left text-sm" data-theme-set="dark">
             Dark
-          </button>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <button type="button" data-theme-set="system" className="w-full text-left text-sm">
+          </DropdownMenuItem>
+          <DropdownMenuItem className="w-full text-left text-sm" data-theme-set="system">
             System
-          </button>
-        </DropdownMenuItem>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

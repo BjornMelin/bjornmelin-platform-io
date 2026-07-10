@@ -12,7 +12,7 @@ import Link from "next/link";
 import { ExpandableText } from "@/components/shared/expandable-text";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { ProjectCardModel } from "@/types/project";
@@ -143,54 +143,50 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
 
       <CardFooter className="mt-auto flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" className="h-11 w-11" asChild>
-            <Link
-              href={project.repoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Open ${project.title} repository on GitHub`}
-            >
-              <FolderGit2 className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </Button>
-          <Button variant="outline" className="h-11 md:h-9" asChild>
-            <Link
-              href={project.primaryUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Open ${project.title}`}
-            >
-              <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              <span>Open</span>
-            </Link>
-          </Button>
+          <Link
+            href={project.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${project.title} repository on GitHub`}
+            className={buttonVariants({ variant: "outline", size: "icon", className: "h-11 w-11" })}
+          >
+            <FolderGit2 className="h-4 w-4" aria-hidden="true" />
+          </Link>
+          <Link
+            href={project.primaryUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${project.title}`}
+            className={buttonVariants({ variant: "outline", className: "h-11 md:h-9" })}
+          >
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+            <span>Open</span>
+          </Link>
         </div>
 
         <div className="flex items-center gap-2">
           {project.liveUrl ? (
-            <Button variant="secondary" className="h-11 md:h-9" asChild>
-              <Link
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Open ${project.title} live site`}
-              >
-                Live
-              </Link>
-            </Button>
+            <Link
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Open ${project.title} live site`}
+              className={buttonVariants({ variant: "secondary", className: "h-11 md:h-9" })}
+            >
+              Live
+            </Link>
           ) : null}
           {project.docsUrl ? (
-            <Button variant="outline" className="h-11 md:h-9" asChild>
-              <Link
-                href={project.docsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Open ${project.title} documentation`}
-              >
-                <BookOpenText className="h-4 w-4" aria-hidden="true" />
-                Docs
-              </Link>
-            </Button>
+            <Link
+              href={project.docsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Open ${project.title} documentation`}
+              className={buttonVariants({ variant: "outline", className: "h-11 md:h-9" })}
+            >
+              <BookOpenText className="h-4 w-4" aria-hidden="true" />
+              Docs
+            </Link>
           ) : null}
         </div>
       </CardFooter>

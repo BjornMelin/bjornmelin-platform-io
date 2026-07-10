@@ -142,7 +142,7 @@ vi.mock("next/image", () => ({
   },
 }));
 
-// Provide a jsdom-safe matchMedia for libraries relying on it (e.g., next-themes)
+// Provide a jsdom-safe matchMedia for theme and responsive behavior.
 if (typeof window !== "undefined" && !("matchMedia" in window)) {
   // @ts-expect-error augment test environment
   window.matchMedia = (query: string) => ({
@@ -157,7 +157,7 @@ if (typeof window !== "undefined" && !("matchMedia" in window)) {
   });
 }
 
-// Radix UI (Select/Popover) relies on Pointer Events APIs in some environments.
+// Base UI primitives rely on Pointer Events APIs in some environments.
 if (typeof window !== "undefined") {
   const proto = window.HTMLElement?.prototype as unknown as Record<string, unknown> | undefined;
   if (proto && typeof proto.hasPointerCapture !== "function") {

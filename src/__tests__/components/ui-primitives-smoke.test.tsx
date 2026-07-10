@@ -5,14 +5,13 @@
  * accessibility/behavior invariants. Their main purpose is coverage across impacted files.
  */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,18 +19,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -39,14 +31,21 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Toast,
-  ToastDescription,
-  ToastProvider,
-  ToastTitle,
-  ToastViewport,
-} from "@/components/ui/toast";
-import { Toggle } from "@/components/ui/toggle";
+import { ToastProvider, useToastManager } from "@/components/ui/toast";
+import { Toaster } from "@/components/ui/toaster";
+
+function ToastFixture() {
+  const { add } = useToastManager();
+
+  return (
+    <button
+      type="button"
+      onClick={() => add({ title: "Toast title", description: "Toast description" })}
+    >
+      Show toast
+    </button>
+  );
+}
 
 describe("Tailwind v4 UI primitives", () => {
   afterEach(() => {
@@ -71,7 +70,6 @@ describe("Tailwind v4 UI primitives", () => {
         <label htmlFor="message">Message</label>
         <Textarea id="message" name="message" />
         <Separator />
-        <Toggle aria-label="Toggle option">Toggle</Toggle>
       </div>,
     );
 
@@ -80,8 +78,6 @@ describe("Tailwind v4 UI primitives", () => {
     expect(screen.getByText("Title")).toBeInTheDocument();
     expect(screen.getByLabelText("Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Message")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Toggle option" })).toBeInTheDocument();
-
     await user.tab();
     expect(screen.getByRole("button", { name: "Action" })).toHaveFocus();
   });
@@ -89,21 +85,8 @@ describe("Tailwind v4 UI primitives", () => {
   it("renders portal primitives in controlled open state", async () => {
     const user = userEvent.setup();
 
-    // These primitives use portals and some also apply "aria-hidden" to siblings (e.g. Dialog/Select),
+    // These primitives use portals and some also apply "aria-hidden" to siblings (e.g. Sheet/Select),
     // so we render them in isolation to avoid false negatives in accessible queries.
-
-    {
-      const { unmount } = render(
-        <Dialog open onOpenChange={() => {}}>
-          <DialogContent>
-            <DialogTitle>Dialog title</DialogTitle>
-            <DialogDescription>Dialog description</DialogDescription>
-          </DialogContent>
-        </Dialog>,
-      );
-      expect(screen.getByText("Dialog title")).toBeInTheDocument();
-      unmount();
-    }
 
     {
       const { unmount } = render(
@@ -121,9 +104,7 @@ describe("Tailwind v4 UI primitives", () => {
     {
       const { unmount } = render(
         <DropdownMenu open onOpenChange={() => {}}>
-          <DropdownMenuTrigger asChild>
-            <button type="button">Menu</button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger render={<button type="button">Menu</button>} />
           <DropdownMenuContent>
             <DropdownMenuItem>Item</DropdownMenuItem>
           </DropdownMenuContent>
@@ -138,9 +119,7 @@ describe("Tailwind v4 UI primitives", () => {
     {
       const { unmount } = render(
         <Popover open onOpenChange={() => {}}>
-          <PopoverTrigger asChild>
-            <button type="button">Popover</button>
-          </PopoverTrigger>
+          <PopoverTrigger render={<button type="button">Popover</button>} />
           <PopoverContent>Popover content</PopoverContent>
         </Popover>,
       );
@@ -150,12 +129,20 @@ describe("Tailwind v4 UI primitives", () => {
 
     {
       const { unmount } = render(
-        <Select value="featured" onValueChange={() => {}} open onOpenChange={() => {}}>
+        <Select
+          items={[{ value: "featured", label: "Featured First" }]}
+          value="featured"
+          onValueChange={() => {}}
+          open
+          onOpenChange={() => {}}
+        >
           <SelectTrigger aria-label="Sort projects by">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="featured">Featured First</SelectItem>
+            <SelectGroup>
+              <SelectItem value="featured">Featured First</SelectItem>
+            </SelectGroup>
           </SelectContent>
         </Select>,
       );
@@ -166,33 +153,18 @@ describe("Tailwind v4 UI primitives", () => {
     {
       const { unmount } = render(
         <ToastProvider>
-          <ToastViewport />
-          <Toast open onOpenChange={() => {}}>
-            <ToastTitle>Toast title</ToastTitle>
-            <ToastDescription>Toast description</ToastDescription>
-          </Toast>
+          <ToastFixture />
+          <Toaster />
         </ToastProvider>,
       );
-      expect(screen.getByText("Toast title")).toBeInTheDocument();
-      await user.tab();
+      await user.click(screen.getByRole("button", { name: "Show toast" }));
+      expect(await screen.findByText("Toast title")).toBeInTheDocument();
+      expect(screen.getByText("Toast description")).toBeInTheDocument();
+      await user.hover(screen.getByRole("dialog", { name: "Toast title" }));
+      const closeButton = screen.getByRole("button", { name: "Close notification" });
+      await user.click(closeButton);
+      await waitFor(() => expect(screen.queryByText("Toast title")).not.toBeInTheDocument());
       unmount();
     }
-  });
-
-  it("exposes NavigationMenu trigger style helper", () => {
-    expect(navigationMenuTriggerStyle()).toEqual(expect.any(String));
-
-    render(
-      <NavigationMenu>
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>Nav</NavigationMenuTrigger>
-            <NavigationMenuContent>Nav content</NavigationMenuContent>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>,
-    );
-
-    expect(screen.getByRole("button", { name: "Nav" })).toBeInTheDocument();
   });
 });

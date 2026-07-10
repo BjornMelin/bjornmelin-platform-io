@@ -2,7 +2,7 @@ import { ArrowUpRight, Code2, FileText, PackageCheck, PackageOpen } from "lucide
 import Link from "next/link";
 import { CommandCopyButton } from "@/components/agent-skills/command-copy-button";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { AgentSkillCardModel } from "@/types/agent-skill";
 
@@ -104,43 +104,44 @@ export function AgentSkillCard({ skill, className }: AgentSkillCardProps) {
       </div>
 
       <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
-        <Button variant="secondary" className="h-11 rounded-full md:h-9" asChild>
-          <Link href={skill.detailHref} aria-label={`View ${skill.name} details`}>
-            <Code2 className="h-4 w-4" aria-hidden="true" />
-            Details
-          </Link>
-        </Button>
+        <Link
+          href={skill.detailHref}
+          aria-label={`View ${skill.name} details`}
+          className={buttonVariants({
+            variant: "secondary",
+            className: "h-11 rounded-full md:h-9",
+          })}
+        >
+          <Code2 className="h-4 w-4" aria-hidden="true" />
+          Details
+        </Link>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-11 w-11 rounded-full md:h-9 md:w-9"
-            asChild
+          <Link
+            href={skill.sourceLinks.skillMd}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${skill.name} SKILL.md on GitHub`}
+            className={buttonVariants({
+              variant: "outline",
+              size: "icon",
+              className: "h-11 w-11 rounded-full md:h-9 md:w-9",
+            })}
           >
-            <Link
-              href={skill.sourceLinks.skillMd}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Open ${skill.name} SKILL.md on GitHub`}
-            >
-              <FileText className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-11 w-11 rounded-full md:h-9 md:w-9"
-            asChild
+            <FileText className="h-4 w-4" aria-hidden="true" />
+          </Link>
+          <Link
+            href={skill.sourceLinks.directory}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${skill.name} source directory on GitHub`}
+            className={buttonVariants({
+              variant: "outline",
+              size: "icon",
+              className: "h-11 w-11 rounded-full md:h-9 md:w-9",
+            })}
           >
-            <Link
-              href={skill.sourceLinks.directory}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Open ${skill.name} source directory on GitHub`}
-            >
-              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </Button>
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </article>

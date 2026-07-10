@@ -1,49 +1,53 @@
 "use client";
 
-import { Popover as PopoverPrimitive } from "radix-ui";
-import * as React from "react";
+import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
 import { cn } from "@/lib/utils";
 
-/**
- * Floating panel that appears when a trigger is clicked.
- */
+/** Groups the parts of a popover. */
 const Popover = PopoverPrimitive.Root;
 
-/**
- * Element that opens the popover.
- */
+/** Opens the associated popover. */
 const PopoverTrigger = PopoverPrimitive.Trigger;
 
-/**
- * Optional anchor element for the popover.
- */
-const PopoverAnchor = PopoverPrimitive.Anchor;
+type PopoverPositioningProps = Pick<
+  PopoverPrimitive.Positioner.Props,
+  "align" | "alignOffset" | "side" | "sideOffset"
+>;
 
-/**
- * Renders popover content inside a portal.
- *
- * @param props Popover content props including alignment and offset.
- * @param ref Forwarded ref to the content element.
- * @returns Popover content element.
- */
-const PopoverContent = React.forwardRef<
-  React.ComponentRef<typeof PopoverPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
-  <PopoverPrimitive.Portal>
-    <PopoverPrimitive.Content
-      ref={ref}
-      align={align}
-      sideOffset={sideOffset}
-      className={cn(
-        "z-50 w-72 rounded-md border border-border bg-popover p-4 text-popover-foreground shadow-md outline-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-(--radix-popover-content-transform-origin)",
-        className,
-      )}
-      {...props}
-    />
-  </PopoverPrimitive.Portal>
-));
-PopoverContent.displayName = PopoverPrimitive.Content.displayName;
+type PopoverContentProps = Omit<PopoverPrimitive.Popup.Props, "className"> &
+  PopoverPositioningProps & {
+    className?: string;
+  };
 
-export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger };
+/** Renders positioned popover content in a portal. */
+function PopoverContent({
+  className,
+  align = "center",
+  alignOffset,
+  side,
+  sideOffset = 4,
+  ...props
+}: PopoverContentProps) {
+  return (
+    <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Positioner
+        align={align}
+        alignOffset={alignOffset}
+        side={side}
+        sideOffset={sideOffset}
+        className="isolate z-50"
+      >
+        <PopoverPrimitive.Popup
+          className={cn(
+            "z-50 w-72 origin-(--transform-origin) rounded-md border border-border bg-popover p-4 text-popover-foreground shadow-md outline-hidden transition-[opacity,transform] motion-reduce:transition-none data-starting-style:scale-95 data-starting-style:opacity-0 data-ending-style:scale-95 data-ending-style:opacity-0 data-[side=bottom]:data-starting-style:-translate-y-2 data-[side=left]:data-starting-style:translate-x-2 data-[side=right]:data-starting-style:-translate-x-2 data-[side=top]:data-starting-style:translate-y-2",
+            className,
+          )}
+          {...props}
+        />
+      </PopoverPrimitive.Positioner>
+    </PopoverPrimitive.Portal>
+  );
+}
+
+export { Popover, PopoverContent, PopoverTrigger };

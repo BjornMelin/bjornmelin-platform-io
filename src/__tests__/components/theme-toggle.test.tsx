@@ -1,5 +1,4 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -11,10 +10,9 @@ describe("<ThemeToggle />", () => {
   });
 
   it("renders theme options with data attributes", async () => {
-    const user = userEvent.setup();
     render(<ThemeToggle />);
-    await user.click(screen.getByRole("button", { name: /toggle theme/i }));
-    expect(screen.getByRole("menuitem", { name: /light/i })).toHaveAttribute(
+    fireEvent.mouseDown(screen.getByRole("button", { name: /toggle theme/i }));
+    expect(await screen.findByRole("menuitem", { name: /light/i })).toHaveAttribute(
       "data-theme-set",
       "light",
     );
@@ -29,13 +27,12 @@ describe("<ThemeToggle />", () => {
   });
 
   it("opens the menu when activated", async () => {
-    const user = userEvent.setup();
     render(<ThemeToggle />);
 
     const trigger = screen.getByRole("button", { name: /toggle theme/i });
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 
-    await user.click(trigger);
-    expect(screen.getByRole("menu")).toBeInTheDocument();
+    fireEvent.mouseDown(trigger);
+    expect(await screen.findByRole("menu")).toBeInTheDocument();
   });
 });

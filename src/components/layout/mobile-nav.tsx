@@ -76,16 +76,18 @@ export function MobileNav({
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <button
-          type="button"
-          className="rounded-md p-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:hidden"
-          aria-label="Toggle menu"
-          aria-expanded={isOpen}
-        >
-          {isOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
-        </button>
-      </SheetTrigger>
+      <SheetTrigger
+        render={
+          <button
+            type="button"
+            className="rounded-md p-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:hidden"
+            aria-label="Toggle menu"
+            aria-expanded={isOpen}
+          >
+            {isOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
+          </button>
+        }
+      />
       <SheetContent
         side="right"
         className="w-[85vw] max-w-[360px] overflow-y-auto overscroll-contain sm:w-80"
@@ -145,7 +147,7 @@ export function MobileNav({
             );
           })}
         </nav>
-        <Separator className="my-4" />
+        <Separator aria-hidden="true" className="my-4" />
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Preferences
         </div>
