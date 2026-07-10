@@ -236,17 +236,17 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 - [pnpm-lock.yaml](../../pnpm-lock.yaml#L1): update only as a consequence of the dependency cleanup.
 - [src/components/ui/button.tsx](../../src/components/ui/button.tsx#L1): migrate `Slot` import shape carefully and
   recheck `asChild` typing.
-- [src/components/ui/dialog.tsx](../../src/components/ui/dialog.tsx#L1) and
+- `src/components/ui/dialog.tsx` (deleted by the Base UI hard cut) and
   [src/components/ui/sheet.tsx](../../src/components/ui/sheet.tsx#L1):
   verify shared `Dialog` primitive behavior remains intact.
 - [src/components/ui/dropdown-menu.tsx](../../src/components/ui/dropdown-menu.tsx#L1),
   [src/components/ui/select.tsx](../../src/components/ui/select.tsx#L1),
-  [src/components/ui/navigation-menu.tsx](../../src/components/ui/navigation-menu.tsx#L1),
+  `src/components/ui/navigation-menu.tsx` (deleted by the Base UI hard cut),
   [src/components/ui/popover.tsx](../../src/components/ui/popover.tsx#L1),
   [src/components/ui/toast.tsx](../../src/components/ui/toast.tsx#L1),
-  [src/components/ui/toggle.tsx](../../src/components/ui/toggle.tsx#L1),
+  `src/components/ui/toggle.tsx` (deleted by the Base UI hard cut),
   and
-  [src/components/ui/toggle-group.tsx](../../src/components/ui/toggle-group.tsx#L1):
+  `src/components/ui/toggle-group.tsx` (deleted by the Base UI hard cut):
   migrate imports and recheck keyboard/focus behavior.
 - [src/components/layout/footer.tsx](../../src/components/layout/footer.tsx#L1):
   treat `@radix-ui/react-icons` as adjacent follow-on or leave it explicitly
