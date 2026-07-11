@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.11.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.10.2...v3.11.0) (2026-07-11)
+
+
+### Features
+
+* **agent-skills:** gate catalog sync on content change, not commit churn ([#387](https://github.com/BjornMelin/bjornmelin-platform-io/issues/387)) ([a8f09db](https://github.com/BjornMelin/bjornmelin-platform-io/commit/a8f09dbec1aa045d8bca76c3c2c2f13bd0c4411b))
+* **ui:** migrate shadcn primitives to Base UI ([#389](https://github.com/BjornMelin/bjornmelin-platform-io/issues/389)) ([106c277](https://github.com/BjornMelin/bjornmelin-platform-io/commit/106c2775b2fda0b8bc956c89ddf46de4d9670d24))
+
 ## [3.10.2](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.10.1...v3.10.2) (2026-06-15)
 
 
