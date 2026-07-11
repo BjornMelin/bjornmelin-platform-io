@@ -1,9 +1,6 @@
 import type { ReactNode } from "react";
 
-/**
- * Shared mock implementations for Radix UI components.
- * These are intended to be used with vi.mock() in test files.
- */
+/** Shared mock implementations for UI components used in tests. */
 
 export const SelectMocks = {
   Select: ({
@@ -41,26 +38,4 @@ export const SelectMocks = {
   SelectSeparator: () => null,
   SelectScrollUpButton: () => null,
   SelectScrollDownButton: () => null,
-};
-
-export const ToggleGroupMocks = {
-  ToggleGroup: ({
-    onValueChange,
-    children,
-  }: {
-    onValueChange: (value: string) => void;
-    children: ReactNode;
-  }) => (
-    <div>
-      <button type="button" onClick={() => onValueChange("")}>
-        Clear
-      </button>
-      {children}
-    </div>
-  ),
-  ToggleGroupItem: ({ children, onClick }: { children: ReactNode; onClick?: () => void }) => (
-    <button type="button" onClick={onClick}>
-      {children}
-    </button>
-  ),
 };

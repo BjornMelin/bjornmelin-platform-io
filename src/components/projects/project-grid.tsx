@@ -1,8 +1,6 @@
 "use client";
 
-/**
- * @fileoverview Interactive projects grid: URL-synced search/filter/sort via nuqs.
- */
+/** Interactive projects grid with URL-synced search, filtering, and sorting. */
 
 import { Search, X } from "lucide-react";
 import { useQueryStates } from "nuqs";
@@ -11,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -45,6 +44,26 @@ interface ProjectGridProps {
 export function ProjectGrid({ projects, categories, languages, className }: ProjectGridProps) {
   const [{ q, category, lang, minStars, sort }, setQuery] = useQueryStates(projectsQueryParsers);
   const normalizedLang = lang.toLowerCase();
+  const categoryOptions = [
+    { value: "all", label: "All categories" },
+    ...categories.map((value) => ({ value, label: value })),
+  ];
+  const languageOptions = [
+    { value: "all", label: "All languages" },
+    ...languages.map((label) => ({ value: label.toLowerCase(), label })),
+  ];
+  const minimumStarOptions = [
+    { value: "0", label: "Any" },
+    { value: "10", label: "10+" },
+    { value: "25", label: "25+" },
+    { value: "50", label: "50+" },
+    { value: "100", label: "100+" },
+  ];
+  const sortOptions = [
+    { value: "stars", label: "Stars" },
+    { value: "updated", label: "Recently Updated" },
+    { value: "name", label: "Name" },
+  ] as const satisfies ReadonlyArray<{ value: ProjectsSort; label: string }>;
   const consumeQueryUpdate = (promise: ReturnType<typeof setQuery>) => {
     promise.then(
       () => undefined,
@@ -107,8 +126,9 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
             </label>
             <Select
               value={category}
+              items={categoryOptions}
               onValueChange={(value) => {
-                updateQuery({ category: value });
+                if (value !== null) updateQuery({ category: value });
               }}
             >
               <SelectTrigger
@@ -119,12 +139,13 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All categories</SelectItem>
-                {categories.map((value) => (
-                  <SelectItem key={value} value={value}>
-                    {value}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {categoryOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
@@ -135,8 +156,9 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
             </label>
             <Select
               value={normalizedLang}
+              items={languageOptions}
               onValueChange={(value) => {
-                updateQuery({ lang: value });
+                if (value !== null) updateQuery({ lang: value });
               }}
             >
               <SelectTrigger
@@ -147,12 +169,13 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
                 <SelectValue placeholder="Language" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All languages</SelectItem>
-                {languages.map((language) => (
-                  <SelectItem key={language} value={language.toLowerCase()}>
-                    {language}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {languageOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
@@ -163,8 +186,10 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
             </label>
             <Select
               value={String(minStars)}
+              items={minimumStarOptions}
               onValueChange={(value) => {
-                updateQuery({ minStars: Number(value) });
+                const option = minimumStarOptions.find((item) => item.value === value);
+                if (option) updateQuery({ minStars: Number(option.value) });
               }}
             >
               <SelectTrigger
@@ -175,11 +200,13 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
                 <SelectValue placeholder="Stars" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0">Any</SelectItem>
-                <SelectItem value="10">10+</SelectItem>
-                <SelectItem value="25">25+</SelectItem>
-                <SelectItem value="50">50+</SelectItem>
-                <SelectItem value="100">100+</SelectItem>
+                <SelectGroup>
+                  {minimumStarOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
@@ -190,17 +217,22 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
             </label>
             <Select
               value={sort}
+              items={sortOptions}
               onValueChange={(value) => {
-                updateQuery({ sort: value as ProjectsSort });
+                if (value !== null) updateQuery({ sort: value });
               }}
             >
               <SelectTrigger id="projects-sort" aria-label="Sort projects" className="h-11 md:h-9">
                 <SelectValue placeholder="Sort" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="stars">Stars</SelectItem>
-                <SelectItem value="updated">Recently Updated</SelectItem>
-                <SelectItem value="name">Name</SelectItem>
+                <SelectGroup>
+                  {sortOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
@@ -227,7 +259,7 @@ export function ProjectGrid({ projects, categories, languages, className }: Proj
           </div>
         </div>
 
-        <Separator />
+        <Separator aria-hidden="true" />
       </div>
 
       {sorted.length === 0 ? (

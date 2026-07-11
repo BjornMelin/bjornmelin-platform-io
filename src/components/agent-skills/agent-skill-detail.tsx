@@ -2,7 +2,7 @@ import { ArrowLeft, ArrowUpRight, BookOpenText, Code2, PackageCheck, Terminal } 
 import Link from "next/link";
 import { CommandCopyButton } from "@/components/agent-skills/command-copy-button";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { AgentSkillCardModel } from "@/types/agent-skill";
 
@@ -37,16 +37,16 @@ export function AgentSkillDetail({ skill }: AgentSkillDetailProps) {
     <div className="overflow-x-hidden">
       <section className="border-b border-border/70">
         <div className="container mx-auto px-4 py-14 md:py-20">
-          <Button
-            variant="ghost"
-            className="mb-8 h-11 rounded-full px-0 hover:bg-transparent md:h-10"
-            asChild
+          <Link
+            href="/agent-skills"
+            className={buttonVariants({
+              variant: "ghost",
+              className: "mb-8 h-11 rounded-full px-0 hover:bg-transparent md:h-10",
+            })}
           >
-            <Link href="/agent-skills">
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-              Agent Skills Lab
-            </Link>
-          </Button>
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Agent Skills Lab
+          </Link>
 
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
             <div className="min-w-0">
@@ -62,22 +62,27 @@ export function AgentSkillDetail({ skill }: AgentSkillDetailProps) {
                 {skill.description}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button className="h-12 rounded-full px-6" asChild>
-                  <Link
-                    href={skill.sourceLinks.directory}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Source directory
-                    <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-                  </Link>
-                </Button>
-                <Button variant="outline" className="h-12 rounded-full px-6" asChild>
-                  <Link href={skill.sourceLinks.skillMd} target="_blank" rel="noopener noreferrer">
-                    <BookOpenText className="h-4 w-4" aria-hidden="true" />
-                    SKILL.md
-                  </Link>
-                </Button>
+                <Link
+                  href={skill.sourceLinks.directory}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={buttonVariants({ className: "h-12 rounded-full px-6" })}
+                >
+                  Source directory
+                  <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+                <Link
+                  href={skill.sourceLinks.skillMd}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={buttonVariants({
+                    variant: "outline",
+                    className: "h-12 rounded-full px-6",
+                  })}
+                >
+                  <BookOpenText className="h-4 w-4" aria-hidden="true" />
+                  SKILL.md
+                </Link>
               </div>
             </div>
 
@@ -104,7 +109,7 @@ export function AgentSkillDetail({ skill }: AgentSkillDetailProps) {
                   <dd className="font-mono text-2xl tabular-nums">{skill.resources.agents}</dd>
                 </div>
               </dl>
-              <Separator className="my-5" />
+              <Separator aria-hidden="true" className="my-5" />
               <div className="flex flex-wrap gap-2">
                 {skill.readinessLabels.map((label) => (
                   <Badge key={label} variant={label === "Packaged" ? "default" : "outline"}>

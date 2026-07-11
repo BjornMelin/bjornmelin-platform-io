@@ -1,12 +1,11 @@
 "use client";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
 
 /**
  * Root provider composition for the application.
- * Wraps children with NuqsAdapter for URL state management,
- * NextThemesProvider for theme context, and renders the Toaster.
+ * Wraps children with NuqsAdapter for URL state management and Base UI toast context.
  *
  * @param children - React children to render within the providers.
  * @returns Provider-wrapped children element.
@@ -14,16 +13,10 @@ import { Toaster } from "@/components/ui/toaster";
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NuqsAdapter>
-      <NextThemesProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-        storageKey="theme"
-      >
+      <ToastProvider limit={1}>
         {children}
         <Toaster />
-      </NextThemesProvider>
+      </ToastProvider>
     </NuqsAdapter>
   );
 }

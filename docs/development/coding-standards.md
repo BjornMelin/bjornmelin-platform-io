@@ -95,8 +95,8 @@ feature/
 ### Tailwind v4 (CSS-first)
 
 - Tailwind config lives in `src/app/globals.css` using `@import "tailwindcss"`, `@theme`, `@plugin`, and `@custom-variant`.
-- `tailwind.config.ts` exists only for tooling that expects a Tailwind config path
-  (Tailwind does not load it unless `@config` is used).
+- `components.json` leaves the Tailwind config path empty; do not add a
+  `tailwind.config.ts` compatibility stub.
 - Class scanning is limited to `src/` via `@import "tailwindcss" source("../")` for faster builds.
 - Border colors are no longer implicit; prefer explicit utilities (e.g. `border border-border`, `border border-input`).
 
@@ -210,11 +210,12 @@ Reference: `https://github.com/airbnb/javascript?tab=readme-ov-file#comments`.
 
 ```typescript
 /**
- * ProjectCard component displays a project with its details
+ * Displays a project with its details.
  *
- * @param {ProjectCardModel} project - Project data to display
- * @param {string} className - Optional additional classes
- * @returns {JSX.Element} Project card component
+ * @param props - Project card properties.
+ * @param props.project - Project data to display.
+ * @param props.className - Optional additional classes.
+ * @returns Project card element.
  */
 export function ProjectCard({ project, className }: ProjectCardProps) {
   // Implementation

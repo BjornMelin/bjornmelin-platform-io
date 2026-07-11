@@ -2,8 +2,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@plugin "tailwindcss-animate";
-
 @theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -113,7 +111,7 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground;
+    @apply relative bg-background text-foreground;
   }
   button {
     touch-action: manipulation;

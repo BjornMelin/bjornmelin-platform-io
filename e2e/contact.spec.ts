@@ -49,4 +49,10 @@ test("contact form validates required fields and submits successfully", async ({
   expect(typeof (payload as Record<string, unknown>).formLoadTime).toBe("number");
   expect((payload as Record<string, unknown>).honeypot).toBe("");
   await expect(page.getByText(/message sent successfully/i)).toBeVisible();
+  await expect(page.getByText("Message sent!", { exact: true })).toBeVisible();
+
+  await page.getByRole("dialog", { name: "Message sent!" }).hover();
+  const closeToast = page.getByRole("button", { name: "Close notification" });
+  await closeToast.click();
+  await expect(page.getByText("Message sent!", { exact: true })).toHaveCount(0);
 });

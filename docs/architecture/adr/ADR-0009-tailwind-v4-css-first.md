@@ -2,8 +2,8 @@
 ADR: 0009
 Title: Tailwind CSS v4 with CSS-first configuration
 Status: Implemented
-Version: 1.0
-Date: 2026-01-19
+Version: 1.1
+Date: 2026-07-10
 Supersedes: []
 Superseded-by: []
 Related: ["ADR-0005"]
@@ -43,7 +43,7 @@ framework integrations into dedicated packages (e.g. `@tailwindcss/postcss`).
 - Reduce JS config surface area (KISS/YAGNI).
 - Prefer Tailwind v4’s intended configuration style (CSS-first).
 - Keep static export constraints intact (ADR-0005).
-- Keep developer tooling compatibility (shadcn/ui expects a config file path).
+- Keep shadcn/ui tooling on its native Tailwind v4 configuration path.
 
 ## Alternatives
 
@@ -74,9 +74,9 @@ We will use:
   - `@utility ... { ... }` for custom utilities
   - `@plugin ...` for Tailwind plugins
 
-We will keep `tailwind.config.ts` only as a **tooling compatibility stub** (not loaded by Tailwind)
-for integrations that require a config path (e.g. shadcn/ui). Tailwind v4 does not auto-load config
-files unless explicitly opted in via `@config`.
+`components.json` uses an empty Tailwind config path. No `tailwind.config.ts`
+compatibility stub is retained because current shadcn/ui supports Tailwind v4
+CSS-first projects directly.
 
 ## Constraints
 
@@ -89,7 +89,7 @@ files unless explicitly opted in via `@config`.
 
 - PostCSS config: `postcss.config.mjs` uses only `@tailwindcss/postcss`.
 - Global styling entry point: `src/app/globals.css`.
-- Tailwind config stub: `tailwind.config.ts` is for tooling only; do not opt-in via `@config`.
+- shadcn config: `components.json` keeps `tailwind.config` empty.
 
 ## Consequences
 
@@ -101,5 +101,12 @@ files unless explicitly opted in via `@config`.
 
 ### Negative Consequences / Trade-offs
 
-- Some tools still expect a config file; we keep a stub config file for compatibility.
+- Tools that still require a JavaScript config are incompatible until they support
+  Tailwind v4 CSS-first projects or the repository intentionally adopts `@config`.
 - Tailwind v4 has breaking class/utility changes that must be reflected in markup and docs.
+
+## Changelog
+
+- **1.1 (2026-07-10)**: Removed the obsolete Tailwind config compatibility
+  stub after adopting shadcn `base-nova` and its native Tailwind v4 path.
+- **1.0 (2026-01-19)**: Adopted Tailwind CSS v4 with CSS-first configuration.

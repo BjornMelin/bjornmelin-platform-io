@@ -1,16 +1,20 @@
 ---
 spec: SPEC-0011
 title: shadcn radix-ui unification playbook
-version: 1.0.0
-date: 2026-06-01
+version: 1.1.0
+date: 2026-07-10
 owners: ["ai-arch"]
-status: Implemented
+status: Deprecated
 related_requirements: ["NFR-001"]
 related_adrs: ["ADR-0005", "ADR-0009"]
-notes: "Implemented local shadcn new-york migration from individual Radix packages to the unified radix-ui package."
+notes: "Historical Radix unification record superseded by SPEC-0012."
 ---
 
 ## Summary
+
+This historical migration record is superseded by `SPEC-0012`. Its Radix
+commands and package contracts are not valid instructions for the current
+Base UI repository.
 
 This specification defines the canonical end state for shadcn `new-york`
 projects that still depend on many individual `@radix-ui/react-*` packages:
@@ -232,17 +236,17 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 - [pnpm-lock.yaml](../../pnpm-lock.yaml#L1): update only as a consequence of the dependency cleanup.
 - [src/components/ui/button.tsx](../../src/components/ui/button.tsx#L1): migrate `Slot` import shape carefully and
   recheck `asChild` typing.
-- [src/components/ui/dialog.tsx](../../src/components/ui/dialog.tsx#L1) and
+- `src/components/ui/dialog.tsx` (deleted by the Base UI hard cut) and
   [src/components/ui/sheet.tsx](../../src/components/ui/sheet.tsx#L1):
   verify shared `Dialog` primitive behavior remains intact.
 - [src/components/ui/dropdown-menu.tsx](../../src/components/ui/dropdown-menu.tsx#L1),
   [src/components/ui/select.tsx](../../src/components/ui/select.tsx#L1),
-  [src/components/ui/navigation-menu.tsx](../../src/components/ui/navigation-menu.tsx#L1),
+  `src/components/ui/navigation-menu.tsx` (deleted by the Base UI hard cut),
   [src/components/ui/popover.tsx](../../src/components/ui/popover.tsx#L1),
   [src/components/ui/toast.tsx](../../src/components/ui/toast.tsx#L1),
-  [src/components/ui/toggle.tsx](../../src/components/ui/toggle.tsx#L1),
+  `src/components/ui/toggle.tsx` (deleted by the Base UI hard cut),
   and
-  [src/components/ui/toggle-group.tsx](../../src/components/ui/toggle-group.tsx#L1):
+  `src/components/ui/toggle-group.tsx` (deleted by the Base UI hard cut):
   migrate imports and recheck keyboard/focus behavior.
 - [src/components/layout/footer.tsx](../../src/components/layout/footer.tsx#L1):
   treat `@radix-ui/react-icons` as adjacent follow-on or leave it explicitly
@@ -477,6 +481,8 @@ Verification expectation:
 
 ## Changelog
 
+- **1.1 (2026-07-10)**: Deprecated after the Base UI hard cut documented in
+  `SPEC-0012`.
 - **1.0 (2026-06-01)**: Implemented local shadcn `radix-ui` migration, removed
   obsolete individual Radix primitive dependencies, and recorded the completed
   repo outcome.

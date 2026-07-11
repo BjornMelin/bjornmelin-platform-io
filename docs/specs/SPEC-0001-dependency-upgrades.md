@@ -1,8 +1,8 @@
 ---
 spec: SPEC-0001
 title: Dependency upgrades
-version: 1.6.0
-date: 2026-07-08
+version: 1.7.0
+date: 2026-07-10
 owners: ["ai-arch"]
 status: Implemented
 related_requirements: ["FR-001", "NFR-001"]
@@ -66,7 +66,7 @@ Requirement IDs are defined in `docs/specs/requirements.md`.
 - Vite 8.1.3
 - Playwright 1.61.1
 - Biome 2.5.2
-- radix-ui 1.6.2
+- Base UI React 1.6.0
 
 *Note: `pnpm-lock.yaml` is the source of truth for reproducible installs. This
 spec lists the intentional baseline versions for the core toolchain.*
@@ -126,8 +126,11 @@ and improved DX while preserving static export constraints.
 
 This baseline also removes unused dependencies to reduce the operational surface area (example:
 `framer-motion` was removed after it was no longer referenced in app code).
-The current baseline also unifies local shadcn Radix primitives on the
-`radix-ui` package instead of many individual `@radix-ui/react-*` dependencies.
+The current baseline uses shadcn `base-nova` components backed by
+`@base-ui/react`. The former `radix-ui`, `tailwindcss-animate`, and redundant
+`next-themes` dependencies are removed rather than retained as compatibility
+paths; Base transition attributes cover the current motion needs without
+another animation package, and `ThemeScript` owns theme state.
 
 ## Decision Framework Score (must be ≥ 9.0)
 
@@ -201,6 +204,9 @@ The current baseline also unifies local shadcn Radix primitives on the
 
 ## Changelog
 
+- **1.7 (2026-07-10)**: Replaced the unified Radix dependency with Base UI
+  React 1.6.0 and removed both the unused animation dependency and obsolete
+  Tailwind config stub.
 - **1.6 (2026-07-08)**: Dependency refresh for Vite 8.1.3, Vitest
   4.1.10, `radix-ui` 1.6.2, AWS SDK 3.1080.0, CDK lib 2.261.0,
   React Hook Form 7.81.0, Resend 6.17.1, and tsx 4.23.0 while keeping

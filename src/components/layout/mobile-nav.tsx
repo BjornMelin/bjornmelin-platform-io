@@ -43,7 +43,7 @@ export function MobileNav({
     setIsOpen(false);
   }, []);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: close on route changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Close on route changes; tracked in docs/specs/SPEC-0012-shadcn-base-ui-hard-cut.md.
   React.useEffect(() => {
     closeMenu();
   }, [closeMenu, pathname]);
@@ -76,20 +76,18 @@ export function MobileNav({
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <button
-          type="button"
-          className="rounded-md p-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:hidden"
-          aria-label="Toggle menu"
-          aria-expanded={isOpen}
-        >
-          {isOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
-        </button>
-      </SheetTrigger>
-      <SheetContent
-        side="right"
-        className="w-[85vw] max-w-[360px] overflow-y-auto overscroll-contain sm:w-80"
-      >
+      <SheetTrigger
+        render={
+          <button
+            type="button"
+            className="inline-flex size-11 items-center justify-center rounded-md focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:hidden"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
+          </button>
+        }
+      />
+      <SheetContent side="right" className="w-[85vw] max-w-[360px] overflow-y-auto sm:w-80">
         <SheetHeader className="border-b border-border pb-4">
           <SheetTitle>Navigation</SheetTitle>
           <SheetDescription>Explore Bjorn's portfolio.</SheetDescription>
@@ -145,7 +143,7 @@ export function MobileNav({
             );
           })}
         </nav>
-        <Separator className="my-4" />
+        <Separator aria-hidden="true" className="my-4" />
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Preferences
         </div>

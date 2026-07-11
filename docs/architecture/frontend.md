@@ -34,7 +34,7 @@ src/
 | Next.js 16.2.10 | React framework with App Router |
 | TypeScript 6.0.3 | Type-safe JavaScript |
 | Tailwind CSS | Utility-first CSS |
-| shadcn/ui | UI component library |
+| shadcn/ui + Base UI 1.6 | Styled component layer and accessible primitives |
 | Zod | Runtime validation |
 
 ## Image Optimization
@@ -73,7 +73,7 @@ pnpm build  # Runs: prebuild (sharp) → next build → CSP hash generation
 - `AppShell`: Skip link + single main landmark wrapper
 - `Navbar`: Site navigation with mobile menu
 - `Footer`: Site footer with links
-- `next-themes`: Dark/light theme management
+- `ThemeScript`: Dark/light theme management without a client context dependency
 
 ### Page Sections
 
@@ -97,8 +97,8 @@ pnpm build  # Runs: prebuild (sharp) → next build → CSP hash generation
 ## Styling
 
 - Tailwind CSS for utility-first styling
-- Custom components using shadcn/ui
-- Dark/light theme support via next-themes
+- shadcn `base-nova` components backed by direct Base UI subpath imports
+- Dark/light theme support via the inline `ThemeScript`
 - Geist font family
 
 ## Performance
@@ -119,7 +119,7 @@ pnpm build  # Runs: prebuild (sharp) → next build → CSP hash generation
 ## Error Handling
 
 - Error boundaries for component-level errors
-- Toast notifications via shadcn/ui Toaster
+- Toast notifications via the Base UI manager and local shadcn Toaster
 - Form validation errors via Zod
 
 ## Development Practices

@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { useToastManager } from "@/components/ui/toast";
 import { buildContactEndpoint, safeParseUrl } from "@/lib/api/contact";
 import { type ContactFormData, contactFormSchema } from "@/lib/schemas/contact";
 
@@ -35,7 +35,7 @@ interface APIErrorResponse {
 export function ContactForm() {
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
   const [formErrorMessage, setFormErrorMessage] = useState("");
-  const { toast } = useToast();
+  const { add: addToast } = useToastManager();
   const idPrefix = useId();
   const fieldIds = useMemo(
     () => ({
@@ -160,7 +160,7 @@ export function ContactForm() {
 
       setFormStatus("success");
       setFormErrorMessage("");
-      toast({
+      addToast({
         title: "Message sent!",
         description: "Thanks for your message. I'll get back to you soon.",
       });
@@ -169,10 +169,10 @@ export function ContactForm() {
       const message = error instanceof Error ? error.message : "Failed to send message";
       setFormStatus("error");
       setFormErrorMessage(message);
-      toast({
+      addToast({
         title: "Error",
         description: message,
-        variant: "destructive",
+        type: "destructive",
       });
     }
   };

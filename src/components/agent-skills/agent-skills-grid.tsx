@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -45,6 +46,25 @@ export function AgentSkillsGrid({
 }: AgentSkillsGridProps) {
   const [{ q, category, readiness, packageState, sort }, setQuery] =
     useQueryStates(agentSkillsQueryParsers);
+  const categoryOptions = [
+    { value: "all", label: "All categories" },
+    ...categories.map((value) => ({ value, label: value })),
+  ];
+  const readinessOptions = [
+    { value: "all", label: "All readiness" },
+    ...readinessLabels.map((value) => ({ value, label: value })),
+  ];
+  const packageOptions = [
+    { value: "all", label: "All packages" },
+    { value: "packaged", label: "Packaged" },
+    { value: "source", label: "Source only" },
+  ] as const satisfies ReadonlyArray<{ value: AgentSkillsPackageFilter; label: string }>;
+  const sortOptions = [
+    { value: "featured", label: "Featured" },
+    { value: "resources", label: "Resources" },
+    { value: "packaged", label: "Packaged" },
+    { value: "name", label: "Name" },
+  ] as const satisfies ReadonlyArray<{ value: AgentSkillsSort; label: string }>;
 
   const filtered = filterAgentSkills(skills, { q, category, readiness, packageState });
   const sorted = sortAgentSkills(filtered, sort);
@@ -90,7 +110,7 @@ export function AgentSkillsGrid({
                 Generated from the public dev-skills repository with install commands, source links,
                 quality signals, and resource counts.
               </p>
-              <Separator className="my-5" />
+              <Separator aria-hidden="true" className="my-5" />
               <dl className="space-y-3 text-sm">
                 <div className="flex items-center justify-between gap-4">
                   <dt className="text-muted-foreground">Packaged</dt>
@@ -148,7 +168,10 @@ export function AgentSkillsGrid({
                   </label>
                   <Select
                     value={category}
-                    onValueChange={(value) => updateQuery({ category: value })}
+                    items={categoryOptions}
+                    onValueChange={(value) => {
+                      if (value !== null) updateQuery({ category: value });
+                    }}
                   >
                     <SelectTrigger
                       id="agent-skills-category"
@@ -158,12 +181,13 @@ export function AgentSkillsGrid({
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All categories</SelectItem>
-                      {categories.map((value) => (
-                        <SelectItem key={value} value={value}>
-                          {value}
-                        </SelectItem>
-                      ))}
+                      <SelectGroup>
+                        {categoryOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
@@ -174,7 +198,10 @@ export function AgentSkillsGrid({
                   </label>
                   <Select
                     value={readiness}
-                    onValueChange={(value) => updateQuery({ readiness: value })}
+                    items={readinessOptions}
+                    onValueChange={(value) => {
+                      if (value !== null) updateQuery({ readiness: value });
+                    }}
                   >
                     <SelectTrigger
                       id="agent-skills-readiness"
@@ -184,12 +211,13 @@ export function AgentSkillsGrid({
                       <SelectValue placeholder="Readiness" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All readiness</SelectItem>
-                      {readinessLabels.map((label) => (
-                        <SelectItem key={label} value={label}>
-                          {label}
-                        </SelectItem>
-                      ))}
+                      <SelectGroup>
+                        {readinessOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
@@ -200,9 +228,10 @@ export function AgentSkillsGrid({
                   </label>
                   <Select
                     value={packageState}
-                    onValueChange={(value) =>
-                      updateQuery({ packageState: value as AgentSkillsPackageFilter })
-                    }
+                    items={packageOptions}
+                    onValueChange={(value) => {
+                      if (value !== null) updateQuery({ packageState: value });
+                    }}
                   >
                     <SelectTrigger
                       id="agent-skills-package"
@@ -212,9 +241,13 @@ export function AgentSkillsGrid({
                       <SelectValue placeholder="Package" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All packages</SelectItem>
-                      <SelectItem value="packaged">Packaged</SelectItem>
-                      <SelectItem value="source">Source only</SelectItem>
+                      <SelectGroup>
+                        {packageOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
@@ -225,7 +258,10 @@ export function AgentSkillsGrid({
                   </label>
                   <Select
                     value={sort}
-                    onValueChange={(value) => updateQuery({ sort: value as AgentSkillsSort })}
+                    items={sortOptions}
+                    onValueChange={(value) => {
+                      if (value !== null) updateQuery({ sort: value });
+                    }}
                   >
                     <SelectTrigger
                       id="agent-skills-sort"
@@ -235,10 +271,13 @@ export function AgentSkillsGrid({
                       <SelectValue placeholder="Sort" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="featured">Featured</SelectItem>
-                      <SelectItem value="resources">Resources</SelectItem>
-                      <SelectItem value="packaged">Packaged</SelectItem>
-                      <SelectItem value="name">Name</SelectItem>
+                      <SelectGroup>
+                        {sortOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
@@ -257,7 +296,7 @@ export function AgentSkillsGrid({
                 ) : null}
               </div>
 
-              <Separator />
+              <Separator aria-hidden="true" />
             </div>
 
             {sorted.length === 0 ? (

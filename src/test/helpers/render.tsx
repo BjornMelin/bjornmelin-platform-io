@@ -1,15 +1,13 @@
 import { type RenderOptions, type RenderResult, render } from "@testing-library/react";
 import userEvent, { type UserEvent } from "@testing-library/user-event";
-import { ThemeProvider } from "next-themes";
 import type { ReactElement, ReactNode } from "react";
+import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
 
 /**
  * Options for renderWithProviders.
  */
 interface RenderWithProvidersOptions extends Omit<RenderOptions, "wrapper"> {
-  /** Initial theme for ThemeProvider. Default: "system" */
-  theme?: "light" | "dark" | "system";
   /** Whether to include Toaster. Default: true */
   withToaster?: boolean;
 }
@@ -23,9 +21,10 @@ interface RenderWithProvidersResult extends RenderResult {
 }
 
 /**
- * Render a component with all app providers.
- * Includes ThemeProvider and Toaster by default.
- * Returns a userEvent instance for interactions.
+ * Renders a component with app providers and a configured user-event instance.
+ * @param ui - React element to render.
+ * @param options - Testing Library render options and provider controls.
+ * @returns Render result extended with a configured user-event instance.
  *
  * @example
  * ```tsx
@@ -40,16 +39,16 @@ export function renderWithProviders(
   ui: ReactElement,
   options: RenderWithProvidersOptions = {},
 ): RenderWithProvidersResult {
-  const { theme = "system", withToaster = true, ...renderOptions } = options;
+  const { withToaster = true, ...renderOptions } = options;
 
   const user = userEvent.setup();
 
   function Wrapper({ children }: { children: ReactNode }) {
     return (
-      <ThemeProvider attribute="class" defaultTheme={theme} enableSystem disableTransitionOnChange>
+      <ToastProvider limit={1}>
         {children}
         {withToaster && <Toaster />}
-      </ThemeProvider>
+      </ToastProvider>
     );
   }
 

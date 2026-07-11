@@ -242,13 +242,14 @@ pnpm dev
 ```yaml
 Frontend:
   Core:
-    - React 19.2.5
-    - Next.js 16.2.4
+    - React 19.2.7
+    - Next.js 16.2.10
     - TypeScript 6.0.3
 
   UI:
     - Tailwind CSS
-    - shadcn/ui
+    - shadcn/ui base-nova
+    - Base UI React 1.6.0
     - GeistVF Font
 
   Build:

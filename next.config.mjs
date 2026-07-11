@@ -26,10 +26,6 @@ const nextConfig = {
   },
   trailingSlash: true,
   reactStrictMode: true,
-  experimental: {
-    optimizePackageImports: ["radix-ui"],
-  },
-
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,

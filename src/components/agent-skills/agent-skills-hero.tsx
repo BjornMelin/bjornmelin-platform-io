@@ -2,7 +2,7 @@ import { ArrowRight, Boxes, Terminal } from "lucide-react";
 import Link from "next/link";
 import { CommandCopyButton } from "@/components/agent-skills/command-copy-button";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import type { AgentSkillCardModel, AgentSkillsMetadata } from "@/types/agent-skill";
 
 interface AgentSkillsHeroProps {
@@ -35,19 +35,26 @@ export function AgentSkillsHero({ featuredSkills, metadata }: AgentSkillsHeroPro
             turn complex engineering work into repeatable systems.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button className="h-12 rounded-full px-6" asChild>
-              <Link href="#skills-catalog">
-                Browse skills
-                <span className="ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/10">
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </span>
-              </Link>
-            </Button>
-            <Button variant="outline" className="h-12 rounded-full px-6" asChild>
-              <Link href={metadata.sourceRepository} target="_blank" rel="noopener noreferrer">
-                Source repository
-              </Link>
-            </Button>
+            <Link
+              href="#skills-catalog"
+              className={buttonVariants({ className: "h-12 rounded-full px-6" })}
+            >
+              Browse skills
+              <span className="ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/10">
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </span>
+            </Link>
+            <Link
+              href={metadata.sourceRepository}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonVariants({
+                variant: "outline",
+                className: "h-12 rounded-full px-6",
+              })}
+            >
+              Source repository
+            </Link>
           </div>
         </div>
 

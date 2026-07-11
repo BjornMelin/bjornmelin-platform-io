@@ -1,21 +1,22 @@
-"use client";
-
 import { cva, type VariantProps } from "class-variance-authority";
-import { Label as LabelPrimitive } from "radix-ui";
-import * as React from "react";
+import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
 const labelVariants = cva(
-  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+  "select-none text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
 );
 
-const Label = React.forwardRef<
-  React.ComponentRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & VariantProps<typeof labelVariants>
->(({ className, ...props }, ref) => (
-  <LabelPrimitive.Root ref={ref} className={cn(labelVariants(), className)} {...props} />
-));
-Label.displayName = LabelPrimitive.Root.displayName;
+type LabelProps = React.ComponentProps<"label"> & VariantProps<typeof labelVariants>;
+
+/**
+ * Renders a native label with the site label styles.
+ * @param props - Native label properties.
+ * @returns Styled native label element.
+ */
+function Label({ className, ...props }: LabelProps) {
+  // biome-ignore lint/a11y/noLabelWithoutControl: Consumers provide htmlFor or nest a control; tracked in docs/specs/SPEC-0012-shadcn-base-ui-hard-cut.md.
+  return <label className={cn(labelVariants(), className)} {...props} />;
+}
 
 export { Label };

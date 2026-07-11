@@ -7,10 +7,9 @@ import { buildContactEndpoint } from "@/lib/api/contact";
 import { server } from "@/mocks/node";
 import { createDeferred, fillContactForm } from "@/test/helpers";
 
-// Mock the toast hook
 const mockToast = vi.fn();
-vi.mock("@/hooks/use-toast", () => ({
-  useToast: () => ({ toast: mockToast }),
+vi.mock("@/components/ui/toast", () => ({
+  useToastManager: () => ({ add: mockToast }),
 }));
 
 const apiBaseUrl = "https://api.example.com";
