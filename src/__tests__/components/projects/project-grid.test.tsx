@@ -81,7 +81,7 @@ describe("<ProjectGrid />", () => {
       wrapper: withNuqsTestingAdapter({ hasMemory: true }),
     });
 
-    expect(screen.getByText(/showing/i)).toHaveTextContent("Showing 3 of 3 projects");
+    expect(screen.getByRole("status")).toHaveTextContent("Showing 3 of 3 projects");
     expect(screen.getAllByTestId("project-card")).toHaveLength(3);
   });
 
@@ -125,10 +125,13 @@ describe("<ProjectGrid />", () => {
 
     expect(screen.getAllByTestId("project-card")).toHaveLength(1);
     expect(screen.getByRole("link", { name: "Beta" })).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Showing 1 of 3 projects");
     // Language -> TypeScript (should yield empty set with current category)
     await selectOption(user, /filter by language/i, "TypeScript");
 
     expect(screen.queryAllByTestId("project-card")).toHaveLength(0);
+    expect(screen.getAllByRole("status")).toHaveLength(1);
+    expect(screen.getByRole("status")).toHaveTextContent("Showing 0 of 3 projects");
     expect(screen.getByText(/no projects match/i)).toBeInTheDocument();
   });
 

@@ -4,6 +4,7 @@ import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ContactForm } from "@/components/contact/contact-form";
 import { buildContactEndpoint } from "@/lib/api/contact";
+import { PROFILE } from "@/lib/profile";
 import { server } from "@/mocks/node";
 import { createDeferred, fillContactForm } from "@/test/helpers";
 
@@ -260,6 +261,10 @@ describe("ContactForm", () => {
         }),
       );
       expect(screen.getByText(/set NEXT_PUBLIC_API_URL/i)).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute(
+        "href",
+        PROFILE.socialUrls.linkedin,
+      );
     });
   });
 

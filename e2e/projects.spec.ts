@@ -17,7 +17,9 @@ test("projects page lists projects and supports URL-synced filtering", async ({ 
   // Search updates URL state (history replace is fine for keystrokes).
   const searchBox = page.getByRole("searchbox", { name: "Search projects" });
   await searchBox.fill("stardex");
-  await expect(page).toHaveURL(/\\?(.+&)?q=stardex(&|$)/);
+  await expect(page).toHaveURL(/\?(.+&)?q=stardex(&|$)/);
+  await searchBox.fill("");
+  await expect(page).toHaveURL((url) => /^\/projects\/?$/.test(url.pathname) && url.search === "");
 
   // Changing category should push history entries and be back/forward safe.
   const categoryCombobox = page.getByRole("combobox", { name: "Filter by category" });
@@ -41,11 +43,21 @@ test("projects page lists projects and supports URL-synced filtering", async ({ 
     )
     .toBe(true);
   await ragOption.click();
-  await expect(page).toHaveURL(/category=RAG/);
+  await expect(page).toHaveURL(
+    (url) => /^\/projects\/?$/.test(url.pathname) && url.searchParams.get("category") === "RAG",
+  );
+  await expect(page.getByRole("status")).toHaveText(/Showing \d+ of \d+ projects/);
   await page.goBack();
-  await expect(page).not.toHaveURL(/category=/);
+  await expect(page).toHaveURL(
+    (url) => /^\/projects\/?$/.test(url.pathname) && !url.searchParams.has("category"),
+  );
+  await expect(categoryCombobox).toContainText(/all categories/i);
   await page.goForward();
-  await expect(page).toHaveURL(/category=RAG/);
+  await expect(page).toHaveURL(
+    (url) => /^\/projects\/?$/.test(url.pathname) && url.searchParams.get("category") === "RAG",
+  );
+  await expect(categoryCombobox).toContainText("RAG");
+  await expect(page.getByRole("status")).toHaveText(/Showing \d+ of \d+ projects/);
 
   // Escape closes a select popup and restores focus to its trigger.
   const sortCombobox = page.getByRole("combobox", { name: "Sort projects" });

@@ -3,7 +3,29 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ThemeScript } from "@/components/theme/theme-script";
 
+const executeThemeScript = () => {
+  const { container } = render(<ThemeScript />);
+  const source = container.querySelector("script")?.textContent;
+
+  if (!source) throw new Error("Theme script source is missing");
+  // biome-ignore lint/security/noGlobalEval: Executes the trusted static ThemeScript source in a runtime regression test.
+  window.eval(source);
+};
+
+const createRuntimeMediaQuery = (matches: boolean) =>
+  Object.assign(new EventTarget(), {
+    matches,
+    media: "(prefers-color-scheme: dark)",
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+  }) as unknown as MediaQueryList;
+
 describe("<ThemeScript />", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("renders a script element", () => {
     const { container } = render(<ThemeScript />);
     expect(container.querySelector("script")).toBeInTheDocument();
@@ -16,6 +38,9 @@ describe("<ThemeScript />", () => {
     expect(script?.innerHTML).toContain("(function()");
     expect(script?.innerHTML).toContain("getTheme");
     expect(script?.innerHTML).toContain("applyTheme");
+    expect(script?.innerHTML).toContain(
+      "nextTheme !== 'light' && nextTheme !== 'dark' && nextTheme !== 'system'",
+    );
   });
 
   it("reads theme from localStorage", () => {
@@ -44,6 +69,55 @@ describe("<ThemeScript />", () => {
     const script = container.querySelector("script");
 
     expect(script?.innerHTML).toContain("addEventListener('change'");
+  });
+
+  it("ignores unsupported theme clicks at runtime", () => {
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => createRuntimeMediaQuery(false)),
+    );
+    localStorage.setItem("theme", "dark");
+    document.documentElement.classList.remove("dark");
+    executeThemeScript();
+
+    const trigger = document.createElement("button");
+    trigger.dataset.themeSet = "sepia";
+    document.body.append(trigger);
+
+    try {
+      trigger.click();
+
+      expect(localStorage.getItem("theme")).toBe("dark");
+      expect(document.documentElement.classList.contains("dark")).toBe(true);
+    } finally {
+      trigger.remove();
+      localStorage.removeItem("theme");
+      document.documentElement.classList.remove("dark");
+    }
+  });
+
+  it("treats an invalid stored preference as system at runtime", () => {
+    const mediaQuery = createRuntimeMediaQuery(false);
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => mediaQuery),
+    );
+    localStorage.setItem("theme", "sepia");
+    document.documentElement.classList.remove("dark");
+
+    try {
+      executeThemeScript();
+      expect(document.documentElement.classList.contains("dark")).toBe(false);
+
+      const changeEvent = new Event("change");
+      Object.defineProperty(changeEvent, "matches", { value: true });
+      mediaQuery.dispatchEvent(changeEvent);
+
+      expect(document.documentElement.classList.contains("dark")).toBe(true);
+    } finally {
+      localStorage.removeItem("theme");
+      document.documentElement.classList.remove("dark");
+    }
   });
 });
 
@@ -193,7 +267,9 @@ describe("theme initialization logic", () => {
     const handleSystemPreferenceChange = (e: { matches: boolean }) => {
       try {
         const stored = localStorage.getItem("theme");
-        if (stored === "system" || !stored) {
+        const preference =
+          stored === "light" || stored === "dark" || stored === "system" ? stored : null;
+        if (preference === "system" || !preference) {
           applyTheme(e.matches ? "dark" : "light");
         }
       } catch {

@@ -13,14 +13,14 @@ export type AgentSkillsPackageFilter = (typeof agentSkillsPackageValues)[number]
 /** Query param parsers and defaults for Agent Skills Lab list state. */
 export const agentSkillsQueryParsers = {
   q: parseAsString.withDefault("").withOptions({ history: "replace", scroll: false }),
-  category: parseAsString.withDefault("all").withOptions({ scroll: false }),
-  readiness: parseAsString.withDefault("all").withOptions({ scroll: false }),
+  category: parseAsString.withDefault("all").withOptions({ history: "push", scroll: false }),
+  readiness: parseAsString.withDefault("all").withOptions({ history: "push", scroll: false }),
   packageState: parseAsStringEnum([...agentSkillsPackageValues] as AgentSkillsPackageFilter[])
     .withDefault("all")
-    .withOptions({ scroll: false }),
+    .withOptions({ history: "push", scroll: false }),
   sort: parseAsStringEnum([...agentSkillsSortValues] as AgentSkillsSort[])
     .withDefault("featured")
-    .withOptions({ scroll: false }),
+    .withOptions({ history: "push", scroll: false }),
 } satisfies ParserMap;
 
 /** URL-synced query state for Agent Skills Lab filters and sorting. */

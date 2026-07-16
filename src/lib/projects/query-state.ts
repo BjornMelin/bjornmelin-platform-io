@@ -8,12 +8,12 @@ export type ProjectsSort = (typeof projectsSortValues)[number];
 /** Query param parsers and defaults for projects list state. */
 export const projectsQueryParsers = {
   q: parseAsString.withDefault("").withOptions({ history: "replace", scroll: false }),
-  category: parseAsString.withDefault("all").withOptions({ scroll: false }),
-  lang: parseAsString.withDefault("all").withOptions({ scroll: false }),
-  minStars: parseAsInteger.withDefault(0).withOptions({ scroll: false }),
+  category: parseAsString.withDefault("all").withOptions({ history: "push", scroll: false }),
+  lang: parseAsString.withDefault("all").withOptions({ history: "push", scroll: false }),
+  minStars: parseAsInteger.withDefault(0).withOptions({ history: "push", scroll: false }),
   sort: parseAsStringEnum([...projectsSortValues] as ProjectsSort[])
     .withDefault("stars")
-    .withOptions({ scroll: false }),
+    .withOptions({ history: "push", scroll: false }),
 } satisfies ParserMap;
 
 /** URL-synced query state for projects list filters and sorting. */

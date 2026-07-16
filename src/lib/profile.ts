@@ -14,6 +14,13 @@ export const PROFILE: Profile = ProfileSchema.parse({
     "Senior Data Scientist and AI Engineer, current UC Berkeley MIDS student, specializing in AI/ML, GenAI, and applied research. 6x AWS Certified with experience building scalable AI systems, cloud architecture, and MLOps workflows.",
   websiteSummary:
     "Personal portfolio of Bjorn Melin, Senior Data Scientist and AI Engineer, current UC Berkeley MIDS student and researcher with experience in cloud architecture and MLOps.",
+  socialUrls: {
+    github: "https://github.com/bjornmelin",
+    linkedin: "https://www.linkedin.com/in/bjorn-melin",
+    medium: "https://medium.com/@bjornmelin",
+    orcid: "https://orcid.org/0009-0004-1978-3356",
+    coursera: "https://www.coursera.org/learner/bjorn-melin",
+  },
   keywords: [
     "Neuro-symbolic AI",
     "Deep Learning",

@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastManager } from "@/components/ui/toast";
 import { buildContactEndpoint, safeParseUrl } from "@/lib/api/contact";
+import { PROFILE } from "@/lib/profile";
 import { type ContactFormData, contactFormSchema } from "@/lib/schemas/contact";
 
 interface APIErrorResponse {
@@ -206,7 +207,7 @@ export function ContactForm() {
               Please try again. If the problem persists, reach out via the contact form later or
               send a message through{" "}
               <a
-                href="https://www.linkedin.com/in/bjornmelin/"
+                href={PROFILE.socialUrls.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xs underline hover:text-red-400 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"

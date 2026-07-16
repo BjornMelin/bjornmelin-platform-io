@@ -13,6 +13,12 @@ const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 /** Groups related dropdown menu items. */
 const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 
+/** Groups related dropdown menu radio items. */
+const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+
+/** Indicates whether a dropdown menu radio item is selected. */
+const DropdownMenuRadioItemIndicator = DropdownMenuPrimitive.RadioItemIndicator;
+
 type DropdownMenuPositioningProps = Pick<
   DropdownMenuPrimitive.Positioner.Props,
   "align" | "alignOffset" | "side" | "sideOffset"
@@ -80,10 +86,36 @@ function DropdownMenuItem({ className, inset, ...props }: DropdownMenuItemProps)
   );
 }
 
+type DropdownMenuRadioItemProps = Omit<DropdownMenuPrimitive.RadioItem.Props, "className"> & {
+  className?: string;
+  inset?: boolean;
+};
+
+/**
+ * Renders an interactive dropdown menu radio item.
+ * @param props - Dropdown menu radio item properties.
+ * @returns Styled Base UI menu radio item element.
+ */
+function DropdownMenuRadioItem({ className, inset, ...props }: DropdownMenuRadioItemProps) {
+  return (
+    <DropdownMenuPrimitive.RadioItem
+      className={cn(
+        "relative flex cursor-default select-none items-center gap-2 rounded-xs px-2 py-1.5 text-sm outline-hidden transition-colors data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0",
+        inset && "pl-8",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuRadioItemIndicator,
   DropdownMenuTrigger,
 };

@@ -14,7 +14,23 @@ test("agent skills filters, copies a command, and opens a detail page", async ({
   await expect(packagedOption).toBeVisible();
   await packagedOption.click({ delay: 200 });
 
-  await expect(page).toHaveURL(/packageState=packaged/);
+  await expect(page).toHaveURL(
+    (url) =>
+      /^\/agent-skills\/?$/.test(url.pathname) &&
+      url.searchParams.get("packageState") === "packaged",
+  );
+  await page.goBack();
+  await expect(page).toHaveURL(
+    (url) => /^\/agent-skills\/?$/.test(url.pathname) && !url.searchParams.has("packageState"),
+  );
+  await expect(packageFilter).toContainText("All packages");
+  await page.goForward();
+  await expect(page).toHaveURL(
+    (url) =>
+      /^\/agent-skills\/?$/.test(url.pathname) &&
+      url.searchParams.get("packageState") === "packaged",
+  );
+  await expect(packageFilter).toContainText("Packaged");
   const catalog = page.locator("#skills-catalog");
   await expect(catalog.getByRole("link", { name: "firecrawl", exact: true })).toBeVisible();
 
