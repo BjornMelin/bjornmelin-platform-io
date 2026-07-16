@@ -17,6 +17,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuRadioItemIndicator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -115,12 +118,23 @@ describe("Tailwind v4 UI primitives", () => {
           <DropdownMenuTrigger render={<button type="button">Menu</button>} />
           <DropdownMenuContent>
             <DropdownMenuItem>Item</DropdownMenuItem>
+            <DropdownMenuRadioGroup value="second" onValueChange={() => {}}>
+              <DropdownMenuRadioItem value="first">First</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="second">
+                <DropdownMenuRadioItemIndicator>Selected</DropdownMenuRadioItemIndicator>
+                Second
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>,
       );
       expect(screen.getByText("Menu")).toBeInTheDocument();
       expect(screen.getByRole("menu", { name: "Menu" })).toBeInTheDocument();
       expect(screen.getByRole("menuitem", { name: "Item" })).toBeInTheDocument();
+      expect(screen.getByRole("menuitemradio", { name: "Second" })).toHaveAttribute(
+        "aria-checked",
+        "true",
+      );
       unmount();
     }
 

@@ -12,7 +12,7 @@ full, honor its STOP conditions, and update its row when done.
 | 001 | Centralize and correct public identity URLs | P1 | S | - | DONE |
 | 002 | Make discrete catalog filters navigable | P1 | S | - | DONE |
 | 003 | Announce catalog result changes | P1 | S | 002 | DONE |
-| 004 | Expose the selected theme preference | P1 | M | - | TODO |
+| 004 | Expose the selected theme preference | P1 | M | - | DONE |
 | 005 | Make the mobile sheet respond promptly | P1 | S | - | TODO |
 
 Status values: TODO, IN PROGRESS, DONE, BLOCKED with a one-line reason, or REJECTED with a
