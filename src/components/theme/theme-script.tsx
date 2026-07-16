@@ -57,7 +57,6 @@ export function ThemeScript() {
         if (nextTheme !== 'light' && nextTheme !== 'dark' && nextTheme !== 'system') return;
         persistTheme(nextTheme);
         applyTheme(nextTheme === 'system' ? getTheme() : nextTheme);
-        document.dispatchEvent(new Event('theme-preference-change'));
       });
     })();
   `;

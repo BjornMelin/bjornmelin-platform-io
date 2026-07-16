@@ -284,12 +284,7 @@ export function AgentSkillsGrid({
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p
-                  role="status"
-                  aria-live="polite"
-                  aria-atomic="true"
-                  className="text-sm text-muted-foreground"
-                >
+                <p role="status" className="text-sm text-muted-foreground">
                   Showing <span className="font-medium text-foreground">{sorted.length}</span> of{" "}
                   <span className="font-medium text-foreground">{skills.length}</span> skills
                 </p>

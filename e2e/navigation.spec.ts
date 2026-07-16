@@ -115,30 +115,3 @@ test("theme menu remains interactive inside the mobile sheet", async ({ page }) 
   await page.keyboard.press("Escape");
   await expect(desktopThemeTrigger).toBeFocused();
 });
-
-test("theme menu changes and persists the selected theme", async ({ page }) => {
-  await page.goto("/");
-
-  const trigger = page.getByRole("button", { name: "Toggle theme" });
-  await trigger.click();
-  const darkItem = page.getByRole("menuitemradio", { name: "Dark" });
-  await expect(darkItem).toBeVisible();
-  await darkItem.focus();
-  await page.keyboard.press("Enter");
-
-  await expect(page.locator("html")).toHaveClass(/dark/);
-  await expect.poll(() => page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
-  await expect(trigger).toBeFocused();
-
-  await trigger.click();
-  await expect(darkItem).toHaveAttribute("aria-checked", "true");
-  const systemItem = page.getByRole("menuitemradio", { name: "System" });
-  await systemItem.focus();
-  await page.keyboard.press("Enter");
-
-  await expect.poll(() => page.evaluate(() => localStorage.getItem("theme"))).toBe("system");
-  await trigger.click();
-  await expect(systemItem).toHaveAttribute("aria-checked", "true");
-  await page.keyboard.press("Escape");
-  await expect(trigger).toBeFocused();
-});

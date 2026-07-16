@@ -25,7 +25,7 @@ function SheetOverlay({ className, ...props }: SheetOverlayProps) {
   return (
     <SheetPrimitive.Backdrop
       className={cn(
-        "fixed inset-0 z-[60] bg-black/80 transition-opacity duration-200 ease-out motion-reduce:transition-none data-starting-style:opacity-0 data-ending-style:opacity-0 data-ending-style:ease-in",
+        "fixed inset-0 z-[60] bg-black/80 transition-opacity duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none data-starting-style:opacity-0 data-ending-style:opacity-0",
         className,
       )}
       {...props}
@@ -34,7 +34,7 @@ function SheetOverlay({ className, ...props }: SheetOverlayProps) {
 }
 
 const sheetVariants = cva(
-  "fixed z-[60] gap-4 overscroll-contain border-border bg-background p-6 shadow-lg transition-transform duration-300 ease-out motion-reduce:transition-none data-ending-style:duration-200 data-ending-style:ease-in",
+  "fixed z-[60] gap-4 overscroll-contain border-border bg-background p-6 shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none data-ending-style:duration-200",
   {
     variants: {
       side: {

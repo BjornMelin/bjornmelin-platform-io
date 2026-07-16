@@ -40,10 +40,10 @@ also uses starting and ending data styles instead of Radix state selectors.
 
 ```tsx
 // backdrop
-"... transition-opacity duration-200 ease-out motion-reduce:transition-none data-ending-style:ease-in ..."
+"... transition-opacity duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none ..."
 
 // panel
-"... transition-transform duration-300 ease-out motion-reduce:transition-none data-ending-style:duration-200 data-ending-style:ease-in"
+"... transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none data-ending-style:duration-200"
 ```
 
 Do not use `transition-all`, springs, or a new animation library.
@@ -73,15 +73,17 @@ Do not use `transition-all`, springs, or a new animation library.
 
 ### Step 1: Tighten the backdrop timing
 
-Change the backdrop to 200 ms ease-out on entry and an ending-style ease-in exit. Keep opacity as the
-only transitioned property and keep `motion-reduce:transition-none`.
+Change the backdrop to 200 ms with the reviewed `cubic-bezier(0.23,1,0.32,1)` curve. Keep opacity as
+the only transitioned property, use the same curve for entry and exit, and keep
+`motion-reduce:transition-none`.
 
 **Verify**: primitive smoke tests pass.
 
 ### Step 2: Give the panel an asymmetric physical curve
 
-Change the panel to 300 ms ease-out on entry and 200 ms ease-in on exit. Preserve every placement,
-starting-style, ending-style, and responsive class.
+Change the panel to 300 ms with the reviewed `cubic-bezier(0.32,0.72,0,1)` curve and retain the 200 ms
+ending duration. Preserve every placement, starting-style, ending-style, and responsive class; do
+not override the easing during exit.
 
 **Verify**: typecheck and navigation E2E pass.
 
@@ -98,15 +100,15 @@ paths with the browser-test result.
 
 ## Done criteria
 
-- [ ] Panel entry is 300 ms ease-out and exit is 200 ms ease-in.
-- [ ] Backdrop transition is 200 ms and property-scoped.
+- [ ] Panel uses `cubic-bezier(0.32,0.72,0,1)` with a 300 ms entry and 200 ms exit.
+- [ ] Backdrop uses `cubic-bezier(0.23,1,0.32,1)` at 200 ms and remains property-scoped.
 - [ ] Reduced motion removes the transitions.
 - [ ] Focus trap, body scroll lock, Escape dismissal, and focus return still work.
 - [ ] Primitive tests, navigation E2E, and typecheck pass.
 
 ## STOP conditions
 
-- Tailwind 4.3.2 does not generate the ending-style easing variant.
+- Tailwind 4.3.2 does not generate either arbitrary cubic-bezier easing utility.
 - Any focus, scroll-lock, or final-position behavior changes.
 - The change requires editing Base UI internals or adding a dependency.
 
