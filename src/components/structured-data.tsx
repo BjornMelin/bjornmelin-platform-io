@@ -21,6 +21,7 @@ export function generatePersonSchema(): Record<string, unknown> {
     sameAs: [
       PROFILE.socialUrls.github,
       PROFILE.socialUrls.linkedin,
+      PROFILE.socialUrls.medium,
       PROFILE.socialUrls.orcid,
       PROFILE.socialUrls.coursera,
     ],

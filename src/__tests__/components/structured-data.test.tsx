@@ -22,6 +22,7 @@ describe("structured-data", () => {
     expect(sameAs).toEqual([
       PROFILE.socialUrls.github,
       PROFILE.socialUrls.linkedin,
+      PROFILE.socialUrls.medium,
       PROFILE.socialUrls.orcid,
       PROFILE.socialUrls.coursera,
     ]);

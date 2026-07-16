@@ -46,6 +46,7 @@ test("projects page lists projects and supports URL-synced filtering", async ({ 
   await expect(page).toHaveURL(
     (url) => /^\/projects\/?$/.test(url.pathname) && url.searchParams.get("category") === "RAG",
   );
+  await expect(page.getByRole("status")).toHaveText(/Showing \d+ of \d+ projects/);
   await page.goBack();
   await expect(page).toHaveURL(
     (url) => /^\/projects\/?$/.test(url.pathname) && !url.searchParams.has("category"),
@@ -56,6 +57,7 @@ test("projects page lists projects and supports URL-synced filtering", async ({ 
     (url) => /^\/projects\/?$/.test(url.pathname) && url.searchParams.get("category") === "RAG",
   );
   await expect(categoryCombobox).toContainText("RAG");
+  await expect(page.getByRole("status")).toHaveText(/Showing \d+ of \d+ projects/);
 
   // Escape closes a select popup and restores focus to its trigger.
   const sortCombobox = page.getByRole("combobox", { name: "Sort projects" });

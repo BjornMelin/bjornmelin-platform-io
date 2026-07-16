@@ -2,14 +2,15 @@
  * Injects a theme initialization script that prevents flash of unstyled theme on page load.
  * Runs before React hydration to detect stored preference, apply the correct theme class,
  * and handle theme changes via data-theme-set attributes.
- * @returns {JSX.Element} A script element containing the theme initialization logic.
+ * @returns A script element containing the theme initialization logic.
  */
 export function ThemeScript() {
   const themeScript = `
     (function() {
       function getStoredTheme() {
         try {
-          return localStorage.getItem('theme');
+          var stored = localStorage.getItem('theme');
+          return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : null;
         } catch (e) {
           return null;
         }
