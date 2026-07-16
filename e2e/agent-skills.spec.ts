@@ -31,6 +31,9 @@ test("agent skills filters, copies a command, and opens a detail page", async ({
       url.searchParams.get("packageState") === "packaged",
   );
   await expect(packageFilter).toContainText("Packaged");
+  await expect(
+    page.getByRole("status").filter({ hasText: /Showing \d+ of \d+ skills/ }),
+  ).toHaveText(/Showing \d+ of \d+ skills/);
   const catalog = page.locator("#skills-catalog");
   await expect(catalog.getByRole("link", { name: "firecrawl", exact: true })).toBeVisible();
 
