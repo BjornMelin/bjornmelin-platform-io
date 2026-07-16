@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.11.1](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.11.0...v3.11.1) (2026-07-16)
+
+
+### Bug Fixes
+
+* **ui:** refine platform interactions and accessibility ([#397](https://github.com/BjornMelin/bjornmelin-platform-io/issues/397)) ([bf6cbf8](https://github.com/BjornMelin/bjornmelin-platform-io/commit/bf6cbf8a89c16afb7b8f24193579c4219eec2606))
+
 ## [3.11.0](https://github.com/BjornMelin/bjornmelin-platform-io/compare/v3.10.2...v3.11.0) (2026-07-11)
 
 
