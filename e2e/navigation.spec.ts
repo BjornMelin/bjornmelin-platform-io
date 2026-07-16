@@ -97,18 +97,23 @@ test("theme menu remains interactive inside the mobile sheet", async ({ page }) 
   await expect(themeTrigger).toBeFocused();
   await expect(mobileNav).toBeVisible();
 
-  await themeTrigger.click();
+  await page.keyboard.press("Escape");
+  await expect(sheet).toHaveCount(0);
+  await expect(menuTrigger).toBeFocused();
+
+  await page.setViewportSize({ width: 1280, height: 844 });
+  const desktopThemeTrigger = page.getByRole("button", { name: "Toggle theme" });
+  await desktopThemeTrigger.click();
+  await expect(darkItem).toHaveAttribute("aria-checked", "true");
   const systemItem = page.getByRole("menuitemradio", { name: "System" });
   await systemItem.focus();
   await page.keyboard.press("Enter");
   await expect.poll(() => page.evaluate(() => localStorage.getItem("theme"))).toBe("system");
 
-  await themeTrigger.click();
+  await desktopThemeTrigger.click();
   await expect(systemItem).toHaveAttribute("aria-checked", "true");
   await page.keyboard.press("Escape");
-  await page.keyboard.press("Escape");
-  await expect(sheet).toHaveCount(0);
-  await expect(menuTrigger).toBeFocused();
+  await expect(desktopThemeTrigger).toBeFocused();
 });
 
 test("theme menu changes and persists the selected theme", async ({ page }) => {

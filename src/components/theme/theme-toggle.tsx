@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Moon, Sun } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +18,8 @@ const themeOptions = [
 ] as const;
 
 type ThemePreference = (typeof themeOptions)[number]["value"];
+
+const THEME_PREFERENCE_CHANGE_EVENT = "theme-preference-change";
 
 const isThemePreference = (value: unknown): value is ThemePreference =>
   value === "light" || value === "dark" || value === "system";
@@ -39,6 +41,12 @@ const getStoredThemePreference = (): ThemePreference => {
  */
 export function ThemeToggle() {
   const [preference, setPreference] = useState<ThemePreference>(getStoredThemePreference);
+
+  useEffect(() => {
+    const refreshPreference = () => setPreference(getStoredThemePreference());
+    document.addEventListener(THEME_PREFERENCE_CHANGE_EVENT, refreshPreference);
+    return () => document.removeEventListener(THEME_PREFERENCE_CHANGE_EVENT, refreshPreference);
+  }, []);
 
   return (
     <DropdownMenu modal={false}>

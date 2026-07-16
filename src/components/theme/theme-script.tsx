@@ -54,9 +54,10 @@ export function ThemeScript() {
         var trigger = target.closest('[data-theme-set]');
         if (!trigger) return;
         var nextTheme = trigger.getAttribute('data-theme-set');
-        if (!nextTheme) return;
+        if (nextTheme !== 'light' && nextTheme !== 'dark' && nextTheme !== 'system') return;
         persistTheme(nextTheme);
         applyTheme(nextTheme === 'system' ? getTheme() : nextTheme);
+        document.dispatchEvent(new Event('theme-preference-change'));
       });
     })();
   `;

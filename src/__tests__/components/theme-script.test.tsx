@@ -45,6 +45,21 @@ describe("<ThemeScript />", () => {
 
     expect(script?.innerHTML).toContain("addEventListener('change'");
   });
+
+  it("broadcasts valid delegated preference changes after applying them", () => {
+    const { container } = render(<ThemeScript />);
+    const source = container.querySelector("script")?.innerHTML ?? "";
+    const persistIndex = source.indexOf("persistTheme(nextTheme)");
+    const applyIndex = source.indexOf("applyTheme(nextTheme");
+    const broadcastIndex = source.indexOf("new Event('theme-preference-change')");
+
+    expect(source).toContain(
+      "nextTheme !== 'light' && nextTheme !== 'dark' && nextTheme !== 'system'",
+    );
+    expect(persistIndex).toBeGreaterThan(-1);
+    expect(applyIndex).toBeGreaterThan(persistIndex);
+    expect(broadcastIndex).toBeGreaterThan(applyIndex);
+  });
 });
 
 describe("theme initialization logic", () => {

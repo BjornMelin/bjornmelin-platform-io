@@ -121,4 +121,57 @@ describe("<ThemeToggle />", () => {
       document.removeEventListener("click", handleClick);
     }
   });
+
+  it("synchronizes the selected preference across mounted toggles", async () => {
+    const user = userEvent.setup();
+    const persistAndBroadcast = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const value = target.closest("[data-theme-set]")?.getAttribute("data-theme-set");
+      if (value !== "light" && value !== "dark" && value !== "system") return;
+      localStorage.setItem("theme", value);
+      document.dispatchEvent(new Event("theme-preference-change"));
+    };
+    document.addEventListener("click", persistAndBroadcast);
+
+    try {
+      render(
+        <>
+          <ThemeToggle />
+          <ThemeToggle />
+        </>,
+      );
+      const [firstTrigger, secondTrigger] = screen.getAllByRole("button", {
+        name: /toggle theme/i,
+      });
+      if (!firstTrigger || !secondTrigger) throw new Error("Expected two theme toggles");
+
+      fireEvent.mouseDown(firstTrigger);
+      await user.click(await screen.findByRole("menuitemradio", { name: "Dark" }));
+      fireEvent.mouseDown(secondTrigger);
+      const items = await screen.findAllByRole("menuitemradio");
+
+      expect(screen.getByRole("menuitemradio", { name: "Dark" })).toHaveAttribute(
+        "aria-checked",
+        "true",
+      );
+      expect(items.filter((item) => item.getAttribute("aria-checked") === "true")).toHaveLength(1);
+    } finally {
+      document.removeEventListener("click", persistAndBroadcast);
+    }
+  });
+
+  it("removes its preference-change listener when unmounted", () => {
+    const addEventListener = vi.spyOn(document, "addEventListener");
+    const removeEventListener = vi.spyOn(document, "removeEventListener");
+    const { unmount } = render(<ThemeToggle />);
+    const registration = addEventListener.mock.calls.find(
+      ([eventName]) => eventName === "theme-preference-change",
+    );
+    if (!registration) throw new Error("Expected theme preference listener registration");
+
+    unmount();
+
+    expect(removeEventListener).toHaveBeenCalledWith("theme-preference-change", registration[1]);
+  });
 });
