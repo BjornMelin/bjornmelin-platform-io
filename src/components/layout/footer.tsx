@@ -1,6 +1,7 @@
 import { BookOpenCheck, BookText, Mail } from "lucide-react";
 import Link from "next/link";
 import type { ComponentPropsWithoutRef } from "react";
+import { PROFILE } from "@/lib/profile";
 
 type BrandIconProps = ComponentPropsWithoutRef<"svg">;
 
@@ -73,7 +74,7 @@ export function Footer() {
             <h2 className="text-balance text-lg font-semibold">Connect</h2>
             <div className="flex gap-4">
               <a
-                href="https://github.com/bjornmelin"
+                href={PROFILE.socialUrls.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -82,7 +83,7 @@ export function Footer() {
                 <GitHubMark className="h-5 w-5" aria-hidden="true" />
               </a>
               <a
-                href="https://linkedin.com/in/bjorn-melin"
+                href={PROFILE.socialUrls.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -91,7 +92,7 @@ export function Footer() {
                 <LinkedInMark className="h-5 w-5" aria-hidden="true" />
               </a>
               <a
-                href="https://medium.com/@bjornmelin"
+                href={PROFILE.socialUrls.medium}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -100,7 +101,7 @@ export function Footer() {
                 <BookText size={20} aria-hidden="true" />
               </a>
               <a
-                href="https://orcid.org/0009-0004-1978-3356"
+                href={PROFILE.socialUrls.orcid}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xs text-foreground/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"

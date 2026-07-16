@@ -9,6 +9,8 @@ import StructuredData, {
   generatePersonSchema,
   generateWebsiteSchema,
 } from "@/components/structured-data";
+import { PROFILE } from "@/lib/profile";
+import { ProfileSchema } from "@/lib/schemas/profile";
 
 describe("structured-data", () => {
   it("exposes generators with expected fields", () => {
@@ -17,7 +19,21 @@ describe("structured-data", () => {
     expect(person["@type"]).toBe("Person");
     expect(site["@type"]).toBe("WebSite");
     const sameAs = person.sameAs as unknown[] | undefined;
-    expect(Array.isArray(sameAs)).toBe(true);
+    expect(sameAs).toEqual([
+      PROFILE.socialUrls.github,
+      PROFILE.socialUrls.linkedin,
+      PROFILE.socialUrls.orcid,
+      PROFILE.socialUrls.coursera,
+    ]);
+  });
+
+  it("rejects non-HTTPS profile identity URLs", () => {
+    expect(() =>
+      ProfileSchema.parse({
+        ...PROFILE,
+        socialUrls: { ...PROFILE.socialUrls, github: "http://github.com/bjornmelin" },
+      }),
+    ).toThrow();
   });
 
   it("uses the canonical public site URL for schema URLs", () => {

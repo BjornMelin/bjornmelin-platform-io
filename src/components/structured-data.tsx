@@ -19,10 +19,10 @@ export function generatePersonSchema(): Record<string, unknown> {
     jobTitle: PROFILE.shortTitle,
     description: PROFILE.summary,
     sameAs: [
-      "https://github.com/bjornmelin",
-      "https://linkedin.com/in/bjornmelin",
-      "https://orcid.org/0000-0003-3891-5522",
-      "https://www.coursera.org/learner/bjorn-melin",
+      PROFILE.socialUrls.github,
+      PROFILE.socialUrls.linkedin,
+      PROFILE.socialUrls.orcid,
+      PROFILE.socialUrls.coursera,
     ],
     knowsAbout: [
       "Neuro-symbolic AI",
