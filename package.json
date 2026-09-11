@@ -86,7 +86,7 @@
     "msw": "^2.13.4",
     "playwright": "~1.61.1",
     "postcss": "^8.5.16",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.4",
     "tailwindcss": "4.3.2",
     "tsx": "^4.23.0",
     "typescript": "~6.0.3",
